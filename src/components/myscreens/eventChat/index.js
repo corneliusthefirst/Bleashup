@@ -1,23 +1,13 @@
 import React, { Component } from 'react'
 import {
-  StyleSheet,
-  KeyboardAvoidingView,
-  ActivityIndicator,
-  FlatList,
-  StatusBar,
-  ImageBackground,
-  Platform,
   View,
-  TouchableOpacity,
 } from 'react-native'
 import ChatRoom from './ChatRoom';
-import { Spinner } from 'native-base';
 import stores from '../../../stores';
 import moment from 'moment';
-import firebase from 'react-native-firebase';
-import { values } from 'lodash';
 import Waiter from '../loginhome/Waiter';
 import BeComponent from '../../BeComponent';
+import Spinner from '../../Spinner';
 
 
  export default class EventChat extends BeComponent {

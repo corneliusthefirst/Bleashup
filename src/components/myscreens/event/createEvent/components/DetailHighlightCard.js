@@ -10,12 +10,11 @@ import Modal from 'react-native-modalbox';
 import autobind from "autobind-decorator";
 import HighlightCardDetail from "./HighlightCardDetail";
 import  stores from '../../../../../stores/index';
-import {observer} from 'mobx-react'
-import moment from "moment"
-import { filter,uniqBy,orderBy,find,findIndex,reject,uniq,indexOf,forEach,dropWhile } from "lodash";
 import request from "../../../../../services/requestObjects";
 import EventHighlights from "./EventHighlights"
 import BleashupAlert from './BleashupAlert';
+import MaterialIconCommunity  from 'react-native-vector-icons/MaterialCommunityIcons';
+import EvilIcons  from 'react-native-vector-icons/EvilIcons';
 
 
 let {height, width} = Dimensions.get('window')
@@ -75,8 +74,8 @@ componentDidMount(){
            </CardItem>
            <CardItem>
              <View style={{width:width/2-width/16,height:height/7}}>
-            <Thumbnail source={{uri:this.props.item.url.photo}} style={{ flex: 1, width:null,height:null,
-              borderRadius:8}} large ></Thumbnail>
+            <Image resizeMode={"cover"} source={{uri:this.props.item.url.photo}} style={{ flex: 1, width:null,height:null,
+              borderRadius:8}} large ></Image>
             </View>
            </CardItem>
            <CardItem style={{height:height/18}}>
@@ -90,8 +89,8 @@ componentDidMount(){
                  <TouchableOpacity onPress={() => {return this.update()}}  style={{marginRight:"15%"}}>
     
                     {this.state.updating ? <Spinner size={"small"} color="#7DD2D2"></Spinner> : 
-                    <Icon style={{ fontSize: 16, color: "#1FABAB" }} name="update" type="MaterialCommunityIcons">
-                    </Icon>}
+                    <MaterialIconCommunity style={{ fontSize: 16, color: "#1FABAB" }} name="update" type="MaterialCommunityIcons">
+                    </MaterialIconCommunity>}
                     <Label style={{ fontSize: 12, color: "#1FABAB" }}>Update</Label>
                   </TouchableOpacity>
                  </Left>
@@ -99,8 +98,8 @@ componentDidMount(){
                    <TouchableOpacity onPress={() => {this.setState({check:true})}} style={{marginRight:"15%"}}>
     
                     {this.state.deleting ? <Spinner size={"small"} color="#7DD2D2"></Spinner> : 
-                    <Icon name="trash" style={{ fontSize: 16, color: "red" }} type="EvilIcons">
-                    </Icon>}
+                    <EvilIcons name="trash" style={{ fontSize: 16, color: "red" }} type="EvilIcons">
+                    </EvilIcons>}
                     <Label style={{ fontSize: 12, color: "red" }} >Delete</Label>
                   </TouchableOpacity>
                  </Right>

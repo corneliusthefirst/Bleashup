@@ -1,28 +1,20 @@
 import React, { PureComponent } from "react";
 import Modal from "react-native-modalbox";
 import {
-    Header,
-    Left,
-    Icon,
-    Text,
-    Label,
-    Right,
-    Title,
-    Thumbnail,
-} from "native-base";
-import {
     View,
+    Text,
     TouchableWithoutFeedback,
     TouchableHighlight,
     TouchableOpacity,
+    StyleSheet
 } from "react-native";
-//import BleashupFlatList from './BleashupFlatList';
-//import ProfileWithCheckBox from './myscreens/currentevents/components/PofileWithCheckbox';
-import { indexOf, reject, concat, find } from "lodash";
 import CacheImages from "../../CacheImages";
 import testForURL from "../../../services/testForURL";
 import ProfileView from "../invitations/components/ProfileView";
 import ColorList from "../../colorList";
+import EvilIcons  from 'react-native-vector-icons/EvilIcons';
+import rounder from '../../../services/rounder';
+import shadower from "../../shadower";
 export default class NotificationModal extends PureComponent {
     constructor(props) {
         super(props);
@@ -110,14 +102,16 @@ export default class NotificationModal extends PureComponent {
                                                                     }}
                                                                 ></CacheImages>
                                                             ) : (
-                                                                <Thumbnail
+                                                                <Image
                                                                     small
+                                                                    resizeMode={"cover"}
+                                                                    style={styles.smallthumbnail}
                                                                     source={{
                                                                         uri: this.props.change.updater.profile
                                                                             ? this.change.updater.profile
                                                                             : "",
                                                                     }}
-                                                                ></Thumbnail>
+                                                                ></Image>
                                                             )}
                                                     </View>
                                                     <View
@@ -161,7 +155,7 @@ export default class NotificationModal extends PureComponent {
                                                 })
                                             }
                                         >
-                                            <Icon type={"EvilIcons"} name={"close"}></Icon>
+                                            <EvilIcons name={"close"}/>
                                         </TouchableOpacity>
                                     </View>
                                 </View>
@@ -195,5 +189,13 @@ export default class NotificationModal extends PureComponent {
                 ) : null}
             </Modal>
         );
+
     }
 }
+
+const styles = StyleSheet.create({
+    smallthumbnail:{
+        ...rounder(20,ColorList.bodyBackground),
+        ...shadower(2)
+    }   
+})

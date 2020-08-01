@@ -1,13 +1,16 @@
 /* eslint-disable react-native/no-inline-styles */
 /* eslint-disable prettier/prettier */
 import React, { PureComponent } from 'react';
-import { View, TouchableOpacity  } from 'react-native';
+import { View, TouchableOpacity, Text  } from 'react-native';
 import bleashupHeaderStyle from '../../../services/bleashupHeaderStyle';
 import ColorList from '../../colorList';
-import { Icon, Text } from 'native-base';
 import TypingIndicator from './TypingIndicator';
 import ChatRoomPlus from './ChatRoomPlus';
 import ChatroomMenu from './ChatroomMenu';
+import MaterialIcons  from 'react-native-vector-icons/MaterialIcons';
+import GState from '../../../stores/globalState';
+import Entypo  from 'react-native-vector-icons/Entypo';
+import  Ionicons  from 'react-native-vector-icons/Ionicons';
 
 export default class ChatRoomHeader extends PureComponent {
     constructor(props){
@@ -38,8 +41,9 @@ export default class ChatRoomHeader extends PureComponent {
                         width: '20%',
                         alignItems: 'center',
                     }} onPress={() => requestAnimationFrame(() => this.props.goback())} >
-                        <Icon
+                        <MaterialIcons
                             style={{
+                                ...GState.defaultIconSize,
                                 color: ColorList.headerIcon,
                                 //marginLeft: '5%',
                             }}
@@ -88,7 +92,7 @@ export default class ChatRoomHeader extends PureComponent {
                             justifyContent: 'center',
                         }}
                     >
-                        <Icon
+                        <Entypo
                             style={{ color: ColorList.likeActive, fontSize: 25 }}
                             type={'Entypo'}
                             name={'phone'}
@@ -104,7 +108,7 @@ export default class ChatRoomHeader extends PureComponent {
                             justifyContent: 'center',
                         }}
                     >
-                        <Icon
+                        <Ionicons
                             style={{ color: ColorList.headerIcon, fontSize: 30 }}
                             type={'Ionicons'}
                             name={'ios-menu'}
@@ -118,43 +122,3 @@ export default class ChatRoomHeader extends PureComponent {
     }
 }
 
-
-                    /*<View style={{ height: ColorList.headerHeight, marginLeft: "10%" }}>
-                        <ChatRoomPlus
-                            computedMaster={this.props.computedMaster}
-                            master={this.props.master}
-                            eventID={this.props.activity_id}
-                            roomID={this.props.firebaseRoom}
-                            public={this.props.public_state}
-                            addAudio={() => {
-                                this.props.openAudioPicker();
-                                this.props.markAsRead();
-                            }}
-                            addFile={() => this.props.openFilePicker()}
-                            showVote={() => this.props.openVoteCreation()}
-                            showReminds={() => {
-                                this.props.addRemind(this.props.members);
-                            }}
-                            addPhotos={() => this.props.openPhotoSelector()}
-                            addMembers={() => this.props.addMembers()}
-                        ></ChatRoomPlus>
-                        </View>*/
-
-                    /*<View style={{ height: ColorList.headerHeight }}>
-                        <ChatroomMenu
-                            showMembers={() => this.props.showMembers()}
-                            addMembers={() => this.props.addMembers()}
-                            closeCommitee={() => this.props.close()}
-                            openCommitee={() => this.props.open()}
-                            leaveCommitee={() => this.props.leave()}
-                            showRoomMedia={() => this.props.showRoomMedia()}
-                            removeMembers={() => this.props.removeMembers()}
-                            publishCommitee={() => this.props.publish()}
-                            master={this.props.master}
-                            eventID={this.props.activity_id}
-                            roomID={this.props.firebaseRoom}
-                            public={this.props.public_state}
-                            opened={this.props.opened}
-                            settings={this.props.activity_id === this.props.roomID ? this.props.openSettings : this.props.editCommitteeName}
-                         />
-                    </View>*/

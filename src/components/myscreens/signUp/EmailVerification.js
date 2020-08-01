@@ -37,6 +37,7 @@ import { observable } from "mobx";
 import UserServices from "../../../services/userHttpServices";
 import firebase from 'react-native-firebase';
 import connect from '../../../services/tcpConnect';
+import Toaster from "../../../services/Toaster";
 
 @observer
 export default class EmailVerificationView extends Component {
@@ -70,7 +71,7 @@ export default class EmailVerificationView extends Component {
       this.back()
     } else {
       this.exiting = true
-      Toast.show({ text: "Press again to go to the previous page" });
+      Toaster({ text: "Press again to go to the previous page" });
       this.timeout = setTimeout(() => {
         this.exiting = false
       }, 800)

@@ -2,18 +2,25 @@
 /* eslint-disable react-native/no-inline-styles */
 /* eslint-disable prettier/prettier */
 import React, { Component } from 'react';
-import { View, Dimensions, TouchableOpacity, StyleSheet } from 'react-native';
+import { View, Dimensions, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import rounder from "../../../services/rounder";
 import ColorList from "../../colorList";
 
 const screenWidth = Math.round(Dimensions.get('window').width);
 const screenheight = Math.round(Dimensions.get('window').height);
 
-import { Icon, Text } from 'native-base';
 import BleashupModal from '../../mainComponents/BleashupModal';
 import BeNavigator from '../../../services/navigationServices';
 import AnimatedComponent from '../../AnimatedComponent';
 import shadower from '../../shadower';
+import  Entypo  from 'react-native-vector-icons/Entypo';
+import  AntDesign  from 'react-native-vector-icons/AntDesign';
+import  Ionicons from 'react-native-vector-icons/Ionicons';
+import  MaterialCommunityIcons  from 'react-native-vector-icons/MaterialCommunityIcons';
+import  SimpleLineIcons  from 'react-native-vector-icons/SimpleLineIcons';
+import  Feather from 'react-native-vector-icons/Feather';
+import MaterialIcons  from 'react-native-vector-icons/MaterialIcons';
+import Texts from '../../../meta/text';
 
 export default class Options extends AnimatedComponent {
 
@@ -106,18 +113,18 @@ export default class Options extends AnimatedComponent {
                                         ...rounder(this.buttonSize, '#1e90ff'),
                                     }}
                                 >
-                                    <Icon
+                                    <Entypo
                                         style={{
                                             color: 'white',
                                             fontSize: 25,
                                         }}
                                         type={"Entypo"}
                                         name={"bell"}
-                                    ></Icon>
+                                    />
                                 </View>
                             </TouchableOpacity>
 
-                            <Text style={styles.textStyle} >Remind Message</Text>
+                            <Text ellipsizeMode={"tail"} numberOfLines={1} style={styles.textStyle} >{Texts.remind_message}</Text>
                         </View>
 
 
@@ -132,18 +139,21 @@ export default class Options extends AnimatedComponent {
                                         ...rounder(this.buttonSize, ColorList.indicatorColor),
                                     }}
                                 >
-                                    <Icon
+                                    <AntDesign
                                         style={{
                                             color: ColorList.bodyBackground,
                                             fontSize: 20,
                                         }}
                                         type={"AntDesign"}
                                         name={"addfile"}
-                                    ></Icon>
+                                    />
                                 </View>
                             </TouchableOpacity>
 
-                            <Text style={styles.textStyle} >Files</Text>
+                            <Text 
+                            ellipsizeMode={"tail"} 
+                            numberOfLines={1} 
+                            style={styles.textStyle} >{Texts.files}</Text>
                         </View>
 
                         <View style={this.mainContainerStyles}>
@@ -157,18 +167,21 @@ export default class Options extends AnimatedComponent {
                                         ...rounder(this.buttonSize, '#8b008b'),
                                     }}
                                 >
-                                    <Icon
+                                    <Ionicons
                                         style={{
                                             color: ColorList.bodyBackground,
                                             fontSize: 23,
                                         }}
                                         type={"Ionicons"}
                                         name={"md-photos"}
-                                    ></Icon>
+                                    />
                                 </View>
                             </TouchableOpacity>
 
-                            <Text style={styles.textStyle}  >Add Photos</Text>
+                            <Text 
+                            ellipsizeMode={"tail"} 
+                            numberOfLines={1}
+                             style={styles.textStyle}  >{Texts.add_photos}</Text>
                         </View>
 
                         <View style={this.mainContainerStyles}>
@@ -184,21 +197,22 @@ export default class Options extends AnimatedComponent {
                                             ...rounder(this.buttonSize - 5, '#ffd707'),
                                         }}
                                     >
-                                        <Icon
+                                        <MaterialCommunityIcons
                                             style={{
                                                 color: ColorList.bodyBackground,
                                                 fontSize: 20,
                                             }}
                                             type={"MaterialCommunityIcons"}
                                             name={"microphone-plus"}
-                                        ></Icon>
-
+                                        />
                                     </View>
 
                                 </View>
                             </TouchableOpacity>
 
-                            <Text style={styles.textStyle}  >Audio</Text>
+                            <Text ellipsizeMode={"tail"}
+                                numberOfLines={1} 
+                                style={styles.textStyle}  >Audio</Text>
                         </View>
 
 
@@ -220,18 +234,20 @@ export default class Options extends AnimatedComponent {
                                         ...rounder(this.buttonSize, '#cd5c5c'),
                                     }}
                                 >
-                                    <Icon
+                                    <MaterialCommunityIcons
                                         style={{
                                             color: 'white',
                                             fontSize: 22,
                                         }}
                                         type={"MaterialCommunityIcons"}
                                         name={"qrcode-scan"}
-                                    ></Icon>
+                                    />
                                 </View>
                             </TouchableOpacity>
 
-                            <Text style={styles.textStyle} >QR Scanner</Text>
+                            <Text ellipsizeMode={"tail"}
+                                numberOfLines={1}
+                                 style={styles.textStyle} >{Texts.qr_scanner}</Text>
                         </View>
 
 
@@ -246,18 +262,21 @@ export default class Options extends AnimatedComponent {
                                         ...rounder(this.buttonSize, '#66cdaa'),
                                     }}
                                 >
-                                    <Icon
+                                    <SimpleLineIcons
                                         style={{
                                             color: ColorList.bodyBackground,
                                             fontSize: 22,
                                         }}
                                         type={"SimpleLineIcons"}
                                         name={"list"}
-                                    ></Icon>
+                                    />
                                 </View>
                             </TouchableOpacity>
 
-                            <Text style={styles.textStyle} >All Reminds</Text>
+                            <Text 
+                            ellipsizeMode={"tail"}
+                            numberOfLines={1}
+                            style={styles.textStyle} >{Texts.reminds}</Text>
                         </View>
 
 
@@ -272,18 +291,20 @@ export default class Options extends AnimatedComponent {
                                         ...rounder(this.buttonSize, '#48d1cc'),
                                     }}
                                 >
-                                    <Icon
+                                    <Feather
                                         style={{
                                             color: ColorList.bodyBackground,
                                             fontSize: 25,
                                         }}
                                         type={"Feather"}
                                         name={"user"}
-                                    ></Icon>
+                                    />
                                 </View>
                             </TouchableOpacity>
 
-                            <Text style={styles.textStyle}  >Contacts</Text>
+                            <Text ellipsizeMode={"tail"}
+                                numberOfLines={1}
+                                 style={styles.textStyle}  >Contacts</Text>
                         </View>
 
                         <View style={this.mainContainerStyles}>
@@ -298,21 +319,21 @@ export default class Options extends AnimatedComponent {
                                         ...rounder(this.buttonSize, '#663399'),
                                     }}
                                 >
-                                    <Icon
+                                    <MaterialIcons
                                         style={{
                                             color: ColorList.bodyBackground,
                                             fontSize: 25,
                                         }}
                                         type={"MaterialIcons"}
                                         name={"group-add"}
-                                    ></Icon>
+                                    />
 
                                 </View>
 
 
                             </TouchableOpacity>
 
-                            <Text style={styles.textStyle}  >New Activity</Text>
+                            <Text style={styles.textStyle}  >{Texts.new_activity}</Text>
                         </View>
 
                     </View>

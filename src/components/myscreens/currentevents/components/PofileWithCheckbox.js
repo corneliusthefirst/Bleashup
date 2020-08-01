@@ -1,8 +1,9 @@
 import React, { PureComponent } from 'react';
 
 import { TouchableOpacity, View, TouchableWithoutFeedback } from "react-native"
-import { Icon } from 'native-base';
 import ProfileView from '../../invitations/components/ProfileView';
+import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
+import GState from '../../../../stores/globalState';
 
 export default class ProfileWithCheckBox extends PureComponent {
     constructor(props) {
@@ -13,9 +14,7 @@ export default class ProfileWithCheckBox extends PureComponent {
         }
     }
     componentDidMount() {
-        this.setState({
-            checked: this.props.checked
-        })
+    
     }
     margin = { marginTop: 'auto', marginBottom: 'auto', }
     render() {
@@ -26,15 +25,13 @@ export default class ProfileWithCheckBox extends PureComponent {
                 } else {
                     this.props.check(this.props.phone)
                 }
-                this.setState({
-                    checked: !this.state.checked
-                })
             })
             }>
                 <View style={{ display: 'flex', flexDirection: 'row',justifyContent: 'space-between',marginTop: '1%', marginBottom: '5%',alignSelf: 'center',}}>
                 <View style={{...this.margin,width:"10%"}}>
-                    <Icon style={{ color: "#1FABAB" }} name={this.state.checked ? "radio-button-checked" :
-                        "radio-button-unchecked"} type="MaterialIcons"></Icon>
+                    <MaterialIcons style={{...GState.defaultIconSize, color: "#1FABAB" }} name={this.props.checked ? "radio-button-checked" :
+                        "radio-button-unchecked"} type="MaterialIcons">
+                        </MaterialIcons>
                     </View>
                     <View style={{...this.margin,width:'90%'}}>
                         <ProfileView delay={this.props.delay} hideMe={() => {

@@ -1,14 +1,12 @@
 
 import React, { Component } from 'react';
-import {
-    Text, Icon, Item,
-    Button,
-} from "native-base";
-import { View, Dimensions, Keyboard, ScrollView, Textarea } from 'react-native';
+
+import { Text,View, Dimensions, Keyboard, ScrollView, Textarea, TouchableOpacity } from 'react-native';
 import Modal from 'react-native-modalbox';
 import ColorList from '../../colorList';
 import CreateTextInput from '../event/createEvent/components/CreateTextInput';
 import BleashupModal from '../../mainComponents/BleashupModal';
+import GState from '../../../stores/globalState';
 
 let { height, width } = Dimensions.get('window');
 
@@ -59,14 +57,14 @@ export default class AddReport extends BleashupModal {
                         width: width / 4, height: "100%", alignSelf: "flex-end",
                         marginRight: "1%"
                     }} >
-                        <Button onPress={() => this.props.report(this.state.description)} style={{
+                        <TouchableOpacity onPress={() => this.props.report(this.state.description)} style={{
                             borderRadius: 8,
                             borderWidth: 1, marginRight: "2%", backgroundColor: ColorList.bodyBackground,
                             borderColor: ColorList.bodyIcon, alignSelf: 'flex-end',
                             width: width / 4, height: height / 18, justifyContent: "center"
                         }}>
-                            <Text style={{ color: ColorList.bodyIcon }}>Report</Text>
-                        </Button>
+                            <Text style={{...GState.defaultTextStyle, color: ColorList.bodyIcon,marginRight:"auto",marginLeft: "auto", }}>Report</Text>
+                        </TouchableOpacity>
                     </View>
                 </View> : null}
             </ScrollView>)

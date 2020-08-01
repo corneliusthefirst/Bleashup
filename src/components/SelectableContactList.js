@@ -1,29 +1,20 @@
 import React, { PureComponent } from "react";
-import Modal from "react-native-modalbox";
-import {
-    Header,
-    Left,
-    Icon,
-    Text,
-    Label,
-    Right,
-    Title,
-    Button,
-} from "native-base";
 import {
     View,
+    Text,
     TouchableWithoutFeedback,
     TouchableHighlight,
     TouchableOpacity,
 } from "react-native";
 import BleashupFlatList from "./BleashupFlatList";
 import ProfileWithCheckBox from "./myscreens/currentevents/components/PofileWithCheckbox";
-import { indexOf, reject, concat, find } from "lodash";
+import { indexOf, reject, concat, find,findIndex } from "lodash";
 import Menu, { MenuDivider, MenuItem } from "react-native-material-menu";
 import bleashupHeaderStyle from "../services/bleashupHeaderStyle";
 import BleashupModal from "./mainComponents/BleashupModal";
 import ColorList from "./colorList";
 import CreationHeader from "./myscreens/event/createEvent/components/CreationHeader";
+import GState from "../stores/globalState";
 
 export default class SelectableContactList extends BleashupModal {
     initialize() {
@@ -89,7 +80,7 @@ export default class SelectableContactList extends BleashupModal {
                             }
                         >
                             <Text
-                                style={{ fontWeight: "bold", color: "#1FABAB", fontSize: 22 }}
+                                style={{ ...GState.defaultTextStyle, fontWeight: "bold", color: "#1FABAB", fontSize: 22 }}
                             >
                                 {"OK"}
                             </Text>
@@ -122,7 +113,7 @@ export default class SelectableContactList extends BleashupModal {
                                         <View style={{ margin: "2%" }}>
                                             <ProfileWithCheckBox
                                                 delay={this.delay}
-                                                checked={this.state.check}
+                                                checked={findIndex(this.state.checked,{phone:item.phone})>=0}
                                                 index={indexOf(this.state.checked, item.phone)}
                                                 phone={item.phone}
                                                 check={(phone) =>

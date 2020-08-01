@@ -1,10 +1,10 @@
 import React, { Component } from "react"
-import { View, TouchableOpacity } from "react-native"
-import { Icon, Text} from "native-base"
+import { View, TouchableOpacity, Text } from "react-native"
 import { countComments } from '../../../../../services/cloud_services';
 import ColorList from '../../../../colorList';
 import stores from '../../../../../stores';
 import BeNavigator from '../../../../../services/navigationServices';
+import FontAwesome  from 'react-native-vector-icons/FontAwesome';
 
 export default class Comments extends Component {
     constructor(props) {
@@ -47,10 +47,9 @@ export default class Comments extends Component {
     render() {
         return <View style={{ flexDirection: 'column', justifyContent: 'flex-start', alignItems: 'center', }}>
             <TouchableOpacity onPress={() => requestAnimationFrame(this.openComments.bind(this))}>
-                <Icon style={{ color: ColorList.headerIcon, fontSize: 30, }}
+                <FontAwesome style={{ color: ColorList.headerIcon, fontSize: 30, }}
                     type={"FontAwesome"}
-                    name={"comments-o"}>
-                </Icon>
+                    name={"comments-o"}/>
             </TouchableOpacity>
             <View>
                 {this.state.latestComment.text && <Text elipsizeMode={'tail'} numberOfLines={1} note>{`${this.state.latestComment.text}`}</Text>}

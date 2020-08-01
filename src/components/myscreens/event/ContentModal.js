@@ -1,12 +1,12 @@
 import React, { PureComponent } from 'react';
-import { Content, Text, Item, View, Button } from 'native-base';
+import {View, ScrollView, Text,TouchableOpacity,StyleSheet} from "react-native"
 import { map } from "lodash"
 import Modal from "react-native-modalbox"
-import { Icon } from 'native-base';
 import moment from 'moment';
 import { format } from '../../../services/recurrenceConfigs';
 import MediaPreviewer from './createEvent/components/MediaPeviewer';
 import ColorList from '../../colorList';
+import  EvilIcons from 'react-native-vector-icons/EvilIcons';
 
 export default class ContentModal extends PureComponent {
     constructor(props) {
@@ -17,17 +17,14 @@ export default class ContentModal extends PureComponent {
     }
     state = {}
     renderContentItems(content) {
-        return content.map(ele => <Item>
-            <Text>ele</Text>
-        </Item>)
+        return content.map(ele => <Text>ele</Text>)
     }
     renderObject(content) {
-        return map(content, (value, key) => <Item>
+        return map(content, (value, key) => 
             <View style={{ flexDirection: 'row', }}>
                 <Text style={{ fontWeight: 'bold', fontStyle: 'italic', }}>{key}{": "}</Text>
                 <Text>{Array.isArray(value) ? value.join(',') : key === 'recurrence' ? moment(value).format(format) : value}</Text>
-            </View>
-        </Item>)
+            </View>)
     }
     render() {
         return (
@@ -57,10 +54,7 @@ export default class ContentModal extends PureComponent {
                     borderRadius: 8, width: "90%"
                 }}
             >
-                {/*</View><Icon name={"close"} onPress={() => {
-                    this.props.closed()
-                }} type={"EvilIcons"}></Icon></View>*/}
-                <Content style={{ margin: "5%" }}>
+                <ScrollView style={{ margin: "5%" }}>
                 {this.props.title?<Text style={{margin: '5%',}}>{this.props.title}</Text>:null}
                     {this.state.content && (this.state.content.photo || this.state.content.video) ?
                         <View style={{width:'90%',alignSelf: 'center',}}><MediaPreviewer
@@ -72,10 +66,23 @@ export default class ContentModal extends PureComponent {
                             this.renderObject(this.state.content) : Array.isArray(this.state.content) ?
                                 this.renderContentItems(this.state.content) :
                                 <Text>{this.state.content}</Text>}
-                    {this.props.votable ? <Button onPress={this.props.vote} style={{alignSelf: 'flex-end',margin:'5%',
-                    borderRadius: 5,height:30}}><Text style={{marginBottom: 'auto',color:ColorList.bodyBackground}}>Vote</Text></Button> :this.props.trashable?<Icon onPress={this.props.cleanMedia} style={{color:ColorList.redIcon,alignSelf: 'flex-end',margin: '5%',}} name={'trash'} type="EvilIcons"></Icon> :null}
-                </Content>
+                    {this.props.votable ? <TouchableOpacity onPress={this.props.vote} style={styles.voteButton}><Text style={{marginBottom: 'auto',color:ColorList.bodyBackground}}>Vote</Text>
+                    </TouchableOpacity> :
+                    this.props.trashable?<EvilIcons
+                    onPress={this.props.cleanMedia} 
+                    style={{color:ColorList.redIcon,alignSelf: 'flex-end',margin: '5%',}} 
+                    name={'trash'} type="EvilIcons"></EvilIcons> 
+                    :null}
+                </ScrollView>
             </Modal>
         );
     }
 }
+
+const styles = StyleSheet.create({
+    voteButton:{
+        alignSelf: 'flex-end', margin: '5%',
+        backgroundColor: ColorList.indicatorColor,
+        borderRadius: 5, height: 30
+    }
+})

@@ -1,15 +1,20 @@
 import React, { Component } from "react";
-import { View, Animated, TouchableWithoutFeedback,TouchableOpacity, ScrollView , Dimensions, PanResponder,ActivityIndicator } from 'react-native';
-import { Container, Header, Item, Input, Icon, Button, Text,Title,Thumbnail } from 'native-base';
+import { View,  TouchableWithoutFeedback, TouchableOpacity, Text,  Dimensions, ActivityIndicator, TextInput,StyleSheet } from 'react-native';
 import BleashupFlatList from '../../BleashupFlatList';
 import testForURL from '../../../services/testForURL';
 import stores from "../../../stores/index"
 import GlobalFunctions from "../../globalFunctions"
-import {uniq,concat,find} from "lodash";
+import {find} from "lodash";
 import CacheImages from "../../CacheImages";
 import colorList from '../../colorList';
 import DetailsModal from "../../myscreens/invitations/components/DetailsModal";
 import BeNavigator from '../../../services/navigationServices';
+import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
+import GState from "../../../stores/globalState";
+import EvilIcons  from 'react-native-vector-icons/EvilIcons';
+import Ionicons  from 'react-native-vector-icons/Ionicons';
+import rounder from "../../../services/rounder";
+import shadower from "../../shadower";
 
 let globalFunctions =  GlobalFunctions;
 let { height, width } = Dimensions.get('window');
@@ -57,29 +62,25 @@ navigateToEventDetails = (item) => {
 
    render(){
        return(
-        
-    <Container style={{height:"100%",width:colorList.containerWidth,backgroundColor:colorList.bodyBackground,alignItems:"center"}}>
-       
+    <View style={{height:"100%",width:colorList.containerWidth,backgroundColor:colorList.bodyBackground,alignItems:"center"}}>
        <View style={{height:colorList.headerHeight-10,width:"100%",alignItems:"center",backgroundColor:colorList.headerBackground,marginTop:"5%"}}>
         <View style={{flexDirection:"row",backgroundColor:colorList.bodyBackground,height:colorList.headerHeight-10,width:"94%",borderColor:"gray",borderWidth:1,
         justifyContent:"center",alignItems:"center",borderRadius:15}}>
           
-              <Icon onPress={() => {this.props.navigation.goBack()}}
-               style={{ color:colorList.bodyIcon,marginLeft:"2%",marginRight:"2%"}} type={"MaterialIcons"}name={"arrow-back"}></Icon>
+              <MaterialIcons onPress={() => {this.props.navigation.goBack()}}
+               style={{ color:colorList.bodyIcon,marginLeft:"2%",marginRight:"2%",...GState.defaultIconSize}} type={"MaterialIcons"}name={"arrow-back"}/>
                 
-              <Icon type="EvilIcons" name="search" />
-               <Input style={{fontSize:15}} placeholder="search @activity/relation"  onChangeText={text => this.searchFilterFunction(text)}  value={this.state.value} />
-              <Icon name="ios-people" style={{marginRight:"2%"}} />
+              <EvilIcons type="EvilIcons"style={{...GState.defaultIconSize}} name="search" />
+               <TextInput style={{fontSize:15}} placeholder="search @activity/relation"  onChangeText={text => this.searchFilterFunction(text)}  value={this.state.value} />
+              <Ionicons name="ios-people" style={{marginRight:"2%",...GState.defaultIconSize}} />
         </View>
        </View>
-
        <View style={{flex:1,marginTop:"5%",marginLeft:"-3%"}}>
-
         {this.state.data.length == 0 ? null :
          (this.state.loading == true ?
-            <Container style={{ flex: 1, alignItems: 'center', justifyContent: 'center',backgroundColor:colorList.bodyBackground }}>
+            <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center',backgroundColor:colorList.bodyBackground }}>
                <ActivityIndicator />
-            </Container> : (
+            </View> : (
                <BleashupFlatList
                     initialRender={20}
                     renderPerBatch={20}
@@ -99,14 +100,14 @@ navigateToEventDetails = (item) => {
                       <TouchableWithoutFeedback>
                              {item.background && testForURL(item.image) ? <CacheImages small thumbnails {...this.props}
                                  source={{ uri:item.image}} /> :
-                                 <Thumbnail  small source={require("../../../../Images/images.jpeg")} ></Thumbnail>}
+                                 <Image resizeMode={"cover"} style={styles.thumbnail}  source={require("../../../../Images/images.jpeg")} />}
                          </TouchableWithoutFeedback>
                          </View>
      
                          <TouchableOpacity style={{width:((4/5)*100).toFixed(1).toString()+"%" ,marginTop: '2.2%',}} onPress={()=>{requestAnimationFrame(() => this.navigateToEventDetails(item))}} >
                            <View style={{ width: ((4/5)*100).toFixed(1).toString()+"%",flexDirection:"row"}}>
                          <View style={{flexDirection:"column",width:"76%"}}>
-                                <Title style={{alignSelf:"flex-start",marginLeft:2,fontSize:14}}>{item.name}</Title>
+                                <View style={{alignSelf:"flex-start",marginLeft:2,fontSize:14}}>{item.name}</View>
                          </View>
                           <View style={{flexDirection:"column",width:"24%"}}>
                                 <Text style={{alignSelf:"flex-start",fontSize:14}}>{item.type=="relation"?"@relation":"@activity"}</Text>
@@ -123,7 +124,6 @@ navigateToEventDetails = (item) => {
                 </BleashupFlatList>)
                 )}
         </View> 
-       
          <DetailsModal goToActivity={() => {
                     this.props.navigation.navigate('Event',
                     {
@@ -137,9 +137,14 @@ navigateToEventDetails = (item) => {
                   onClosed={() => {this.setState({details: false})}
                   }>
         </DetailsModal>
-
-      </Container>
+      </View>
        )
    }
-
 }
+
+const styles = StyleSheet.create({
+  thumbnail:{
+    ...rounder(30,colorList.bodyBackground),
+    ...shadower(3)
+  }
+})

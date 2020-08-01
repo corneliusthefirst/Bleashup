@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
 import moment from "moment"
-import { View, StatusBar, Dimensions, BackHandler, Keyboard, ScrollView, TouchableWithoutFeedback } from 'react-native';
-import { Text, Title, Spinner, Toast, Icon } from 'native-base';
+import { View, StatusBar, Text, Dimensions, BackHandler, Keyboard, ScrollView, TouchableWithoutFeedback } from 'react-native';
 import BleashupSectionList from '../../BleashupSectionList';
 import BleashupFlatList from '../../BleashupFlatList';
 import HighLight from './Highlight';
@@ -11,9 +10,10 @@ import InputView from './InputView';
 import stores from '../../../stores';
 import firebase from 'react-native-firebase';
 import uuid from 'react-native-uuid';
-import ChatStore from '../../../stores/ChatStore';
 import shadower from '../../shadower';
 import ColorList from '../../colorList';
+import Toaster from '../../../services/Toaster';
+import AntDesign from 'react-native-vector-icons/AntDesign';
 const screenWidth = Math.round(Dimensions.get('window').width);
 const screenheight = Math.round(Dimensions.get('window').height);
 export default class HighLightsDetails extends Component {
@@ -104,14 +104,14 @@ export default class HighLightsDetails extends Component {
         firebase.database().ref(this.event_id).push(message, (e => {
             if (e) {
                 console.warn(e)
-                Toast.show({ text: "Couldn't send your reaction; deu to connection issues" })
+                Toaster({ text: "Couldn't send your reaction; deu to connection issues" })
             } else {
                 this.setState({
                     messageListHeight: '100%',
                     inputsHeight: 0
                 })
                 stores.Messages.addNewMessage(this.event_id,message).then(() => {
-                    Toast.show({ text: 'Reaction Sent', type: 'success' })
+                    Toaster({ text: 'Reaction Sent', type: 'success' })
                 })
                 this.refs.inputView._clean()
             }
@@ -191,7 +191,7 @@ export default class HighLightsDetails extends Component {
                         backgroundColor: '#3D3D1F',
                         opacity: 0.9
                     }}><StatusBar animated={true} barStyle="light-content" backgroundColor="#3D3D1F"></StatusBar>
-                        {!this.state.mounted ? <Spinner size={'small'}></Spinner> :
+                        {!this.state.mounted ? null :
                             <TouchableWithoutFeedback onPressIn={() => {
                                 this.adjutRoomDisplay()
                             }}>{this.messageList()}</TouchableWithoutFeedback>
@@ -248,9 +248,9 @@ export default class HighLightsDetails extends Component {
                         borderBottomRightRadius: 8, borderTopRightRadius: 8, borderRightWidth: 0,
                         flexDirection: 'row',
                     }}>
-                        <Icon onPress={() => {
+                        <AntDesign onPress={() => {
                             this.goback()
-                        }} name="doubleleft" style={{ marginLeft: '8%', color: '#0A4E52', marginBottom: '7%', alignSelf: 'center', }} type={"AntDesign"}></Icon>
+                        }} name="doubleleft" style={{ marginLeft: '8%', color: ColorList.bodyBackground, marginBottom: '7%', alignSelf: 'center', }} type={"AntDesign"} />
                     </View>
                     {this.state.showPhoto ? <PhotoViewer photo={this.state.photo} open={this.state.showPhoto} hidePhoto={() => {
                         this.setState({

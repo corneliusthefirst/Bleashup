@@ -1,13 +1,7 @@
 import React, { Component } from "react";
-import { 
-  Text, Icon, Spinner,
-  Button, Thumbnail, Toast
-} from "native-base";
 
-import { StyleSheet, View,Image,TouchableOpacity, Dimensions} from 'react-native';
-import ActionButton from 'react-native-action-button';
+import { StyleSheet, View, Image, TouchableOpacity, Dimensions, Text} from 'react-native';
 import Modal from 'react-native-modalbox';
-import autobind from "autobind-decorator";
 import  stores from '../../../../../stores/index';
 import SearchImage from './SearchImage';
 import Pickers from '../../../../../services/Picker';
@@ -16,6 +10,13 @@ import testForURL from '../../../../../services/testForURL';
 import PhotoViewer from '../../PhotoViewer';
 import shadower from "../../../../shadower";
 import CacheImages from '../../../../CacheImages';
+import Toaster from "../../../../../services/Toaster";
+import  MaterialIcons  from 'react-native-vector-icons/MaterialIcons';
+import Foundation from "react-native-vector-icons/Foundation"
+import GState from "../../../../../stores/globalState";
+import EvilIcons from 'react-native-vector-icons/EvilIcons';
+import ColorList from '../../../../colorList';
+import Spinner from '../../../../Spinner';
 
 
 
@@ -45,7 +46,6 @@ componentDidUpdate(prevProps,prevState){
   }
 }
 
-    @autobind
     TakePhotoFromCamera(){    
       Pickers.SnapPhoto(true).then(res => {
         this.setState({
@@ -59,12 +59,12 @@ componentDidUpdate(prevProps,prevState){
             })
            });
         },() => {
-        Toast.show({text:'Unable To upload photo',position:'top'})
+        Toaster({text:'Unable To upload photo',position:'top'})
         this.setState({
           uploading:false
         })
         },(error) => {
-            Toast.show({ text: 'Unable To upload photo', position: 'top' })
+            Toaster({ text: 'Unable To upload photo', position: 'top' })
             this.setState({
               uploading: false
             })
@@ -82,7 +82,6 @@ componentDidUpdate(prevProps,prevState){
       })
     })
   }
-    @autobind
     TakePhotoFromLibrary(){
     return new Promise((resolve, reject) => {
 
@@ -118,23 +117,23 @@ componentDidUpdate(prevProps,prevState){
          <View style={{flex:1}}>
                  <View style={{justifyContent:'space-between',alignItem:'center'}}>
                     
-                    <Button style={{alignSelf:'center',width:"90%",borderRadius:15,backgroundColor:"transparent",justifyContent:'center',alignItem:'center',marginTop:"5%"}}
+                    <TouchableOpacity style={{alignSelf:'center',width:"90%",borderRadius:15,backgroundColor:"transparent",justifyContent:'center',alignItem:'center',marginTop:"5%"}}
                       onPress={()=>{this.TakePhotoFromCamera()}}>
                         <View style={{flexDirection:"row",marginBottom:'4%',}}>
-                         <Icon name="photo-camera" active={true} type="MaterialIcons"
-                            style={{color: "#0A4E52",alignSelf:"flex-start"}}/>
+                         <MaterialIcons name="photo-camera" active={true} 
+                            style={{...GState.defaultIconSize,color: "#0A4E52",alignSelf:"flex-start"}}/>
                          <Text  style={{alignSelf:"center"}}>Add Photo</Text>
                         </View>
-                    </Button>
-                    <Button style={{alignSelf:'center',width:"90%",borderRadius:15,borderColor:"#1FABAB",backgroundColor:"transparent",justifyContent:'center',
+                    </TouchableOpacity>
+                    <TouchableOpacity style={{alignSelf:'center',width:"90%",borderRadius:15,borderColor:"#1FABAB",backgroundColor:"transparent",justifyContent:'center',
                     alignItem:'center',marginTop:"3%"}} 
                       onPress={()=>{this.setState({ searchImageState:true})}}>
                         <View style={{flexDirection:"row",marginBottom: '1%',}}>
-                         <Icon name="web" active={true} type="Foundation"
-                            style={{color: "#0A4E52",alignSelf:"flex-start",marginLeft:5}}/>
+                         <Foundation name="web" active={true} type="Foundation"
+                            style={{...GState.defaultIconSize,color: ColorList.bodyIcon,alignSelf:"flex-start",marginLeft:5}}/>
                          <Text  style={{alignSelf:"center"}}> Download photo</Text>
                         </View>
-                    </Button>
+                    </TouchableOpacity>
 
                  </View>
 
@@ -143,16 +142,16 @@ componentDidUpdate(prevProps,prevState){
                     <TouchableOpacity onPress={() => this.state.EventPhoto && testForURL(this.state.EventPhoto)?this.setState({ enlargeImage: true }):null} >
                         {this.state.EventPhoto && testForURL(this.state.EventPhoto)?<CacheImages thumbnails square  source={{uri:this.state.EventPhoto}}
                          style={{alignSelf:'center',height: "90%",width: "90%", borderRadius:10
-                  }} /> : <Thumbnail source={this.state.EventPhoto ? { uri: this.state.EventPhoto } : this.state.DefaultPhoto}
+                  }} /> : <Image resizeMode={"cover"} source={this.state.EventPhoto ? { uri: this.state.EventPhoto } : this.state.DefaultPhoto}
                     style={{
                       alignSelf: 'center', height: "90%", width: "90%", borderRadius: 100
-                    }}></Thumbnail>}
+                    }}></Image>}
                     </TouchableOpacity>
                     {this.state.EventPhoto?<View style={{position:'absolute',alignSelf: 'flex-end',margin: '2%',marginBottom: '70%',marginRight: '5%',}}>
                     <TouchableOpacity onPress={() =>{
                       this.resetPhoto()
                     }}>
-                      <Icon name={'close'} type={'EvilIcons'} style={{color:'red'}}></Icon>
+                      <EvilIcons name={'close'} style={{...GState.defaultIconSize,color:'red'}}/>
                     </TouchableOpacity>
                     </View>:null}
                     {this.state.uploading?<View style={{marginTop: "30%",marginLeft: "37%",position:'absolute'}}>
@@ -178,16 +177,6 @@ componentDidUpdate(prevProps,prevState){
 
     }
 
-
-
-
-
-/**   
- *  <View style={{flex:1,alignSelf:'flex-end'}}>
-     <Button style={{width:"20%",borderRadius:8,marginRight:"4%",marginTop:"-3%",backgroundColor:'#1FABAB'}} onPress={()=>{ this.setState({EventPhotoState:true})}}>
-      <Text style={{color:"#FEFFDE"}}>OK</Text>
-     </Button>
-     </View> */
 
 
 

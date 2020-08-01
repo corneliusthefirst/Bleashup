@@ -31,7 +31,6 @@ export default class MuteView extends Component {
                  </View>
           </View>
         </View>
-
       </View>
     );
   }

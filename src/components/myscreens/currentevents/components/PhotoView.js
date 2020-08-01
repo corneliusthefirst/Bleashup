@@ -1,9 +1,7 @@
 import React, { Component } from "react"
 import CacheImages from "../../../CacheImages";
 import ImageActivityIndicator from "./imageActivityIndicator";
-import { View, TouchableOpacity } from "react-native"
-import Image from 'react-native-scalable-image';
-import { Thumbnail, Icon } from 'native-base';
+import { View, TouchableOpacity,Image} from "react-native"
 import shadower from "../../../shadower";
 import stores from '../../../../stores';
 import emitter from '../../../../services/eventEmiter';
@@ -11,6 +9,7 @@ import GState from '../../../../stores/globalState';
 import buttoner from "../../../../services/buttoner";
 import ColorList from '../../../colorList';
 import BeNavigator from '../../../../services/navigationServices';
+import  Ionicons  from 'react-native-vector-icons/Ionicons';
 
 export default class PhotoView extends Component {
     constructor(props) {
@@ -80,6 +79,7 @@ export default class PhotoView extends Component {
         url === this.props.photo && !this.state.audio ? this.props.showPhoto(url) :
             BeNavigator.navigateTo("HighLightsDetails", { event_id: this.props.event_id })
     }
+    eventPhoto = require('../../../../../assets/default_event_image.jpeg')
     render() {
         return (<View>
 
@@ -89,12 +89,12 @@ export default class PhotoView extends Component {
                 })}>
                   <View style={{ ...this.props.style,alignItems:"center",justifyContent:"center", height: this.props.height ? this.props.height : 150 }}>
                     <View style={{flex:1}}>
-                    {!this.state.image ? <Thumbnail style={{
+                    {!this.state.image ? <Image resizeMode={"cover"} style={{
                         //...shadower(),
                         height: this.props.height ? this.props.height : 150,
                         width: this.props.width ? this.props.width : "100%",alignSelf: 'center',
                         borderRadius: this.props.borderRadius ? this.props.borderRadius : 0
-                    }} square source={require('../../../../../assets/default_event_image.jpeg')}></Thumbnail> :
+                    }} square source={this.eventPhoto}></Image> :
                         <CacheImages thumbnails square source={{ uri: this.state.image }}
                             //parmenent={false}
                             style={{
@@ -103,7 +103,7 @@ export default class PhotoView extends Component {
                                 width: this.props.width ? this.props.width : "100%",alignSelf: 'center',
                                 borderRadius: this.props.borderRadius ? this.props.borderRadius : 0
                             }}
-                            //resizeMode="contain"
+                            //resizeMode="cover"
                             width={this.props.width}
                         ></CacheImages>
                     }
@@ -118,13 +118,13 @@ export default class PhotoView extends Component {
                                 }}
                               >
                                   {this.state.video ?
-                                      <Icon onPress={() => {
+                                      <Ionicons onPress={() => {
                                         this.showPhoto(this.state.image)
                                       }} name="ios-play" style={{marginLeft:12,
                                           fontSize: 42, color: ColorList.bodyBackground
                                       }} type="Ionicons" />
                                        :
-                                        <Icon onPress={() => {
+                                        <Ionicons onPress={() => {
                                          this.showPhoto(this.state.image)
                                       }} name= "headset" style={{marginRight:5,
                                           fontSize: 36, color: ColorList.bodyBackground
@@ -139,14 +139,3 @@ export default class PhotoView extends Component {
         </View>)
     }
 }
-
-/**                    <View 
-                        style={{ width: '100%', position: 'absolute',}}>
-                        <Icon onPress={() => {
-                            this.showPhoto(this.state.image)
-                        }} name={this.state.video ? "play" : "headset"} style={{
-                            fontSize: 50, color: '#FEFFDE', elevation: 10,marginLeft: '8%',
-                            marginTop: '18%', alignSelf: 'center',
-                        }} type={this.state.video ? "EvilIcons" : "MaterialIcons"}>
-                        </Icon>
-                        </View> */

@@ -1,14 +1,6 @@
 import React, { Component } from "react";
-import { View, BackHandler,TouchableOpacity } from 'react-native';
-import {
-  Icon,
-  Text,
-  Spinner,
-  Title
-} from 'native-base';
-import autobind from "autobind-decorator";
+import { View, BackHandler, TouchableOpacity, Text } from 'react-native';
 import stores from '../../../stores';
-import { findIndex } from "lodash";
 import BleashupTimeLine from '../../BleashupTimeLine';
 import moment from "moment";
 import emitter from '../../../services/eventEmiter';
@@ -18,6 +10,8 @@ import TasksCreation from "../reminds/TasksCreation";
 import GState from '../../../stores/globalState/index';
 import bleashupHeaderStyle from "../../../services/bleashupHeaderStyle";
 import colorList from '../../colorList';
+import MaterialIcons  from 'react-native-vector-icons/MaterialIcons';
+import EvilIcons  from 'react-native-vector-icons/EvilIcons';
 
 export default class ChangeLogs extends Component {
   constructor(props) {
@@ -54,11 +48,6 @@ export default class ChangeLogs extends Component {
       })
     })
   }
-
-  /*
-  @autobind goBack() {
-    this.props.navigation.goBack()
-  }*/
 
   renderDetail(item, sectionID, rowID) {
     return (<View><Text>{item.changed}</Text></View>)
@@ -119,21 +108,27 @@ export default class ChangeLogs extends Component {
             }}>
               <View style={{ width: "10%", paddingLeft: "1%" }} >
                 <TouchableOpacity onPress={() => requestAnimationFrame(this.props.goback)} >
-                  <Icon
-                    style={{ color: colorList.headerIcon }}
-                    type={"MaterialIcons"} name={"arrow-back"}>
-                  </Icon>
+                  <MaterialIcons
+                    style={{...GState.defaultIconSize, color: colorList.headerIcon }}
+                    name={"arrow-back"}>
+                  </MaterialIcons>
                 </TouchableOpacity>
               </View>
               <View style={{ width: '70%', paddingLeft: '2%', justifyContent: "center" }}>
-                <Title style={{ color: colorList.headerText, fontSize: colorList.headerFontSize, fontWeight: colorList.headerFontweight, alignSelf: 'flex-start' }}>{"History"}</Title>
+                <Text style={{ 
+                  color: colorList.headerText, 
+                  fontSize: colorList.headerFontSize, 
+                  fontWeight: colorList.headerFontweight, 
+                  alignSelf: 'flex-start' 
+              }}>{"History"}</Text>
               </View>
 
               <View style={{ width: '10%', paddingRight: '3%' }}>
                 <TouchableOpacity>
-                  <Icon
-                    name={"gear"} type="EvilIcons"
+                  <EvilIcons
+                    name={"gear"}
                     style={{
+                      ...GState.defaultIconSize,
                       color: colorList.headerIcon,
                       alignSelf: 'flex-end',
                     }} />
@@ -141,10 +136,6 @@ export default class ChangeLogs extends Component {
               </View>
 
               <View style={{ width: '10%', paddingLeft: '1%', }}>
-                {/* <Icon onPress={() => {
-                  this.props.openMenu()
-                }} style={{ color: colorList.headerIcon }} type={"Ionicons"} name={"ios-menu"}></Icon>
-              */}
               </View>
 
             </View>

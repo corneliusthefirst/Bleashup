@@ -1,14 +1,11 @@
 import React, { Component } from 'react';
 import {
-    View, Dimensions, StatusBar, Keyboard
+    View, Dimensions, StatusBar, Keyboard, Text
 } from 'react-native';
 
 const screenWidth = Math.round(Dimensions.get('window').width);
 const screenheight = Math.round(Dimensions.get('window').height);
 import ReactNativeZoomableView from '@dudigital/react-native-zoomable-view/src/ReactNativeZoomableView';
-import Image from 'react-native-scalable-image';
-
-import { Icon, Text } from 'native-base';
 import VideoController from '../eventChat/VideoController';
 import moment from 'moment';
 import BleashupModal from '../../mainComponents/BleashupModal';

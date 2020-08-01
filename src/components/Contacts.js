@@ -1,9 +1,7 @@
 import React, { Component } from "react"
-import { List, ListItem, Body, Left, Right, Text, Header, Title, Spinner } from "native-base"
-import { View, FlatList } from "react-native"
+import { View, FlatList, Text } from "react-native"
 import ImageActivityIndicator from "./myscreens/currentevents/components/imageActivityIndicator";
 import stores from "../stores";
-import UserService from "../services/userHttpServices"
 import ProfileView from "./myscreens/invitations/components/ProfileView";
 import BleashupFlatList from './BleashupFlatList';
 import moment from "moment";
@@ -11,6 +9,8 @@ import dateDisplayer from '../services/dates_displayer';
 import bleashupHeaderStyle from "../services/bleashupHeaderStyle";
 import CreationHeader from "./myscreens/event/createEvent/components/CreationHeader";
 import ColorList from './colorList';
+import GState from "../stores/globalState";
+import Spinner from './Spinner';
 export default class Contacts extends Component {
 
     constructor(props) {
@@ -52,6 +52,7 @@ export default class Contacts extends Component {
             {this.state.isloaded ? (
                 <View style={{height:ColorList.containerHeight - (ColorList.headerHeight + 20)}}>
                     {this.state.isEmpty ? <Text style={{
+                        ...GState.defaultTextStyle,
                         margin: '10%',
                     }} note>{"sory! there's no connction to the server"}</Text> : <BleashupFlatList
                         firstIndex={0}
@@ -71,6 +72,7 @@ export default class Contacts extends Component {
                                     marginTop: "5%",
                                 }}>
                                     {item.date ? <Text style={{
+                                        ...GState.defaultTextStyle,
                                     }} note>{dateDisplayer(moment(item.date).format("YYYY/MM/DD"))}{" at "}
                                         {moment(item.date).format("HH:mm")}</Text> : null}
                                 </View>

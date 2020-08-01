@@ -1,13 +1,12 @@
 import React, { Component } from "react";
 
-import { View } from "react-native";
-import { TouchableOpacity } from "react-native";
+import { TouchableOpacity, View } from "react-native";
 import TitleView from "./TitleView";
 import CacheImages from "../../../CacheImages";
-import { Thumbnail, Icon } from "native-base";
 import ColorList from '../../../colorList';
 import rounder from "../../../../services/rounder";
 import BePureComponent from '../../../BePureComponent';
+import  AntDesign  from 'react-native-vector-icons/AntDesign';
 export default class ActivityProfile extends BePureComponent {
     constructor(props) {
         super(props);
@@ -50,12 +49,11 @@ export default class ActivityProfile extends BePureComponent {
                         ) : (<View style={{
                             ...rounder(50,ColorList.photoPlaceHolderColor)
                         }}>
-                                <Icon name={"calendar"} type={"AntDesign"} style={{
+                                <AntDesign name={"calendar"} style={{
                                     alignSelf: 'center',
                                     color:ColorList.bodyBackground,
                                     fontSize: ColorList.profilePlaceHolderHeight - 10,
-                                }}>
-                            </Icon>
+                                }}/>
                             </View>
                             )}
                     </View>

@@ -1,16 +1,5 @@
 import React, { PureComponent } from "react";
 import { View, Dimensions } from "react-native";
-import {
-  Content,
-  Text,
-  Item,
-  Container,
-  Tabs,
-  Tab,
-  TabHeading,
-  Spinner,
-  Icon,
-} from "native-base";
 import { map } from "lodash";
 import Modal from "react-native-modalbox";
 import shadower from "../../shadower";
@@ -19,6 +8,10 @@ import DonnersList from "./DonnersList";
 import TabModal from "../../mainComponents/TabModal";
 import CreationHeader from "../event/createEvent/components/CreationHeader";
 import ColorList from '../../colorList';
+import  MaterialIcons  from 'react-native-vector-icons/MaterialIcons';
+import Ionicons  from 'react-native-vector-icons/Ionicons';
+import MaterialIconCommunity  from 'react-native-vector-icons/MaterialCommunityIcons';
+import GState from "../../../stores/globalState";
 const screenheight = Math.round(Dimensions.get("window").height);
 export default class ReportTabModal extends TabModal {
   initialize() {
@@ -46,16 +39,16 @@ export default class ReportTabModal extends TabModal {
   }
   inialPage=1
   tabs = [{
-    heading: () => <Icon
+    heading: () => <MaterialIcons
       onPress={this.onClosedModal.bind(this)}
       type="MaterialIcons"
       name="arrow-back"
-      style={{ color: ColorList.headerIcon }}
-    ></Icon>,
+      style={{...GState.defaultIconSize, color: ColorList.headerIcon }}
+    />,
     body: () => null
   },
   {
-    heading: () => <Icon name={"ios-people"} type="Ionicons"></Icon>,
+    heading: () => <Ionicons style={{...GState.defaultIconSize}} name={"ios-people"} type="Ionicons"/>,
     body: () => (
       <View style={{ height: "100%" }}>
         {this.state.mounted ? (
@@ -65,16 +58,15 @@ export default class ReportTabModal extends TabModal {
             must_report={this.props.must_report}
             actualInterval={this.props.actualInterval}
           ></ConcerneeList>
-        ) : (
-            <Spinner size="small"></Spinner>
-          )}
+        ) : null}
       </View>
     ),
   },
   {
-    heading: () => <Icon name={"md-checkmark"} type={"Ionicons"} style={{ 
+    heading: () => <Ionicons name={"md-checkmark"} type={"Ionicons"} style={{ 
+      ...GState.defaultIconSize,
       color:ColorList.indicatorColor
-     }}></Icon>,
+     }}/>,
      tabBarColor:ColorList.indicatorColor,
     body: () => (
       <View style={{ height: "100%" }}>
@@ -90,9 +82,10 @@ export default class ReportTabModal extends TabModal {
     ),
   },
   {
-    heading: () => <Icon name="check-all" type={"MaterialCommunityIcons"} style={{
+    heading: () => <MaterialIconCommunity name="check-all" type={"MaterialCommunityIcons"} style={{
+      ...GState.defaultIconSize,
       color:ColorList.likeActive
-    }}></Icon>,
+    }}/>,
     tabBarColor:ColorList.likeActive,
     body: () => (
       <View style={{ height: "100%" }}>

@@ -11,7 +11,6 @@ import {
 import ImojieSelector from "./ImojiSelector";
 import Pickers from "../../../services/Picker";
 import rounder from "../../../services/rounder";
-import { Icon,Toast } from "native-base";
 import GState from "../../../stores/globalState/index";
 import ReplyText from "./ReplyText";
 import toTitleCase from "../../../services/toTitle";
@@ -24,13 +23,18 @@ import GrowingInput from "./GrowingInput";
 import ColorList from "../../colorList";
 import uuid from "react-native-uuid";
 import moment from "moment";
-
 import AudioFilePreviewer from "./AudioFilePreviewer";
 import FilePreview from "./FilePreview";
 import PhotoPreview from "./PhotoPreviewer";
 import BeComponent from "../../BeComponent";
 import BeNavigator from '../../../services/navigationServices';
 import Vibrator from '../../../services/Vibrator';
+import Toaster from "../../../services/Toaster";
+import EvilIcons  from 'react-native-vector-icons/EvilIcons';
+import MaterialIconCommunity from 'react-native-vector-icons/MaterialCommunityIcons';
+import Entypo from 'react-native-vector-icons/Entypo';
+import Ionicons from 'react-native-vector-icons/Ionicons';
+import FontAwesome5  from 'react-native-vector-icons/FontAwesome5';
 
 export default class ChatKeyboard extends BeComponent {
     constructor(props) {
@@ -86,7 +90,7 @@ export default class ChatKeyboard extends BeComponent {
         Pickers.CleanAll();
     }
     sendAudioMessge(filename, duration, dontsend) {
-        this.props.toggleAudio()
+       !this.state.audio && this.props.toggleAudio()
         if (!dontsend) {
             this.props.scrollToEnd();
             let message = {
@@ -284,14 +288,14 @@ export default class ChatKeyboard extends BeComponent {
                         alignSelf: "flex-end",
                     }}
                 >
-                    <Icon
+                    <EvilIcons
                         name={"close"}
                         type={"EvilIcons"}
                         style={{
                             fontSize: 15,
                             alignSelf: "center",
                         }}
-                    ></Icon>
+                    />
                 </TouchableOpacity>
             </View>
         );
@@ -554,13 +558,14 @@ export default class ChatKeyboard extends BeComponent {
     }
     closeIcon() {
         return (
-            <Icon
+            <EvilIcons
                 name="close"
                 style={{
+                    ...GState.defaultIconSize,
                     fontSize: 15,
                 }}
                 type={"EvilIcons"}
-            ></Icon>
+            />
         );
     }
     closeStyle = {
@@ -638,7 +643,7 @@ export default class ChatKeyboard extends BeComponent {
     }
     attemptAudio(){
         Vibrator.vibrateShort()
-        Toast.show({"text":"Long press to start recording"})
+        Toaster({"text":"Long press to start recording"})
     }
     render() {
         return (
@@ -694,14 +699,14 @@ export default class ChatKeyboard extends BeComponent {
                                         ...rounder(30, ColorList.bodyBackground),
                                     }}
                                 >
-                                        <Icon
+                                        <MaterialIconCommunity
                                             style={{
                                                 color: ColorList.indicatorColor,
                                                 fontSize: 20,
                                             }}
                                             type={"MaterialCommunityIcons"}
                                             name={"camera"}
-                                        ></Icon>
+                                        />
                                 </View>
                             </TouchableOpacity>//:null
                         }
@@ -748,7 +753,7 @@ export default class ChatKeyboard extends BeComponent {
                                             left:2
                                         }}
                                 >
-                                    <Icon
+                                    <Entypo
                                         style={{
                                             color: ColorList.likeActive,
                                             alignSelf: "flex-end",
@@ -756,7 +761,7 @@ export default class ChatKeyboard extends BeComponent {
                                         }}
                                         type="Entypo"
                                         name="emoji-flirt"
-                                    ></Icon>
+                                    />
                                 </TouchableOpacity>
                                 {
                                     //* Reply Message caption */
@@ -791,14 +796,14 @@ export default class ChatKeyboard extends BeComponent {
                                         })
                                     }
                                 >
-                                    <Icon
+                                    <Ionicons
                                         style={{
                                             color: ColorList.indicatorColor,
                                             fontSize: 30,
                                         }}
                                         type={"Ionicons"}
                                         name={this.props.showOptions ? "ios-close" : "ios-add"}
-                                    ></Icon> 
+                                    /> 
                                 </TouchableOpacity>:null}
                             </View>
                         </View>
@@ -832,7 +837,7 @@ export default class ChatKeyboard extends BeComponent {
                                 {!this.state.textValue &&
                                     !this.props.showAudioRecorder &&
                                     !this.state.showCaption ? (
-                                        <Icon
+                                        <FontAwesome5
                                             style={{
                                                 color: ColorList.indicatorColor,
                                                 fontSize: 23,
@@ -840,9 +845,9 @@ export default class ChatKeyboard extends BeComponent {
                                             }}
                                             type={"FontAwesome5"}
                                             name={"microphone-alt"}
-                                        ></Icon>
+                                        />
                                     ) : (
-                                        <Icon
+                                        <Ionicons
                                             style={{
                                                 color: ColorList.indicatorColor,
                                                 fontSize: 23,
@@ -850,7 +855,7 @@ export default class ChatKeyboard extends BeComponent {
                                             }}
                                             name="md-send"
                                             type="Ionicons"
-                                        ></Icon>
+                                        />
                                     )}
                             </View>
                         </TouchableOpacity>

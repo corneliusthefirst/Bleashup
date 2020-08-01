@@ -7,7 +7,6 @@ import {
  
 import { StyleSheet, View,Image,TouchableOpacity,FlatList,ScrollView, Dimensions} from 'react-native';
 import Modal from 'react-native-modalbox';
-import autobind from "autobind-decorator";
 import CacheImages from "../../CacheImages";
 import PhotoEnlargeModal from "../invitations/components/PhotoEnlargeModal";
 import  stores from '../../../stores/index';

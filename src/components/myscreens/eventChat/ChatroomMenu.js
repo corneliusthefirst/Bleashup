@@ -3,10 +3,10 @@ import {
     View, Text, TouchableOpacity
 } from 'react-native';
 import Menu, { MenuItem, MenuDivider } from 'react-native-material-menu';
-import { Icon, } from "native-base"
 import emitter from '../../../services/eventEmiter';
 import colorList from "../../colorList";
 import replies from './reply_extern';
+import  EvilIcons  from 'react-native-vector-icons/EvilIcons';
 
 export default class ChatroomMenu extends Component {
     constructor(props) {
@@ -56,12 +56,12 @@ export default class ChatroomMenu extends Component {
                     button={<TouchableOpacity 
                         onPress={ () => 
                             requestAnimationFrame(() => this.showMenu())
-                    }><Icon style={{
+                    }><EvilIcons style={{
                         color: colorList.headerIcon,
                     }}
                      name="gear" 
                      type="EvilIcons">
-                    </Icon>
+                    </EvilIcons>
                     </TouchableOpacity>}
                 >
                     {this.isGeneral?null: <View><MenuItem textStyle={{ color: "#0A4E52" }} onPress={() => {

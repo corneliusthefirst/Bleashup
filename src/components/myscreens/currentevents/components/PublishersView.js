@@ -3,8 +3,6 @@ import {
     View, Text, TouchableOpacity
 } from 'react-native';
 import Menu, { MenuItem, MenuDivider } from 'react-native-material-menu';
-import ImageActivityIndicator from "./imageActivityIndicator";
-import { Icon, } from "native-base"
 import PublishersModal from "../../../PublishersModal"
 import stores from '../../../../stores';
 import { findIndex } from "lodash"

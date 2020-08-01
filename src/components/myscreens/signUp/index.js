@@ -33,6 +33,7 @@ import { observer } from "mobx-react";
 import moment from "moment";
 import firebase from 'react-native-firebase';
 import { BackHandler, TouchableOpacity } from 'react-native';
+import Toaster from "../../../services/Toaster";
 
 @observer
 export default class SignUpView extends Component {
@@ -81,7 +82,7 @@ export default class SignUpView extends Component {
       this.back()
     } else {
       this.exiting = true
-      Toast.show({ text: "Press again to go to the previous page" });
+      Toaster({ text: "Press again to go to the previous page" });
       this.timeout = setTimeout(() => {
         this.exiting = false
       }, 800)

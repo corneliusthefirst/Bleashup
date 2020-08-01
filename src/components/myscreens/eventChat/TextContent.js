@@ -1,13 +1,14 @@
 import React, { Component } from "react"
 import {
-    View, TouchableOpacity, PanResponder, Linking, Vibration,
-    Clipboard, StyleSheet, TouchableWithoutFeedback
+    View, TouchableOpacity,  Linking,
+    Clipboard, StyleSheet,  Text,
 } from 'react-native'
-import { Text, Toast } from "native-base"
 import Hyperlink from 'react-native-hyperlink'
 import ParsedText from 'react-native-parsed-text';
 import openLink from "../event/createEvent/components/openLinkOnBrowser";
 import ColorList from '../../colorList';
+import Toaster from "../../../services/Toaster"
+import Vibrator from '../../../services/Vibrator';
 export default class TextContent extends Component {
     constructor(props) {
         super(props)
@@ -21,8 +22,8 @@ export default class TextContent extends Component {
     }
     copyToClipboard(phone) {
         Clipboard.setString(phone)
-        Vibration.vibrate(10)
-        Toast.show({ text: 'copied to clipboard !' })
+        Vibrator.shortDuration()
+        Toaster({ text: 'copied to clipboard !' })
     }
 
     handlePhonePress(phone, matchIndex /*: number*/) {

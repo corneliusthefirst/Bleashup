@@ -4,18 +4,11 @@
 /* eslint-disable comma-dangle */
 /* eslint-disable prettier/prettier */
 import React, { Component } from "react";
-import {
-  Content, Card, CardItem, Toast, Text, Spinner, Title, Icon
-} from "native-base";
-
-import { StyleSheet, View, Image, TouchableOpacity, FlatList, ScrollView, Dimensions } from 'react-native';
-import autobind from "autobind-decorator";
+import { StyleSheet, View, Text,  Image, TouchableOpacity, FlatList, ScrollView, Dimensions } from 'react-native';
 import stores from '../../../stores/index';
 //import { observer } from 'mobx-react'
-import { filter, uniqBy, concat, head, orderBy, find, findIndex, reject, uniq, indexOf, forEach, dropWhile } from "lodash";
+import {  find, findIndex, reject,  } from "lodash";
 import request from "../../../services/requestObjects";
-
-import EventLocation from "../event/createEvent/components/EventLocation";
 import EventDescription from "../event/createEvent/components/EventDescription";
 import EventHighlights from "../event/createEvent/components/EventHighlights";
 import moment from 'moment';
@@ -28,12 +21,9 @@ import HighlightCard from "../event/createEvent/components/HighlightCard"
 import MapView from "../currentevents/components/MapView";
 import Creator from "../reminds/Creator";
 import bleashupHeaderStyle from "../../../services/bleashupHeaderStyle";
-import HighLightsDetails from '../highlights_details/index';
 import QRDisplayer from "../QR/QRCodeDisplayer";
 import colorList from '../../colorList'
-import ColorList from "../../colorList";
 import DescriptionModal from './descriptionModal';
-import Drawer from '../../draggableView';
 import SideButton from '../../sideButton';
 import Share from '../../../stores/share';
 import BeNavigator from '../../../services/navigationServices';
@@ -42,6 +32,11 @@ import AnimatedComponent from '../../AnimatedComponent';
 import MessageActions from '../eventChat/MessageActons';
 import Vibrator from '../../../services/Vibrator';
 import GState from '../../../stores/globalState/index';
+import Toaster from "../../../services/Toaster";
+import  MaterialIcons  from 'react-native-vector-icons/MaterialIcons';
+import  AntDesign  from 'react-native-vector-icons/AntDesign';
+import  Feather  from 'react-native-vector-icons/Feather';
+import ColorList from '../../colorList';
 
 let { height, width } = Dimensions.get('window');
 
@@ -76,7 +71,6 @@ export default class EventDetailView extends AnimatedComponent {
 
   }
   scrolled = 0
-  @autobind
   initializer() {
     let participant = find(this.props.Event.participant, { phone: stores.LoginStore.user.phone });
     this.animateUI()
@@ -152,13 +146,11 @@ export default class EventDetailView extends AnimatedComponent {
 
 
 
-  @autobind
   back() {
     this.setStatePure({ animateHighlight: false })
     //add backward navigation to calling page
   }
 
-  @autobind
   deleteHighlight(item) {
     if (!this.props.working) {
       this.props.startLoader()
@@ -187,7 +179,7 @@ export default class EventDetailView extends AnimatedComponent {
         })
       }
     } else {
-      Toast.show({ text: 'App is Busy' })
+      Toaster({ text: 'App is Busy' })
     }
   }
 
@@ -220,16 +212,15 @@ export default class EventDetailView extends AnimatedComponent {
         this.sendUpdateHighlight()
       })
     } else {
-      Toast.show({ text: 'App is Busy' })
+      Toaster({ text: 'App is Busy' })
     }
   }
   sendUpdateHighlight() {
     //emitter.emit(`refresh-highlights_${this.props.Event.id}`)
   }
-  @autobind
   newHighlight() {
     this.props.computedMaster ? this.setStatePure({ EventHighlightState: true }) :
-      Toast.show({ text: "you don't have enough priviledges to add a post", duration: 4000 })
+      Toaster({ text: "you don't have enough priviledges to add a post", duration: 4000 })
   }
   deleteHighlightHighlight(highlights) {
 
@@ -313,12 +304,13 @@ action = () => [
             flexDirection: "row", alignItems: "center",
           }}>
             <TouchableOpacity onPress={() => requestAnimationFrame(this.props.goback)} style={{ width: "10%", paddingLeft: "3%" }} >
-              <Icon
-                style={{ color: colorList.headerIcon, }} type={"MaterialIcons"} name={"arrow-back"}></Icon>
+              <MaterialIcons
+                style={{...GState.defaultIconSize, color: colorList.headerIcon, }} type={"MaterialIcons"} 
+                name={"arrow-back"}/>
             </TouchableOpacity>
 
             <View style={{ width: '69%', paddingLeft: '9%', justifyContent: "center" }}>
-              <Title style={{ color: colorList.headerText, fontWeight: 'bold', alignSelf: 'flex-start', fontSize: colorList.headerFontSize }}>{"Star Messages"}</Title>
+              <Text style={{ color: colorList.headerText, fontWeight: 'bold', alignSelf: 'flex-start', fontSize: colorList.headerFontSize }}>{"Star Messages"}</Text>
             </View>
           </View>
         </View>
@@ -425,11 +417,7 @@ action = () => [
         }} event={this.props.Event || {}} isOpen={this.state.EventDescriptionState} onClosed={() => { this.setStatePure({ EventDescriptionState: false }) }}
           ref={"description_ref"} eventId={this.props.Event.id} updateDes={true} parentComp={this} />
 
-        <EventLocation updateLocation={(newLoc) => {
-          this.props.updateLocation(newLoc)
-        }} event={this.props.Event} isOpen={this.state.EventLocationState} onClosed={() => { this.setStatePure({ EventLocationState: false }) }}
-          ref={"location_ref"} updateLoc={true} eventId={this.props.Event.id} parentComp={this} />
-
+       
         <MessageActions title={"star actions"} actions={this.action} onClosed={() => {
           this.setStatePure({
             showActions:false
@@ -446,7 +434,7 @@ action = () => [
           //text={"D"}
           renderIcon={() => {
             return <View style={{ backgroundColor: ColorList.bodyBackground, height: 40, width: 40, borderRadius: 30, justifyContent: "center", alignItems: "center", ...shadower(4) }}>
-              <Icon name="file-text" type="Feather" style={{ color: ColorList.bodyIcon, fontSize: 22 }} />
+              <Feather name="file-text" type="Feather" style={{ color: ColorList.bodyIcon, fontSize: 22 }} />
             </View>
           }}
           action={() => requestAnimationFrame(() => { this.setStatePure({ viewdetail: true })})}
@@ -464,7 +452,7 @@ action = () => [
           buttonTextStyle={{ color: "white" }}
           renderIcon={() => {
             return <View style={{ backgroundColor: ColorList.bodyBackground, height: 40, width: 40, borderRadius: 30, justifyContent: "center", alignItems: "center", ...shadower(4) }}>
-              <Icon name="plus" type="AntDesign" style={{ color: ColorList.bodyIcon, fontSize: 22 }} />
+              <AntDesign name="plus" type="AntDesign" style={{ color: ColorList.bodyIcon, fontSize: 22 }} />
             </View>
           }}
           size={40}

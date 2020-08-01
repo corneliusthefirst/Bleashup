@@ -1,7 +1,5 @@
 import React, { Component } from "react"
-import { View, TouchableOpacity, TouchableWithoutFeedback, Vibration, StyleSheet } from 'react-native';
-import { Text, Icon, Spinner, Toast } from 'native-base';
-import Image from "react-native-scalable-image"
+import { View, TouchableOpacity, Text, TouchableWithoutFeedback, Vibration, StyleSheet } from 'react-native';
 import { AnimatedCircularProgress } from "react-native-circular-progress";
 import GState from "../../../stores/globalState";
 import TextContent from "./TextContent";
@@ -12,6 +10,7 @@ import ColorList from '../../colorList';
 import stores from "../../../stores";
 import CacheImages from '../../CacheImages';
 import BePureComponent from '../../BePureComponent';
+import  EvilIcons  from 'react-native-vector-icons/EvilIcons';
 
 
 export default class VideoMessage extends BePureComponent {
@@ -154,10 +153,10 @@ export default class VideoMessage extends BePureComponent {
                             </CacheImages>
                             <View style={{ position: 'absolute', marginTop: "50%", marginLeft: "45%", }}>
                                 <View style={{ ...buttoner }}>
-                                        <Icon onPress={() => this.props.playVideo(this.props.message.source)} type="EvilIcons" name="play" style={{
+                                        <EvilIcons onPress={() => this.props.playVideo(this.props.message.source)} type="EvilIcons" name="play" style={{
                                             fontSize: 40,
                                             color: ColorList.bodyBackground
-                                        }}></Icon>
+                                        }}/>
                                 </View>
                             </View>
                             <View style={{ alignSelf: this.state.sender ? 'flex-start' : 'flex-end', margin: '2%', justifyContent: 'center', }}>
@@ -173,11 +172,11 @@ export default class VideoMessage extends BePureComponent {
                                                 {
                                                     (fill) => (<View style={{ ...buttoner, alignSelf: 'center' }}>
                                                         {this.state.downloading ? <TouchableWithoutFeedback onPress={() => this.cancelDownLoad(this.props.message.source)}>
-                                                            <Icon type="EvilIcons" style={{ color: ColorList.bodyBackground }} name="close">
-                                                            </Icon>
+                                                            <EvilIcons type="EvilIcons" style={{ color: ColorList.bodyBackground }} name="close">
+                                                            </EvilIcons>
                                                         </TouchableWithoutFeedback> : <TouchableWithoutFeedback onPress={() => this.downloadVideo(this.props.message.source)}>
-                                                                <Icon type="EvilIcons" style={{ color: ColorList.bodyBackground }} name="arrow-down">
-                                                                </Icon>
+                                                                <EvilIcons type="EvilIcons" style={{ color: ColorList.bodyBackground }} name="arrow-down">
+                                                                </EvilIcons>
                                                             </TouchableWithoutFeedback>}
                                                     </View>)
                                                 }

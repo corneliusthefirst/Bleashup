@@ -1,6 +1,5 @@
 import React, { Component } from "react";
 import Menu, { MenuItem, MenuDivider } from "react-native-material-menu";
-import { Icon, Text } from "native-base";
 import { View, TouchableOpacity } from "react-native";
 import ColorList from '../../colorList';
 export default class TextMenu extends Component {
@@ -27,7 +26,10 @@ export default class TextMenu extends Component {
                     <View>
                         <MenuDivider color="#1FABAB" />
                         <MenuItem
-                            textStyle={{ color: ColorList.headerIcon, textTransform: 'capitalize' }}
+                            textStyle={{ 
+                                color: ColorList.headerIcon, 
+                                textTransform: 'capitalize' 
+                            }}
                             onPress={() => {
                                 this.hideMenu();
                                 ele.callback();

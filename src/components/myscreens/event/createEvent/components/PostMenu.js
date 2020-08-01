@@ -3,8 +3,8 @@ import {
     View, Text, TouchableOpacity
 } from 'react-native';
 import Menu, { MenuItem, MenuDivider } from 'react-native-material-menu';
-import { Icon, } from "native-base"
 import ColorList from '../../../../colorList';
+import  Entypo  from 'react-native-vector-icons/Entypo';
 
 export default class PostMenu extends Component {
     constructor(props) {
@@ -41,12 +41,12 @@ export default class PostMenu extends Component {
                 <Menu
                     style={{ backgroundColor: ColorList.bodyBackground }}
                     ref={this.setMenuRef}
-                    button={<TouchableOpacity onPress={this.showMenu} ><Icon style={{
+                    button={<TouchableOpacity onPress={this.showMenu} ><Entypo style={{
                         color: ColorList.headerIcon,
                         fontSize: 22,
                         marginTop: '10%'
                     }} 
-                        name="dots-three-vertical" type="Entypo"></Icon>
+                        name="dots-three-vertical" />
                         </TouchableOpacity>}
                 >
                     <MenuItem textStyle={{ color: ColorList.headerIcon }} onPress={() => {

@@ -1,8 +1,6 @@
 import React, { Component } from "react";
-import Modal from "react-native-modalbox";
-import { View, TouchableOpacity } from "react-native";
+import { View, TouchableOpacity, Text } from "react-native";
 import BleashupFlatList from "../../BleashupFlatList";
-import { Spinner, Text, Button, Icon } from "native-base";
 import { findIndex, reject, uniqBy } from "lodash";
 import stores from "../../../stores";
 import SelectableContactsMaster from "./SelectableContactsMaster";
@@ -10,6 +8,7 @@ import SelectableProfileWithOptions from "./SelectableProfileWithOption";
 import emitter from "../../../services/eventEmiter";
 import CacheImages from "../../CacheImages";
 import bleashupHeaderStyle from "../../../services/bleashupHeaderStyle";
+import Spinner from '../../Spinner';
 export default class Members extends Component {
   constructor(props) {
     super(props);

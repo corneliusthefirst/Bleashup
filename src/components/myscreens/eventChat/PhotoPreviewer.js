@@ -4,10 +4,11 @@ import ReactNativeZoomableView from "@dudigital/react-native-zoomable-view/src/R
 import VideoController from "./VideoController";
 import ColorList from '../../colorList';
 import rounder from "../../../services/rounder";
-import { Icon } from "native-base";
 import CacheImages from '../../CacheImages';
 import shadower from "../../shadower";
 import BeComponent from '../../BeComponent';
+import  EvilIcons  from 'react-native-vector-icons/EvilIcons';
+import GState from "../../../stores/globalState";
 export default class PhotoPreview extends BeComponent {
     constructor(props) {
         super(props)
@@ -62,13 +63,14 @@ export default class PhotoPreview extends BeComponent {
                         textAlign: "center",
                     }}
                 >
-                    <Icon
+                    <EvilIcons
                         name="close"
                         type="EvilIcons"
                         style={{
+                            ...GState.defaultIconSize,
                             fontSize: 15,
                         }}
-                    ></Icon>
+                    />
                 </TouchableOpacity>
             </View>
         ) : (

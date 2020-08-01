@@ -1,7 +1,4 @@
 import React, { PureComponent } from "react"
-import Modal from "react-native-modalbox"
-import { Content, List, ListItem, Body, Left, Right, Text, Container } from 'native-base';
-import ImageActivityIndicator from "./myscreens/currentevents/components/imageActivityIndicator";
 import Contacts from './Contacts';
 import BleashupModal from './mainComponents/BleashupModal';
 export default class ContactsModal extends BleashupModal {
@@ -25,12 +22,12 @@ export default class ContactsModal extends BleashupModal {
         })
     }
     modalBody() {
-        return <Container>
+        return <View>
                     <Contacts 
                     close={this.onClosedModal.bind(this)} 
                     contacts={(this.props.contacts && this.props.contacts) || []} 
                     title={this.props.title ? this.props.title : "Seen By ..."}
                     ></Contacts>
-                </Container>
+                </View>
     }
 }

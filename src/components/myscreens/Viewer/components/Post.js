@@ -59,7 +59,6 @@ export default Post;
 
     /*
     import Video from 'react-native-video';
-   //import Image from 'react-native-scalable-image';
     
     {!props.isLoaded && (
       <View style={styles.loading}>

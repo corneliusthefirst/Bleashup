@@ -15,12 +15,16 @@ import {
     Text
 } from 'react-native';
 import _ from 'lodash';
-import { Icon, Spinner } from 'native-base';
 import ColorList from '../../colorList';
 import rounder from '../../../services/rounder';
 import shadower from '../../shadower';
 import { TouchableOpacity } from 'react-native';
 import BeComponent from '../../BeComponent';
+import EvilIcons  from 'react-native-vector-icons/EvilIcons';
+import MaterialIcons  from 'react-native-vector-icons/MaterialIcons';
+import GState from '../../../stores/globalState';
+import MaterialCommunityIcons  from 'react-native-vector-icons/MaterialCommunityIcons';
+import Spinner from '../../Spinner';
 
 export default class VideoController extends BeComponent {
 
@@ -902,10 +906,10 @@ export default class VideoController extends BeComponent {
     renderBack() {
 
         return this.renderControl(
-            <Icon
+            <EvilIcons
                 name={"close"}
                 type="EvilIcons"
-                style={{ color: ColorList.bodyBackground, }}
+                style={{...GState.defaultIconSize, color: ColorList.bodyBackground, }}
             />,
             this.events.onBack,
             styles.controls.back
@@ -934,7 +938,7 @@ export default class VideoController extends BeComponent {
                     ]}
                     {...this.player.volumePanResponder.panHandlers}
                 >
-                    <Icon style={styles.volume.icon} style={{ color: ColorList.bodyBackground }} type="EvilIcons" name="bell" />
+                    <EvilIcons style={styles.volume.icon} style={{ ...GState.defaultIconSize, color: ColorList.bodyBackground }} type="EvilIcons" name="bell" />
                 </View>
             </View>
         );
@@ -949,8 +953,7 @@ export default class VideoController extends BeComponent {
             <View style={{ flexDirection: 'row', }}>
                 {this.props.extra?this.props.extra:
                 <TouchableOpacity onPress={this.methods.toggleFullscreen} style={{ width: 50, flexDirection: 'row', justifyContent: 'center', ...this.props.expandContainerStyle }}>
-                    <Icon style={{ color: ColorList.bodyBackground, marginBottom: 'auto', marginTop: 'auto', }} type="MaterialIcons" name="fullscreen">
-                    </Icon>
+                    <MaterialIcons style={{...GState.defaultIconSize, color: ColorList.bodyBackground, marginBottom: 'auto', marginTop: 'auto', }} type="MaterialIcons" name="fullscreen"/>
                 </TouchableOpacity>}
             </View>,
             !this.props.extra ? this.methods.toggleFullscreen:() => {},
@@ -1043,8 +1046,9 @@ export default class VideoController extends BeComponent {
     renderPlayPause() {
 
         return this.renderControl(
-            <Icon type="MaterialCommunityIcons"
-                name={!this.state.paused ? "pause" : "play-circle-outline"} style={{ color: 'white' }}></Icon>,
+            <MaterialCommunityIcons type="MaterialCommunityIcons"
+                name={!this.state.paused ? "pause" : "play-circle-outline"} 
+                style={{...GState.defaultIconSize, color: 'white' }}/>,
             this.methods.togglePlayPause,
             styles.controls.playPause
         );

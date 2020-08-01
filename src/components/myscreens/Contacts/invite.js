@@ -1,12 +1,21 @@
 import React, { Component } from "react";
 import stores from "../../../stores";
 import Modal from 'react-native-modalbox';
-import { View,Dimensions,TouchableWithoutFeedback,TouchableOpacity,Image,TextInput,Linking} from "react-native";
-import { Title ,Text,Label,Input,Icon,Button,Thumbnail} from "native-base";
-import { filter,map,find} from "lodash";
+import { 
+  View, 
+  Dimensions, 
+  TouchableWithoutFeedback, 
+  TouchableOpacity, 
+  Image, 
+  Text,
+  Linking
+} from "react-native";
 import Message from "../eventChat/Message";
 import colorList from '../../colorList';
 import ColorList from "../../colorList";
+import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
+import MaterialIconCommunity from 'react-native-vector-icons/MaterialCommunityIcons';
+import FontAwesome from 'react-native-vector-icons/FontAwesome';
 
 let { height, width } = Dimensions.get('window');
 
@@ -82,7 +91,7 @@ export default class Invite extends Component {
              <TouchableOpacity onPress={()=>{this.openMessage()}}  >
                <View style={{flexDirection:"column",alignItems:"center"}} >
                <View style={{height:height/17,width:width/8,borderRadius:25,margin:"5%",backgroundColor:"dodgerblue",justifyContent:"center",alignItems:"center"}} >
-               <Icon name="message" active={true} type="MaterialIcons" style={{color: "white",marginTop:4 }} onPress={()=>{this.openMessage()}}  />
+               <MaterialIcons name="message" active={true} type="MaterialIcons" style={{color: "white",marginTop:4 }} onPress={()=>{this.openMessage()}}  />
                </View>
                <Text note>message</Text>
                </View>
@@ -90,7 +99,7 @@ export default class Invite extends Component {
 
               <TouchableOpacity onPress={()=>{this.openGmail()}}>
                <View style={{margin:"5%",flexDirection:"column",alignItems:"center"}} >
-               <Icon name="email" active={true} type="MaterialCommunityIcons" style={{ color: "indianred",fontSize:45}} onPress={()=>{this.openGmail()}} />
+               <MaterialIconCommunity name="email" active={true} type="MaterialCommunityIcons" style={{ color: "indianred",fontSize:45}} onPress={()=>{this.openGmail()}} />
                <Text  note>email</Text>
                </View>
                </TouchableOpacity>
@@ -99,7 +108,7 @@ export default class Invite extends Component {
                <TouchableOpacity   onPress={()=>{this.openWhatsapp()}}>
                <View style={{flexDirection:"column",alignItems:"center"}}>
                <View style={{height:height/17,width:width/8,borderRadius:25,margin:"5%",backgroundColor:"limegreen",justifyContent:"center",alignItems:"center"}}>
-                <Icon name="whatsapp" active={true} type="FontAwesome" style={{ color: "white", }}  onPress={()=>{this.openWhatsapp()}}/>
+                <FontAwesome name="whatsapp" active={true} type="FontAwesome" style={{ color: "white", }}  onPress={()=>{this.openWhatsapp()}}/>
                </View>
                <Text  note>whatsapp</Text>
                </View>
@@ -107,9 +116,9 @@ export default class Invite extends Component {
 
              </View>
               <View>
-                 <Button style={{height:40,width:width-width/5,justifyContent:"center",alignItems:"center",borderWidth:1,borderColor:"gray",backgroundColor:ColorList.bodyBackground,borderRadius:25}} onPress={this.props.onClosed}>
+                 <TouchableOpacity style={{height:40,width:width-width/5,justifyContent:"center",alignItems:"center",borderWidth:1,borderColor:"gray",backgroundColor:ColorList.bodyBackground,borderRadius:25}} onPress={this.props.onClosed}>
                    <Text style={{fontSize:14,fontWeight:"400",color:"red"}}>CANCEL</Text>
-                 </Button>
+                 </TouchableOpacity>
                    
               </View>
 

@@ -1,8 +1,8 @@
-import { Toast } from "native-base";
 import CreateRequest from '../event/createEvent/CreateRequester';
 import stores from "../../../stores";
 import { findIndex } from 'lodash';
 import request from '../../../services/requestObjects';
+import Toaster from '../../../services/Toaster';
 
 export default function getRelation(user){
         return new Promise((resolve,reject) => {
@@ -20,7 +20,7 @@ export default function getRelation(user){
                     CreateRequest.createEvent(relation).then((resp) => {
                           resolve(resp)
                     }).catch(() => {
-                        Toast.show({ text: 'unable to start a relation' })
+                        Toaster({ text: 'unable to start a relation' })
                         reject()
                     })
 

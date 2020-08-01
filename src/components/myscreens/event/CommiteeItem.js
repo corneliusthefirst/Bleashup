@@ -1,31 +1,28 @@
 import React, { PureComponent } from "react";
-import {
-    Text,
-    Badge,
-    Icon,
-    Label,
-    Spinner,
-    Toast,
-    Thumbnail,
-    Title,
-} from "native-base";
 import stores from "../../../stores";
-import { View, TouchableWithoutFeedback, TouchableOpacity } from "react-native";
-import { find, isEqual } from "lodash";
+import { 
+    View, 
+    TouchableWithoutFeedback, 
+    TouchableOpacity, 
+    Text,StyleSheet 
+} from "react-native";
+import { find } from "lodash";
 import EditNameModal from "./EditNameModal";
 import emitter from "../../../services/eventEmiter";
-import { observer } from "mobx-react";
 import GState from "../../../stores/globalState";
 import firebase from "react-native-firebase";
-import Image from "react-native-scalable-image";
 import CacheImages from "../../CacheImages";
 import ChatStore from "../../../stores/ChatStore";
 import testForURL from "../../../services/testForURL";
-import Menu, { MenuItem, MenuDivider } from "react-native-material-menu";
 import shadower from "../../shadower";
 import ColorList from "../../colorList";
 import convertToHMS from "../highlights_details/convertToHMS";
 import TextContent from "../eventChat/TextContent";
+import Toaster from "../../../services/Toaster";
+import Entypo  from 'react-native-vector-icons/Entypo';
+import AntDesign from 'react-native-vector-icons/AntDesign';
+import Octicons from "react-native-vector-icons/Octicons"
+import rounder from "../../../services/rounder";
 
 export default class CommiteeItem extends PureComponent {
     constructor(props) {
@@ -93,7 +90,7 @@ export default class CommiteeItem extends PureComponent {
                     //this._accordion.setSelected(-1);
                 });
             } else {
-                Toast.show({
+                Toaster({
                     text: "Cannot join this commitee; It is not opened to you",
                 });
                 reject();
@@ -270,12 +267,11 @@ export default class CommiteeItem extends PureComponent {
                                         small
                                     ></CacheImages>
                                 ) : (
-                                        <Thumbnail
-                                            style={{ borderRadius: 5 }}
-                                            square
-                                            small
+                                        <Image
+                                           resizeMode={"cover"}
+                                            style={styles.thumbnail}
                                             source={{ uri: message.photo }}
-                                        ></Thumbnail>
+                                        ></Image>
                                     )}
                             </View>
                         </View>
@@ -284,7 +280,9 @@ export default class CommiteeItem extends PureComponent {
             case "audio":
                 return (
                     <View style={{ display: "flex", flexDirection: "column" }}>
-                        <Title
+                        <Text
+                        elipsizeMode={"tail"}
+                        numberOfLines={1}
                             style={{
                                 fontWeight: "bold",
                                 fontSize: 16,
@@ -293,7 +291,7 @@ export default class CommiteeItem extends PureComponent {
                             }}
                         >
                             {this.formNickName(message.sender)}
-                        </Title>
+                        </Text>
                         <View style={{ display: "flex", flexDirection: "row" }}>
                             <View style={{
                                 marginLeft: "3%",
@@ -319,11 +317,10 @@ export default class CommiteeItem extends PureComponent {
                                 ></TextContent>
                             </View>
                             <View style={{ alignSelf: "flex-end", marginTop: "-2%" }}>
-                                <Icon
-                                    type={"Entypo"}
+                                <Entypo
                                     name={"mic"}
                                     style={{ fontSize: 30, color: ColorList.bodyText }}
-                                ></Icon>
+                                ></Entypo>
                             </View>
                         </View>
                     </View>
@@ -331,7 +328,9 @@ export default class CommiteeItem extends PureComponent {
             case "video":
                 return (
                     <View style={{ display: "flex", flexDirection: "column" }}>
-                        <Title
+                        <Text
+                        elipsizeMode={"tail"}
+                        numberOfLines={1}
                             style={{
                                 fontWeight: "bold",
                                 fontSize: 16,
@@ -340,7 +339,7 @@ export default class CommiteeItem extends PureComponent {
                             }}
                         >
                             {this.formNickName(message.sender)}
-                        </Title>
+                        </Text>
                         <View
                             style={{ display: "flex", flexDirection: "row", marginTop: "1%" }}
                         >
@@ -361,11 +360,10 @@ export default class CommiteeItem extends PureComponent {
                                 ></TextContent>
                             </View>
                             <View style={{ alignSelf: "flex-end", marginTop: "-2%" }}>
-                                <Icon
-                                    type={"AntDesign"}
+                                <AntDesign
                                     name={"videocamera"}
                                     style={{ fontSize: 30, color: ColorList.bodyText }}
-                                ></Icon>
+                                ></AntDesign>
                             </View>
                         </View>
                     </View>
@@ -373,8 +371,10 @@ export default class CommiteeItem extends PureComponent {
             case "attachement":
                 return (
                     <View style={{ display: "flex", flexDirection: "column" }}>
-                        <Title
-                            style={{
+                        <Text
+                        elipsizeMode={"tail"}
+                        numberOfLines={1}
+                        style={{
                                 fontWeight: "bold",
                                 fontSize: 16,
                                 color: ColorList.bodyText,
@@ -382,7 +382,7 @@ export default class CommiteeItem extends PureComponent {
                             }}
                         >
                             {this.formNickName(message.sender)}
-                        </Title>
+                        </Text>
                         <View style={{ display: "flex", flexDirection: "row" }}>
                             <View style={{
                                 marginLeft: "2%", width: "90%"
@@ -402,11 +402,10 @@ export default class CommiteeItem extends PureComponent {
                                 ></TextContent>
                             </View>
                             <View style={{ alignSelf: "flex-end", marginTop: "-2%" }}>
-                                <Icon
-                                    type={"Octicons"}
+                                <Octicons
                                     name={"file"}
                                     style={{ fontSize: 30, color: ColorList.bodyText }}
-                                ></Icon>
+                                />
                             </View>
                         </View>
                     </View>
@@ -488,32 +487,12 @@ export default class CommiteeItem extends PureComponent {
                                     alignSelf: "flex-end",
                                 }}
                             >
-                                {/*
-                                    this.props.commitee &&
-                                        this.props.commitee.name &&
-                                        this.props.commitee.name.toLowerCase() === "General".toLowerCase() ? null :
-                                        this.master ?
-                                            <View style={{ marginTop: "-5%", }}>
-                                                <TouchableWithoutFeedback onPress={() => {
-                                                    GState.editingCommiteeName = true
-                                                    requestAnimationFrame(() => {
-                                                        this.setState({
-                                                            isEditNameModelOpened: true,
-                                                            newThing: !this.state.newThing
-                                                        })
-                                                        setTimeout(() => {
-                                                            GState.editingCommiteeName = false
-                                                        }, 300)
-                                                    })
-                                                }}>
-                                                    <View><Icon style={{ fontSize: 30, color: ColorList.bodyText }} name="pencil" type="EvilIcons" /></View>
-                                                </TouchableWithoutFeedback>
-                                            </View> : null*/}
                                 {this.joint && this.props.commitee.new_messages ? (
                                     this.props.commitee.new_messages.length > 0 ? (
-                                        <Badge
+                                        <View
                                             style={{
                                                 display: "flex",
+                                                ...rounder(30,ColorList.indicatorColor),
                                                 justifyContent: "center",
                                                 ...shadower(2)
                                             }}
@@ -524,7 +503,7 @@ export default class CommiteeItem extends PureComponent {
                                             >
                                                 {this.props.commitee.new_messages.length}
                                             </Text>
-                                        </Badge>
+                                        </View>
                                     ) : null
                                 ) : null}
                             </View>
@@ -562,3 +541,11 @@ export default class CommiteeItem extends PureComponent {
             );
     }
 }
+
+const styles = StyleSheet.create({
+    thumbnail:{
+        borderRadius: 5,
+        width:20,
+        height:20
+    }
+})

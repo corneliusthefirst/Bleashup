@@ -1,9 +1,10 @@
 /* eslint-disable react-native/no-inline-styles */
 import React from 'react';
-import { Icon, Button } from "native-base";
-import { View, Text } from 'react-native';
+import { View, Text, TouchableOpacity } from 'react-native';
 import BleashupModal from "./mainComponents/BleashupModal";
 import ColorList from './colorList';
+import Entypo  from 'react-native-vector-icons/Entypo';
+import MaterialIcons  from 'react-native-vector-icons/MaterialIcons';
 
 export default class PrivacyModal extends BleashupModal {
   initialize() {
@@ -60,10 +61,9 @@ export default class PrivacyModal extends BleashupModal {
               padding: 10,
             }}
           >
-            <Icon
+            <Entypo
               name="sound-mute"
               active={true}
-              type="Entypo"
               style={{ color: ColorList.bodyIcon, marginRight: 20 }}
               onPress={() => this.toggleMute()}
             />
@@ -85,11 +85,13 @@ export default class PrivacyModal extends BleashupModal {
           </Text>
         ) : (
           <View style={{ flexDirection: 'row' }}>
-            <Button iconLeft style={{ backgroundColor: '#c94c4c' }}>
-              <Icon
+            <TouchableOpacity style={{ 
+              margin:2,
+              backgroundColor: '#c94c4c',
+              justifyContent: 'flex-start', }}>
+              <MaterialIcons
                 name="block"
                 active={true}
-                type="MaterialIcons"
                 style={{ color: 'white' }}
                 onPress={() => this.toggleBlock()}
               />
@@ -99,7 +101,7 @@ export default class PrivacyModal extends BleashupModal {
               ) : (
                 <Text>Block</Text>
               )}
-            </Button>
+            </TouchableOpacity>
 
             {this.state.blockState ? (
               <Text style={{ color: '#c94c4c' }}>Blocked</Text>

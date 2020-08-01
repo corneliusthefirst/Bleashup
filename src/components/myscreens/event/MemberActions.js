@@ -3,9 +3,9 @@ import {
     View, Text, TouchableOpacity
 } from 'react-native';
 import Menu, { MenuItem, MenuDivider } from 'react-native-material-menu';
-import { Icon, } from "native-base"
 import emitter from '../../../services/eventEmiter';
 import ColorList from '../../colorList';
+import  Entypo from 'react-native-vector-icons/Entypo';
 
 export default class MemberActions extends Component {
     constructor(props) {
@@ -23,21 +23,9 @@ export default class MemberActions extends Component {
             publi: this.props.public,
             opened: this.props.opened
         })
-        // emitter.on("open-close", (newState) => {
-        //    console.warn("receiving closed !!")
-        //    this.setState({
-        //        opened: newState
-        //    })
-        // })
-        //  emitter.on("publish-unpublish", (newState) => {
-        //      this.setState({
-        //          public: newState
-        //      })
-        //  })
     }
     componentWillUnmount() {
-        //emitter.off('open-close')
-        // emitter.off('publish-unpublish')
+        
     }
     componentWillReceiveProps(nextProps) {
         if (nextProps.hide) {
@@ -72,10 +60,10 @@ export default class MemberActions extends Component {
                 <Menu
                     style={{ backgroundColor: ColorList.bodyBackground }}
                     ref={this.setMenuRef}
-                    button={<Icon style={{
+                    button={<Entypo style={{
                         color: ColorList.headerIcon,
                         fontSize: 25,
-                    }} onPress={this.showMenu} name="dots-three-vertical" type="Entypo"></Icon>}
+                    }} onPress={this.showMenu} name="dots-three-vertical" type="Entypo"/>}
                 >
                     <View><MenuItem textStyle={{ color: ColorList.headerIcon}} onPress={() => {
                         this.hideMenu()

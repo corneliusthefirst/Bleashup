@@ -1,7 +1,6 @@
 import React, { Component } from "react";
-import { View, TouchableOpacity } from "react-native";
+import { View, TouchableOpacity, Text  } from "react-native";
 import Like from "../../../currentevents/components/Like";
-import { Icon, Text } from "native-base";
 import ColorList from "../../../../colorList";
 import SocialTabModal from "./SocialTabModal";
 import ActionsMenu from "../../ActionsMenu";
@@ -47,26 +46,6 @@ export default class Social extends Component {
                                 id={this.props.id}
                             ></Like>
                         </View>
-                       {/**
-                        * <View style={this.itemStyle}>
-                        <Comments
-                        activity_id={this.props.activity_id}
-                        activity_name={this.props.activity_name}
-                        title={this.props.title}
-                        creator={this.props.creator}
-                        setCommentsCount={(val) => {
-                            this.setState({
-                                commentCount:val
-                            })
-                        }} id={this.props.id}></Comments>
-                        </View>
-                        <View style={this.itemStyle}>
-                            <View style={{ flexDirection:"row",justifyContent:"center"}}>
-                                <Icon style={{ color: ColorList.headerIcon, fontSize: 22, }} type={"FontAwesome"} name={"support"}>
-                            </Icon>
-                            </View>
-                        </View>
-                        */}
                     </View>
 
                     {/*<View

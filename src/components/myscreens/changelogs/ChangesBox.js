@@ -1,7 +1,6 @@
 import React, { Component } from "react"
-import { View, TouchableOpacity } from 'react-native';
+import { View, TouchableOpacity, Text } from 'react-native';
 import CacheImages from '../../CacheImages';
-import { Text, Icon, Spinner, Thumbnail } from "native-base";
 import testForURL from '../../../services/testForURL';
 import stores from '../../../stores';
 import shadower from "../../shadower";
@@ -17,7 +16,7 @@ import Swipeout from '../eventChat/Swipeout';
 export default class ChangeBox extends AnimatedComponent {
     initialize(){
         this.state = {
-            loaded: false,
+            loaded: true,
             newThing: false
         }
     }
@@ -67,10 +66,10 @@ export default class ChangeBox extends AnimatedComponent {
                         }}>
                             <View style={{ flexDirection: 'row', }}>
                                 <Text ellipsizeMode='tail' style={{ fontSize: 14, fontWeight: "800", color: colorList.bodyText }}
-                                    numberOfLines={4}>{this.props.change.changed}</Text>
+                                    numberOfLines={2}>{this.props.change.changed}</Text>
                             </View>
                             <Text ellipsizeMode='tail' style={{ fontSize: 13, color: '#555756', fontStyle: 'italic', }}
-                                numberOfLines={6}>{typeof this.props.change.new_value.new_value === "string"
+                                numberOfLines={2}>{typeof this.props.change.new_value.new_value === "string"
                                     && !testForURL(this.props.change.new_value.new_value, true) ? this.props.change.new_value.new_value : ""}</Text>
                         </View>
                     </View>}

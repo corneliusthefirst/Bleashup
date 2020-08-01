@@ -10,11 +10,13 @@ import {
   TouchableWithoutFeedback ,
   Dimensions,
 } from 'react-native';
-import {Icon} from 'native-base';
 import ColorList from '../../colorList';
 import BleashupModal from '../BleashupModal';
 import VideoView from '../../myscreens/Viewer/components/videoView';
 import CreateTextInput from '../../myscreens/event/createEvent/components/CreateTextInput';
+import AntDesign  from 'react-native-vector-icons/AntDesign';
+import  Ionicons  from 'react-native-vector-icons/Ionicons';
+import { Feather } from 'react-native-vector-icons/Feather';
 
 const screenHeight  =  Dimensions.get('window').height;
 const screenWidth  =  Dimensions.get('window').width;
@@ -80,7 +82,7 @@ export default class PickedImage extends BleashupModal {
         }
         <View style={{position:'absolute',height:60,width:'100%',top:0,alignItems:'flex-end',
               justifyContent:'center',backgroundColor:this.props.data.photo !== '' ? 'rgba(0, 0, 0, 0.3)' : 'rgba(0, 0, 0, 0.9)'}}>
-              <Icon
+              <AntDesign
                     name="close"
                     style={{color:'white', fontSize:25 , marginRight:15}}
                     type="AntDesign"
@@ -107,12 +109,12 @@ export default class PickedImage extends BleashupModal {
        <View style={{width:'20%',alignItems:'center',justifyContent:'center'}}>
         <TouchableWithoutFeedback onPress={this.validate}>
             <View style={{height:44,width:44,borderRadius:22,backgroundColor:ColorList.indicatorColor,alignItems:'center',justifyContent:'center'}}>
-                  <Icon
-                    name={this.props.nomessage ? 'ios-arrow-round-forward' : 'send'}
+                {this.props.nomessage?<Ionicons
+                    name={'ios-arrow-round-forward'}
                     style={{color:'white', fontSize:25 }}
-                    type={this.props.nomessage ? "Ionicons" : "Feather"}
+                    type={ "Ionicons"}
                     onPress={this.validate}
-                  />
+                /> : <Feather style={{ color: 'white', fontSize: 25 }} name={'send'}/>}
            </View>
         </TouchableWithoutFeedback>
 

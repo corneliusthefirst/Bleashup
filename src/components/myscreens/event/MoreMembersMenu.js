@@ -3,9 +3,9 @@ import {
     View, Text, TouchableOpacity
 } from 'react-native';
 import Menu, { MenuItem, MenuDivider } from 'react-native-material-menu';
-import { Icon, } from "native-base"
 import emitter from '../../../services/eventEmiter';
 import ColorList from '../../colorList';
+import AntDesign  from 'react-native-vector-icons/AntDesign';
 
 export default class MoreMembersMenu extends Component {
     constructor(props) {
@@ -23,21 +23,10 @@ export default class MoreMembersMenu extends Component {
             publi: this.props.public,
             opened: this.props.opened
         })
-        // emitter.on("open-close", (newState) => {
-        //    console.warn("receiving closed !!")
-        //    this.setState({
-        //        opened: newState
-        //    })
-        // })
-        //  emitter.on("publish-unpublish", (newState) => {
-        //      this.setState({
-        //          public: newState
-        //      })
-        //  })
+       
     }
     componentWillUnmount() {
-        //emitter.off('open-close')
-        // emitter.off('publish-unpublish')
+        
     }
     componentWillReceiveProps(nextProps) {
         if (nextProps.hide) {
@@ -63,22 +52,16 @@ export default class MoreMembersMenu extends Component {
                 <Menu
                     style={{ backgroundColor: ColorList.bodyBackground }}
                     ref={this.setMenuRef}
-                    button={<TouchableOpacity onPress={ () => requestAnimationFrame(this.showMenu)} ><Icon style={{
+                    button={<TouchableOpacity onPress={ () => requestAnimationFrame(this.showMenu)} ><AntDesign style={{
                         color: ColorList.headerIcon,
                         fontSize: 30,
-                    }} name="plus" type="AntDesign"></Icon></TouchableOpacity>}
+                    }} name="plus" type="AntDesign"></AntDesign></TouchableOpacity>}
                 >
                     {this.props.master && <View><MenuItem textStyle={{ color: ColorList.headerIcon }} onPress={() => {
                         this.hideMenu()
                         this.props.addMembers()
                     }}>{"Add Members"}</MenuItem>
                         <MenuDivider color={ColorList.iconActive} /></View>}
-
-                    {/*<View><MenuItem textStyle={{ color: ColorList.headerIcon }} onPress={() => {
-                        this.hideMenu()
-                        this.props.invite()
-                    }}>{"Invite Members"}</MenuItem>
-                <MenuDivider color={ColorList.iconActive} /></View>*/}
                 </Menu>
             </View>
         ) : <ImageActivityIndicator />;

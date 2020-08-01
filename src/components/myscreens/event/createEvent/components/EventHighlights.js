@@ -1,37 +1,9 @@
 import React, { Component } from "react";
-import {
-  Content,
-  Card,
-  CardItem,
-  Text,
-  Body,
-  Container,
-  Icon,
-  Header,
-  Form,
-  Item,
-  Title,
-  Input,
-  Left,
-  Right,
-  H3,
-  H1,
-  H2,
-  Spinner,
-  Root,
-  Button,
-  InputGroup,
-  DatePicker,
-  Thumbnail,
-  Alert,
-  List,
-  ListItem,
-  Label,
-  Toast,
-} from "native-base";
+
 import {
   StyleSheet,
   View,
+  Text,
   Image,
   TouchableOpacity,
   FlatList,
@@ -39,13 +11,10 @@ import {
   Dimensions,
   TextInput,
 } from "react-native";
-import ActionButton from "react-native-action-button";
 import Modal from "react-native-modalbox";
-import autobind from "autobind-decorator";
 import CacheImages from "../../../../CacheImages";
 import HighlightCard from "./HighlightCard";
 import stores from "../../../../../stores/index";
-import { observer } from "mobx-react";
 import moment from "moment";
 import { find, reject } from "lodash";
 import request from "../../../../../services/requestObjects";
@@ -56,7 +25,6 @@ import SimpleAudioPlayer from "../../../highlights_details/SimpleAudioPlayer";
 import Pickers from "../../../../../services/Picker";
 import FileExachange from "../../../../../services/FileExchange";
 import PhotoViewer from "../../PhotoViewer";
-import { RNFFmpeg } from "react-native-ffmpeg";
 import shadower from "../../../../shadower";
 import Requester from "../../Requester";
 import buttoner from "../../../../../services/buttoner";
@@ -68,7 +36,11 @@ import MediaPreviewer from "./MediaPeviewer";
 import CreationHeader from "./CreationHeader";
 import CreateButton from './ActionButton';
 import CreateTextInput from './CreateTextInput';
-
+import Toaster from "../../../../../services/Toaster";
+import  EvilIcons  from 'react-native-vector-icons/EvilIcons';
+import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
+import Spinner from '../../../../Spinner';
+import GState from "../../../../../stores/globalState";
 //create an extension to toast so that it can work in my modal
 
 var uuid = require("react-native-uuid");
@@ -192,13 +164,11 @@ export default class EventHighlights extends BleashupModal {
   }
 
 
-  @autobind
   back() {
     this.setStatePure({ newing: !this.state.newing, animateHighlight: false });
     this.props.onClosed(this.props.star);
   }
 
-  @autobind
   resetHighlight() {
     this.state.currentHighlight = request.Highlight();
     this.state.currentHighlight.id = request.Highlight().id;
@@ -208,7 +178,6 @@ export default class EventHighlights extends BleashupModal {
     });
   }
 
-  @autobind
   onChangedTitle(value) {
     //this.setStatePure({newing:!this.state.newing,title:value})
     this.state.currentHighlight.title = value;
@@ -223,7 +192,6 @@ export default class EventHighlights extends BleashupModal {
       ).then(() => {});
     }
   }
-  @autobind
   onChangedDescription(value) {
     //this.setStatePure({newing:!this.state.newing,description:value})
     this.state.currentHighlight.description = value;
@@ -240,7 +208,6 @@ export default class EventHighlights extends BleashupModal {
     }
   }
 
-  @autobind
   onchangeHighLightPublicState(value) {
     this.setStatePure({
       currentHighlight: { ...this.state.currentHighlight, public_state: value },
@@ -254,7 +221,6 @@ export default class EventHighlights extends BleashupModal {
     }
   }
 
-  @autobind
   AddHighlight() {
     console.warn("creating highlight")
     var arr = new Array(32);
@@ -298,7 +264,7 @@ export default class EventHighlights extends BleashupModal {
             });
           });
       } else {
-        Toast.show({
+        Toaster({
           text: "Post Must include at least a media or title",
           duration: 5000,
           buttonText: "ok",
@@ -307,7 +273,6 @@ export default class EventHighlights extends BleashupModal {
       }
   }
 
-  @autobind
   updateHighlight() {
     this.setStatePure({ newing: !this.state.newing, update: false });
     if (this.props.highlight_id) {
@@ -410,7 +375,6 @@ export default class EventHighlights extends BleashupModal {
       });
     }
   }
-  @autobind
   deleteHighlight(id) {
     this.state.highlightData = reject(this.state.highlightData, { id, id });
     this.setStatePure({
@@ -439,7 +403,7 @@ export default class EventHighlights extends BleashupModal {
     return this.state.isMounted ? (
       <View>
        <CreationHeader
-       back={this.back}
+       back={this.back.bind(this)}
         title={this.props.updateState ? "Update Post" : "Add New Post"}
        >
        </CreationHeader>
@@ -458,7 +422,7 @@ export default class EventHighlights extends BleashupModal {
                 value={this.state.currentHighlight.title
                   ? this.state.currentHighlight.title
                   : ""}
-                onChange={this.onChangedTitle}
+                onChange={this.onChangedTitle.bind(this)}
                 placeholder={"title"}
             >
             </CreateTextInput>
@@ -469,7 +433,7 @@ export default class EventHighlights extends BleashupModal {
                 value={this.state.currentHighlight.description
                   ? this.state.currentHighlight.description
                   : ""}
-                onChange={this.onChangedDescription}
+                onChange={this.onChangedDescription.bind(this)}
                 placeholder={"description"}
                 maxLength={3000}
                 numberOfLines={5}
@@ -512,7 +476,7 @@ export default class EventHighlights extends BleashupModal {
                     url={this.state.currentHighlight.url}
                   ></SimpleAudioPlayer>
 
-                  <Icon
+                  <EvilIcons
                     name={"close"}
                     type="EvilIcons"
                     onPress={() => this.cleanAudio()}
@@ -522,7 +486,7 @@ export default class EventHighlights extends BleashupModal {
                       alignSelf: "flex-end",
                       fontSize: 20,
                     }}
-                  ></Icon>
+                  />
                 </View>
               ) : null}
               
@@ -540,15 +504,19 @@ export default class EventHighlights extends BleashupModal {
                 alignSelf: 'center',
                 marginBottom: '3%',}}
               >
-                <Icon
+                <MaterialIcons
                   name={
                     this.state.currentHighlight.public_state === "public"
                       ? "radio-button-checked"
                       : "radio-button-unchecked"
                   }
                   type={"MaterialIcons"}
-                  style={{fontSize:22,width:'15%',...this.center}}
-                ></Icon>
+                  style={{
+                    ...GState.defaultIconSize,
+                    fontSize:22,
+                    width:'15%',
+                    ...this.center}}
+                />
                 <Text style={{color:ColorList.bodyText,...this.center}}>{`${this.state.currentHighlight.public_state}`}</Text>
               </TouchableOpacity>
 
@@ -556,7 +524,7 @@ export default class EventHighlights extends BleashupModal {
                 {this.state.creating ? (
                   <Spinner></Spinner>
                 ) :<CreateButton
-                    action={!this.props.updateState ? this.AddHighlight : this.updateHighlight}
+                    action={!this.props.updateState ? this.AddHighlight.bind(this) : this.updateHighlight.bind(this)}
                     title={!this.props.updateState ? "Add New Post" : "Update Post"}
                     width={this.width}
                 >

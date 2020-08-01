@@ -1,24 +1,29 @@
 import React, { Component } from "react";
-import { View, Vibration,FlatList, TouchableWithoutFeedback, Dimensions, TouchableOpacity,PermissionsAndroid,ScrollView} from 'react-native';
+import { 
+  View,
+  Text, 
+  TouchableWithoutFeedback, 
+  Dimensions, 
+  TouchableOpacity, 
+  PermissionsAndroid, 
+  ScrollView, 
+  Image, 
+  StyleSheet } from 'react-native';
 
-import {
-  Card,CardItem,Text,Label,Spinner,Button,Container,Icon,Thumbnail,Title, Item
-} from 'native-base';
 import bleashupHeaderStyle from "../../../services/bleashupHeaderStyle";
 import Contacts from 'react-native-contacts';
 import BleashupFlatList from '../../BleashupFlatList';
 import GState from '../../../stores/globalState/index';
 import CacheImages from '../../CacheImages';
 import stores from "../../../stores";
-import { functionDeclaration } from "@babel/types";
 import testForURL from '../../../services/testForURL';
-import {find,uniqBy,uniq,filter,includes,concat} from "lodash";
+import {find,uniq,} from "lodash";
 import request from '../../../services/requestObjects';
-import autobind from "autobind-decorator";
 import Invite from './invite';
-import moment from "moment"
 //import CreateRequest from '../event/createEvent/CreateRequester';
 import ProfileView from "../invitations/components/ProfileView"
+import  MaterialIcons  from 'react-native-vector-icons/MaterialIcons';
+import rounder from "../../../services/rounder";
 
 var uuid = require('react-native-uuid');
 uuid.v1({
@@ -180,19 +185,19 @@ createRelation = (user)=>{
 
 
 
-
+defaultImage = require("../../../../Images/images.jpeg")
 render(){
   //contacts = this.state.contacts;
   //console.warn("here boy",this.state.contacts)
     return (
-      <Container style={{ backgroundColor: "#FEFFDE",flexDirection:"column",width:width }}>
+      <View style={{ backgroundColor: "#FEFFDE",flexDirection:"column",width:width }}>
          <View style={{ height:40, }}>
            <View style={{
                 ...bleashupHeaderStyle,
                 
               }}>
                  <View style={{flexDirection:"row",width:width/3,marginLeft:width/25,justifyContent:"space-between",alignItems:"center"}}>
-                 <Icon name="arrow-back" active={true} type="MaterialIcons" style={{ color: "#1FABAB", }} onPress={() => this.props.navigation.navigate("Home")} />
+                 <MaterialIcons name="arrow-back" active={true} type="MaterialIcons" style={{ color: "#1FABAB", }} onPress={() => this.props.navigation.navigate("Home")} />
                  <Text style={{fontSize:18,fontWeight:"bold",marginLeft:"16%"}}>Contacts</Text>
                  </View>
           </View>
@@ -211,20 +216,20 @@ render(){
              }}>
                  {this.state.user.profile && testForURL(this.state.user.profile) ? <CacheImages small thumbnails {...this.props}
                      source={{ uri:this.state.user.profile}} /> :
-                     <Thumbnail  small source={require("../../../../Images/images.jpeg")} ></Thumbnail>}
+                     <Image  resizeMode={"contain"} style={styles.smallThumnail} source={this.defaultImage} ></Image>}
              </TouchableWithoutFeedback>
              </View>
 
              <View style={{flexDirection:"column",width:"82%"}}>
-                    <Title style={{alignSelf:"flex-start"}}>{this.state.user.nickname}</Title>
-                    <Title style={{color:"gray",alignSelf:"flex-start",fontSize:15}}>{this.state.user.status}</Title>
+                    <Text style={{alignSelf:"flex-start"}}>{this.state.user.nickname}</Text>
+                    <Text style={{color:"gray",alignSelf:"flex-start",fontSize:15}}>{this.state.user.status}</Text>
              </View>
         </View>:{flexDirection:"column",height:height - height/19,width:"100%"}}>
 
         <TouchableOpacity style={{flex:1}} onPress={() => this.props.navigation.navigate("NewContact")} >  
         <View style={{flex:1,flexDirection:"row",alignItems:"center"}} >
             <View style={{width:width/8,height:height/16,borderRadius:32,backgroundColor:"#1FABAB",alignItems:"center",justifyContent:"center",marginLeft:"2%"}} >
-               <Icon name="person-add" active={true} type="MaterialIcons" style={{ color: "#FEFFDE",paddingRight:6 }} />
+               <MaterialIcons name="person-add" active={true} type="MaterialIcons" style={{ color: "#FEFFDE",paddingRight:6 }} />
             </View>
             <View style={{marginLeft:"5%"}}>
                <Text>New Contact</Text>
@@ -236,7 +241,7 @@ render(){
         <TouchableOpacity style={{flex:1}} onPress={this.invite} >  
         <View style={{flex:1,flexDirection:"row",alignItems:"center"}} >
             <View style={{width:width/8,height:height/16,borderRadius:32,alignItems:"center",justifyContent:"center",marginLeft:"2%"}} >
-               <Icon name="share" active={true} type="MaterialIcons" style={{ color: "#1FABAB",paddingRight:6 }} />
+               <MaterialIcons name="share" active={true} type="MaterialIcons" style={{ color: "#1FABAB",paddingRight:6 }} />
             </View>
             <View style={{marginLeft:"5%"}}>
                <Text>Invite Friends</Text>
@@ -275,168 +280,14 @@ render(){
 
          </View>
          :null}
-
-        </Container>
+        </View>
     );
 }
 
 }
 
-/**
- *                          <View style={{flexDirection:"row",margin:"3%",width:"100%",height:50}}>
-                      <View style={{width:width/6,height:50}}>
-                      <TouchableWithoutFeedback onPress={() => {
-                             requestAnimationFrame(() => {
-                                 GState.showingProfile = true
-                                 setTimeout(() => {
-                                     GState.showingProfile = false
-                                 }, 50)
-                             });
-                         }}>
-                             {item.profile && testForURL(item.profile) ? <CacheImages small thumbnails {...this.props}
-                                 source={{ uri:item.profile}} /> :
-                                 <Thumbnail  small source={require("../../../../Images/images.jpeg")} ></Thumbnail>}
-                         </TouchableWithoutFeedback>
-                         </View>
-     
-                        <TouchableOpacity onPress={()=>{this.createRelation(item)}}>
-                         <View style={{flexDirection:"column",width:width-width/5,height:50}}>
-                                <Title style={{alignSelf:"flex-start"}}>{item.nickname}</Title>
-                                <Title style={{color:"gray",alignSelf:"flex-start",fontSize:15}}>{item.status}</Title>
-                         </View>
-                        </TouchableOpacity>
-                    </View>              
- */
-
-
-/**
- *       stores.LoginStore.getUser().then((user)=>{
-        console.warn(user);
-        this.users.push(user);
-        console.warn(this.users);
-       stores.TemporalUsersStore.addUser(user).then(()=>{
-          console.warn("here bro")
-          stores.TemporalUsersStore.loadFromStore().then((users)=>{
-               console.warn("users are :",users)
-               
-          })
-        })
-      })   
-
-
-
-users = [
-  {
-    phone: "+33623104297",
-    name: "herve",
-    status: "At home what a good day",
-    age: "34",
-    nickname: "herve",
-    email: "herve@gmail.com",
-    created_at: "",
-    updated_at: "",
-    password:"hervus",
-    profile:"https://images.unsplash.com/photo-1500099817043-86d46000d58f?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=800&q=60",
-    profile_ext:""
-  },
-  {
-    phone: "+143266489332",
-    name: "Hken",
-    status: "Designing the future",
-    age: "21",
-    nickname: "Hken",
-    email: "Hken@gmail.com",
-    created_at: "",
-    updated_at: "",
-    password:"hkenBoy",
-    profile:"https://images.unsplash.com/photo-1478397453044-17bb5f994100?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=800&q=60",
-    profile_ext:""
-  },
-  {
-    phone: "+33683656312",
-    name: "angel",
-    status: "Cooking cakes is my passio",
-    age: "23",
-    nickname: "angel",
-    email: "",
-    created_at: "",
-    updated_at: "",
-    password:"angel",
-    profile:"https://images.unsplash.com/photo-1505118380757-91f5f5632de0?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=581&q=80",
-    profile_ext:""
-  },
-  {
-    phone: "+237697712608",
-    name: "Maurelle",
-    status: "la go des wey fort",
-    age: "",
-    nickname: "Maurelle",
-    email: "maurelle@gmail.com",
-    created_at: "",
-    updated_at: "",
-    password:"",
-    profile:"https://images.unsplash.com/photo-1496287437689-3c24997cca99?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=800&q=60",
-    profile_ext:""
+const styles = StyleSheet.create({
+  smallThumnail:{
+    ...rounder(20)
   }
-]
-
-:
-                     <View style={{flexDirection:"row",margin:"3%",width:"100%"}}>
-                        <View style={{width:"17%"}}>
-                           <TouchableWithoutFeedback onPress={() => {
-                                  requestAnimationFrame(() => {
-                                      GState.showingProfile = true
-                                      setTimeout(() => {
-                                          GState.showingProfile = false
-                                      }, 50)
-                                  });
-                              }}>
-                                  {item.hasThumbnail && testForURL(item.thumbnailPath) ? <CacheImages small thumbnails {...this.props}
-                                      source={{ uri:item.thumbnailPath}} /> :
-                                      <Thumbnail  small source={require("../../../../Images/images.jpeg")} ></Thumbnail>}
-                              </TouchableWithoutFeedback>
-                              </View>
-          
-                              <View style={{flexDirection:"row",width:"82%",justifyContent:"space-between"}}>
-                                     <Title style={{alignSelf:"flex-start"}}>{item.displayName}</Title>
-                                     <TouchableOpacity onPress={this.invite}>
-                                     <Text style={{fontWeight:"bold",color:"green",fontSize:18,marginRight:"15%"}}>invite</Text>
-                                     </TouchableOpacity>
-                              </View>
-
-                             
-                     </View>
-checkUser(phoneNumbers){
-
-  phoneNum = phoneNumbers
-  phoneNum.forEach(phone => {
-    if(phone.number.charAt(0)!="+"){
-      phone.number = "+33"+phone.number;
-    }
-    //stores.TemporalUsersStore.getUser(phone.number).then((user)=>{
-     user = find(stores.TemporalUsersStore.Users, { phone: phone.number });
-    
-      if(user){
-         //console.warn("user is",user);
-         return user;
-      }
-     
-   })
-
-   return user;
- // });
-
-}
- */
-   //console.warn(userArray)
-      /*
-         array = uniq(concat(this.array,this.array1));
-   console.warn(array)
-   userArray=[];
-   //get valid users from temporal user store
-   array.forEach((phone)=>{
-     user = find(stores.TemporalUsersStore.Users, { phone: phone});
-     if(user){
-       userArray.push(user);
-     }
-   })*/
+})

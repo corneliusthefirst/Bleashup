@@ -1,13 +1,14 @@
 import React, { Component } from "react";
-import { Text, Icon } from "native-base";
 //import GState from "../../../../../stores/globalState";
-import { View, ScrollView, Linking, TouchableOpacity } from "react-native"
+import { View, Text, ScrollView, Linking, TouchableOpacity } from "react-native"
 import Modal from 'react-native-modalbox';
 import colorList from '../../colorList';
 import Creator from "../reminds/Creator";
 import QRDisplayer from "../QR/QRCodeDisplayer";
 import Hyperlink from 'react-native-hyperlink';
 import BleashupModal from '../../mainComponents/BleashupModal';
+import EvilIcons  from 'react-native-vector-icons/EvilIcons';
+import GState from '../../../stores/globalState/index';
 
 export default class DescriptionModal extends BleashupModal {
   
@@ -35,7 +36,7 @@ export default class DescriptionModal extends BleashupModal {
           <View style={{ flexDirection: 'row', justifyContent: "space-between", height: "20%", alignItems: "center" }}><Text style={{ fontWeight: "500", color: colorList.bodyText }}>@Activity description</Text>
             {this.props.parent.props.computedMaster ? <TouchableOpacity onPress={() => requestAnimationFrame(() => {
               this.props.parent.setStatePure({ EventDescriptionState: true })
-            })}><Icon name={"pencil"} type={"EvilIcons"}></Icon></TouchableOpacity> : null}</View>
+            })}><EvilIcons style={{ ...GState.defaultIconSize }} name={"pencil"} type={"EvilIcons"}/></TouchableOpacity> : null}</View>
 
           <ScrollView keyboardShouldPersistTaps={"handled"}
             nestedScrollEnabled showsVerticalScrollIndicator={false}>

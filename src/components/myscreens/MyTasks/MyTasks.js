@@ -20,6 +20,7 @@ import ActivityProfile from "../currentevents/components/ActivityProfile";
 import Remind from "../reminds";
 import moment from "moment";
 import RelationProfile from '../../RelationProfile';
+import  MaterialIcons  from 'react-native-vector-icons/MaterialIcons';
 
 @observer
 class MyTasksView extends Component {
@@ -114,7 +115,7 @@ class MyTasksView extends Component {
             }}
           >
             <View style={{ width: '18%', alignItems: 'center' }}>
-              <Icon
+              <MaterialIcons
                 name="arrow-back"
                 active={true}
                 type="MaterialIcons"

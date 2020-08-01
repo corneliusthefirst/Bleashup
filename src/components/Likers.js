@@ -1,11 +1,11 @@
 import React, { PureComponent } from "react"
-import { Left, Right, Icon, CardItem, Text, List, ListItem, Button } from "native-base"
-import { View } from "react-native"
+import { View, Text, } from "react-native"
 import ImageActivityIndicator from "./myscreens/currentevents/components/imageActivityIndicator";
 import UserService from "../services/userHttpServices"
 import ProfileView from "./myscreens/invitations/components/ProfileView";
 import { observer } from "mobx-react";
-import Menu, { MenuDivider, MenuItem } from 'react-native-material-menu';
+import MaterialIcons from "react-native-vector-icons/MaterialIcons"
+import Menu, { MenuDivider } from 'react-native-material-menu';
 import BleashupFlatList from './BleashupFlatList';
 import stores from "../stores";
 import ColorList from './colorList';
@@ -63,10 +63,12 @@ import ColorList from './colorList';
                         <View style={{ display: 'flex', flexDirection: 'row', width: "100%" }}>
                             <View style={{ margin: '2%', width: "70%" }}><ProfileView delay={this.delay} phone={item}></ProfileView>
                             </View>
-                            <Button style={{ flexDirection: 'column',alignSelf: 'center', }} onPress={() => this.navigateToChat()} transparent>
-                                <Icon type="MaterialIcons" style={{color:ColorList.headerIcon}}
-                                    name="chat-bubble">
-                                </Icon><Text style={{color:ColorList.headerIcon}}>Chat</Text></Button>
+                            <TouchableOpacity style={{ flexDirection: 'column',alignSelf: 'center', }} onPress={() => this.navigateToChat()} transparent>
+                                <MaterialIcons style={{color:ColorList.headerIcon}}
+                                name="chat-bubble">
+                                </MaterialIcons>
+                                <Text style={{color:ColorList.headerIcon}}>Chat</Text>
+                                </TouchableOpacity>
                         </View>
                         <MenuDivider color={ColorList.headerIcon} />
                     </View>)

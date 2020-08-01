@@ -1,28 +1,17 @@
 import React, { Component } from "react";
-import {
-    List,
-    ListItem,
-    Body,
-    Left,
-    Right,
-    Text,
-    Header,
-    Title,
-    Spinner,
-    Icon,
-    Button,
-} from "native-base";
-import { View, FlatList } from "react-native";
+import { View, Text, TouchableOpacity } from "react-native";
 import ImageActivityIndicator from "./myscreens/currentevents/components/imageActivityIndicator";
 import stores from "../stores";
 import UserService from "../services/userHttpServices";
 import ProfileView from "./myscreens/invitations/components/ProfileView";
 import BleashupFlatList from "./BleashupFlatList";
-import Menu, { MenuDivider, MenuItem } from "react-native-material-menu";
 import bleashupHeaderStyle from "../services/bleashupHeaderStyle";
 import ColorList from "./colorList";
-import { TouchableOpacity } from "react-native-gesture-handler";
 import CreationHeader from "./myscreens/event/createEvent/components/CreationHeader";
+import  AntDesign  from 'react-native-vector-icons/AntDesign';
+import  Entypo  from 'react-native-vector-icons/Entypo';
+import Spinner from './Spinner';
+import GState from "../stores/globalState";
 
 export default class ParticipantList extends Component {
     constructor(props) {
@@ -98,35 +87,34 @@ export default class ParticipantList extends Component {
                         <View style={{ flexDirection: 'row', justifyContent: 'space-between',width:150,marginBottom: 'auto',marginTop: 'auto', }}>
                             {this.props.managing && (
                                 <View style={{ ...this.center, flexDirection: 'row', }}>
-                                    <Button
+                                    <TouchableOpacity
                                     transparent
-                                    style={{ backgroundColor: ColorList.bodyBackground, }}
+                                    style={{ backgroundColor: ColorList.bodyBackground,width:50 }}
                                         onPress={this.props.addMembers}
                                     >
-                                        <Icon
+                                        <AntDesign
                                             name={"plus"}
-                                            type={"AntDesign"}
-                                            style={{ color: ColorList.headerIcon }}
-                                        ></Icon>
-                                    </Button>
+                                            style={{ ...GState.defaultIconSize,color: ColorList.headerIcon }}
+                                        ></AntDesign>
+                                    </TouchableOpacity>
                                     {this.state.participants &&
                                         this.state.participants.length > 0 ? (
-                                            <Button transparent style={{
+                                            <TouchableOpacity style={{
+                                                width:50,
                                                 backgroundColor: ColorList.bodyBackground,
                                             }}
                                                 onPress={this.props.removeMember}
                                             >
-                                                <Icon
+                                                <Entypo
                                                     name={"circle-with-minus"}
-                                                    type={"Entypo"}
-                                                    style={{ color: ColorList.headerIcon }}
-                                                ></Icon>
-                                            </Button>
+                                                    style={{...GState.defaultIconSize, color: ColorList.headerIcon }}
+                                                ></Entypo>
+                                            </TouchableOpacity>
                                         ) : null}
                                 </View>
                             )}
                             <View style={{ ...this.center,  }}>
-                                <Text style={{ }} note>
+                                <Text style={{  fontSize: 12,}} note>
                                     {this.state.participants ? this.state.participants.length : 0}
                                     {" member(s)"}
                                 </Text></View>

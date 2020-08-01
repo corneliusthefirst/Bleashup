@@ -1,8 +1,9 @@
 import React, { Component } from 'react';
-import { View, TouchableHighlight, TouchableWithoutFeedback, TouchableOpacity } from 'react-native';
+import { View, TouchableHighlight,Text, TouchableWithoutFeedback, TouchableOpacity } from 'react-native';
 import ProfileView from '../invitations/components/ProfileView';
-import { Icon, Text, Button } from 'native-base';
 import Menu, { MenuItem, MenuDivider } from 'react-native-material-menu';
+import MaterialIcons  from 'react-native-vector-icons/MaterialIcons';
+import GState from '../../../stores/globalState';
 
 export default class SelectableContactsMaster extends Component {
     constructor(props) {
@@ -46,11 +47,11 @@ export default class SelectableContactsMaster extends Component {
     render() {
         return !this.state.hiden ? (
             <View style={{ flexDirection: 'column', margin: '2%', }}>
-                <Button transparent onPress={() => requestAnimationFrame(() => this.selectContact())}>
+                <TouchableOpacity transparent onPress={() => requestAnimationFrame(() => this.selectContact())}>
                     <View style={{ width: "90%", flexDirection: 'row', alignSelf: 'flex-start', }}>
                         <View style={{ width: "20%", ...this.margin }}>
-                            <Icon name={this.props.checked ? "radio-button-checked" :
-                                "radio-button-unchecked"} type="MaterialIcons"></Icon>
+                            <MaterialIcons style={{...GState.defaultIconSize}} name={this.props.checked ? "radio-button-checked" :
+                                "radio-button-unchecked"} type="MaterialIcons"/>
                         </View>
                         <View style={{ width: "80%", color: "#0A4E52",...this.margin }}>
                             <ProfileView delay={this.props.delay} hideMe={() => {
@@ -60,21 +61,21 @@ export default class SelectableContactsMaster extends Component {
                             }} phone={this.props.contact.phone}></ProfileView>
                         </View>
                     </View>
-                </Button>
+                </TouchableOpacity>
                 <View>
                     <View style={{ alignItems: 'flex-end', marginLeft: "60%", }}>
-                        <Button onPress={() => requestAnimationFrame(() => this.setMaster())} transparent>
+                        <TouchableOpacity onPress={() => requestAnimationFrame(() => this.setMaster())} transparent>
                             <View>
                                 <View style={{ width: "90%", alignSelf: 'flex-end', flexDirection: 'row', }}>
-                                    <Icon name={this.props.masterchecked ? "radio-button-checked" :
-                                        "radio-button-unchecked"} type="MaterialIcons"></Icon>
+                                    <MaterialIcons style={{ ...GState.defaultIconSize }} name={this.props.masterchecked ? "radio-button-checked" :
+                                        "radio-button-unchecked"} type="MaterialIcons"/>
                                     <Text style={{
                                         fontStyle: 'italic',
                                         fontWeight: 'bold', color: "#0A4E52", marginTop: "3%"
                                     }}>master</Text>
                                 </View>
                             </View>
-                        </Button>
+                        </TouchableOpacity>
                     </View>
                 </View>
                 <MenuDivider color="#1FABAB" />

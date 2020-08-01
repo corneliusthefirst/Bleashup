@@ -1,8 +1,6 @@
 import React, { Component } from 'react';
 
-import { View, TouchableOpacity, TouchableWithoutFeedback, PermissionsAndroid } from "react-native"
-import Image from "react-native-scalable-image"
-import { Text, Icon, Spinner } from 'native-base';
+import { View, TouchableOpacity, Text, TouchableWithoutFeedback, PermissionsAndroid } from "react-native"
 import { AnimatedCircularProgress } from 'react-native-circular-progress';
 import GState from '../../../stores/globalState';
 import FileExachange from '../../../services/FileExchange.js';
@@ -13,6 +11,7 @@ import TextContent from './TextContent';
 import CacheImages from '../../CacheImages';
 import Pickers from '../../../services/Picker';
 import BePureComponent from '../../BePureComponent';
+import  EvilIcons  from 'react-native-vector-icons/EvilIcons';
 const { fs } = rnFetchBlob
 export default class PhotoUploader extends BePureComponent {
     constructor(props) {
@@ -126,22 +125,18 @@ export default class PhotoUploader extends BePureComponent {
                                         (fill) => (<View>
                                             {this.state.uploading ? <TouchableWithoutFeedback onPress={() => this.cancelUpLoad(this.props.message.source)}>
                                                 <View>
-                                                    <Icon type="EvilIcons" style={{ color: ColorList.bodyBackground }} name="close">
-                                                    </Icon>
-                                                    <Spinner style={{ position: 'absolute', marginTop: "-136%", marginLeft: "-15%", }}>
-                                                    </Spinner>
+                                                    <EvilIcons type="EvilIcons" style={{...GState.defaultIconSize, color: ColorList.bodyBackground }} name="close"/>
                                                 </View>
                                             </TouchableWithoutFeedback> : <TouchableWithoutFeedback onPress={() => this.uploadPhoto()}>
                                                     <View>
-                                                        <Icon type="EvilIcons" style={{ color: ColorList.bodyBackground }} name="arrow-up">
-                                                        </Icon>
+                                                    <EvilIcons type="EvilIcons" style={{ ...GState.defaultIconSize, color: ColorList.bodyBackground }} name="arrow-up"/>
                                                     </View>
 
                                                 </TouchableWithoutFeedback>}
                                         </View>)
                                     }
                                 </AnimatedCircularProgress></View>
-                                <View style={{ marginTop: "15%", ...buttoner, width: 75, height: 25, }}><Text style={{ color: ColorList.bodyBackground }} note>{"("}{this.toMB(this.state.received).toFixed(1)}{"/"}
+                                <View style={{ marginTop: "15%", ...buttoner, width: 85, height: 25, }}><Text style={{ color: ColorList.bodyBackground }} note>{"("}{this.toMB(this.state.received).toFixed(1)}{"/"}
                                     {this.toMB(this.state.total).toFixed(1)}{")Mb"}</Text></View></View>}</View>
                 </View>
                 <View>

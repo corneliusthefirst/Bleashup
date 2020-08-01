@@ -14,10 +14,7 @@ import {
 } from "react-native";
 import Sound from "react-native-sound";
 import { AnimatedCircularProgress } from "react-native-circular-progress";
-import { Icon, Right, Spinner, Toast } from "native-base";
 import GState from "../../../stores/globalState";
-import BarIndicat from "../../BarIndicat";
-import { BarIndicator } from "react-native-indicators";
 import testForURL from "../../../services/testForURL";
 import converToHMS from "../highlights_details/convertToHMS";
 import FileExachange from "../../../services/FileExchange";
@@ -26,6 +23,8 @@ import stores from "../../../stores";
 import TextContent from "./TextContent";
 import emitter from '../../../services/eventEmiter';
 import BePureComponent from '../../BePureComponent';
+import  EvilIcons from 'react-native-vector-icons/EvilIcons';
+import  FontAwesome5  from 'react-native-vector-icons/FontAwesome5';
 export default class AudioMessage extends BePureComponent {
     constructor(props) {
         super(props);
@@ -348,13 +347,13 @@ export default class AudioMessage extends BePureComponent {
                                                 }
                                             >
                                                 <View>
-                                                    <Icon
-                                                        style={{ color: ColorList.bodyText }}
+                                                    <EvilIcons
+                                                        style={{...GState.defaultIconSize, color: ColorList.bodyText }}
                                                         type="EvilIcons"
                                                         name={
                                                             this.state.downloading ? "close" : "arrow-down"
                                                         }
-                                                    ></Icon>
+                                                    ></EvilIcons>
                                                 </View>
                                             </TouchableOpacity>
                                         </View>
@@ -369,11 +368,11 @@ export default class AudioMessage extends BePureComponent {
                                             )
                                         }
                                     >
-                                        <Icon
+                                        <FontAwesome5
                                             type="FontAwesome5"
-                                            style={{ color: ColorList.bodyText, fontSize: 20 }}
+                                            style={{...GState.defaultIconSize, color: ColorList.bodyText, fontSize: 20 }}
                                             name={!this.state.playing ? "play" : "pause"}
-                                        ></Icon>
+                                        />
                                     </TouchableOpacity>
                                 )}
                         </View>

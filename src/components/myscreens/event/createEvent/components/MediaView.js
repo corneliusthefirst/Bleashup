@@ -1,12 +1,13 @@
 import React, { Component } from 'react';
 import { View, TouchableOpacity } from 'react-native';
-import { Icon } from 'native-base';
 import testForURL from '../../../../../services/testForURL';
 import shadower from '../../../../shadower';
 import CacheImages from '../../../../CacheImages';
 import buttoner from '../../../../../services/buttoner';
 import ColorList from '../../../../colorList';
 import { TouchableWithoutFeedback } from 'react-native-gesture-handler';
+import  Ionicons  from 'react-native-vector-icons/Ionicons';
+import  MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 
 export default class MedaiView extends Component {
     constructor(props) {
@@ -32,14 +33,14 @@ export default class MedaiView extends Component {
                         position: "absolute",
                     }}>
                         {this.props.url.video ?
-                            <Icon onPress={() => {
+                            <Ionicons onPress={() => {
                                 this.props.showItem(this.props.url)
                             }} name="ios-play" style={{
                                 fontSize: 43, color: ColorList.bodyBackground
                             }} type="Ionicons" />
                             :
 
-                            <Icon onPress={() => {
+                            <MaterialIcons onPress={() => {
                                 this.props.showItem(this.props.url)
                             }} name="headset" style={{
                                 fontSize: 40, color: ColorList.bodyBackground

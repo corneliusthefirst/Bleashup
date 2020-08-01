@@ -1,9 +1,10 @@
 import React, { PureComponent } from "react";
-import { View, TouchableOpacity } from "react-native";
+import { View, TouchableOpacity, Text,  } from "react-native";
 import ColorList from "../../colorList";
-import { Text, Icon } from "native-base";
 import Pickers from "../../../services/Picker";
 import shadower from "../../shadower";
+import  AntDesign  from 'react-native-vector-icons/AntDesign';
+import  FontAwesome from 'react-native-vector-icons/FontAwesome';
 
 export default class FilePreview extends PureComponent {
   constructor(props) {
@@ -40,14 +41,14 @@ export default class FilePreview extends PureComponent {
             justifyContent: "center",
           }}
         >
-          <Icon
+          <AntDesign
             name={"profile"}
             type={"AntDesign"}
             style={{
               color: ColorList.bodyBackground,
               fontSize: 30,
             }}
-          ></Icon>
+          />
         </View>
         <View
           style={{
@@ -74,14 +75,14 @@ export default class FilePreview extends PureComponent {
             marginTop: "auto",
           }}
         >
-          <Icon
+          <FontAwesome
             type="FontAwesome"
             name="folder-open"
             style={{
               color: ColorList.bodyBackground,
               fontSize: 30,
             }}
-          ></Icon>
+          />
         </TouchableOpacity>
       </View>
     );

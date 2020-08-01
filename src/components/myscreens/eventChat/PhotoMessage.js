@@ -2,11 +2,10 @@ import React, { Component } from "react"
 import {
     View, TouchableOpacity,
     TouchableWithoutFeedback,
-    Vibration, PanResponder
+    Vibration, PanResponder,
+    Text 
 } from 'react-native';
-import { Text } from 'native-base';
 import TextContent from "./TextContent";
-import Image from 'react-native-scalable-image';
 import CacheImages from '../../CacheImages';
 import FileExachange from '../../../services/FileExchange';
 import testForURL from '../../../services/testForURL';
@@ -24,22 +23,6 @@ export default class PhotoMessage extends BePureComponent {
             text: "",
             time: "",
         };
-    }
-
-    componentDidMount() {
-        /*if (testForURL(this.props.message.photo)) {
-            this.exchanger = new FileExachange(this.props.message.photo, this.path, 0, 0, (received, total) => {
-
-            }, (dir, received, total) => {
-                stores.Messages.replaceMessage(this.props.room, { ...this.props.message, photo: 'file://' + dir }).then(() => {
-
-                })
-            }, (error) => {
-                console.warn(error)
-            })
-            this.exchanger.download(0, 0)
-        } else {
-        }*/
     }
     getPhotoSmall() {
         return this.props.message.sender && stores.LoginStore.user.phone.replace("00", "+") === this.props.message.sender.phone ?

@@ -1,11 +1,12 @@
 import React from "react";
-import { View, Dimensions } from "react-native";
-import { Text, Spinner ,Icon} from "native-base";
+import { View, Text, Dimensions } from "react-native";
 import Photo from "./PhotoLister";
 import Video from "./VideoLister";
 import File from "./FileLister";
 import TabModal from "../../mainComponents/TabModal";
 import ColorList from '../../colorList';
+import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
+import Spinner from '../../Spinner';
 const screenheight = Math.round(Dimensions.get("window").height);
 export default class MediaTabModal extends TabModal {
     initialize() {
@@ -37,12 +38,12 @@ export default class MediaTabModal extends TabModal {
     tabs = [
         {
             heading: () => (
-                <Icon
+                <MaterialIcons
                     onPress={this.onClosedModal.bind(this)}
                     type="MaterialIcons"
                     name="arrow-back"
                     style={{ color: ColorList.headerIcon }}
-                ></Icon>
+                />
             ),
             body: () => null,
         },

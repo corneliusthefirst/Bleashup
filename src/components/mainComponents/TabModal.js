@@ -1,10 +1,11 @@
 import React from "react";
-import { View, Dimensions } from "react-native";
-import { Text, Container, Tabs, Tab, TabHeading } from "native-base";
+import { View, Dimensions, Text, } from "react-native";
+import { Container, Tabs, Tab, TabHeading } from "native-base";
 import ColorList from "../colorList";
 import bleashupHeaderStyle from "../../services/bleashupHeaderStyle";
 import BleashupModal from "./BleashupModal";
 import shadower from "../shadower";
+import GState from "../../stores/globalState";
 const screenheight = Math.round(Dimensions.get("window").height);
 export default class TabModal extends BleashupModal {
   TabHeader() {
@@ -39,7 +40,7 @@ export default class TabModal extends BleashupModal {
     {
       heading: () => (
         <View>
-          <Text>Sample</Text>
+          <Text style={{...GState.defaultTextStyle}}>Sample</Text>
         </View>
       ),
       body: () => <View></View>,

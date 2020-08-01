@@ -6,21 +6,22 @@ import {
   TouchableWithoutFeedback,
   PanResponder,
   ScrollView,
+  Image,
   TouchableOpacity,
+  Text,
 } from 'react-native';
-import { Text, Content, Icon, Spinner, Title, Thumbnail } from 'native-base';
-import firebase from 'react-native-firebase';
 import stores from '../../../stores';
 import BleashupFlatList from '../../BleashupFlatList';
 import CommiteeItem from './CommiteeItem';
 import BleashupScrollView from '../../BleashupScrollView';
-import { union, uniq } from "lodash";
+import { union } from "lodash";
 import GState from '../../../stores/globalState';
 import emitter from '../../../services/eventEmiter';
 import shadower from '../../shadower';
 import colorList from '../../colorList';
 import bleashupHeaderStyle from '../../../services/bleashupHeaderStyle';
 import { observer } from 'mobx-react';
+import AntDesign  from 'react-native-vector-icons/AntDesign';
 
 @observer
 class Commitee extends Component {
@@ -89,7 +90,7 @@ class Commitee extends Component {
               justifyContent: 'center',
             }}
           >
-            <Thumbnail
+            <Image resizeMode={"cover"}
               source={require('../../../../assets/committees.png')}
               style={{ width: 130, height: 32 }}
             />
@@ -108,10 +109,9 @@ class Commitee extends Component {
                 })
               }
             >
-              <Icon
+              <AntDesign
                 style={{ color: colorList.bodyIcon, fontSize: 22 }}
                 name="plus"
-                type="AntDesign"
               />
             </TouchableOpacity>
           </View>

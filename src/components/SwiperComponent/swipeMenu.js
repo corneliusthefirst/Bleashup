@@ -3,8 +3,9 @@
 import React, { Component } from "react";
 import { View, Text , TouchableOpacity} from 'react-native';
 import Menu, { MenuItem, MenuDivider } from 'react-native-material-menu';
-import { Icon } from "native-base";
 import ColorList from '../colorList';
+import Entypo from 'react-native-vector-icons/Entypo';
+import GState from "../../stores/globalState";
 
 export default class SwipeMenu extends React.PureComponent {
   _menu = null;
@@ -29,10 +30,10 @@ export default class SwipeMenu extends React.PureComponent {
           button={
               <TouchableOpacity onPress={this.showMenu}>
                 <View style={{width:30,height:'100%', justifyContent: 'center',alignItems:'center'}}>
-                 <Icon
+                 <Entypo
                    name="dots-three-vertical"
                    type="Entypo"
-                   style={{ color: 'white', fontSize: 16 }}
+                   style={{...GState.defaultIconSize, color: 'white', fontSize: 16 }}
                    onPress={this.showMenu}
                  />
                 </View>

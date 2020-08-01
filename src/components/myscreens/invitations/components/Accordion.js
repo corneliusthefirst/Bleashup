@@ -1,12 +1,7 @@
 import React, { Component } from "react";
-import autobind from "autobind-decorator";
+import EvilIcons from 'react-native-vector-icons/EvilIcons';
 import {
-  Content, Card, CardItem, Text, Body, Container, Icon, Header, Form, Thumbnail, Item,
-  Title, Input, Left, Right, H3, H1, H2, Spinner, Button, InputGroup,
-  DatePicker, CheckBox, List, Accordion, DeckSwiper
-} from "native-base";
-import {
-  Platform, View,Dimensions
+  Text, Platform, View,Dimensions
 } from 'react-native';
 
 
@@ -16,7 +11,6 @@ export default class AccordionModule extends Component {
     super(props);
   }
 
-   @autobind
   _renderHeader(item, expanded) {
     return (
       <View style={{
@@ -31,9 +25,9 @@ export default class AccordionModule extends Component {
         {
           this.props.long &&
           (expanded
-            ? <View style={{alignSelf:"flex-end" }}><Icon style={{alignSelf:"flex-end",fontSize: 18 }} name="arrow-up" type="EvilIcons" /></View>
-            : <Icon style={{alignSelf:"flex-end",fontSize: 18 }} name="arrow-down" type="EvilIcons"/>)
-  
+            ? <View style={{alignSelf:"flex-end" }}><EvilIcons style={{alignSelf:"flex-end",fontSize: 18 }} name="arrow-up" type="EvilIcons" /></View>
+            : <EvilIcons style={{alignSelf:"flex-end",fontSize: 18 }} name="arrow-down" type="EvilIcons"/>)
+
         }
    
       </View>
@@ -65,7 +59,7 @@ export default class AccordionModule extends Component {
       dataArray={this.props.dataArray}
       animation={true}
       expanded={true}
-      renderHeader={this._renderHeader}
+      renderHeader={this._renderHeader.bind(this)}
       renderContent={this._renderContent}
       style={{ borderWidth:0,width:width-width/8 }}
     />

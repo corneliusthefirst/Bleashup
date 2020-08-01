@@ -1,6 +1,5 @@
 import React from "react";
-import { View, ScrollView,TouchableOpacity } from "react-native";
-import { Icon,Title,Text,Spinner } from "native-base";
+import { View, ScrollView,TouchableOpacity,Text } from "react-native";
 import Settings from "./Settings";
 import Members from "./Members";
 import MoreMembersMenu from "./MoreMembersMenu";
@@ -8,7 +7,9 @@ import RemoveMemberMenu from "./RemoveMemberMenu";
 import BleashupModal from "../../mainComponents/BleashupModal";
 import ColorList from "../../colorList";
 import bleashupHeaderStyle from "../../../services/bleashupHeaderStyle";
-
+import MaterialIcons  from 'react-native-vector-icons/MaterialIcons';
+import GState from "../../../stores/globalState";
+import Spinner from '../../Spinner';
 export default class SettingsTabModal extends BleashupModal {
   onClosedModal() {
     this.props.closed();
@@ -40,26 +41,27 @@ export default class SettingsTabModal extends BleashupModal {
               <TouchableOpacity style={{width:"20%", marginRight: 10, background:'red'}} onPress={() => 
                requestAnimationFrame(this.onClosedModal.bind(this))
               } >
-              <Icon
+              <MaterialIcons
                 style={{
+                  ...GState.defaultIconSize,
                   color: ColorList.headerIcon,
                   marginLeft: 20,
                 }}
                 type={"MaterialIcons"}
                 name={"arrow-back"}
-              ></Icon>
+              />
               </TouchableOpacity>
               <View style={{ 
                 width:"80%"
                }}>
-              <Title style={{ 
+              <Text style={{ 
                 color: ColorList.headerText, 
                 fontWeight: "600",
                 fontSize:ColorList.fontSize,
                 alignSelf:'flex-start' 
               }}>
                 {"Activity Settings"}
-              </Title>
+              </Text>
               </View>
             </View>
           </View>
@@ -79,6 +81,7 @@ export default class SettingsTabModal extends BleashupModal {
             <View style={{
               height:ColorList.headerHeight
             }}>{this.TabHeader()}</View>
+            <View style={{height:"80%"}}>
           {this.state.isMounted ?
             <Members
               currentPhone={this.props.currentPhone}
@@ -88,7 +91,8 @@ export default class SettingsTabModal extends BleashupModal {
               participants={this.props.event.participant}
               master={this.props.master}
               changeMasterState={this.props.changeMasterState}
-            ></Members>:<Spinner size={"small"} ></Spinner>}
+                ></Members>:<Spinner size={"small"} ></Spinner>}
+                </View>
           </View>
         </ScrollView>
       </View>

@@ -1,10 +1,11 @@
 import React, { Component } from 'react';
-import { View, Vibration, TouchableOpacity } from 'react-native';
-import { Title, Text, Icon } from 'native-base';
+import { View, Vibration, TouchableOpacity, Text } from 'react-native';
 import HighlightContent from './HighlightContent';
 import moment from 'moment';
 import stores from '../../../stores';
 import Creator from '../reminds/Creator';
+import  Entypo  from 'react-native-vector-icons/Entypo';
+import GState from '../../../stores/globalState';
 
 
 export default class HighLight extends Component {
@@ -63,19 +64,7 @@ export default class HighLight extends Component {
         this.props.showInput(this.props.highlight)
     }
     closingSwipeout() {
-        /* if (this.replying) {
-              if(!this.closed){
-                  this.closing++
-                  this.closed = true
-  
-                  this.closing = 0
-                  Vibration.vibrate(this.duration)
-                  setTimeout(() => {
-                      this.closed = false
-                  }, 1000)
-              }
-              this.replying = false
-          }*/
+       
     }
     showCreator() {
         this.setState({
@@ -94,9 +83,10 @@ export default class HighLight extends Component {
                         alignSelf: 'center', margin: '1%',
                         backgroundColor: this.props.background ? this.props.background : "#9EEDD3",
                     }}>
-                        <View style={{ height: 50,  borderRadius: 8, }}>
-                            <Text ellipsizeMode={"tail"} numberOfLines={2} style={{
+                        <View style={{ height: 55,  borderRadius: 8, }}>
+                            <Text ellipsizeMode={"tail"} numberOfLines={3} style={{
                                 alignSelf: 'center',
+                                ...GState.defaultTextStyle,
                                 margin: '3%', fontWeight: 'bold', fontSize: 15,
                             }}>
                                 {this.props.highlight.title}
@@ -106,10 +96,17 @@ export default class HighLight extends Component {
                             {this.renderContent(this.props.highlight)}
                         </View>
 
-                        <View style={{ flexDirection: "row", justifyContent: "space-between", bottom: 0, margin: 3, width: "98%" }}>
+                        <View style={{ 
+                            flexDirection: "row", 
+                            justifyContent: "space-between", 
+                            bottom: 0, 
+                            margin: 2,
+                            marginTop: "5%", 
+                            width: "98%" 
+                        }}>
 
                         {!this.props.shouldNotMention && <View style={{}}>
-                            { <Icon name="reply" onPress={() => this.props.mention?this.props.mention():this.quickMention()} type="Entypo" style={{ color: '#555756', fontSize:35 }}></Icon>}
+                            { <Entypo name="reply" onPress={() => this.props.mention?this.props.mention():this.quickMention()} type="Entypo" style={{ color: '#555756', fontSize:35 }}/>}
                         </View>}
                             <Creator creator={this.props.highlight.creator} created_at={this.props.highlight.created_at} color={this.props.color ? this.props.color : "#9EEDD3"}></Creator>
                         </View>

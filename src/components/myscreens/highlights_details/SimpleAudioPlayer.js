@@ -1,15 +1,16 @@
 import React, { Component } from 'react';
 
-import { View, Slider, TouchableOpacity } from "react-native"
+import { View, Slider, TouchableOpacity, Text } from "react-native"
 import { AnimatedCircularProgress } from 'react-native-circular-progress';
 import Sound from 'react-native-sound';
 import BarIndicat from '../../BarIndicat';
 import { BarIndicator } from "react-native-indicators"
 import converToHMS from './convertToHMS';
-import { Text, Icon, Right } from "native-base"
 import Pickers from '../../../services/Picker';
 import FileExachange from '../../../services/FileExchange';
 import rnFetchBlob from 'rn-fetch-blob';
+import  FontAwesome5  from 'react-native-vector-icons/FontAwesome5';
+import ColorList from '../../colorList';
 const AppDir = rnFetchBlob.fs.dirs.SDCardDir + '/Bleashup'
 
 export default class SimpleAudioPlayer extends Component {
@@ -145,7 +146,7 @@ export default class SimpleAudioPlayer extends Component {
                         }}></Slider>
                             <View style={{ display: 'flex', flexDirection: 'row', alignContent: 'space-between', }}>
                                 <Text>{converToHMS(Math.floor(this.state.currentTime))}</Text>
-                                <Right><Text>{converToHMS(this.props.url.duration)}</Text></Right>
+                                <View style={{marginLeft: "auto",}}><Text>{converToHMS(this.props.url.duration)}</Text></View>
                             </View>
                         </View>
                     </View> : <View style={{ textStyleD }}>{/*!this.state.playing ? <BarIndicat animating={false}
@@ -153,11 +154,9 @@ export default class SimpleAudioPlayer extends Component {
                     <View style={{ margin: '4%' }}>
                         {!this.state.playing ? <TouchableOpacity
                             onPress={() => requestAnimationFrame(() => this.plays())}>
-                            <Icon type="FontAwesome5" style={{ color: "#0A4E52", fontSize: 20 }} name="play">
-                            </Icon>
+                            <FontAwesome5 type="FontAwesome5" style={{ color: ColorList.bodyBackground, fontSize: 20 }} name="play"/>
                         </TouchableOpacity> : <TouchableOpacity onPress={() => requestAnimationFrame(() => this.pause())}>
-                                <Icon type="FontAwesome5" style={{ color: "#0A4E52", fontSize: 20 }} name="pause">
-                                </Icon>
+                                <FontAwesome5 type="FontAwesome5" style={{ color: ColorList.bodyBackground, fontSize: 20 }} name="pause"></FontAwesome5>
                             </TouchableOpacity>}
                     </View>
                 </View>

@@ -1,10 +1,11 @@
 import React, { Component } from 'react';
 import BleashupModal from '../../../../mainComponents/BleashupModal';
 import TabModal from '../../../../mainComponents/TabModal';
-import { Icon } from 'native-base';
 import Likers from '../../../../Likers';
 import { View } from 'react-native';
 import ColorList from '../../../../colorList';
+import Entypo  from 'react-native-vector-icons/Entypo';
+import FontAwesome  from 'react-native-vector-icons/FontAwesome';
 
 export default class SocialTabModal extends TabModal{
   initialize(){
@@ -25,11 +26,11 @@ activeTextStyle={color:ColorList.likeActive}
   state = {}
   tabs = [
       {
-          heading: () => <Icon name="thumbs-up" type={"Entypo"} style={{ fontSize: this.returnFontSize(0)}}></Icon>,
+          heading: () => <Entypo name="thumbs-up" type={"Entypo"} style={{ fontSize: this.returnFontSize(0)}}/>,
           body : () =>  <Likers id={this.props.id}></Likers>
       },
       {
-          heading: () => <Icon name={"support"} type={"FontAwesome"} style={{ fontSize: this.returnFontSize(1)}}></Icon>,
+          heading: () => <FontAwesome name={"support"} type={"FontAwesome"} style={{ fontSize: this.returnFontSize(1)}}/>,
           body : () => <View></View>
       }
   ]

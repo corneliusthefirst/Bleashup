@@ -24,6 +24,7 @@ import ColorList from "../../colorList";
 import ShareFrame from "../../mainComponents/ShareFram";
 import Share from "../../../stores/share";
 import replies from "../eventChat/reply_extern";
+import Toaster from "../../../services/Toaster";
 let { height, width } = Dimensions.get("window");
 
 export default class Votes extends BleashupModal {
@@ -207,7 +208,7 @@ export default class Votes extends BleashupModal {
             })
             .catch(() => {
              this.props.stopLoader && this.props.stopLoader();
-              Toast.show({
+              Toaster({
                 text: "unable to perform this request",
                 duration: 4000,
               });
@@ -216,10 +217,10 @@ export default class Votes extends BleashupModal {
           sayAppBusy();
         }
       } else {
-        Toast.show({ text: "voted already", duration: 4000 });
+        Toaster({ text: "voted already", duration: 4000 });
       }
     } else {
-      Toast.show({ text: "Voting period has ended", duration: 4000 });
+      Toaster({ text: "Voting period has ended", duration: 4000 });
     }
   }
   voteItem(message) {
@@ -247,7 +248,7 @@ export default class Votes extends BleashupModal {
           }
         })
         .catch(() => {
-          Toast.show({ text: "unable to perform request" });
+          Toaster({ text: "unable to perform request" });
         });
     } else {
       sayAppBusy();

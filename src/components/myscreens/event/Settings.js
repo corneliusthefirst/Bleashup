@@ -4,11 +4,8 @@ import {
   PermissionsAndroid,
   StatusBar,
   TouchableOpacity, ScrollView, TextInput,
-  TouchableWithoutFeedback 
+  TouchableWithoutFeedback, Text 
 } from "react-native";
-import {
-  Text, Item, Button, Icon, Spinner, Label, Title,
-} from "native-base";
 import { Dropdown } from "react-native-material-dropdown";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import NumericInput from "react-native-numeric-input";
@@ -17,6 +14,13 @@ import { find } from "lodash";
 import bleashupHeaderStyle from "../../../services/bleashupHeaderStyle";
 import colorList from "../../colorList";
 import Menu, { MenuItem, MenuDivider } from "react-native-material-menu";
+import  AntDesign from 'react-native-vector-icons/AntDesign';
+import MaterialIcons  from 'react-native-vector-icons/MaterialIcons';
+import MaterialIconCommunity from 'react-native-vector-icons/MaterialCommunityIcons';
+import FontAwesome from 'react-native-vector-icons/FontAwesome';
+import GState from "../../../stores/globalState";
+import EvilIcons  from 'react-native-vector-icons/EvilIcons';
+import Spinner from '../../Spinner';
 
 var event = null;
 export default class Settings extends Component {
@@ -211,17 +215,16 @@ export default class Settings extends Component {
                 headerHeight: colorList.headerHeight,
               }}
             >
-              <Icon
+              <AntDesign
                 name="edit"
                 active={true}
-                type="AntDesign"
                 style={{
                   color: colorList.bodyIcon,
                   alignSelf: "center",
                   fontSize: 32,
                 }}
               />
-              <Item
+              <View
                 style={{
                   width: "75%",
                   flexDirection: "row",
@@ -242,9 +245,9 @@ export default class Settings extends Component {
                   value={this.state.activityName}
                   placeholder={"Activity Name"}
                 ></TextInput>
-              </Item>
+              </View>
             </View>
-            <Item
+            <View
               style={{
                 borderColor: colorList.bodyBackground,
                 marginTop: "4%",
@@ -252,33 +255,33 @@ export default class Settings extends Component {
               }}
             >
               <View pointerEvents={this.props.master ? null : "none"}>
-                <Button onPress={() => this.setPublic()} transparent>
-                  <Icon
+                <TouchableOpacity style={{ flexDirection: 'row',width:125,justifyContent: 'space-between', }} onPress={() => this.setPublic()} transparent>
+                  <MaterialIcons
                     name={
                       this.state.public
                         ? "radio-button-checked"
                         : "radio-button-unchecked"
                     }
                     type={"MaterialIcons"}
-                    style={{ color: colorList.bodyIcon }}
-                  ></Icon>
-                  <Text style={{ color: colorList.bodyText }}>
+                    style={{...GState.defaultIconSize, color: colorList.bodyIcon,marginLeft: 5, }}
+                  />
+                  <Text style={{ color: colorList.bodyText,marginTop: 5, }}>
                     {this.state.public ? "Public" : "Private"}
                   </Text>
-                </Button>
+                </TouchableOpacity>
               </View>
-            </Item>
+            </View>
           </View>
 
           <View
             pointerEvents={this.props.creator ? null : "none"}
             style={{ width: "100%", flexDirection: "row" }}
           >
-            <Icon
+            <MaterialIconCommunity
               name="account-group-outline"
               active={true}
               type="MaterialCommunityIcons"
-              style={{ color: colorList.bodyIcon, margin: "4%" }}
+              style={{...GState.defaultIconSize, color: colorList.bodyIcon, margin: "4%" }}
               onPress={this.showMenu}
             />
 
@@ -320,25 +323,28 @@ export default class Settings extends Component {
               </Menu>
             </TouchableOpacity>
           </View>
-          <View pointerEvents={this.props.creator ? null : "none"} style={{}}>
-            <Button onPress={() => this.closeActiviy()} transparent>
-              <Icon
-                name={this.state.closed ? "door-open" : "poweroff"}
-                type={this.state.closed ? "FontAwesome5" : "AntDesign"}
+          <View pointerEvents={this.props.creator ? null : "none"} style={{marginLeft: "4%",}}>
+            <TouchableOpacity style={{flexDirection: 'row',width:125,justifyContent: 'space-between',}} onPress={() => this.closeActiviy()} transparent>
+                <View>{this.state.closed?<FontAwesome
+                name={"door-open"}
+                type={"FontAwesome5"}
                 style={{
-                  color: this.state.closed ? colorList.headerIcon : "red",
+                  ...GState.defaultIconSize,
+                  color:  colorList.headerIcon
                 }}
-              ></Icon>
+              />:<AntDesign name={"poweroff"}
+              style={{...GState.defaultIconSize,color:'red'}}
+               ></AntDesign>}</View>
               <Text
                 style={{
                   fontWeight: "bold",
                   color: colorList.bodyText,
-                  marginLeft: "2.5%",
+                  marginTop: 5,
                 }}
               >
                 {this.state.closed ? "Open" : "Close"} Activiy
               </Text>
-            </Button>
+            </TouchableOpacity>
           </View>
         </ScrollView>
         {this.isNotSame() && (
@@ -353,18 +359,17 @@ export default class Settings extends Component {
               height: "10%",
             }}
           >
-            <Icon
+            <EvilIcons
               name="close"
               type="EvilIcons"
-              style={{ color: colorList.headerIcon }}
+              style={{...GState.defaultIconSize, color: colorList.headerIcon }}
               onPress={this.cancelUpdate.bind(this)}
-            ></Icon>
-            <Icon
-              style={{ color: colorList.indicatorColor }}
-              type="EvilIcons"
+            />
+            <EvilIcons
+              style={{...GState.defaultIconSize, color: colorList.indicatorColor }}
               onPress={this.saveConfigurations.bind(this)}
               name="check"
-            ></Icon>
+            />
           </View>
         )}
       </View>

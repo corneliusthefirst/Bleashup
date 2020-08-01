@@ -1,7 +1,6 @@
 import React, { PureComponent } from 'react';
 import  moment from 'moment';
-import { View } from 'react-native';
-import { Text } from 'native-base';
+import { View, Text } from 'react-native';
 import shadower from '../../shadower';
 export default class MediaSeparator extends PureComponent{
     constructor(props){

@@ -17,6 +17,7 @@ import EvilIcons from "react-native-vector-icons/EvilIcons";
 import Entypo from "react-native-vector-icons/Entypo";
 import AntDesign from "react-native-vector-icons/AntDesign";
 import ColorList from "../../colorList";
+import Toaster from "../../../services/Toaster";
 let dirs = rnFetchBlob.fs.dirs;
 export default class PhotoViewer extends BleashupModal {
   initialize() {
@@ -35,7 +36,7 @@ export default class PhotoViewer extends BleashupModal {
         this.props.photo.split("/")[this.props.photo.split("/").length - 1];
       rnFetchBlob.fs.exists(path).then((status) => {
         if (status) {
-          Toast.show({
+          Toaster({
             text: "Image has already been downloaded",
             duration: 4000,
           });
@@ -57,7 +58,7 @@ export default class PhotoViewer extends BleashupModal {
             })
             .fetch("GET", this.props.photo)
             .then((res) => {
-              Toast.show({
+              Toaster({
                 text: "Image Successfully downloaded",
                 type: "success",
                 duration: 4000,
@@ -65,7 +66,7 @@ export default class PhotoViewer extends BleashupModal {
             })
             .catch((e) => {
               console.warn(e);
-              Toast.show({
+              Toaster({
                 text: "unable to download this image",
                 duration: 5000,
               });

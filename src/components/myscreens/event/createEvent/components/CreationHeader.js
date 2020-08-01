@@ -1,8 +1,9 @@
 import React, { Component } from "react";
-import { View, TouchableOpacity } from "react-native";
+import { View, TouchableOpacity, Text } from "react-native";
 import ColorList from "../../../../colorList";
-import { Icon, Text } from "native-base";
 import bleashupHeaderStyle from "../../../../../services/bleashupHeaderStyle";
+import  MaterialIcons  from 'react-native-vector-icons/MaterialIcons';
+import GState from "../../../../../stores/globalState";
 
 export default class CreationHeader extends Component {
   constructor(props) {
@@ -25,10 +26,10 @@ export default class CreationHeader extends Component {
               onPress={() => requestAnimationFrame(this.props.back)}
               style={{ width: 30, marginTop: "auto", marginBottom: "auto" }}
             >
-              <Icon
+              <MaterialIcons
                 type="MaterialIcons"
                 name="arrow-back"
-                style={{ color: ColorList.headerIcon }}
+                style={{...GState.defaultIconSize, color: ColorList.headerIcon }}
               />
             </TouchableOpacity>
           )}

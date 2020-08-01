@@ -2,7 +2,9 @@
 import React, { Component } from 'react';
 import VideoController from '../../eventChat/VideoController';
 import {Animated,View,StyleSheet,} from 'react-native';
-import { Icon } from 'native-base';
+import  MaterialCommunityIcons  from 'react-native-vector-icons/MaterialCommunityIcons';
+import GState from '../../../../stores/globalState';
+import  MaterialIcons  from 'react-native-vector-icons/MaterialIcons';
 
 export default class VideoViewerController  extends VideoController {
 
@@ -74,8 +76,8 @@ export default class VideoViewerController  extends VideoController {
     renderPlayPause() { 
 
         return this.renderControl(
-            <Icon type="MaterialCommunityIcons" 
-            name={this.state.paused?"play-circle-outline":"pause"} style={{ color: 'white',fontSize:55}}></Icon>,
+            <MaterialCommunityIcons type="MaterialCommunityIcons" 
+            name={this.state.paused?"play-circle-outline":"pause"} style={{...GState.defaultIconSize, color: 'white',fontSize:55}}/>,
             this.methods.togglePlayPause,
             styles.controls.playPause
         );
@@ -126,9 +128,9 @@ export default class VideoViewerController  extends VideoController {
             return(
             
                 <View style={[styles.loader]}>
-                      {this.props.nextPrev?<Icon name="skip-previous" type="MaterialIcons" style={{color:"white",fontSize:40,paddingRight:"10%"}} onPress={this.props.previousVideo}/>:null}
+                      {this.props.nextPrev?<MaterialIcons name="skip-previous" type="MaterialIcons" style={{...GState.defaultIconSize,color:"white",fontSize:40,paddingRight:"10%"}} onPress={this.props.previousVideo}/>:null}
                       {playPauseControl}
-                      {this.props.nextPrev?<Icon name="skip-next" type="MaterialIcons" style={{color:"white",fontSize:40,paddingLeft:"10%"}} onPress={this.props.nextVideo}/>:null}
+                      {this.props.nextPrev?<MaterialIcons name="skip-next" type="MaterialIcons" style={{...GState.defaultIconSize,color:"white",fontSize:40,paddingLeft:"10%"}} onPress={this.props.nextVideo}/>:null}
                 </View>
                 
             );

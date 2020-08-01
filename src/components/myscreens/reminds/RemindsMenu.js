@@ -1,9 +1,9 @@
 import React, { Component } from "react";
 import { View, Text, TouchableOpacity } from "react-native";
 import Menu, { MenuItem, MenuDivider } from "react-native-material-menu";
-import { Icon } from "native-base";
 import emitter from "../../../services/eventEmiter";
 import ColorList from "../../colorList";
+import  Entypo  from 'react-native-vector-icons/Entypo';
 
 export default class RemindsMenu extends Component {
     constructor(props) {
@@ -41,7 +41,7 @@ export default class RemindsMenu extends Component {
                     style={{ backgroundColor: ColorList.bodyBackground }}
                     ref={this.setMenuRef}
                     button={
-                        <TouchableOpacity onPress={() => requestAnimationFrame(this.showMenu)} ><Icon
+                        <TouchableOpacity onPress={() => requestAnimationFrame(this.showMenu)} ><Entypo
                             style={{
                                 color: ColorList.bodyIcon,
                                 fontSize: 25,
@@ -49,7 +49,7 @@ export default class RemindsMenu extends Component {
                             }}
                             name="dots-three-vertical"
                             type="Entypo"
-                        ></Icon></TouchableOpacity>
+                        /></TouchableOpacity>
                     }
                 >
                     <View>

@@ -1,8 +1,6 @@
 import React, { Component } from 'react';
 
 import { View, TouchableOpacity, TouchableWithoutFeedback, PermissionsAndroid } from "react-native"
-import Image from "react-native-scalable-image"
-import { Text, Icon, Spinner } from 'native-base';
 import { AnimatedCircularProgress } from 'react-native-circular-progress';
 import FileExachange from '../../../services/FileExchange';
 import Pickers from '../../../services/Picker';
@@ -11,6 +9,8 @@ import buttoner from '../../../services/buttoner';
 import ColorList from '../../colorList';
 import TextContent from './TextContent';
 import BePureComponent from '../../BePureComponent';
+import EvilIcons from 'react-native-vector-icons/EvilIcons';
+import GState from '../../../stores/globalState';
 const { fs } = rnFetchBlob
 export default class VideoUploader extends BePureComponent {
     constructor(props) {
@@ -119,14 +119,13 @@ export default class VideoUploader extends BePureComponent {
                                                     {
                                                         (fill) => (<View>
                                                             {this.state.uploading ? <TouchableWithoutFeedback onPress={() => this.cancelUpLoad(this.props.message.source)}>
-                                                                <View><Icon type="EvilIcons" style={{ color: ColorList.bodyBackground }} name="close">
-                                                                </Icon>
-                                                                    <Spinner style={{ position: 'absolute', marginTop: "-136%", marginLeft: "-15%", }}></Spinner>
+                                                                <View><EvilIcons type="EvilIcons" style={{...GState.defaultIconSize, color: ColorList.bodyBackground }} name="close">
+                                                                </EvilIcons>
                                                                 </View>
                                                             </TouchableWithoutFeedback> : <TouchableWithoutFeedback onPress={() => !this.state.uploading && this.uploadVideo()}>
                                                                     <View>
-                                                                        <Icon type="EvilIcons" style={{ color: ColorList.bodyBackground }} name="arrow-up">
-                                                                        </Icon>
+                                                                        <EvilIcons type="EvilIcons" style={{ ...GState.defaultIconSize, color: ColorList.bodyBackground }} name="arrow-up">
+                                                                        </EvilIcons>
                                                                     </View>
 
                                                                 </TouchableWithoutFeedback>}
@@ -145,10 +144,11 @@ export default class VideoUploader extends BePureComponent {
                                     <TouchableOpacity
                                         onPress={() => this.props.playVideo(this.props.message.source)
                                         }>
-                                        <Icon type="EvilIcons" name="play" style={{
+                                        <EvilIcons type="EvilIcons" name="play" style={{
+                                            ...GState.defaultIconSize,
                                             fontSize: 40,
                                             color: ColorList.bodyBackground
-                                        }}></Icon>
+                                        }}/>
                                     </TouchableOpacity>
                                 </View>
                             </View>

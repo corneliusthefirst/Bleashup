@@ -5,7 +5,6 @@ import {
     StyleSheet, Text, TouchableOpacity, View, ScrollView, Alert, Vibration, Platform, TouchableWithoutFeedback
 } from 'react-native';
 import { AnimatedCircularProgress } from 'react-native-circular-progress';
-import { Icon, Right, Spinner, Toast } from 'native-base';
 import GState from '../../../stores/globalState';
 import testForURL from '../../../services/testForURL';
 import FileExachange from '../../../services/FileExchange';
@@ -14,6 +13,8 @@ import stores from '../../../stores';
 import ColorList from '../../colorList';
 import TextContent from './TextContent';
 import BePureComponent from '../../BePureComponent';
+import  EvilIcons  from 'react-native-vector-icons/EvilIcons';
+import  FontAwesome  from 'react-native-vector-icons/FontAwesome';
 
 export default class FileAttarchementMessaege extends BePureComponent {
     constructor(props) {
@@ -168,11 +169,8 @@ export default class FileAttarchementMessaege extends BePureComponent {
                                         <TouchableOpacity onPress={() => this.state.downloading ? this.cancelDownLoad(this.props.message.source) :
                                             this.downloadFile(this.props.message.source)}>
                                             <View>
-                                                <Icon style={{ color: ColorList.bodyText }} type="EvilIcons"
-                                                    name={this.state.downloading ? "close" : "arrow-down"}></Icon>
-                                            </View>
-                                            <View style={{ position: 'absolute', marginTop: '-103%', marginLeft: '-14%', }}>
-                                                {this.state.downloading ? <Spinner></Spinner> : null}
+                                                <EvilIcons style={{...GState.defaultIconSize, color: ColorList.bodyText }} type="EvilIcons"
+                                                    name={this.state.downloading ? "close" : "arrow-down"}/>
                                             </View>
                                         </TouchableOpacity>
                                     </View>
@@ -180,8 +178,7 @@ export default class FileAttarchementMessaege extends BePureComponent {
                             }
                         </AnimatedCircularProgress></View> : <TouchableOpacity
                             onPress={() => requestAnimationFrame(() => this.openFile())}>
-                                <Icon type="FontAwesome" style={{ color: ColorList.bodyText, fontSize: 22,alignSelf:'center',justifyContent: 'center', }} name="folder-open">
-                                </Icon>
+                                <FontAwesome type="FontAwesome" style={{ color: ColorList.bodyText, fontSize: 22,alignSelf:'center',justifyContent: 'center', }} name="folder-open"/>
                             </TouchableOpacity>}<View>
                             {!testForURL(this.props.message.source) ? <Text style={{alignSelf: 'center',}}>{this.toMB(this.state.total).toFixed(1)}{"Mb"}</Text> :
                                 <Text style={{ fontSize: 10,alignSelf: 'center',justifyContent: 'center', }} note>{"("}{this.toMB(isNaN(this.state.received) ? 0 : this.state.received).toFixed(1)}{"/"}

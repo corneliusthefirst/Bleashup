@@ -10,7 +10,6 @@ import {
     WebView
   } from 'react-native';
 import Video from 'react-native-video';
-// import Image from 'react-native-scalable-image';
 import PropTypes from 'prop-types';
 
 import Post from './Post';

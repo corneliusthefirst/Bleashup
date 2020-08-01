@@ -1,9 +1,7 @@
 import React, { PureComponent } from "react";
-import ModalBox from "react-native-modalbox";
-import { Container, Spinner, Text, Item } from "native-base";
 import BleashupFlatList from "../../BleashupFlatList";
 import ProfileView from "../invitations/components/ProfileView";
-import { TouchableOpacity, View } from "react-native";
+import { TouchableOpacity, View, Text } from "react-native";
 import IntervalSeparator from "../reminds/IntervalSeparator";
 import bleashupHeaderStyle from "../../../services/bleashupHeaderStyle";
 import ColorList from "../../colorList";
@@ -69,7 +67,7 @@ export default class ContactListModal extends BleashupModal {
                                                 from={item.from}
                                             ></IntervalSeparator>
                                         ) : (
-                                                <Item style={{ margin: "1%" }} key={index.toString()}>
+                                                <View style={{ margin: "1%" }} key={index.toString()}>
                                                     <View style={{ display: "flex", flexDirection: "row" }}>
                                                         <View style={{ margin: "2%", height: 60 }}>
                                                             <ProfileView
@@ -78,11 +76,11 @@ export default class ContactListModal extends BleashupModal {
                                                             ></ProfileView>
                                                         </View>
                                                     </View>
-                                                </Item>
+                                                </View>
                                             )}
                                     </View>
                                 ) : (
-                                        <Item style={{ margin: "1%" }} key={index.toString()}>
+                                        <View style={{ margin: "1%" }} key={index.toString()}>
                                             <View style={{ display: "flex", flexDirection: "row" }}>
                                                 <View style={{ margin: "2%", height: 60 }}>
                                                     <ProfileView
@@ -91,7 +89,7 @@ export default class ContactListModal extends BleashupModal {
                                                     ></ProfileView>
                                                 </View>
                                             </View>
-                                        </Item>
+                                        </View>
                                     );
                             }}
                         ></BleashupFlatList>

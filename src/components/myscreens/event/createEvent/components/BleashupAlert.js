@@ -1,13 +1,9 @@
 import React, { Component } from "react";
-import {
-  Content, Card, CardItem, Text, Body, Container, Icon, Header,
-  Form, Item, Title, Input, Left, Right, H3, H1, H2, Spinner,
-  Button, InputGroup, DatePicker, Thumbnail, Alert,Textarea,List,ListItem,Label
-} from "native-base";
-import { StyleSheet, View,Image,TouchableOpacity,FlatList,ScrollView,Dimensions} from 'react-native';
+import { StyleSheet, View,Text,Image,TouchableOpacity,FlatList,ScrollView,Dimensions} from 'react-native';
 
 import Modal from 'react-native-modalbox';
 import ColorList from '../../../../colorList';
+import shadower from "../../../../shadower";
 
 let {height, width} = Dimensions.get('window');
 
@@ -16,6 +12,10 @@ export default class BleashupAlert extends Component {
         super(props);
         this.state={
         }
+    }
+    center={
+      marginBottom: "auto",
+      marginTop: "auto",
     }
 
     render(){
@@ -48,16 +48,34 @@ export default class BleashupAlert extends Component {
 
             <View style={{flex:3,flexDirection:"row",justifyContent:"flex-end"}}>
             <TouchableOpacity style={{width:"21%",marginRight:"5%"}}>
-            <Button style={{width:"100%",borderRadius:15,borderColor:"red",backgroundColor:"#1FABAB",justifyContent:'center',alignItem:'center'}}
+            <TouchableOpacity style={{
+              width:"100%",
+              height:40,
+              borderRadius:15,
+              flexDirection: 'row',
+              borderColor:"red",
+              backgroundColor:ColorList.indicatorColor,
+              justifyContent:'center',
+              alignItem:'center',
+              ...shadower(2)}}
                onPress={this.props.onClosed}>
-                    <Text style={{color:"#FEFFDE"}}>{this.props.refuse}</Text>
-            </Button> 
+                    <Text style={{color:ColorList.bodyBackground,...this.center}}>{this.props.refuse}</Text>
+            </TouchableOpacity> 
             </TouchableOpacity>
             <TouchableOpacity style={{width:"20%",marginRight:"4%"}}>
-            <Button style={{width:"100%",borderRadius:15,borderColor:"green",backgroundColor:"salmon",justifyContent:'center',alignItem:'center'}}
+            <TouchableOpacity style={{
+              width:"100%",
+              height:40,
+              flexDirection: 'row',
+              borderRadius:15,
+              borderColor:"green",
+              backgroundColor:"salmon",
+              justifyContent:'center',
+              alignItem:'center',
+              ...shadower(2)}}
                onPress={this.props.deleteFunction}>
-                    <Text style={{color:"#FEFFDE"}}>{this.props.accept}</Text>
-            </Button> 
+                    <Text style={{color:ColorList.bodyBackground,...this.center}}>{this.props.accept}</Text>
+            </TouchableOpacity> 
             </TouchableOpacity>
 
             </View>

@@ -1,6 +1,5 @@
 import React, { PureComponent } from "react"
-import { StyleSheet, TouchableOpacity, TouchableWithoutFeedback, View, Vibration } from 'react-native';
-import { Text } from "native-base"
+import { StyleSheet, TouchableOpacity, Text, TouchableWithoutFeedback, View, Vibration } from 'react-native';
 import TextContent from "./TextContent";
 export default class TextMessage extends PureComponent {
     constructor(props) {

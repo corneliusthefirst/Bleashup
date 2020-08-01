@@ -9,7 +9,7 @@ import { findIndex } from 'lodash';
 import CalendarServe from '../../../services/CalendarService';
 import MainUpdater from '../../../services/mainUpdater';
 import toTitleCase from '../../../services/toTitle';
-import { Toast } from 'native-base';
+import Toaster from '../../../services/Toaster';
 class Requester {
     saveToCanlendar(eventID, remind, alarms,newRemindName) {
         if (findIndex(remind.members, { phone: stores.LoginStore.user.phone }) >= 0) {
@@ -53,7 +53,7 @@ class Requester {
                                 })
                             })
                         }).catch(() => {
-                            Toast.show({ text: "Unable To perform This Action" })
+                            Toaster({ text: "Unable To perform This Action" })
                             reject()
                         })
                 })
@@ -96,7 +96,7 @@ class Requester {
                                     resolve('ok')
                                 })
                             }).catch(error => {
-                                Toast.show({ text: 'Unable to perform network request' })
+                                Toaster({ text: 'Unable to perform network request' })
                                 console.warn(error)
                                 reject(error)
                             })
@@ -138,7 +138,7 @@ class Requester {
                             resolve('ok')
                         })
                     }).catch(error => {
-                        Toast.show({ text: 'Unable to perform network request' })
+                        Toaster({ text: 'Unable to perform network request' })
                         console.warn(error)
                         reject(error)
                     })
@@ -223,7 +223,7 @@ class Requester {
                             })
                         })
                     }).catch(error => {
-                        Toast.show({ text: 'Unable to perform network request' })
+                        Toaster({ text: 'Unable to perform network request' })
                         console.warn(error)
                         reject(error)
                     })
@@ -260,7 +260,7 @@ class Requester {
                             resolve('ok')
                         })
                     }).catch(error => {
-                        Toast.show({ text: 'Unable to perform network request' })
+                        Toaster({ text: 'Unable to perform network request' })
                         console.warn(error)
                         reject(error)
                     })
@@ -297,7 +297,7 @@ class Requester {
                             resolve('ok')
                         })
                     }).catch(error => {
-                        Toast.show({ text: 'Unable to perform network request' })
+                        Toaster({ text: 'Unable to perform network request' })
                         console.warn(error)
                         reject(error)
                     })
@@ -340,7 +340,7 @@ class Requester {
                         })
 
                     }).catch(error => {
-                        Toast.show({ text: 'Unable to perform network request' })
+                        Toaster({ text: 'Unable to perform network request' })
                         console.warn(error)
                         reject(error)
                     })
@@ -424,7 +424,7 @@ class Requester {
                         resolve('ok')
                     })
                 }).catch(error => {
-                    Toast.show({ text: 'Unable to perform network request' })
+                    Toaster({ text: 'Unable to perform network request' })
                     console.warn(error)
                     reject(error)
                 })
@@ -471,7 +471,7 @@ class Requester {
                                 })
                             })
                         }).catch(error => {
-                            Toast.show({ text: 'Unable to perform network request' })
+                            Toaster({ text: 'Unable to perform network request' })
                             console.warn(error)
                             reject(error)
                         })

@@ -3,7 +3,6 @@ import Modal from 'react-native-modalbox';
 import { View, Text, TouchableOpacity,Dimensions} from 'react-native'
 import { Button, Icon } from 'native-base'
 import CacheImages from '../../../CacheImages';
-import Image from 'react-native-scalable-image';
 
 let {height, width} = Dimensions.get('window');
 

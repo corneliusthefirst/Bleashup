@@ -1,14 +1,16 @@
 import React, { Component } from 'react';
 import shadower from '../../shadower';
-import { View, Dimensions, TouchableOpacity, TouchableWithoutFeedback } from "react-native"
+import { View, Dimensions, TouchableOpacity, TouchableWithoutFeedback,Text } from "react-native"
 import CacheImages from '../../CacheImages';
 import BleashupFlatList from '../../BleashupFlatList';
 import PhotoViewer from '../event/PhotoViewer';
 import testForURL from '../../../services/testForURL';
-import { Thumbnail, Button, Icon } from 'native-base';
 import VideoViewer from '../highlights_details/VideoModal';
 import MediaSeparator from './MediaSeparator';
 import buttoner from '../../../services/buttoner';
+import EvilIcons from 'react-native-vector-icons/EvilIcons';
+import ColorList from '../../colorList';
+import GState from '../../../stores/globalState';
 
 let { height, width } = Dimensions.get('window');
 export default class Video extends Component {
@@ -36,7 +38,7 @@ export default class Video extends Component {
                 keyExtractor={(item, index) => item ? item.id : null}
                 renderItem={(item, index) => {
                     return item.type === 'date_separator' ?<MediaSeparator item={item} style={{height:width/3,width:width/3,borderColor:"white",borderWidth:1}}>
-                    </MediaSeparator>: <Button transparent style={{height:width/3,width:width/3}} onPress={() => {
+                    </MediaSeparator>: <TouchableOpacity transparent style={{height:width/3,width:width/3}} onPress={() => {
                         this.setState({
                             showVideo: true,
                             created_at: item.created_at,
@@ -44,13 +46,13 @@ export default class Video extends Component {
                         })
                     }}><View style={{ ...shadower(),alignSelf: 'center', }}>
                             {testForURL(item.thumbnailSource) ? <CacheImages style={{height:width/3,width:width/3,borderColor:"white",borderWidth:1}} source={{ uri: item.thumbnailSource }} square thumbnails ></CacheImages> :
-                                <Thumbnail style={{height:width/3,width:width/3,borderColor:"white",borderWidth:1}} source={{ uri: item.thumbnailSource }} square ></Thumbnail>}
-                                <Icon type={'EvilIcons'} name={"play"} style={{color:'#FEFFDE',position: 'absolute',alignSelf:'center',marginTop: '35%',backgroundColor: 'black',
+                                <Image resizeMode={"cover"} style={{height:width/3,width:width/3,borderColor:"white",borderWidth:1}} source={{ uri: item.thumbnailSource }}></Image>}
+                                <EvilIcons  name={"play"} style={{...GState.defaultIconSize,color:ColorList.bodyBackground,position: 'absolute',alignSelf:'center',marginTop: '35%',backgroundColor: 'black',
                                 opacity:.5,
                                 height:10,
-                                borderRadius:10}}></Icon>
+                                borderRadius:10}}/>
                         </View>
-                    </Button>
+                    </TouchableOpacity>
                 }}
                 dataSource={this.props.video}
             ></BleashupFlatList>

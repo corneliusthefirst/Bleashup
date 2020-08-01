@@ -1,7 +1,6 @@
 import React, { Component } from "react";
 
-import { View } from "react-native";
-import { Text } from "native-base";
+import { View, Text } from "react-native";
 import moment from "moment"
 import dateDisplayer from '../../../services/dates_displayer';
 import shadower from "../../shadower";

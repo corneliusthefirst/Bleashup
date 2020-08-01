@@ -3,10 +3,10 @@ import {
     View, Text, TouchableOpacity
 } from 'react-native';
 import Menu, { MenuItem, MenuDivider } from 'react-native-material-menu';
-import { Icon, } from "native-base"
 import emitter from '../../../services/eventEmiter';
 import colorList from '../../colorList';
 import shadower from '../../shadower';
+import  EvilIcons  from 'react-native-vector-icons/EvilIcons';
 
 export default class ActionsMenu extends Component {
     constructor(props) {
@@ -46,12 +46,12 @@ export default class ActionsMenu extends Component {
                     ref={this.setMenuRef}
                     button={
                         <View style={{ height:50,width:50,borderRadius:30,...shadower(2),alignItems:"center",justifyContent:"center"}}>
-                        <Icon style={{
+                        <EvilIcons style={{
                             color: colorList.bodyIcon,
                             fontSize: 30,
                         }} onPress={() => {
                             this.props.openSettings()
-                        }} name="gear" type="EvilIcons"></Icon>
+                        }} name="gear" type="EvilIcons"/>
                        </View>
                     }
                 >

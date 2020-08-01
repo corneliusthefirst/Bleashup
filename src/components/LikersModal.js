@@ -1,11 +1,12 @@
 import React, { PureComponent } from "react"
 import Modal from "react-native-modalbox"
-import { Text, Spinner } from "native-base"
 import ImageActivityIndicator from "./myscreens/currentevents/components/imageActivityIndicator";
 import Likers from "./Likers";
-import { View } from "react-native"
+import { View, Text } from "react-native"
 import { observer } from "mobx-react";
 import bleashupHeaderStyle from "../services/bleashupHeaderStyle";
+import Spinner from './Spinner';
+import GState from "../stores/globalState";
 @observer export default class LikerssModal extends PureComponent {
     constructor(props) {
         super(props)
@@ -54,8 +55,8 @@ import bleashupHeaderStyle from "../services/bleashupHeaderStyle";
                 {this.state.loaded ? <View>
                     <View style={{ width: "100%", height: 44,}}>
                         <View style={{ flexDirection: 'row',padding: '2%',...bleashupHeaderStyle }}>
-                            <Text style={{ fontSize: 20,  fontWeight: 'bold', width: "80%", marginLeft: "5%", }}>{"Likers"}</Text>
-                            <Text style={{ marginTop: "3%", }} note>{this.state.likers ? this.state.likers.length : 0}{" likers"}</Text>
+                            <Text style={{...GState.defaultTextStyle, fontSize: 20,  fontWeight: 'bold', width: "80%", marginLeft: "5%", }}>{"Likers"}</Text>
+                            <Text style={{...GState.defaultTextStyle, marginTop: "3%", }} note>{this.state.likers ? this.state.likers.length : 0}{" likers"}</Text>
 
                         </View>
                     </View>

@@ -1,40 +1,28 @@
 import React, { PureComponent } from "react";
 
-import { TouchableOpacity, View, RefreshControl, Image } from "react-native";
-import Modal from "react-native-modalbox";
 import {
-  Content,
-  Header,
-  Item,
-  Input,
-  Left,
-  Right,
-  Icon,
-  Body,
-  Title,
-  Label,
+  TouchableOpacity, 
+  View,  
+  ScrollView,
   Text,
-  Container,
-  CheckBox,
-  Footer,
-  Toast,
-  Spinner
-} from "native-base";
-import { without, concat, indexOf, forEach, find, reject, FlatList, ScrollView } from "lodash"
+ } from "react-native";
+import { concat, indexOf, forEach, reject,  } from "lodash"
 import stores from "../../../../stores";
 import ProfileView from "../../invitations/components/ProfileView";
-import ListItem from "../../../../native-base-theme/components/ListItem";
 import ProfileWithCheckBox from "./PofileWithCheckbox";
 import Request from "../Requester";
 import request from "../../../../services/requestObjects";
 import moment from "moment"
 import BleashupFlatList from '../../../BleashupFlatList';
 import Menu, { MenuDivider, MenuItem } from 'react-native-material-menu';
-import Mailer from 'react-native-mail';
+//import Mailer from 'react-native-mail';
 import uuid from 'react-native-uuid';
 import bleashupHeaderStyle from "../../../../services/bleashupHeaderStyle";
 import BleashupModal from '../../../mainComponents/BleashupModal';
 import CreationHeader from "../../event/createEvent/components/CreationHeader";
+import Spinner from '../../../Spinner';
+import Toaster from "../../../../services/Toaster";
+import  EvilIcons  from 'react-native-vector-icons/EvilIcons';
 export default class InvitationModal extends BleashupModal {
   initialize(){
     this.state = {
@@ -60,7 +48,7 @@ export default class InvitationModal extends BleashupModal {
   invite(members, status) {
     this.props.close()
     if (members.length <= 0) {
-      Toast.show({ text: "no contacts selected to be invited" })
+      Toaster({ text: "no contacts selected to be invited" })
     } else {
       if (this.props.master) {
         this.prepareInvites(members, status).then(invites => {
@@ -70,19 +58,19 @@ export default class InvitationModal extends BleashupModal {
               inviting: false,
               masterStatus: false
             })
-            Toast.show({ type: "success", text: "invitations successfully sent !", position: "bottom", buttonText: "OK" })
+            Toaster({ type: "success", text: "invitations successfully sent !", position: "bottom", buttonText: "OK" })
           })).catch(eror => {
             this.setStatePure({
               checked: [],
               inviting: false,
               masterStatus: false
             })
-            Toast.show({ type: "default", text: "could not connect to the server !", position: "bottom", buttonText: "OK" })
+            Toaster({ type: "default", text: "could not connect to the server !", position: "bottom", buttonText: "OK" })
           })
         })
       } else {
 
-        Toast.show({ type: "default", text: "sorry! you cannont invite for event", position: "bottom", buttonText: "OK" })
+        Toaster({ type: "default", text: "sorry! you cannont invite for event", position: "bottom", buttonText: "OK" })
       }
     }
   }
@@ -175,14 +163,15 @@ export default class InvitationModal extends BleashupModal {
     return <View>
       <CreationHeader back={this.onClosedModal.bind(this)} title={"Quick Invite"} 
       extra={this.state.checked.length > 0 ? <View style={{ width: "100%",marginTop: 'auto',marginBottom: 'auto', }}>
-        <Icon onPress={() => requestAnimationFrame(() => {
+        <EvilIcons 
+        onPress={() => requestAnimationFrame(() => {
           this.invite(this.state.checked, false)
-        })} type="EvilIcons"
-          style={{
+        })}
+        style={{
             fontSize: 45,
             //fontWeight: "bold",
             color: "#1FABAB"
-          }} name="sc-telegram"></Icon>
+          }} name="sc-telegram"/>
       </View> : null}></CreationHeader>
        {this.state.loading ? <Spinner size={"small"}></Spinner> :
           <View>
@@ -212,9 +201,6 @@ export default class InvitationModal extends BleashupModal {
                 </View>)
               }
               }
-            /* refreshControl={
-               <RefreshControl refreshing={this.state.refreshing} onRefresh={this.onRefresh} />
-             }*/
             ></BleashupFlatList></View>}
           </View>}
       </View>

@@ -1,13 +1,16 @@
 import React, { Component } from 'react';
 import { PulseIndicator } from 'react-native-indicators';
-import { Text, Right, Icon, Left,Toast} from 'native-base';
-import { View, TouchableOpacity, PermissionsAndroid, BackHandler, Platform } from 'react-native';
+import { View, Text, TouchableOpacity, PermissionsAndroid, BackHandler, Platform } from 'react-native';
 import SoundRecorder from 'react-native-sound-recorder';
 import converToHMS from '../highlights_details/convertToHMS';
 import rnFetchBlob from 'rn-fetch-blob';
 import ColorList from '../../colorList';
 import BeComponent from '../../BeComponent';
-
+import Toaster from '../../../services/Toaster';
+import  Entypo  from 'react-native-vector-icons/Entypo';
+import FontAwesome  from 'react-native-vector-icons/FontAwesome';
+import  EvilIcons  from 'react-native-vector-icons/EvilIcons';
+import GState from '../../../stores/globalState';
 let dirs = rnFetchBlob.fs.dirs
 export default class AudioRecorder extends BeComponent{
     constructor(props){
@@ -41,7 +44,7 @@ export default class AudioRecorder extends BeComponent{
                     this.startRecordTiming()
                 }).catch(error => {
                     this.props.justHideMe()
-                    Toast.show({ duration: 4000, text: "cannot record due to " + error })
+                    Toaster({ duration: 4000, text: "cannot record due to " + error })
                 });
         });
     }
@@ -129,22 +132,22 @@ export default class AudioRecorder extends BeComponent{
             width: '100%', opacity: 0.97,alignSelf: 'center',margin: 'auto',
             // marginTop: "1%",
             backgroundColor: '#5CB99E', height: 50, display: 'flex', flexDirection: 'row',
-             borderTopLeftRadius: 5,borderTopRightRadius: 5,
-        }}><Left><TouchableOpacity onPress={() => this.props.toggleAudioRecorder()}><Icon type={'EvilIcons'} 
-        name={'close'} style={{ color: ColorList.bodyBackground }}></Icon>
-        </TouchableOpacity></Left>{this.state.recording ? 
-            <View style={{ marginLeft: "-40%", marginTop: "1.8%", display: 'flex', flexDirection: 'row', }}>
-            <Icon type={"Entypo"} onPress={() => this.stopRecord()} name={"controller-stop"} style={{ color: ColorList.bodyBackground, fontSize: 35, }}></Icon>
-            <Icon type={"FontAwesome"} name={"pause"} onPress={() => this.pauseRecorder()} style={{ marginTop: "5%", marginLeft: "10%", color: ColorList.bodyBackground, fontSize: 26, }}></Icon>
+             borderTopLeftRadius: 5,borderTopRightRadius: 5,justifyContent: 'space-between',
+        }}><View style={{alignSelf: 'flex-start',marginTop: '3.8%',}}><TouchableOpacity onPress={() => this.props.toggleAudioRecorder()}><EvilIcons type={'EvilIcons'} 
+        name={'close'} style={{...GState.defaultIconSize, color: ColorList.bodyBackground }}/>
+        </TouchableOpacity></View>{this.state.recording ? 
+            <View style={{  marginTop: "1.8%", display: 'flex', flexDirection: 'row', }}>
+            <Entypo  onPress={() => this.stopRecord()} name={"controller-stop"} style={{ color: ColorList.bodyBackground, fontSize: 35, }}/>
+            <FontAwesome name={"pause"} onPress={() => this.pauseRecorder()} style={{ marginTop: "5%", marginLeft: "10%", color: ColorList.bodyBackground, fontSize: 26, }}/>
         </View> :
-         <View style={{ marginLeft: "-40%", marginTop: "1.8%", display: 'flex', flexDirection: 'row', }}>
-                <Icon type={"Entypo"} onPress={() => this.resumAudioRecoder()} name={"controller-record"} style={{ color: ColorList.bodyBackground, fontSize: 35, }}></Icon>
-            </View>}
-            <Right><View style={{ display: 'flex', flexDirection: 'row', marginLeft: "30%", }}>
-                <Text style={{ marginTop: "6%", fontSize: 22, color: ColorList.bodyBackground }}>
+                <TouchableOpacity onPress={() => this.resumAudioRecoder()} style={{  marginTop: "1.8%", display: 'flex', flexDirection: 'row', }}>
+            <Entypo name={"controller-record"} style={{ color: ColorList.bodyBackground, fontSize: 35, }}/>
+            </TouchableOpacity>}
+            <View style={{alignSelf: 'flex-end',}}><View style={{ display: 'flex', flexDirection: 'row', marginLeft: "30%", }}>
+                <Text style={{ marginTop: "1.8%", fontSize: 22, color: ColorList.bodyBackground }}>
                     {converToHMS(this.state.recordTime)}</Text>
                 <PulseIndicator color={'red'}>
-                </PulseIndicator></View></Right></View>;
+                </PulseIndicator></View></View></View>;
     }
     render(){
         return this.props.showAudioRecorder?this.audioRecorder():false

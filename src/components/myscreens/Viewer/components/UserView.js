@@ -1,9 +1,10 @@
 /* eslint-disable */
 import React from 'react';
 import { Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
-import {Icon} from 'native-base';
 import RenderDate from './RenderDate';
 import SwipeMenu from '../../../SwiperComponent/swipeMenu';
+import Ionicons from 'react-native-vector-icons/Ionicons';
+import GState from '../../../../stores/globalState';
 class UserView extends React.PureComponent {
   constructor(props) {
     super(props);
@@ -39,7 +40,7 @@ class UserView extends React.PureComponent {
         
        {props.activityMode ? null:
         <TouchableOpacity onPress={props.onClosePress}>
-        <Icon
+        <Ionicons
           name="close"
           color="white"
           size={25}
@@ -65,7 +66,7 @@ class UserView extends React.PureComponent {
           name="arrow-back"
           type="MaterialIcons"
           size={30}
-          style={{ marginRight: 8,color:"white" }}
+          style={{...GState.defaultTextStyle, marginRight: 8,color:"white" }}
         />
       </TouchableOpacity>
 
@@ -82,25 +83,7 @@ class UserView extends React.PureComponent {
          {props.swiper?<RenderDate style={styles.time} date={this.props.updated_at} />
          :<Text style={styles.time}>{"Posted "+props.updated_at}</Text>}
         </View>
-
           <SwipeMenu forward={this.props.forward} reply={this.props.reply} />
-
-         {/*<View style={{width:70,height:'100%',justifyContent:'center',alignItems:'center',flexDirection:'row'}}>
-
-         <TouchableOpacity onPress={this.props.delete}>
-         <View style={{width:30,height:'100%', justifyContent: 'center',alignItems:'center'}}>
-           <Icon
-              name="delete"
-              type="AntDesign"
-              style={{ color: 'tomato', fontSize: 20 }}
-              onPress={this.props.delete}
-            />
-            </View>
-            </TouchableOpacity>
-
-          
-         </View>  */}
-
       </View>
 
     );

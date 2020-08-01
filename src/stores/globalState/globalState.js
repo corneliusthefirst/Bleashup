@@ -1,4 +1,5 @@
 import { observable, action, extendObservable, autorun, computed } from "mobx";
+import ColorList from '../../components/colorList';
 
 export default class globalState {
   @observable scrollOuter = true;
@@ -28,6 +29,8 @@ export default class globalState {
   @observable newPasswordError = false;
   @observable nav = {}
   @observable nameError = false;
+  defaultIconSize = {fontSize: 30,color:ColorList.bodyIcon}
+  defaultTextStyle = {fontSize: 13,color:ColorList.bodyText}
   @observable newEvent = false;
   @observable emailError = false;
   @observable generalNewMessages = []

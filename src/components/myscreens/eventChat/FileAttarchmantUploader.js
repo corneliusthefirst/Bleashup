@@ -5,7 +5,6 @@ import {
     StyleSheet, Text, TouchableOpacity, View, ScrollView, Alert, Vibration, Platform, TouchableWithoutFeedback
 } from 'react-native';
 import { AnimatedCircularProgress } from 'react-native-circular-progress';
-import { Icon, Right, Spinner, Toast } from 'native-base';
 import GState from '../../../stores/globalState';
 import FileViewer from 'react-native-file-viewer';
 import FileExachange from '../../../services/FileExchange';
@@ -14,6 +13,8 @@ import stores from '../../../stores';
 import TextContent from './TextContent';
 import ColorList from '../../colorList';
 import BePureComponent from '../../BePureComponent';
+import EvilIcons  from 'react-native-vector-icons/EvilIcons';
+import  FontAwesome  from 'react-native-vector-icons/FontAwesome';
 const { fs } = rnFetchBlob
 export default class FileAttarchementUploader extends BePureComponent {
     constructor(props) {
@@ -140,16 +141,14 @@ export default class FileAttarchementUploader extends BePureComponent {
                                             <TouchableOpacity onPress={() => this.state.downloading ? this.cancelUpLoad(this.props.message.source) :
                                                 this.uploadFile(this.props.message.source)}>
                                                 <View>
-                                                    <Icon style={{ color: ColorList.bodyText }} type="EvilIcons"
-                                                        name={this.state.downloading ? "close" : "arrow-up"}></Icon>
+                                                    <EvilIcons style={{ ...GState.defaultIconSize,color: ColorList.bodyText }} type="EvilIcons"
+                                                        name={this.state.downloading ? "close" : "arrow-up"}/>
                                                 </View>
                                                 <View style={{ position: 'absolute', marginTop: '-103%', marginLeft: '-14%', }}>
-                                                    {this.state.downloading ? <Spinner></Spinner> : null}
                                                 </View>
                                             </TouchableOpacity> : <TouchableOpacity
                                                 onPress={() => requestAnimationFrame(() => this.openFile())}>
-                                                <Icon type="FontAwesome" style={{ color: ColorList.bodyText, fontSize: 22 }} name="folder-open">
-                                                </Icon>
+                                                <FontAwesome type="FontAwesome" style={{ color: ColorList.bodyText, fontSize: 22 }} name="folder-open"/>
                                             </TouchableOpacity>}
                                     </View>
                                 )

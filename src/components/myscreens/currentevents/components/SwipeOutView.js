@@ -1,14 +1,13 @@
 import React, { Component } from "react";
 import { View, TouchableOpacity} from 'react-native';
 import UpdateStateIndicator from "./updateStateIndicator";
-import { List, ListItem, Icon, Label } from 'native-base';
 import InvitationModal from "./InvitationModal";
-import autobind from "autobind-decorator";
-import { findIndex } from "lodash"
-import { observer } from "mobx-react";
 import stores from "../../../../stores";
 import shadower from "../../../shadower";
 import colorList from "../../../colorList";
+import Toaster from "../../../../services/Toaster";
+import MaterialIconCommunity from 'react-native-vector-icons/MaterialCommunityIcons';
+import EvilIcons from 'react-native-vector-icons/EvilIcons';
 
 
 export default class SwipeOutView extends Component {
@@ -26,7 +25,7 @@ export default class SwipeOutView extends Component {
 
     };
 
-    @autobind navigateToEventChat() {
+     navigateToEventChat() {
         stores.Events.isParticipant(this.props.Event.id, stores.Session.SessionStore.phone).then(status => {
             if (status) {
                 this.props.navigation.navigate("Event", {
@@ -34,7 +33,7 @@ export default class SwipeOutView extends Component {
                     tab: "EventChat"
                 });
             } else {
-                Toast.show({
+                Toaster({
                     text: "please join the event to see the updates about !",
                     buttonText: "ok"
                 })
@@ -42,7 +41,7 @@ export default class SwipeOutView extends Component {
             this.props.seen()
         })
     }
-    @autobind navigateToLogs() {
+    navigateToLogs() {
         stores.Events.isParticipant(this.props.Event.id, stores.Session.SessionStore.phone).then(status => {
             if (status) {
                 this.props.navigation.navigate("Event", {
@@ -60,7 +59,7 @@ export default class SwipeOutView extends Component {
     invite() {
         this.props.openInvitationModal()
     }
-    @autobind navigateToEventDetails() {
+    navigateToEventDetails() {
         stores.Events.isParticipant(this.props.Event.id, stores.Session.SessionStore.phone).then(status => {
             if (status) {
                 this.props.navigation.navigate("Event", {
@@ -90,9 +89,8 @@ export default class SwipeOutView extends Component {
                             this.props.publish()
                         })
                         } style={{ flexDirection:"column",alignItems:"center" }}>
-                            <Icon style={{ fontSize: 35, color: this.props.Event.public || this.props.master ? colorList.bodyIcon : "#bfc6ea" }} name="share-outline" type="MaterialCommunityIcons">
-                            </Icon>
-                            <Label style={{ fontSize: 14, color: this.props.Event.public || this.props.master ? colorList.bodySubtext : "#bfc6ea"}}>Share</Label>
+                            <MaterialIconCommunity style={{ fontSize: 35, color: this.props.Event.public || this.props.master ? colorList.bodyIcon : "#bfc6ea" }} name="share-outline" type="MaterialCommunityIcons"/>
+                            <Text style={{ fontSize: 14, color: this.props.Event.public || this.props.master ? colorList.bodySubtext : "#bfc6ea"}}>Share</Text>
                         </TouchableOpacity>
                     </View>
 
@@ -101,69 +99,10 @@ export default class SwipeOutView extends Component {
                             this.invite()
                         })
                         } style={{flexDirection:"column",alignItems:"center" }}>
-                            <Icon style={{ fontSize: 40, color: this.props.Event.public || this.props.master ? colorList.bodyIcon : "#bfc6ea" }} name="sc-telegram" type="EvilIcons"></Icon>
-                            <Label style={{ fontSize: 14, color: this.props.master || this.props.Event.public ? colorList.bodySubtext : "#bfc6ea" }}>Invite</Label>
+                            <EvilIcons style={{ fontSize: 40, color: this.props.Event.public || this.props.master ? colorList.bodyIcon : "#bfc6ea" }} name="sc-telegram" type="EvilIcons"/>
+                            <Text style={{ fontSize: 14, color: this.props.master || this.props.Event.public ? colorList.bodySubtext : "#bfc6ea" }}>Invite</Text>
                         </TouchableOpacity>}
                     </View>
-                   {/* <View style={{ height: this.width,flexDirection:"column",alignItems:"center" }}>
-                        {<TouchableOpacity onPress={() => {
-                            this.props.join()
-                        }}>
-                            <Icon style={{alignSelf:"center", fontSize: 30, color: findIndex(this.props.Event.participant, { phone: stores.LoginStore.user.phone }) >= 0 ? "#1FABAB" : colorList.bodyIcon }} name="account-group-outline"
-                                type="MaterialCommunityIcons">
-                            </Icon>
-                            <Label style={{
-                                color: findIndex(this.props.Event.participant, { phone: stores.LoginStore.user.phone }) >= 0 ? "#1FABAB" :  colorList.bodyIcon ,
-                                fontSize: 14,
-                            }}
-                            >
-                                {findIndex(this.props.Event.participant, { phone: stores.LoginStore.user.phone }) >= 0 ? "Joined" : "Join"}
-                            </Label>
-                        </TouchableOpacity>}
-
-                    </View>
-
-                    <View style={{ height: this.width,flexDirection:"column",alignItems:"center"}}>
-                        <TouchableOpacity onPress={() => requestAnimationFrame(() => {
-                            this.navigateToLogs()
-                        })
-                        }>
-                            <Icon style={{ fontSize: 30, color:colorList.bodyIcon}} name="clockcircleo" type="AntDesign"></Icon>
-                            {this.props.Event.upated ? (
-                                <View style={this.indicatorMargin}>
-                                    <UpdateStateIndicator size={this.blinkerSize} />
-                                </View>
-                            ) : (
-                                    <View style={this.indicatorMargin}>
-                                        <UpdateStateIndicator
-                                            size={this.blinkerSize}
-                                            color={this.transparent}
-                                        />
-                                    </View>
-                                )}
-                            <Label style={{ fontSize: 14, color:colorList.bodySubtext,marginLeft:2 }}>{"Logs"}</Label>
-                        </TouchableOpacity>
-                    </View >*/}
-
-
-                    {/*<View style={{ height: this.width, marginBottom: "9%", alignSelf: 'flex-start' }}>
-                        <TouchableOpacity onPress={() => {
-                            return this.props.hide()
-                        }}>
-                            <Icon style={{ fontSize: 20, color: "#1FABAB" }} name="archive" type="EvilIcons">
-                            </Icon>
-                            <Label style={{ fontSize: 14, color: "#1FABAB" }}>Hide</Label>
-                        </TouchableOpacity>
-                    </View>*/}
-                    {/*<View style={{ height: this.width, marginBottom: "9%", marginLeft: '10%' }}>
-                        <TouchableOpacity onPress={() => {
-                            return this.props.delete()
-                        }}>
-                            <Icon name="trash" style={{ fontSize: 30, color: "red" }} type="EvilIcons">
-                            </Icon>
-                            <Label style={{ fontSize: 14, color: "red" }} >Delete</Label>
-                        </TouchableOpacity>
-                    </View>*/}
                 </View>
             </View>
         );

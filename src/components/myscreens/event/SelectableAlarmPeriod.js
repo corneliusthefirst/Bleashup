@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
-import { View } from "react-native"
-import { Button, Icon, Text } from 'native-base';
+import { View, Text,TouchableOpacity } from "react-native"
+import MaterialIcons  from 'react-native-vector-icons/MaterialIcons';
+import GState from '../../../stores/globalState';
 
 export default class SelectableAlarmPeriod extends Component {
     constructor(props) {
@@ -23,15 +24,23 @@ export default class SelectableAlarmPeriod extends Component {
     }
     render() {
         return (
-            <View>
-                <Button onPress={() => this.toggleChecked()} transparent>
-                    <Icon name={
+            <TouchableOpacity style={{
+                width: "85%",
+                flexDirection: 'row',
+                textAlign:'flex-start',
+                height:50,
+                alignItems: 'center',
+            }} onPress={() => this.toggleChecked()} transparent>
+            <View style={{width:100}}> 
+                    <MaterialIcons style={{...GState.defaultIconSize}} name={
                         this.state.checked ? "radio-button-checked" :
                             "radio-button-unchecked"
-                    } type={"MaterialIcons"}></Icon>
-                    <Text>{this.props.item.text}</Text>
-                </Button>
-            </View>
+                    } type={"MaterialIcons"}/>
+                </View>
+                <View>
+                    <Text style={{...GState.defaultTextStyle}}>{this.props.item.text}</Text>
+                </View>
+                </TouchableOpacity>
         );
     }
 }

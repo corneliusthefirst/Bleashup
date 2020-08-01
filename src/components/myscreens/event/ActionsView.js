@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
 import { View, TouchableOpacity } from 'react-native';
-import { Label, Icon } from 'native-base';
 import Requester from './Requester';
 import stores from '../../../stores';
 import shadower from '../../shadower';

@@ -1,6 +1,5 @@
 import React, { Component } from "react";
-import { TouchableOpacity, View } from "react-native";
-import { Text } from "native-base";
+import { TouchableOpacity, View, Text} from "react-native";
 import converToHMS from "../highlights_details/convertToHMS";
 import ContentModal from "../event/ContentModal";
 

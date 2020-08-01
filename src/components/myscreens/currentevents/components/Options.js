@@ -1,16 +1,14 @@
 import React, { Component } from "react"
-import { View, TouchableOpacity } from 'react-native';
-import { Icon, Label, Toast, Text } from "native-base"
-import { observer } from 'mobx-react';
-import autobind from "autobind-decorator";
+import { View, TouchableOpacity, Text } from 'react-native';
 import UpdateStateIndicator from "./updateStateIndicator";
 import stores from "../../../../stores";
+import Toaster from "../../../../services/Toaster";
 
 export default class Options extends Component {
     constructor(props) {
         super(props)
     }
-    @autobind navigateToContributions() {
+    navigateToContributions() {
         stores.Events.isParticipant(this.props.Event.id, stores.Session.SessionStore.phone).then(status => {
             if (status) {
                 this.props.navigation.navigate("Event", {
@@ -18,7 +16,7 @@ export default class Options extends Component {
                     tab: "Contributions"
                 });
             } else {
-                Toast.show({
+                Toaster({
                     text: "please join the event to see the updates about !",
                     buttonText: "ok"
                 })
@@ -39,7 +37,7 @@ export default class Options extends Component {
     }
 
     width = "50%"
-    @autobind navigateToReminds() {
+    navigateToReminds() {
         stores.Events.isParticipant(this.props.Event.id, stores.Session.SessionStore.phone).then(status => {
             if (status) {
                 this.props.navigation.navigate("Event", {
@@ -47,7 +45,7 @@ export default class Options extends Component {
                     tab: "Reminds"
                 });
             } else {
-                Toast.show({
+                Toaster({
                     text: "please join the event to see the updates about !",
                     buttonText: "ok"
                 })
@@ -79,127 +77,3 @@ export default class Options extends Component {
         )
     }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-/**
- *                <View
-                    style={{
-                        width: this.width
-                    }}
-                  >
-                    <TouchableOpacity onPress={() => requestAnimationFrame(() => this.navigateToVotes())}>
-                        <View style={this.others}>
-                            <Icon type="FontAwesome5" name="poll" style={
-                                {
-                                    color: "#1FABAB",
-                                    marginLeft: "2%",
-                                }
-                            }></Icon>
-                            <Label style={{ color: "#1FABAB", fontSize: 12, fontStyle: 'italic' }}>Votes</Label>
-                            {this.props.Event.vote_updated ? (
-                                <View style={this.indicatorMargin}>
-                                    <UpdateStateIndicator size={this.blinkerSize} />
-                                </View>
-                            ) : (
-                                    <View style={this.indicatorMargin}>
-                                        <UpdateStateIndicator
-                                            size={this.blinkerSize}
-                                            color={this.transparent}
-                                        />
-                                    </View>
-                                )}
-                        </View>
-                    </TouchableOpacity>
-                </View>
-                <View
-                    style={{
-                        width: this.width
-                    }}
-                >
-                    <TouchableOpacity onPress={() => requestAnimationFrame(() => this.navigateToContributions())}>
-                        <View style={this.others}>
-                            <Icon type="MaterialIcons" name="monetization-on" style={
-                                {
-                                    marginLeft: "30%",
-                                    color: "#1FABAB"
-                                }
-                            }></Icon>
-                            <Label style={{
-                                color: "#1FABAB",
-                                fontSize: 12, fontStyle: 'italic'
-                            }}>Contributions</Label>
-                            {this.props.Event.contribution_updated ? (
-                                <View style={this.indicatorMargin}>
-                                    <UpdateStateIndicator size={this.blinkerSize} />
-                                </View>
-                            ) : (
-                                    <View style={this.indicatorMargin}>
-                                        <UpdateStateIndicator
-                                            size={this.blinkerSize}
-                                            color={this.transparent}
-                                        />
-                                    </View>
-                                )}
-                        </View>
-                    </TouchableOpacity>
-                </View>
-                            */

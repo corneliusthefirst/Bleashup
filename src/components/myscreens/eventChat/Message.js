@@ -5,13 +5,13 @@ import {
     Vibration,
     TouchableWithoutFeedback,
     TouchableHighlight,
+    Text,
 } from "react-native";
 import TextMessage from "./TextMessage";
 import PhotoMessage from "./PhotoMessage";
 import VideoMessage from "./VideoMessage";
 import FileAttarchementMessaege from "./FileAttarchtmentMessage";
 import AudioMessage from "./AudioMessage";
-import { Left, Icon, Right, Text, Toast, Spinner } from "native-base";
 import ReplyText from "./ReplyText";
 import PhotoUploader from "./PhotoUploader";
 import VideoUploader from "./VideoUploader";
@@ -22,20 +22,18 @@ import DateView from "./DateView";
 import NewSeparator from "./NewSeparator";
 import moment from "moment";
 import shadower from "../../shadower";
-import Voter from "./Voter";
-import { find } from "lodash";
-import { isEqual } from "lodash";
-import formVoteOptions from "../../../services/formVoteOptions";
 import ColorList from "../../colorList";
 import ReactionModal from "./ReactionsModal";
 import stores from "../../../stores";
 import rounder from "../../../services/rounder";
 import emitter from "../../../services/eventEmiter";
 import { SwipeRow } from 'react-native-swipe-list-view';
-import Votes from "../votes";
 import BeComponent from '../../BeComponent';
 import Vibrator from '../../../services/Vibrator';
-import Swipeout from "./Swipeout";
+import  Ionicons  from 'react-native-vector-icons/Ionicons';
+import  EvilIcons  from 'react-native-vector-icons/EvilIcons';
+import  MaterialIconCommunity from 'react-native-vector-icons/MaterialCommunityIcons';
+import  AntDesign  from 'react-native-vector-icons/AntDesign';
 
 export default class Message extends BeComponent {
     constructor(props) {
@@ -548,8 +546,8 @@ export default class Message extends BeComponent {
                                         }}
                                     >
                                         {this.state.time && !this.state.sender ? (
-                                            <View style={{ margin: '1%', ...reactionContanerStyle, width: 50, marginBottom: null, }}>
-                                                <Text note>{this.state.time}</Text>
+                                            <View style={{ margin: '1%', ...reactionContanerStyle, width: 30, marginBottom: null, }}>
+                                                    <Text style={{ fontSize: 8, fontStyle: 'italic', }}>{this.state.time}</Text>
                                             </View>
                                         ) : null}
                                         <View
@@ -659,24 +657,24 @@ export default class Message extends BeComponent {
                                                         {!this.state.sender && this.props.isfirst ? (
                                                             this.props.message.sent ? (
                                                                 this.props.received ? (
-                                                                    <Icon
+                                                                    <Ionicons
                                                                         style={this.iconStyles}
                                                                         type="Ionicons"
                                                                         name="ios-checkmark-circle"
-                                                                    ></Icon>
+                                                                    />
                                                                 ) : (
-                                                                        <Icon
+                                                                        <EvilIcons
                                                                             style={this.iconStyles}
                                                                             type={"EvilIcons"}
                                                                             name="check"
-                                                                        ></Icon>
+                                                                        />
                                                                     )
                                                             ) : (
-                                                                    <Icon
+                                                                    <MaterialIconCommunity
                                                                         style={{ ...this.iconStyles, color: "#FFF" }}
                                                                         type="MaterialCommunityIcons"
                                                                         name="progress-check"
-                                                                    ></Icon>
+                                                                    />
                                                                 )
                                                         ) : null}
                                                     </View>
@@ -694,7 +692,7 @@ export default class Message extends BeComponent {
                                                         ...rounder(17, ColorList.bodyBackground),
                                                         marginLeft: 5,
                                                     }}>
-                                                <Icon
+                                                <AntDesign
                                                     style={{
                                                         fontSize: 15,
                                                         color: "gray",
@@ -702,13 +700,13 @@ export default class Message extends BeComponent {
                                                     }}
                                                     type={"AntDesign"}
                                                     name={"meh"}
-                                                ></Icon>
+                                                />
                                                 </View>
                                             </TouchableOpacity>
                                         ) : null}
                                         {this.state.time && this.state.sender ? (
-                                            <View style={{ alignItems: 'flex-end', ...reactionContanerStyle, width: 50, marginBottom: null, marginLeft: -10, }}>
-                                                <Text note>{this.state.time}</Text>
+                                            <View style={{ alignItems: 'flex-end', ...reactionContanerStyle, width:30, marginBottom: null, marginLeft: -10, }}>
+                                                <Text style={{fontSize: 8,fontStyle: 'italic',}}>{this.state.time}</Text>
                                             </View>
                                         ) : null}
                                     </View>

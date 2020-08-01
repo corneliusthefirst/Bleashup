@@ -1,7 +1,9 @@
 /* eslint-disable prettier/prettier */
 import React, { Component } from 'react';
-import { View,Dimensions } from 'react-native';
-import { Text,Icon } from 'native-base';
+import { View, Dimensions, Text } from 'react-native';
+import Ionicons  from 'react-native-vector-icons/Ionicons';
+import EvilIcons  from 'react-native-vector-icons/EvilIcons';
+import MaterialCommunityIcons  from 'react-native-vector-icons/MaterialCommunityIcons';
 
 let {height, width} = Dimensions.get('window');
 export default class MessageBox extends Component {
@@ -77,9 +79,9 @@ export default class MessageBox extends Component {
 
                           <View style={{width:'35%',justifyContent:'center',alignItems:'center'}}>
                            {!this.state.sender ? this.state.sent ? this.state.received ?
-                            <Icon style={{ color: 'yellow',fontSize:15}} type="Ionicons" name="ios-checkmark-circle" />
-                           : <Icon style={{ color: 'red',fontSize:15}} type={'EvilIcons'} name="check" />
-                           : <Icon style={{ color: '#1FABAB',fontSize:15}} type="MaterialCommunityIcons" name="progress-check" />
+                            <Ionicons style={{ color: 'yellow',fontSize:15}} type="Ionicons" name="ios-checkmark-circle" />
+                           : <EvilIcons style={{ color: 'red',fontSize:15}} type={'EvilIcons'} name="check" />
+                           : <MaterialCommunityIcons style={{ color: '#1FABAB',fontSize:15}} type="MaterialCommunityIcons" name="progress-check" />
                            : null}
                           </View>
 
@@ -102,13 +104,11 @@ export default class MessageBox extends Component {
 
                           <View style={{width:'35%',justifyContent:'center',alignItems:'center'}}>
                            {!this.state.sender ? this.state.sent ? this.state.received ?
-                            <Icon style={{color: 'yellow',fontSize:15}} type="Ionicons" name="ios-checkmark-circle" />
-                            : <Icon style={{ color: 'red',fontSize:15}} type={'EvilIcons'} name="check" />
-                            : <Icon style={{ color: 'white',fontSize:15 }} type="MaterialCommunityIcons"name="progress-check" /> : null}
+                            <Ionicons style={{color: 'yellow',fontSize:15}} type="Ionicons" name="ios-checkmark-circle" />
+                            : <EvilIcons style={{ color: 'red',fontSize:15}} type={'EvilIcons'} name="check" />
+                            : <MaterialCommunityIcons style={{ color: 'white',fontSize:15 }} type="MaterialCommunityIcons"name="progress-check" /> : null}
                           </View>
-
                     </View>
-
                     <View style={{alignSelf:'flex-end',backgroundColor:'white',height:12,width:'98%',borderRadius:3}} />
 
             </View>

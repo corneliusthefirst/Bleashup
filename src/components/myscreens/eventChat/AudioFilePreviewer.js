@@ -1,12 +1,12 @@
 import React, { PureComponent } from 'react';
-import { View } from 'react-native';
-import { Icon, Text, Toast } from 'native-base';
-import { TouchableOpacity } from 'react-native';
+import { View, Text, TouchableOpacity  } from 'react-native';
 import Sound from 'react-native-sound';
 import shadower from '../../shadower';
 import FileExachange from '../../../services/FileExchange';
 import ColorList from '../../colorList';
 import BePureComponent from '../../BePureComponent';
+import Entypo  from 'react-native-vector-icons/Entypo';
+import  AntDesign  from 'react-native-vector-icons/AntDesign';
 
 export default class AudioFilePreviewer extends BePureComponent {
     constructor(props) {
@@ -82,10 +82,10 @@ export default class AudioFilePreviewer extends BePureComponent {
                     justifyContent: 'space-between',
                     margin: '3%',
                 }}>
-                <Icon type="Entypo" name="sound" style={{
+                <Entypo type="Entypo" name="sound" style={{
                     color: ColorList.bodyBackground,
                     fontSize: 30,
-                }}></Icon>
+                }}></Entypo>
 
             </View>
             <View
@@ -109,11 +109,11 @@ export default class AudioFilePreviewer extends BePureComponent {
                     alignItems: 'flex-end',
                     ...this.center
                 }}>
-                <Icon style={{
+                <AntDesign style={{
                     color: ColorList.bodyBackground,
                     fontSize: 30
                 }} name={this.state.playing ? "pause" : "play"} type="AntDesign">
-                </Icon>
+                </AntDesign>
             </TouchableOpacity>
         </View>
     }

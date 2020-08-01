@@ -1,20 +1,21 @@
 import React, { Component } from 'react';
-import { Icon, Item, Title, Spinner, Button } from 'native-base';
-
 import {
   StyleSheet,
   View,
   Image,
   TouchableOpacity,
   Dimensions,
+  Text
 } from "react-native";
-import autobind from 'autobind-decorator';
 import TasksCard from './TasksCard'
 import stores from "../../../stores/index";
 import BleashupFlatList from "../../BleashupFlatList";
 import TasksCreation from "./TasksCreation";
 import { find, findIndex, uniqBy, reject, filter } from 'lodash';
 import shadower from "../../shadower";
+import  AntDesign  from 'react-native-vector-icons/AntDesign';
+import ColorList from '../../colorList';
+import GState from '../../../stores/globalState';
 
 //const MyTasksData = stores.Reminds.MyTasksData
 
@@ -41,7 +42,7 @@ export default class Reminds extends Component {
   shouldComponentUpdate(nextProps, nextState) {
     return (
       this.state.mounted !== nextState.mounted ||
-      this.state.newing !== nextState.newing;
+      this.state.newing !== nextState.newing
     );
   }
   componentDidMount() {
@@ -53,7 +54,6 @@ export default class Reminds extends Component {
     });
   }
 
-  @autobind
   AddRemind() {
     //this.props.navigation.navigate("TasksCreation",{eventRemindData:this.state.eventRemindData,updateData:this.updateData,event_id:this.state.event_id});
     this.setState({
@@ -62,7 +62,6 @@ export default class Reminds extends Component {
     });
   }
 
-  @autobind
   back() {
     this.props.navigation.navigate("Home");
   }
@@ -85,17 +84,17 @@ export default class Reminds extends Component {
           }}
         >
           <View>
-            <Title style={{ fontSize: 20, fontWeight: "bold" }}>
+            <Text style={{ fontSize: 20, fontWeight: "bold" }}>
               Tasks / Reminds
-            </Title>
+            </Text>
           </View>
 
           <View>
             <TouchableOpacity>
-              <Icon
+              <AntDesign
                 type="AntDesign"
                 name="pluscircle"
-                style={{ color: "#1FABAB" }}
+                style={{...GState.defaultIconSize, color: ColorList.bodyBackground }}
                 onPress={() => this.AddRemind()}
               />
             </TouchableOpacity>

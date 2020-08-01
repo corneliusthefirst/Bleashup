@@ -1,6 +1,5 @@
 import React, { Component } from "react"
-import { List, ListItem, Body, Left, Right, Text, Header, Title, Spinner } from "native-base"
-import { View, StatusBar } from "react-native"
+import { View, StatusBar, Text, } from "react-native"
 import ImageActivityIndicator from "./myscreens/currentevents/components/imageActivityIndicator";
 import stores from "../stores";
 import UserService from "../services/userHttpServices"
@@ -12,6 +11,8 @@ import bleashupHeaderStyle from "../services/bleashupHeaderStyle";
 import CreationHeader from "./myscreens/event/createEvent/components/CreationHeader";
 import ColorList from './colorList';
 import rounder from "../services/rounder";
+import Spinner from './Spinner';
+import GState from "../stores/globalState";
 export default class ContactList extends Component {
 
     constructor(props) {
@@ -62,17 +63,18 @@ export default class ContactList extends Component {
             {!this.props.reaction ? <CreationHeader
                 back={this.props.back}
                 title={"Shared By "}
-                extra={<Text style={{ marginTop: 'auto', marginBottom: 'auto', }} note>{this.state.publishers.length}{" sharer(s)"}</Text>}
+                extra={<Text style={{ ...GState.defaultTextStyle, marginTop: 'auto', marginBottom: 'auto', }} note>{this.state.publishers.length}{" sharer(s)"}</Text>}
             >
             </CreationHeader> : <View style={{width:'100%',
                     justifyContent: 'center',
                 }}><View style={{marginTop: '-10%',}}><View style={{ alignSelf: 'center', backgroundColor: ColorList.bodyBackground,
                         alignSelf: 'center', ...rounder(100)}}>
-                        <Text style={{textAlign:'center',fontSize: 75,}}>{this.props.reaction}
+                        <Text style={{...GState.defaultTextStyle,textAlign:'center',fontSize: 75,}}>{this.props.reaction}
                         </Text></View></View></View>}
             {this.state.isloaded ? (
                 <View style={{height:this.props.reaction?'85%':'93%'}}>
                     {this.state.isEmpty ? <Text style={{
+                        ...GState.defaultTextStyle,
                         margin: '10%',
                     }} note>{"sory! there's no connction to the server"}</Text> : <BleashupFlatList
                         firstIndex={0}
@@ -94,6 +96,7 @@ export default class ContactList extends Component {
                                             justifyContent: 'center',
                                         }}>
                                             <Text style={{
+                                                ...GState.defaultTextStyle
                                             }} note>{this.writeDateTime(item.date) || item.period && this.writeDateTime(item.period.date)}</Text>
                                         </View>
                                     </View>

@@ -1,12 +1,11 @@
 import React, { PureComponent } from 'react';
-import { Content, Text, Item, View, Button, Left, Right, Icon } from 'native-base';
-import { ScrollView } from "react-native";
+import { ScrollView, Text,TouchableOpacity,View} from "react-native";
 import Modal from "react-native-modalbox"
 import moment from 'moment';
-import { Root } from 'native-base';
 import ColorList from '../../colorList';
 import BleashupModal from '../../mainComponents/BleashupModal';
 import rounder from '../../../services/rounder';
+import MaterialCommunityIcons  from 'react-native-vector-icons/MaterialCommunityIcons';
 
 export default class RemindReportContent extends BleashupModal {
     initialize(){
@@ -42,13 +41,13 @@ export default class RemindReportContent extends BleashupModal {
                 <Text note>{moment(this.props.report.date).
                     format("dddd, MMMM Do YYYY, h:mm:ss a")}</Text></View>
                 {this.props.master ? <View style={{justifyContent: 'flex-end',flexDirection: 'row',}}>
-                    <Button transparent style={{ flexDirection: 'column', justifyContent: 'center', height: 35 }} onPress={() => {
+                    <TouchableOpacity transparent style={{ flexDirection: 'column', justifyContent: 'center', height: 35 }} onPress={() => {
                         this.props.confirm()
                         this.props.closed()
                     }}>
-                    <Icon style={{ color: ColorList.likeActive, fontSize: 26 }} 
-                    type="MaterialCommunityIcons" name="check-all"></Icon>
-                    </Button>
+                    <MaterialCommunityIcons style={{ color: ColorList.likeActive, fontSize: 26 }} 
+                    name="check-all"></MaterialCommunityIcons>
+                    </TouchableOpacity>
                 </View> : null}
             </View>
         );

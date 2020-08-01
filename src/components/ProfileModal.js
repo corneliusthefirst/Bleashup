@@ -1,9 +1,9 @@
 import React, { Component } from 'react'
 import Modal from 'react-native-modalbox';
-import { View, TouchableOpacity } from 'react-native'
-import { Button, Text, Icon } from 'native-base'
+import { View, TouchableOpacity, Text } from 'react-native'
 import CacheImages from './CacheImages'
 import ColorList from './colorList';
+import EvilIcons  from 'react-native-vector-icons/EvilIcons';
 
 export default class ProfileModal extends Component {
     constructor(props) {
@@ -52,12 +52,12 @@ export default class ProfileModal extends Component {
                 position={'center'}
             >
                 <View>
-                    <TouchableOpacity style={{}} onPress={() =>
+                    <TouchableOpacity style={} onPress={() =>
                         requestAnimationFrame(() => {
                             return this.props.onClosed()
                         })
-                    } transparent>
-                        <Icon style={{ color: ColorList.bodyIcon, fontSize: 35 }} name="close" type="EvilIcons" />
+                    }>
+                        <EvilIcons style={{ color: ColorList.bodyIcon, fontSize: 35 }} name="close" />
                     </TouchableOpacity>
                 </View>
                 <Text style={{ fontSize: 18, fontWeight: '600', marginLeft: -220 }}>{this.state.profile.nickname}</Text>

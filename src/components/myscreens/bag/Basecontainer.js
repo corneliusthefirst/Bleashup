@@ -2,6 +2,7 @@ import { Body, Button, Container, Header as NBHeader, Icon, Left, Right, Title }
 import * as React from "react";
 import { Component } from "react";
 import { KeyboardAvoidingView, ScrollView } from "react-native";
+import MaterialIcons  from 'react-native-vector-icons/MaterialIcons';
 
 export default class BaseContainer extends Component {
     constructor(props) {
@@ -26,7 +27,7 @@ export default class BaseContainer extends Component {
           </Body>
           <Right style={{ alignItems: "center" }}>
             <Button transparent onPress={this.onCreatePress}>
-              <Icon name="ios-add-outline" style={{ color: "grey", fontSize: 50 }} />
+              <MaterialIcons name="ios-add-outline" style={{ color: "grey", fontSize: 50 }} />
             </Button>
           </Right>
         </NBHeader>

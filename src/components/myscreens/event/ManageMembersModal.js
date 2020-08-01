@@ -1,7 +1,6 @@
 import React from "react";
-import { View, TouchableOpacity } from "react-native";
+import { View, TouchableOpacity, Text,  } from "react-native";
 import BleashupFlatList from "../../BleashupFlatList";
-import { Spinner, Text, Button, Icon } from "native-base";
 import { findIndex, reject, uniqBy } from "lodash";
 import stores from "../../../stores";
 import SelectableProfileWithOptions from "./SelectableProfileWithOption";
@@ -11,6 +10,7 @@ import bleashupHeaderStyle from "../../../services/bleashupHeaderStyle";
 import BleashupModal from "../../mainComponents/BleashupModal";
 import ColorList from '../../colorList';
 import CreationHeader from "./createEvent/components/CreationHeader";
+import Spinner from '../../Spinner';
 export default class ManageMembersModal extends BleashupModal {
     initialize() {
         this.state = {
@@ -111,7 +111,7 @@ export default class ManageMembersModal extends BleashupModal {
                                 ) : null}
                             </View>} ></CreationHeader>
                         </View>
-                        <View style={{ height: "93%", margin: "2%" }}>
+                        <View style={{ height: "90%", margin: "2%" }}>
                             <BleashupFlatList
                                 firstIndex={0}
                                 renderPerBatch={5}

@@ -1,6 +1,5 @@
 import React, { Component } from "react";
-import { View,TouchableOpacity } from "react-native";
-import { Icon, Thumbnail } from "native-base";
+import { View,TouchableOpacity,Image } from "react-native";
 import CacheImages from "../../../../CacheImages";
 import testForURL from "../../../../../services/testForURL";
 import PhotoViewer from "../../PhotoViewer";
@@ -8,6 +7,9 @@ import VideoViewer from "../../../highlights_details/VideoModal";
 import buttoner from "../../../../../services/buttoner";
 import ColorList from '../../../../colorList';
 import BeComponent from '../../../../BeComponent';
+import  Ionicons  from 'react-native-vector-icons/Ionicons';
+import  MaterialIcons  from 'react-native-vector-icons/MaterialIcons';
+import EvilIcons  from 'react-native-vector-icons/EvilIcons';
 
 export default class MediaPreviewer extends BeComponent {
   constructor(props) {
@@ -64,7 +66,8 @@ export default class MediaPreviewer extends BeComponent {
                 }}
               />
             ) : (
-              <Thumbnail
+              <Image
+              resizeMode={"cover"}
                 square
                 source={
                   this.props.url && this.props.url.photo
@@ -80,7 +83,7 @@ export default class MediaPreviewer extends BeComponent {
                   borderColor: "#1FABAB",
                   borderRadius:this.props.url.photo || this.props.url.video ? 10 : 5,
                 }}
-              ></Thumbnail>
+              ></Image>
             )}
           </TouchableOpacity>
           {this.props.url && this.props.url.video ? (
@@ -92,13 +95,13 @@ export default class MediaPreviewer extends BeComponent {
               }}
             >
                    {this.props.url.video ?
-                    <Icon onPress={() => {
+                    <Ionicons onPress={() => {
                       this.choseAction(this.props.url);
                     }} name="ios-play" style={{
                         fontSize: 43, color: ColorList.bodyBackground
                     }} type="Ionicons" />
                      :
-                  <Icon onPress={() => {
+                  <MaterialIcons onPress={() => {
                         this.choseAction(this.props.url);
                     }} name= "headset" style={{
                         fontSize: 40, color: ColorList.bodyBackground
@@ -120,7 +123,7 @@ export default class MediaPreviewer extends BeComponent {
               
             }}
           >
-            <Icon
+            <EvilIcons
               name={"close"}
               type="EvilIcons"
               onPress={this.props.cleanMedia}
@@ -128,7 +131,7 @@ export default class MediaPreviewer extends BeComponent {
                 color: ColorList.bodyBackground,
                 fontSize: 30,
               }}
-            ></Icon>
+            />
           </View>
           </View>
         ) : null}

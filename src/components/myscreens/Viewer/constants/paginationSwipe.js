@@ -10,6 +10,7 @@ import GestureRecognizer from 'react-native-swipe-gestures';
 import ProfileSimple from '../../currentevents/components/ProfileViewSimple';
 import bleashupHeaderStyle from '../../../../services/bleashupHeaderStyle';
 import ColorList from '../../../colorList';
+import { TouchableOpacity } from 'react-native-gesture-handler';
 
 let { height, width } = Dimensions.get('window');
 
@@ -90,6 +91,9 @@ export default class PaginationView extends Component {
                  <View style={{flex:1,flexDirection:"row",width:'50%',marginLeft:width / 25,justifyContent:"space-between",alignItems:"center"}}>
                  <Icon name="arrow-back" active={true} type="MaterialIcons" style={{ color: ColorList.headerIcon }} onPress={() => this.props.navigation.goBack()} />
                  <Text style={{fontSize:18,fontWeight:"bold",marginLeft:10}}>Pagination List</Text>
+                 <TouchableOpacity onPress={() => {
+                   this.onSwipeUp()
+                 }} ><Text>Next</Text></TouchableOpacity>
                  </View>
           </View>
         </View>

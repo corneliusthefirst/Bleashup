@@ -10,13 +10,13 @@ import {
   StyleSheet,
 } from "react-native";
 import stores from "../../../../stores";
-import Icon from "react-native-vector-icons/FontAwesome";
 import ProfileModal from "../../invitations/components/ProfileModal";
 import testForURL from "../../../../services/testForURL";
 import GState from "../../../../stores/globalState/index";
 import Highlighter from "react-native-highlight-words";
 import ColorList from "../../../colorList";
 import BeComponent from "../../../BeComponent";
+import FontAwesome  from 'react-native-vector-icons/FontAwesome';
 
 export default class ProfileSimple extends BeComponent {
   constructor(props) {
@@ -68,7 +68,7 @@ export default class ProfileSimple extends BeComponent {
                 />
               </TouchableWithoutFeedback>
             ) : (
-              <Icon style={styles.iconPlaceHolder} name={"user-circle"}></Icon>
+              <FontAwesome style={styles.iconPlaceHolder} name={"user-circle"}></FontAwesome>
             )}
           </View>
         )}

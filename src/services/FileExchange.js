@@ -1,8 +1,7 @@
 
 import rnFetchBlob from 'rn-fetch-blob';
 import * as configs from "../config/bleashup-server-config.json"
-import { Toast } from 'native-base';
-
+import Toaster from './Toaster';
 const { fs, config } = rnFetchBlob
 let dirs = fs.dirs
 const AppDir = fs.dirs.SDCardDir + '/Bleashup'
@@ -175,7 +174,7 @@ export default class FileExachange {
                         }
                     })
                 } else {
-                    Toast.show({ text: "Audio Picking failed", duration: 4000 })
+                    Toaster({ text: "Audio Picking failed", duration: 4000 })
                 }
             })
         })

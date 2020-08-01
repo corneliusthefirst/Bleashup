@@ -1,11 +1,13 @@
 import React, { Component } from 'react';
-import { View, Button, Text, Icon } from 'native-base';
 import BleashupFlatList from '../../BleashupFlatList';
 import IntervalSeparator from './IntervalSeparator';
 import { MenuDivider } from 'react-native-material-menu';
 import ProfileView from '../invitations/components/ProfileView';
 import RemindReportContent from './ReportModal';
 import AccordionModuleNative from '../MyTasks/BleashupAccordion';
+import  Octicons  from 'react-native-vector-icons/Octicons';
+import { TouchableOpacity, Text,View } from 'react-native';
+import GState from '../../../stores/globalState';
 
 export default class DonnersList extends Component {
     constructor(props) {
@@ -52,7 +54,11 @@ export default class DonnersList extends Component {
                                     <ProfileView delay={this.delay} phone={item.phone}></ProfileView>
                                 </View>
                                 {this.props.must_report && !this.props.cannotReport ?
-                                    <Button style={{ flexDirection: 'column', }} onPress={() => {
+                                    <TouchableOpacity style={{ 
+                                        flexDirection: 'column',
+                                        justifyContent: 'center',
+                                        alignItems: 'center',
+                                     }} onPress={() => {
                                         this.setState({
                                             isReportModalOpened: true,
                                             interval: ParentItem,
@@ -60,8 +66,9 @@ export default class DonnersList extends Component {
                                             currentUser: item
                                         })
                                     }} transparent>
-                                        <Icon type="Octicons"
-                                            name="report"></Icon><Text>Report</Text></Button> : null}
+                                        <Octicons style={{...GState.defaultIconSize}} type="Octicons"
+                                            name="report"/>
+                                            <Text style={{...GState.defaultTextStyle}}>Report</Text></TouchableOpacity> : null}
                             </View>
                             <MenuDivider color="#1FABAB" />
                         </View> : null)

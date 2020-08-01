@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
-import { View, TouchableOpacity } from 'react-native';
-import { Text, Button } from "native-base";
+import { View, TouchableOpacity, Text, } from 'react-native';
 import ColorList from '../../../../colorList';
 import shadower from '../../../../shadower';
 
@@ -12,49 +11,30 @@ export default class CreateButton extends Component {
     return (
       <View
         style={{
-          alignSelf: 'center',
           width: this.props.width,
           alignItems: 'center',
+          width: "100%" 
         }}
       >
-        <TouchableOpacity style={{ width: "100%" }}>
-          <Button
-            onPress={() => requestAnimationFrame(this.props.action)}
-            style={{
-              borderWidth: 1,
-              borderColor: ColorList.bodyIcon,
-              backgroundColor: ColorList.bodyBackground,
-              ...this.props.style,
-            }}
-            rounded
-          >
-            <View style={{ width: '100%', alignItems: 'center' }}>
-              <Text style={{ color: ColorList.bodyText, fontWeight: 'bold' }}>
-                {this.props.title}
-              </Text>
-            </View>
-          </Button>
+        <TouchableOpacity style={{
+          borderWidth: 1,
+          borderColor: ColorList.bodyIcon,
+          borderRadius: 20,
+          width: 200,
+          alignItems: 'center',
+          justifyContent: 'center',
+          height:40, 
+          backgroundColor: ColorList.bodyBackground,
+          ...this.props.style,
+        }}
+          onPress={() => requestAnimationFrame(this.props.action)}
+        >
+          <Text style={{ color: ColorList.bodyText, fontWeight: 'bold',
+          textAlign:"center" }}>
+            {this.props.title}
+          </Text>
         </TouchableOpacity>
       </View>
     );
   }
 }
-
-/** <View style={{ alignSelf: "flex-end",  }}>
-            <TouchableOpacity
-                style={{ minHeight: 40, borderRadius: 8, ...shadower(2), backgroundColor: ColorList.headerIcon,
-                    justifyContent: 'center', padding: 10, }}
-                onPress={() => requestAnimationFrame(this.props.action)}
-            >
-                <Text
-                    style={{
-                        alignSelf: 'center',
-                        color: ColorList.headerBackground,
-                        fontWeight: "bold",
-                        fontSize: 20,
-                    }}
-                >
-                    {this.props.title}
-                </Text>
-            </TouchableOpacity>
-        </View> */

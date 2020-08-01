@@ -20,6 +20,10 @@ import TitleView from "../../currentevents/components/TitleView";
 import Creator from "../../reminds/Creator";
 import BleashupModal from "../../../mainComponents/BleashupModal";
 import Texts from "../../../../meta/text";
+import Toaster from "../../../../services/Toaster";
+import ColorList from '../../../colorList';
+import GState from "../../../../stores/globalState";
+import shadower from "../../../shadower";
 export default class DetailsModal extends BleashupModal {
   state = {};
   initialize() {
@@ -92,7 +96,7 @@ export default class DetailsModal extends BleashupModal {
         .catch((error) => {
           console.warn(error, " error which occured while joining ");
           this.setStatePure({ isJoining: false });
-          Toast.show({
+          Toaster({
             text: "unable to perform this action",
             buttonText: "Okay",
             position: "top",
@@ -114,8 +118,8 @@ export default class DetailsModal extends BleashupModal {
       () =>
             this.setStatePure({
               event: this.props.event,
-              details: details,
-              creator: creator,
+              //details: details,
+              //creator: creator,
               loaded: true,
               location: this.props.event.location,
         }),
@@ -138,7 +142,7 @@ export default class DetailsModal extends BleashupModal {
     const accept = this.state.accept;
     const deny = this.state.deny;
     return !this.state.loaded ? null : (
-      <ScrollView showsVerticalScrollIndicator={false}>
+      <View>
         <View style={styles.mainContainer}>
           <View style={styles.headerContainer}>
             <View style={styles.header}>
@@ -148,31 +152,28 @@ export default class DetailsModal extends BleashupModal {
               >
                 <CacheImages thumbnails source={this.url}></CacheImages>
               </TouchableOpacity>
-              <View style={styles.titleContainer}>
+              <View style={styles.titleMainContainer}>
                 <TitleView Event={this.state.event}></TitleView>
               </View>
             </View>
-            <View style={styles.description}>
-            <Text style={styles.description}>{this.props.Event.about.description}</Text>
-            </View>
           </View>
-          <View>
-          </View>
+          <ScrollView style={styles.descriptionContainer} showsVerticalScrollIndicator={false}>
+            <Text style={styles.description}>
+            {this.props.event.about.description||"No Description Provided"}</Text>
+          </ScrollView>
           <View style={styles.cardItem}>
             <View style={styles.left}>
               {this.props.isToBeJoint && this.state.event.public ? (
                 <View>
-                  <View style={styles.joinButtonContainer}>
                     {this.state.isJoining ? null : (
                       <TouchableOpacity
                         onPress={this.props.join}
-                        style={styles.joinButton}
+                        style={styles.joinButtonContainer}
                         onPress={this.initJoin}
                       >
                         <Text style={styles.joinButtom}>{Texts.join}</Text>
                       </TouchableOpacity>
                     )}
-                  </View>
                 </View>
               ) : null}
             </View>
@@ -197,16 +198,20 @@ export default class DetailsModal extends BleashupModal {
             }}
           ></PhotoViewer>
         ) : null}
-      </ScrollView>
+        </View>
     );
   }
 }
 
 const styles = StyleSheet.create({
   headerContainer: { height: 65 },
+  descriptionContainer:{
+    height:200
+  },
   description:{
+    ...GState.defaultTextStyle,
       fontSize: 14,
-      margin: 3,
+      margin: "3%",
       justifyContent: 'flex-start',
   },
   mainContainer: { height: "98%" },
@@ -214,10 +219,11 @@ const styles = StyleSheet.create({
     alignSelf: "flex-end",
   },
   left: {
-    alignSelf: "flex-start",
+    alignSelf: "flex-end",
   },
   header: {
     ...bleashupHeaderStyle,
+    alignItems: 'center',
     padding: "1%",
     flexDirection: "row",
   },
@@ -226,17 +232,36 @@ const styles = StyleSheet.create({
   },
   joinButtonContainer: {
     flexDirection: "row",
-    justifyContent: "space-between",
+    height:40,
+    marginLeft: "auto",
+    alignSelf: 'flex-end',
+    width:60,
+    ...shadower(2),
+    backgroundColor: ColorList.indicatorColor,
+    borderRadius: 3,
   },
-  titleContainer: { width: "80%" },
+  titleMainContainer:{
+    width: "80%",
+    marginLeft: 10,
+    marginTop: "5%",
+  },
+  titleContainer: { 
+   
+  },
   joinButtom: {
     fontSize: 18,
+    marginLeft:'auto',
+    marginRight: 'auto',
+    marginBottom: "auto",
+    marginTop: "auto",
+    color:ColorList.bodyBackground,
     fontWeight: "500",
-    marginLeft: 31,
   },
-  photoContainer: { width: "30%" },
+  photoContainer: { width: "15%",marginBottom: "2%", },
   joinButton: {
     alignItems: "center",
+    backgroundColor: ColorList.indicatorColor,
+    alignSelf: 'flex-end',
     width: 100,
     marginTop: 4,
     marginBottom: 10,

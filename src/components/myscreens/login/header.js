@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { View, StyleSheet}  from 'react-native';
+import { View, StyleSheet,Image}  from 'react-native';
 import Icon from "react-native-vector-icons/Ionicons"
 import shadower  from "../../shadower";
 import ColorList from "../../colorList";
@@ -33,6 +33,7 @@ const styles = StyleSheet.create({
         flexDirection: "row",
     },
      icon: {
+         ...GState.defaultIconSize,
         color: ColorList.headerIcon
     },
     image: {

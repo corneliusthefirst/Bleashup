@@ -32,7 +32,7 @@ import VerificationModal from "../invitations/components/VerificationModal";
 import connect from '../../../services/tcpConnect';
 import HeaderHome from '../login/header';
 import ColorList from "../../colorList";
-
+import Toaster from "../../../services/Toaster";
 
 
 @observer
@@ -81,7 +81,7 @@ export default class SignInView extends Component {
       this.back()
     } else {
       this.exiting = true
-      Toast.show({ text: "Press again to go to the pervious page" });
+      Toaster({ text: "Press again to go to the pervious page" });
       this.timeout = setTimeout(() => {
         this.exiting = false
       }, 800)

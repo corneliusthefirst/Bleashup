@@ -3,8 +3,8 @@ import {
     View, Text, TouchableOpacity
 } from 'react-native';
 import Menu, { MenuItem, MenuDivider } from 'react-native-material-menu';
-import { Icon, } from "native-base"
 import colorList from "../../colorList";
+import AntDesign  from 'react-native-vector-icons/AntDesign';
 
 export default class ChatRoomPlus extends Component {
     constructor(props) {
@@ -25,13 +25,12 @@ export default class ChatRoomPlus extends Component {
             <Menu style={{ backgroundColor:colorList.popMenuBackground}}
                 ref={this.setMenuRef}
                 button={<TouchableOpacity onPress={() => 
-                    requestAnimationFrame(() => this.showMenu())} ><Icon style={{
+                    requestAnimationFrame(() => this.showMenu())} ><AntDesign style={{
                     color:colorList.headerIcon,
                     fontSize: 25,
                 }}
                     name="plus" 
-                    type="AntDesign">
-                    </Icon>
+                    type="AntDesign"/>
                 </TouchableOpacity>}>
                 {/*<View><MenuItem textStyle={{ color: "#0A4E52" }} onPress={() => {
                     this.hideMenu()

@@ -1,7 +1,6 @@
 import React, { Component } from "react"
-import { FlatList, View, ScrollView } from "react-native";
-import { Spinner, CardItem, Text, List } from "native-base";
-import { observer } from "mobx-react";
+import { FlatList, View, ScrollView, Text } from "react-native";
+import Spinner from './Spinner';
 
 
 const ifCloseToTop = ({ layoutMeasurement, contentOffset, contentSize }) => {
@@ -12,7 +11,7 @@ const isCloseToBottom = ({ layoutMeasurement, contentOffset, contentSize }) => {
     return layoutMeasurement.height + contentOffset.y >=
         ((contentSize.height - paddingToBottom) * (0.70));
 };
-@observer export default class BleashupScrollView extends Component {
+export default class BleashupScrollView extends Component {
     constructor(props) {
         super(props)
         this.state = {
@@ -64,11 +63,11 @@ const isCloseToBottom = ({ layoutMeasurement, contentOffset, contentSize }) => {
                     keyExtractor={this.props.keyExtractor}>
                     {this._renderItems(this.props.dataSource.slice(this.props.firstIndex ? this.props.firstIndex : 0,
                         this.state.currentRender))}
-                    {this.props.numberOfItems < this.props.initialRender ? null : <CardItem style={{ width: "100%", height: 25 }} >
+                    {this.props.numberOfItems < this.props.initialRender ? null : <View style={{ width: "100%", height: 25 }} >
                         {this.state.endReached ? <Text style={{
                             marginLeft: "35%"
                         }}>no more data to load</Text> : <Spinner size={"small"}></Spinner>}
-                    </CardItem>}
+                    </View>}
                 </ScrollView>
             </View>)
     }

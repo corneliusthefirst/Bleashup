@@ -3,8 +3,8 @@ import EventListener from '../../../../services/severEventListener';
 import  stores  from '../../../../stores';
 import  uuid  from 'react-native-uuid';
 import  moment  from 'moment';
-import { Toast } from 'native-base';
 import firebase  from 'react-native-firebase';
+import Toaster from '../../../../services/Toaster';
 
 class CreateRequester {
     createEvent(event){
@@ -38,7 +38,7 @@ class CreateRequester {
                         })
                     }
                 }).catch((error) => {
-                    Toast.show({text:'Unable to perform request'})
+                    Toaster({text:'Unable to perform request'})
                     reject(error)
                 })
             })

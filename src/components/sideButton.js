@@ -1,5 +1,4 @@
 import React, { Component } from "react";
-import {Icon } from "native-base";
 import { StyleSheet, View ,TouchableOpacity} from 'react-native';
 import ActionButton from 'react-native-action-button';
 
@@ -45,17 +44,3 @@ const styles = StyleSheet.create({
 
 
 
-
-
-/**     <ActionButton.Item buttonColor='#1CDBAB' title="New Relation" onPress={()=>{this.onClickNewContact()}} size={75}>
-            <Icon name="person-add" active={true} type="MaterialIcons" style={styles.actionButtonIcon} />
-          </ActionButton.Item>   
-          <ActionButton.Item buttonColor='#9b59b6' title=" New Activity  " onPress={()=>{this.onClickNewEvent().then(()=>{})}} size={65}>
-            <Icon name="md-create" style={styles.actionButtonIcon} />
-          </ActionButton.Item>   
-        <ActionButton.Item buttonColor='#3D90E3' title="Join Activity" onPress={() => { this.navigateToQRScanner() }} size={55}>
-          <Icon name="barcode-scan" active={true} type="MaterialCommunityIcons" style={{ color: "#FEFFDE", }} />
-        </ActionButton.Item> 
-          <ActionButton.Item buttonColor='#1abc9c' title="My Tasks" onPress={() => {this.onClickNewRemind()}} size={45}>
-            <Icon name="tasks" type="FontAwesome" style={styles.actionButtonIcon} />
-          </ActionButton.Item> */

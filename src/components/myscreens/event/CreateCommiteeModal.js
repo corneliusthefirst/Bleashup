@@ -4,10 +4,12 @@ import {
     TouchableWithoutFeedback,
     TextInput,
     StatusBar,
-    TouchableOpacity
+    TouchableOpacity,
+    Text
 } from 'react-native';
-import { Container, Content, Form, Item, Input, Icon, Text, Label } from 'native-base';
 import Modal from "react-native-modalbox"
+import MaterialIcons  from 'react-native-vector-icons/MaterialIcons';
+import AntDesign from 'react-native-vector-icons/AntDesign';
 export default class CreateCommiteeModal extends PureComponent {
     constructor(props) {
         super(props)
@@ -77,15 +79,15 @@ export default class CreateCommiteeModal extends PureComponent {
                     {this.state.commiteeNameErrror ? <Text style={{ color: "#A91A84", fontWeight: 'bold', }} note>{"the commitee name cannot be empty"}</Text> : null}
                     {this.state.showGenralNameError ? <Text style={{ color: "#A91A84", fontWeight: 'bold', }} note> the commitee name cannot be same as General</Text> : null}
                     {this.state.nameTooLongError ? <Text style={{ color: "#A91A84", fontWeight: 'bold', }} note>the name is too long</Text> : null}
-                    <Item>
+                    <View>
                         <TextInput maxLength={20} style={{ width: "100%" }} onChangeText={(text) => {
                             this.setState({
                                 commiteeName: text
                             })
                             this.validator(text)
                         }} placeholder="Committee name" />
-                    </Item>
-                    <Item>
+                    </View>
+                    <View>
                         <TouchableOpacity onPress={() => requestAnimationFrame(() => {
                             this.setState({ publicStatus: !this.state.publicStatus })
                         })}>
@@ -94,8 +96,8 @@ export default class CreateCommiteeModal extends PureComponent {
                                     display: "flex",
                                     flexDirection: 'row',
                                 }}>
-                                    <Icon style={{ color: "#1FABAB" }} name={this.state.publicStatus ? "radio-button-checked" :
-                                        "radio-button-unchecked"} type="MaterialIcons"></Icon>
+                                    <MaterialIcons style={{ color: "#1FABAB" }} name={this.state.publicStatus ? "radio-button-checked" :
+                                        "radio-button-unchecked"} type="MaterialIcons"/>
 
                                     <Text style={{ marginLeft: "10%", marginTop: "1%", fontSize: 14, fontWeight: "bold" }}>
                                         Tobe accessible by any participant ?
@@ -103,16 +105,15 @@ export default class CreateCommiteeModal extends PureComponent {
                                 </View>
                             </View>
                         </TouchableOpacity>
-                    </Item>
+                    </View>
                     <View style={{ marginLeft: "90%", marginTop: "4%", }}>
                         <TouchableOpacity onPress={() => requestAnimationFrame(() => {
                             if (this.validator(this.state.commiteeName)) this.props.createCommitee({ publicState: this.state.publicStatus, commiteeName: this.state.commiteeName })
                         })}>
-                            <Icon name="checkcircle" style={{
+                            <AntDesign name="checkcircle" style={{
                                 color: "#1FABAB",
                                 fontSize: 30,
-                            }} type="AntDesign"></Icon>
-                            {//<Label style={{ color: "#1FABAB", fontSize: 14, marginLeft: "10%", fontWeight: 'bold', }}>{"ok"}</Label>
+                            }} type="AntDesign"/>
                         }
                         </TouchableOpacity>
                     </View>

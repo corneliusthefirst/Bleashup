@@ -7,10 +7,10 @@ import Pickers from "../../../../../services/Picker";
 import { AnimatedCircularProgress } from "react-native-circular-progress";
 import shadower from "../../../../shadower";
 import ColorList from "../../../../colorList";
-import { Icon } from "native-base";
 import SearchImage from "./SearchImage";
 import rnFetchBlob from "rn-fetch-blob";
 import BeComponent from '../../../../BeComponent';
+import EvilIcons  from 'react-native-vector-icons/EvilIcons';
 
 export default class PickersUpload extends BeComponent {
   constructor(props) {
@@ -292,12 +292,12 @@ export default class PickersUpload extends BeComponent {
               {(fill) => (
                 <View>
 
-                  <Icon
+                  <EvilIcons
                     name="close"
                     onPress={() => this.cancelAllTasks()}
                     style={{ color: ColorList.headerIcon, fontSize: 20 }}
                     type={"EvilIcons"}
-                  ></Icon>
+                  />
                 </View>
               )}
             </AnimatedCircularProgress>

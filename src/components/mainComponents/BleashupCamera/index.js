@@ -14,7 +14,6 @@ import {
   Dimensions,
 } from 'react-native';
 import { RNCamera as Camera } from 'react-native-camera';
-import {Icon} from 'native-base';
 import propTypes from 'prop-types';
 //import ColorList from '../../colorList';
 import BleashupModal from '../BleashupModal';
@@ -24,6 +23,12 @@ import  Stopwatch from './timer/stopwatch';
 //import ImagePicker from 'react-native-image-crop-picker';
 import Pickers from '../../../services/Picker';
 import GState from '../../../stores/globalState/index';
+import AntDesign from 'react-native-vector-icons/AntDesign';
+import Ionicons from "react-native-vector-icons/Ionicons"
+import  MaterialIconCommunity  from 'react-native-vector-icons/MaterialCommunityIcons';
+import Feather from "react-native-vector-icons/Feather"
+import MaterialIcons  from 'react-native-vector-icons/MaterialIcons';
+import FontAwesome from "react-native-vector-icons/FontAwesome"
 
 //VARIABLES
 const ZOOM = { MIN: 0, MAX: 1.0 };
@@ -333,7 +338,7 @@ render(){
               justifyContent:'center',
               width:width / 3,
            }}>
-                  <Icon
+                  <AntDesign
                     name="close"
                     style={{color:'white', fontSize:25 , marginLeft:15}}
                     type="AntDesign"
@@ -352,14 +357,13 @@ render(){
               <View style={{height:'100%' , flexDirection:'row', alignSelf:'center',justifyContent:'space-between',width:width / 3 }}>
 
               <TouchableOpacity onPress={this.onPressOrientation} style={{height:'100%' ,paddingLeft:10,paddingRight:10,marginLeft:20,justifyContent:'center'}} >
-                  <Icon name="ios-reverse-camera" type="Ionicons" style={{color:'white', fontSize:30 }} />
+                  <Ionicons name="ios-reverse-camera" type="Ionicons" style={{color:'white', fontSize:30 }} />
                 </TouchableOpacity>
 
                 <TouchableOpacity onPress={this.onPressFlashMode}   style={{height:'100%' ,paddingLeft:10,justifyContent:'center'}} >
-                  <Icon
+                  <MaterialIconCommunity
                     name={this.renderFlashIcon()}
                     style={{color:'white', fontSize:25,marginRight:10 }}
-                    type="MaterialCommunityIcons"
                   />
                 </TouchableOpacity>
 
@@ -375,14 +379,14 @@ render(){
             <View style={{ flex: 1, alignItems: 'flex-end' }}>
 
                 <TouchableOpacity onPress={this.onPressZoom.bind(this, 'PLUS')} style={{padding:5,backgroundColor:"rgba(0, 0, 0, 0.3)",borderRadius:20}}>
-                  <Icon size={25} name="zoom-in" type="Feather"  style={{color:'white', fontSize:25 }} />
+                  <FeaT size={25} name="zoom-in" type="Feather"  style={{color:'white', fontSize:25 }} />
                 </TouchableOpacity>
 
                 <TouchableOpacity
                   onPress={this.onPressZoom.bind(this, 'MINUS')}
                   style={{padding:5,marginTop:15,backgroundColor:"rgba(0, 0, 0, 0.3)",borderRadius:20}}
                 >
-                  <Icon size={25} name="zoom-out" type="Feather"   style={{color:'white', fontSize:25 }} />
+                  <Feather size={25} name="zoom-out" type="Feather"   style={{color:'white', fontSize:25 }} />
                 </TouchableOpacity>
 
               </View>
@@ -392,9 +396,6 @@ render(){
 
 
           <View  style={{flexDirection:'row', height:75,backgroundColor:"rgba(0, 0, 0, 0.3)",paddingTop:5}}>
-
-
-
           {this.state.videoActivated && this.state.isRecording ? <TouchableOpacity
                  onPress={this.pauseVideo}
                  style={{
@@ -412,17 +413,15 @@ render(){
               alignItems:'flex-start',
               justifyContent:'center',
            }}>
-                  <Icon
+                  <AntDesign
                     name="pausecircle"
                     style={{color:this.state.paused ? 'white' : '#f94c4c', fontSize:35 , marginLeft:15}}
-                    type="AntDesign"
                     onPress={this.pauseVideo}
                   />
 
              </View>
 
             </TouchableOpacity> :
-
             <TouchableOpacity
                  onPress={() => {this.props.novideo ? this.openGallery('photo') : this.openGallery('all')}}
                  style={{
@@ -440,18 +439,15 @@ render(){
               alignItems:'flex-start',
               justifyContent:'center',
            }}>
-                  <Icon
+                  <MaterialIcons
                     name="photo-library"
                     style={{color:'white', fontSize:35 , marginLeft:15}}
-                    type="MaterialIcons"
                     onPress={() => {this.props.novideo ? this.openGallery('photo') : this.openGallery('all')}}
                   />
 
              </View>
 
             </TouchableOpacity>}
-
-
              {this.state.videoActivated ?
                       <TouchableOpacity
                        onLongPress={() => this.deactivateVideo()}
@@ -466,9 +462,9 @@ render(){
                      }}
                    >
                      <View style={{alignItems:'center',justifyContent:'center'}}>
-                     <Icon name="circle-thin" type="FontAwesome" style={{color:'white', fontSize:70 , position:'relative'}} />
+                     <FontAwesome name="circle-thin" style={{color:'white', fontSize:70 , position:'relative'}} />
                       <View style={{ alignSelf: 'center',alignItems:'center',justifyContent:'center',height:44,width:44,borderRadius:22,backgroundColor:'white',marginTop:-57.5}}>
-                            <Icon name="circle" type="FontAwesome" style={{color:'#f94c4c', fontSize:18 }} />
+                        <FontAwesome name="circle"  style={{color:'#f94c4c', fontSize:18 }} />
                       </View>
                      </View>
 
@@ -487,7 +483,7 @@ render(){
                                 marginBottom: 10,
                              }}
                           >
-                               <Icon name="circle-thin" type="FontAwesome" style={{color:'white', fontSize:70}} />
+                               <FontAwesome name="circle-thin" style={{color:'white', fontSize:70}} />
                      </TouchableOpacity>
            }
 
@@ -554,69 +550,3 @@ const styles = StyleSheet.create({
     flex: 1,
   },
 });
-
-
-  /*
-  componentWillMount = () => {
-    //StatusBar.setHidden(true);
-    //StatusBar.setBackgroundColor('#000000', true);
-  };
-
-  componentWillUnmount(){
-    //StatusBar.setHidden(false);
-    //StatusBar.setBackgroundColor('#FFFFFF', true);
-  }*/
-
-        /*
-          <Icon name="ios-camera" type="Ionicons" style={{color:'black', fontSize:45 }} />
-        <TouchableOpacity
-           onPress={this.openGalerie}
-           style={{
-             alignSelf: 'flex-start',
-             alignItems:'center',
-             backgroundColor: 'white',
-             borderTopLeftRadius: 8,
-             borderBottomLeftRadius: 8,
-             height:50,
-             width:100,
-             marginVertical: 10,
-           }}
-        >
-            <View
-             style={{
-             flex:1,
-             alignItems:'center',
-             justifyContent:'center',
-             backgroundColor: 'white',
-            }}>
-              <Text style={{fontSize:18,fontWeight:'700'}}>Video</Text>
-            </View>
-
-
-        </TouchableOpacity>*/
-
-
-        /* <TouchableOpacity
-           onPress={this.openPhoto}
-           style={{
-             alignSelf: 'flex-start',
-             alignItems:'center',
-             backgroundColor: 'white',
-             height:50,
-             width:100,
-             borderTopRightRadius: 8,
-             borderBottomRightRadius: 8,
-             marginVertical: 10,
-           }}
-         >
-             <View
-             style={{
-             flex:1,
-             alignItems:'center',
-             backgroundColor: 'white',
-             justifyContent:'center',
-           }}>
-                <Text style={{fontSize:18,fontWeight:'700'}} >Photo</Text>
-             </View>
-
-          </TouchableOpacity>*/

@@ -10,9 +10,7 @@ const screenWidth = Math.round(Dimensions.get('window').width);
 const screenheight = Math.round(Dimensions.get('window').height);
 
 import ReactNativeZoomableView from '@dudigital/react-native-zoomable-view/src/ReactNativeZoomableView';
-import Image from 'react-native-scalable-image';
 //import Orientation from 'react-native-orientation-locker';
-import { Icon, Text } from 'native-base';
 import VideoViewerController from './videoViewerController';
 import moment from 'moment';
 import ColorList from '../../../colorList';

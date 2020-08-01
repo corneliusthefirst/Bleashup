@@ -2,12 +2,8 @@
 /* eslint-disable prettier/prettier */
 import React, { Component } from 'react';
 import {
-    Icon,
-    Text,
-    Toast,
-} from 'native-base';
-import {
     View,
+    Text,
     Dimensions,
     Keyboard,
     StatusBar,
@@ -16,9 +12,7 @@ import {
     Vibration,
     Clipboard,
 } from 'react-native';
-
 import VideoPlayer from './VideoController';
-import Image from 'react-native-scalable-image';
 import BleashupFlatList from '../../BleashupFlatList';
 import Message from './Message';
 import {
@@ -44,9 +38,7 @@ import {
 import Waiter from '../loginhome/Waiter';
 import MediaTabModal from './MediaTabModal';
 import testForURL from '../../../services/testForURL';
-import Votes from '../votes';
 import emitter from '../../../services/eventEmiter';
-import ContactsModal from '../../ContactsModal';
 import colorList from '../../colorList';
 import { PrivacyRequester } from '../settings/privacy/Requester';
 import { observer } from 'mobx-react';
@@ -73,7 +65,10 @@ import { Platform } from 'react-native';
 import request from '../../../services/requestObjects';
 import Options from './optionsModal';
 import { BackHandler } from 'react-native';
+import SimpleLineIcons from "react-native-vector-icons/SimpleLineIcons"
 import SideButton from '../../sideButton';
+import Toaster from '../../../services/Toaster';
+import  EvilIcons  from 'react-native-vector-icons/EvilIcons';
 
 const screenWidth = Math.round(Dimensions.get('window').width);
 const screenheight = Math.round(Dimensions.get('window').height);
@@ -699,7 +694,7 @@ class ChatRoom extends AnimatedComponent {
     copyMessage() {
         Clipboard.setString(this.state.currentMessage.text);
         Vibration.vibrate(10);
-        Toast.show({ text: 'copied !', type: 'success' });
+        Toaster({ text: 'copied !', type: 'success' });
     }
     showMessageAction(message, reply,sender) {
         this.tempReply = reply
@@ -856,7 +851,7 @@ class ChatRoom extends AnimatedComponent {
                                                         //text={"D"}
                                                         renderIcon={() => {
                                                             return <TouchableOpacity onPress={() => requestAnimationFrame(() => { this.scrollToEnd() })} style={{ backgroundColor: ColorList.bodyBackground, height: 40, width: 40, borderRadius: 30, justifyContent: "center", alignItems: "center", ...shadower(4) }}>
-                                                                <Icon name="arrow-down" type="SimpleLineIcons" style={{ color: ColorList.bodyIcon, fontSize: 22 }} />
+                                                                <SimpleLineIcons name="arrow-down" type="SimpleLineIcons" style={{ color: ColorList.bodyIcon, fontSize: 22 }} />
                                                             </TouchableOpacity>
                                                         }}
                                                         action={() => requestAnimationFrame(() => { this.scrollToEnd() })}
@@ -976,56 +971,6 @@ class ChatRoom extends AnimatedComponent {
                                     });
                                 }}
                             ></MessageActions>
-                            {/*<Votes
-                                shared={false}
-                                share={{
-                                    id: "45xerfds",
-                                    date: moment().format(),
-                                    sharer: stores.LoginStore.user.phone,
-                                    item_id: "6d1d14f0-8d1a-11ea-9234-8b09069818ca",
-                                    event_id: this.props.activity_id,
-                                }}
-                                replying={(reply) => {
-                                    this.fucussTextInput();
-                                    this.replying(reply, null);
-                                    setTimeout(() => {
-                                        this.setStatePure({
-                                            isVoteCreationModalOpened: false,
-                                        });
-                                    }, 200);
-                                }}
-                                computedMaster={this.props.computedMaster}
-                                takeVote={(vote) => this.createVote(vote)}
-                                working={this.props.working}
-                                isSingleVote={this.state.single_vote}
-                                vote_id={this.state.vote_id}
-                                startLoader={this.props.showLoader}
-                                roomName={this.props.roomName}
-                                showVoters={(voters) => {
-                                    this.showVoters(voters);
-                                }}
-                                stopLoader={this.props.stopLoader}
-                                activity_name={this.props.activity_name}
-                                committee_id={this.props.firebaseRoom}
-                                event_id={this.props.activity_id}
-                                isOpen={this.state.isVoteCreationModalOpened}
-                                sender={this.sender}
-                                onClosed={() => {
-                                    this.setStatePure({
-                                        isVoteCreationModalOpened: false,
-                                    });
-                                }}
-                            ></Votes>*/}
-                            {/*<ContactsModal
-                                title={this.state.title}
-                                contacts={this.state.voters}
-                                isOpen={this.state.showContacts}
-                                onClosed={() => {
-                                    this.setStatePure({
-                                        showContacts: false,
-                                    });
-                                }}
-                            ></ContactsModal>*/}
                             <PublishersModal
                                 isOpen={this.state.showReacters}
                                 onClosed={() => {
@@ -1090,7 +1035,7 @@ class ChatRoom extends AnimatedComponent {
                 isShareWithContactsOpened: true,
                 currentMessage: message,
             })
-            : Toast.show({ text: 'cannot forward unsent messages' });
+            : Toaster({ text: 'cannot forward unsent messages' });
     }
     replyMessage() {
        this.replyTimout = setTimeout(() => {
@@ -1193,7 +1138,7 @@ class ChatRoom extends AnimatedComponent {
                 tempMessage.sourcer = message.source;
                 return tempMessage;
             default:
-                Toast.show({ text: 'unable to reply for unsent messages' });
+                Toaster({ text: 'unable to reply for unsent messages' });
                 return null;
         }
     }
@@ -1510,7 +1455,7 @@ class ChatRoom extends AnimatedComponent {
                         margin: '1%',
                         position: 'absolute',
                     }}>
-                        <Icon
+                        <EvilIcons
                             type="EvilIcons"
                             onPress={() => {
                                 this.setStatePure({

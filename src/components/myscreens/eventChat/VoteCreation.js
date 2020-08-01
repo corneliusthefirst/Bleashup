@@ -7,8 +7,9 @@ import {
     ScrollView,
     KeyboardAvoidingView,
     Platform,
+    Text
 } from "react-native";
-import { Text, Item, Button, Icon, Content } from "native-base";
+import { Button } from "native-base";
 //import Textarea from "react-native-textarea";
 import labler from "./labler";
 import shadower from "../../shadower";
@@ -25,6 +26,9 @@ import PickersUpload from "../event/createEvent/components/PickerUpload";
 import VoteOptionPreviwer from "./VoteOptionMediaPreviewer";
 import CreateButton from "../event/createEvent/components/ActionButton";
 import CreateTextInput from "../event/createEvent/components/CreateTextInput";
+import EvilIcons  from 'react-native-vector-icons/EvilIcons';
+import  MaterialIcons  from 'react-native-vector-icons/MaterialIcons';
+import AntDesign from 'react-native-vector-icons/AntDesign';
 
 let { height, width } = Dimensions.get("window");
 export default class VoteCreation extends BleashupModal {
@@ -229,12 +233,12 @@ export default class VoteCreation extends BleashupModal {
                     </View>
                 </View>
                 <View style={{ width: "15%", justifyContent: "center" }}>
-                    <Icon
+                    <EvilIcons
                         style={{ alignSelf: "flex-end" }}
                         onPress={() => this.removeNote(index)}
                         name="minus"
                         type="EvilIcons"
-                    ></Icon>
+                    />
                 </View>
             </View>
         );
@@ -464,14 +468,14 @@ export default class VoteCreation extends BleashupModal {
                                         onPress={() => this.changeAlwaysShowState()}
                                         transparent
                                     >
-                                        <Icon
+                                        <MaterialIcons
                                             name={
                                                 this.state.vote && this.state.vote.always_show
                                                     ? "radio-button-checked"
                                                     : "radio-button-unchecked"
                                             }
                                             type={"MaterialIcons"}
-                                        ></Icon>
+                                        ></MaterialIcons>
                                         <Text>{"always show vote percentages"}</Text>
                                     </Button>
                                     <View style={{ width: this.width }}>
@@ -528,7 +532,7 @@ export default class VoteCreation extends BleashupModal {
                                                 >
                                                     {"Options"}
                                                 </Text>
-                                                <Icon name="pluscircle" type={"AntDesign"}></Icon>
+                                                <AntDesign name="pluscircle" type={"AntDesign"}/>
                                             </Button>
                                         </View>
                                         <View style={{ marginLeft: "2%" }}>

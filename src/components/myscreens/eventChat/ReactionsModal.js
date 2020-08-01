@@ -1,13 +1,14 @@
 import React from "react";
 
 import BleashupModal from "../../mainComponents/BleashupModal";
-import { View, TouchableOpacity, ScrollView, } from "react-native";
+import { View, TouchableOpacity, ScrollView, Text } from "react-native";
 import { TouchableWithoutFeedback} from "react-native-gesture-handler"
 import CreationHeader from "../event/createEvent/components/CreationHeader";
-import { Icon, Text } from "native-base";
 import ColorList from "../../colorList";
 import shadower from "../../shadower";
 import rounder from '../../../services/rounder';
+import  EvilIcons  from 'react-native-vector-icons/EvilIcons';
+import GState from "../../../stores/globalState";
 
 export default class ReactionModal extends BleashupModal {
     coverScreen = false;
@@ -100,12 +101,12 @@ export default class ReactionModal extends BleashupModal {
                                 alignSelf: "center",
                             }}
                         >
-                            <Icon
+                            <EvilIcons
                                 onPress={this.onClosedModal.bind(this)}
                                 type={"EvilIcons"}
                                 name={"close"}
-                                style={{ margin: "auto", color: ColorList.bodyBackground }}
-                            ></Icon>
+                                style={{ ...GState.defaultIconSize,margin: "auto", color: ColorList.bodyBackground }}
+                            />
                         </View>
                     </View>
                     <View style={{ width: "80%",flexDirection: 'column',justifyContent: 'center',marginTop: 5, }}>

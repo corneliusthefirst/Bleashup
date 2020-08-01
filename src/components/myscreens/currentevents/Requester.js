@@ -5,9 +5,9 @@ import serverEventListener from "../../../services/severEventListener";
 import { forEach } from "lodash"
 import moment from "moment"
 import { AddParticipant } from '../../../services/cloud_services';
-import { Toast } from "native-base";
 import uuid from 'react-native-uuid';
 import firebase from 'react-native-firebase';
+import Toaster from "../../../services/Toaster";
 class Requester {
     constructor() {
         this.currentUserPhone = stores.Session.SessionStore.phone;
@@ -69,7 +69,7 @@ class Requester {
             eventID.event_id = event_id;
             requestData.publishEvent(eventID, event_id + "publish").then(JSONData => {
                 serverEventListener.sendRequest(JSONData, event_id + "publish").then(SuccessMessage => {
-                    Toast.show({ type: "success", text: "successfully published to your contacts", buttonText: "ok" })
+                    Toaster({ type: "success", text: "successfully published to your contacts", buttonText: "ok" })
                     stores.Events.publishEvent(event_id, false).then(() => {
                         stores.Publishers.addPublisher(event_id, {
                             phone:
@@ -108,7 +108,7 @@ class Requester {
             Join.host = EventHost;
             requestData.joinEvent(Join, EventID + "join").then((JSONData) => {
                 serverEventListener.sendRequest(JSONData, EventID + "join").then((SuccessMessage) => {
-                    Toast.show({ text: "Activity Successfully Joint !", type: "success", buttonText: "ok" })
+                    Toaster({ text: "Activity Successfully Joint !", type: "success", buttonText: "ok" })
                     AddParticipant(EventID, [Participant]).then((resp) => { })
                     stores.Events.addParticipant(EventID, Participant, false).then(() => {
                         let Change = {

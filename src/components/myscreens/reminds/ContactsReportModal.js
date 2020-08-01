@@ -1,12 +1,13 @@
 import React, { PureComponent } from "react"
 import Modal from "react-native-modalbox"
-import { Text, Spinner, Button, Icon } from "native-base"
-import { View } from "react-native"
+import { View, Text, } from "react-native"
 import BleashupFlatList from '../../BleashupFlatList';
 import ProfileView from "../invitations/components/ProfileView";
 import { MenuDivider } from 'react-native-material-menu';
 import RemindReportContent from "./ReportModal";
 import IntervalSeparator from "./IntervalSeparator";
+import  Octicons from 'react-native-vector-icons/Octicons';
+import Spinner from '../../Spinner';
 export default class ContactsReportModal extends PureComponent {
     constructor(props) {
         super(props)
@@ -73,15 +74,15 @@ export default class ContactsReportModal extends PureComponent {
                                                 <View style={{ margin: '2%', width: "70%" }}>
                                                     <ProfileView delay={this.delay} phone={item.data.phone}></ProfileView>
                                                 </View>
-                                                {this.props.must_report ? <Button style={{ flexDirection: 'column', }} onPress={() => {
+                                                {this.props.must_report ? <TouchableOpacity style={{ flexDirection: 'column', }} onPress={() => {
                                                     this.setState({
                                                         isReportModalOpened: true,
                                                         currentReport: item.data.status,
                                                         currentUser: item
                                                     })
                                                 }} transparent>
-                                                    <Icon type="Octicons"
-                                                        name="report"></Icon><Text>Report</Text></Button> : null}
+                                                    <Octicons type="Octicons"
+                                                        name="report"/><Text>Report</Text></TouchableOpacity> : null}
                                             </View>
                                             <MenuDivider color="#1FABAB" />
                                         </View> : null)

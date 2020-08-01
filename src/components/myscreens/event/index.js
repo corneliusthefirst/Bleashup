@@ -7,13 +7,9 @@ import {
   Platform,
   Vibration,
 } from "react-native";
-import { Spinner, Toast } from "native-base";
 import EventDetails from "../eventDetails";
 import Remind from "../reminds";
-import Highlights from "../highlights";
-import Votes from "../votes";
 import EventChat from "../eventChat";
-import Contributions from "../contributions";
 import SWView from "./SWView";
 import ChangeLogs from "../changelogs";
 import ParticipantModal from "../../ParticipantModal";
@@ -38,17 +34,11 @@ import {
   AddMembers,
   RemoveMembers,
 } from "../../../services/cloud_services";
-import SettingsModal from "./SettingsModal";
-import CalendarSynchronisationModal from "./CalendarSynchronisationModal";
-import CalendarServe from "../../../services/CalendarService";
-import SetAlarmPatternModal from "./SetAlarmPatternModal";
 import PhotoInputModal from "./PhotoInputModal";
 import PhotoViewer from "./PhotoViewer";
 import SearchImage from "./createEvent/components/SearchImage";
-import FileExachange from "../../../services/FileExchange";
 import Pickers from "../../../services/Picker";
 import HighlightCardDetail from "./createEvent/components/HighlightCardDetail";
-import RemindRequest from "../reminds/Requester";
 import TasksCreation from "../reminds/TasksCreation";
 import testForURL from "../../../services/testForURL";
 import ProfileModal from "../invitations/components/ProfileModal";
@@ -59,6 +49,8 @@ import colorList from "../../colorList";
 import SettingsTabModal from "./SettingTabModal";
 import BeNavigator from "../../../services/navigationServices";
 import replies from "../eventChat/reply_extern";
+import Toaster from "../../../services/Toaster";
+import Spinner from '../../Spinner';
 
 const screenWidth = Math.round(Dimensions.get("window").width);
 
@@ -244,10 +236,6 @@ export default class Event extends Component {
             event_id={this.event.id}
           ></Remind>
         );
-      case "Votes":
-        return <Votes></Votes>;
-      case "Highlights":
-        return <Highlights goback={this.goback.bind(this)}></Highlights>;
       case "EventChat":
         return (
           <EventChat
@@ -316,9 +304,7 @@ export default class Event extends Component {
             }}
           ></EventChat>
         );
-      case "Contributions":
-        return <Contributions {...this.props}></Contributions>;
-      case "ChangeLogs":
+        case "ChangeLogs":
         return (
           <ChangeLogs
             index={this.index}
@@ -483,7 +469,7 @@ export default class Event extends Component {
           this.setState({
             working: false,
           });
-          Toast.show({ text: "Unable to process request !" });
+          Toaster({ text: "Unable to process request !" });
         });
     }
   }
@@ -502,13 +488,13 @@ export default class Event extends Component {
             isManagementModalOpened: false,
             working: false,
           });
-          Toast.show({ text: "unable to perform this action" });
+          Toaster({ text: "unable to perform this action" });
         });
     } else {
       this.setState({
         isManagementModalOpened: false,
       });
-      Toast.show({ text: "App Busy !" });
+      Toaster({ text: "App Busy !" });
     }
   }
   refreshePage() {
@@ -638,32 +624,14 @@ export default class Event extends Component {
         Requester.restoreHighlight(data.new_value.new_value)
           .then(() => {
             this.stopLoader();
-            Toast.show({ text: "restoration was successful", type: "success" });
+            Toaster({ text: "restoration was successful", type: "success" });
           })
           .catch(() => {
             this.stopLoader();
           });
       } else {
         this.stopLoader();
-        Toast.show({ text: "restored already" });
-      }
-    });
-  }
-  restoreRemind(data) {
-    this.startLoader();
-    stores.Reminds.loadReminds(this.event.id).then((reminds) => {
-      if (findIndex(reminds, { id: data.new_value.new_value.id }) < 0) {
-        RemindRequest.restoreRemind(data.new_value.new_value)
-          .then(() => {
-            this.stopLoader();
-            Toast.show({ text: "restoration was successful", type: "success" });
-          })
-          .catch(() => {
-            this.stopLoader();
-          });
-      } else {
-        this.stopLoader();
-        Toast.show({ text: "restored already" });
+        Toaster({ text: "restored already" });
       }
     });
   }
@@ -678,7 +646,7 @@ export default class Event extends Component {
           break;
       }
     } else {
-      Toast.show({ text: "App is Busy " });
+      Toaster({ text: "App is Busy " });
     }
   }
   master = false;
@@ -729,7 +697,7 @@ export default class Event extends Component {
           });
         });
     } else {
-      Toast.show({ text: "App is Busy" });
+      Toaster({ text: "App is Busy" });
     }
   }
   updateActivityDescription(newDesciption) {
@@ -747,7 +715,7 @@ export default class Event extends Component {
           });
         });
     } else {
-      Toast.show({ text: "App is busy" });
+      Toaster({ text: "App is busy" });
     }
   }
   isChat(currentPage) {
@@ -836,7 +804,7 @@ export default class Event extends Component {
         });
       //console.warn(data)
     } else {
-      Toast.show({ text: "App is busy" });
+      Toaster({ text: "App is busy" });
     }
   }
   editName(newName, id) {
@@ -860,7 +828,7 @@ export default class Event extends Component {
           emitter.emit("edit-failed", error);
         });
     } else {
-      Toast.show({ text: "App is busy" });
+      Toaster({ text: "App is busy" });
     }
   }
   publishCommitee(id, state) {
@@ -883,7 +851,7 @@ export default class Event extends Component {
           });
         });
     } else {
-      Toast.show({ text: "App is busy" });
+      Toaster({ text: "App is busy" });
     }
   }
   addCommiteeMembers(id, currentMembers) {
@@ -948,7 +916,7 @@ export default class Event extends Component {
           adding: false,
           working: false,
         });
-        Toast.show({ text: "App is busy" });
+        Toaster({ text: "App is busy" });
       }
     } else {
       this.setState({
@@ -958,7 +926,7 @@ export default class Event extends Component {
         adding: false,
         working: false,
       });
-      Toast.show({ text: "no members selected" });
+      Toaster({ text: "no members selected" });
     }
   }
   swapChats(commitee) {
@@ -1002,7 +970,7 @@ export default class Event extends Component {
             this.setState({
               working: false,
             });
-            Toast.show({ message: "unable to connect to the server" });
+            Toaster({ message: "unable to connect to the server" });
           });
       } else {
         Requester.invite(members, this.event.id)
@@ -1013,11 +981,11 @@ export default class Event extends Component {
             this.setState({
               working: false,
             });
-            Toast.show({ message: "unable to connect to the server" });
+            Toaster({ message: "unable to connect to the server" });
           });
       }
     } else {
-      Toast.show({ message: "App is busy !" });
+      Toaster({ message: "App is busy !" });
     }
   }
   refreshCommitees() {
@@ -1071,7 +1039,7 @@ export default class Event extends Component {
           notcheckall: false,
           working: false,
         });
-        Toast.show({ text: "App is busy" });
+        Toaster({ text: "App is busy" });
       }
     } else {
       this.setState({
@@ -1082,7 +1050,7 @@ export default class Event extends Component {
         notcheckall: false,
         working: false,
       });
-      Toast.show({ text: "no members selected" });
+      Toaster({ text: "no members selected" });
     }
   }
   joinCommitee(id) {
@@ -1108,7 +1076,7 @@ export default class Event extends Component {
           });
         });
     } else {
-      Toast.show({ text: "no members selected" });
+      Toaster({ text: "no members selected" });
     }
   }
   resetSelectedCommitee() {
@@ -1145,7 +1113,7 @@ export default class Event extends Component {
           });
         });
     } else {
-      Toast.show({ text: "App is busy" });
+      Toaster({ text: "App is busy" });
     }
   }
   openCommitee(id) {
@@ -1169,7 +1137,7 @@ export default class Event extends Component {
           });
         });
     } else {
-      Toast.show({ text: "App is busy" });
+      Toaster({ text: "App is busy" });
     }
   }
   closeCommitee(id) {
@@ -1193,7 +1161,7 @@ export default class Event extends Component {
           console.warn(error);
         });
     } else {
-      Toast.show({ text: "no members selected" });
+      Toaster({ text: "no members selected" });
     }
   }
   inviteContacts(adding) {
@@ -1254,7 +1222,7 @@ export default class Event extends Component {
           });
         });
     } else {
-      Toast.show({ text: "App is busy " });
+      Toaster({ text: "App is busy " });
     }
   }
   publish() {
@@ -1270,13 +1238,13 @@ export default class Event extends Component {
         this.setState({
           working: false,
         });
-        Toast.show({
+        Toaster({
           text: "Cannot perform this action; the activity is not public",
           duration: 5000,
         });
       }
     } else {
-      Toast.show({ text: "App Busy " });
+      Toaster({ text: "App Busy " });
     }
   }
   saveSettings(original, newSettings) {
@@ -1289,12 +1257,12 @@ export default class Event extends Component {
           this.initializeMaster();
         })
         .catch((erorr) => {
-          Toast.show({ text: "could not perform the request" });
+          Toaster({ text: "could not perform the request" });
           this.initializeMaster();
         });
     } else {
       this.initializeMaster();
-      Toast.show({ text: "App Busy" });
+      Toaster({ text: "App Busy" });
     }
   }
   markAsConfigured() {
@@ -1313,10 +1281,10 @@ export default class Event extends Component {
           this.initializeMaster();
         })
         .catch(() => {
-          Toast.show({ text: "Unable To process the request" });
+          Toaster({ text: "Unable To process the request" });
         });
     } else {
-      Toast.show({ text: "App is Busy" });
+      Toaster({ text: "App is Busy" });
     }
   }
   removeActivityPhoto() {
@@ -1334,45 +1302,6 @@ export default class Event extends Component {
         });
       });
   }
-  addToCalendar(pattern) {
-    this.setState({
-      isSetPatternModalOpened: false,
-    });
-    let alarms =
-      pattern && pattern.length > 0
-        ? pattern
-        : [
-          {
-            date:
-              Platform.OS === "ios"
-                ? moment(this.event.period)
-                  .subtract(600, "seconds")
-                  .toISOString()
-                : parseInt(
-                  moment(this.event.period).diff(
-                    moment(this.event.period).subtract(600, "seconds"),
-                    "minutes"
-                  )
-                ),
-          },
-          {
-            date:
-              Platform.OS === "ios"
-                ? moment(this.event.period).subtract(1, "hours").toISOString()
-                : parseInt(
-                  moment(this.event.period).diff(
-                    moment(this.event.period).subtract(1, "hours"),
-                    "minutes"
-                  )
-                ),
-          },
-        ];
-    CalendarServe.saveEvent(this.event, alarms).then((id) => {
-      stores.Events.markAsCalendared(this.event.id, id, alarms).then(() => {
-        this.initializeMaster();
-      });
-    });
-  }
   saveBackground(path) {
     this.setState({
       working: true,
@@ -1385,7 +1314,7 @@ export default class Event extends Component {
         this.setState({
           working: false,
         });
-        Toast.show({ text: "Sorry, the action could not be performed" });
+        Toaster({ text: "Sorry, the action could not be performed" });
         this.initializeMaster();
       });
   }
@@ -1439,12 +1368,12 @@ export default class Event extends Component {
         warnTitle: "Leave activity",
         callback: this.leaveActivity.bind(this),
       })
-      : Toast.show({ text: "You are not a  member anymore !" });
+      : Toaster({ text: "You are not a  member anymore !" });
   }
   startInvitation(adding) {
     this.computedMaster || this.event.public
       ? this.inviteContacts(adding)
-      : Toast.show({
+      : Toaster({
         text:
           "You don't have enough priviledges to invite your contacts to this activity ",
         duration: 4000,
@@ -1496,7 +1425,6 @@ export default class Event extends Component {
               marginBottom: "5%",
             }}
           >
-            <Spinner size={"small"}></Spinner>
           </View>
         </View>
       {this.state.working ? (
@@ -1636,34 +1564,6 @@ export default class Event extends Component {
             });
           }}
         ></ManageMembersModal>
-        <CalendarSynchronisationModal
-          closed={() => {
-            this.setState({
-              isSynchronisationModalOpned: false,
-            });
-          }}
-          unsync={() => {
-            this.unsync();
-          }}
-          synced={this.event.calendar_id ? true : false}
-          isOpen={this.state.isSynchronisationModalOpned}
-          callback={() =>
-            this.setState({
-              isSetPatternModalOpened: true,
-              isSynchronisationModalOpned: false,
-            })
-          }
-        ></CalendarSynchronisationModal>
-        <SetAlarmPatternModal
-          save={(pattern) => this.addToCalendar(pattern)}
-          date={this.event.period}
-          isOpen={this.state.isSetPatternModalOpened}
-          closed={() => {
-            this.setState({
-              isSetPatternModalOpened: false,
-            });
-          }}
-        ></SetAlarmPatternModal>
         <PhotoInputModal
           saveBackground={(url) => this.saveBackground(url)}
           removePhoto={() => {
@@ -1904,7 +1804,7 @@ export default class Event extends Component {
               editName={(newName, id, currentName) =>
                 this.computedMaster
                   ? this.editName(newName, id)
-                  : Toast.show({ text: "Connot Update This Commitee" })
+                  : Toaster({ text: "Connot Update This Commitee" })
               }
               swapChats={(room) => this.swapChats(room)}
               phone={stores.LoginStore.user.phone}
@@ -1915,7 +1815,7 @@ export default class Event extends Component {
                     isCommiteeModalOpened: true,
                   });
                 } else {
-                  Toast.show({
+                  Toaster({
                     text:
                       "You don't have enough priviledges to add a commitee ",
                     duration: 4000,

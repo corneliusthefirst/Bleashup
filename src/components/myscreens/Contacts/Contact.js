@@ -8,46 +8,27 @@ import {
   TouchableWithoutFeedback,
   Dimensions,
   TouchableOpacity,
+  Text,
   PermissionsAndroid,
   ScrollView,
 } from 'react-native';
 
-import {
-  Card,
-  CardItem,
-  Text,
-  Label,
-  Spinner,
-  Button,
-  Container,
-  Icon,
-  Thumbnail,
-  Title,
-  Item,
-  Toast,
-} from 'native-base';
 import bleashupHeaderStyle from '../../../services/bleashupHeaderStyle';
 import Contacts from 'react-native-contacts';
 import BleashupFlatList from '../../BleashupFlatList';
 import GState from '../../../stores/globalState/index';
 import CacheImages from '../../CacheImages';
 import stores from '../../../stores';
-import { functionDeclaration } from '@babel/types';
 import testForURL from '../../../services/testForURL';
 import {
   find,
   uniqBy,
   uniq,
-  filter,
   concat,
-  reject,
-  uniqWith,
   findIndex,
 } from 'lodash';
 import request from '../../../services/requestObjects';
-import autobind from 'autobind-decorator';
 import Invite from './invite';
-import moment from 'moment';
 import ColorList from '../../colorList';
 import countries from '../login/countries';
 import CreateRequest from '../event/createEvent/CreateRequester';
@@ -56,6 +37,11 @@ import shadower from '../../shadower';
 import BeNavigator from '../../../services/navigationServices';
 import ProfileViewCall from './ProfileViewCall';
 import getRelation from './Relationer';
+import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
+import EvilIcons from 'react-native-vector-icons/EvilIcons';
+import  AntDesign  from 'react-native-vector-icons/AntDesign';
+import Ionicons from 'react-native-vector-icons/Ionicons';
+import Spinner from '../../Spinner';
 
 var uuid = require('react-native-uuid');
 uuid.v1({
@@ -256,15 +242,16 @@ updatePhoneContacts = (bool) => {
                 alignItems: 'center',
               }}
             >
-              <Icon
+              <MaterialIcons
                 name="arrow-back"
                 active={true}
                 type="MaterialIcons"
-                style={{ color: ColorList.headerIcon }}
+                style={{...GState.defaultIconSize, color: ColorList.headerIcon }}
                 onPress={() => this.props.navigation.navigate('Home')}
               />
               <Text
                 style={{
+                  ...GState.defaultTextStyle,
                   fontSize: ColorList.headerFontSize,
                   fontWeight: 'bold',
                   paddingLeft: '7%',
@@ -276,10 +263,11 @@ updatePhoneContacts = (bool) => {
 
             <View style={{ width:45 }}>
               <TouchableOpacity>
-                <Icon
+                <EvilIcons
                   name="search"
                   type="EvilIcons"
-                  style={{ color: ColorList.headerIcon }}
+                  style={{...GState.defaultIconSize,
+                    color: ColorList.headerIcon }}
                   onPress={this.searchUser}
                 />
               </TouchableOpacity>
@@ -309,14 +297,15 @@ updatePhoneContacts = (bool) => {
                 //marginLeft: '2%',
               }}
             >
-              <Icon
+              <AntDesign
                 name="adduser"
                 active={true}
                 type="AntDesign"
-                style={{ color: ColorList.bodyIcon, paddingRight: 6 }}
+                style={{...GState.defaultIconSize, 
+                  color: ColorList.bodyIcon, paddingRight: 6 }}
               />
             </View>
-            <View style={{ marginLeft: '4%' }}>
+            <View style={{ ...GState.defaultTextStyle, marginLeft: '4%' }}>
               <Text>New Contact</Text>
             </View>
           </View>
@@ -342,14 +331,18 @@ updatePhoneContacts = (bool) => {
                 //marginLeft: '2%',
               }}
             >
-              <Icon
+              <AntDesign
                 name="sharealt"
                 active={true}
                 type="AntDesign"
-                style={{ color: ColorList.bodyIcon, paddingRight: 6 }}
+                style={{ 
+                  ...GState.defaultIconSize,
+                  color: ColorList.bodyIcon, 
+                  paddingRight: 6 
+                }}
               />
             </View>
-            <View style={{ marginLeft: '4%' }}>
+            <View style={{ ...GState.defaultTextStyle, marginLeft: '4%' }}>
               <Text>Invite Friends</Text>
             </View>
           </View>
@@ -373,10 +366,10 @@ updatePhoneContacts = (bool) => {
 
          <TouchableOpacity style={{flex:1,width:55,position:'absolute',right:0}}>
 
-               <Icon
+               <Ionicons
                 name="ios-refresh"
                 type="Ionicons"
-                style={{ color: ColorList.bodyIcon,marginLeft:10 }}
+                style={{ ...GState.defaultIconSize,color: ColorList.bodyIcon,marginLeft:10 }}
                 onPress={()=>this.updatePhoneContacts(true)}
               />
 
@@ -392,7 +385,7 @@ updatePhoneContacts = (bool) => {
               style={{ backgroundColor: ColorList.bodyBackground }}
               firstIndex={0}
               extraData={this.state}
-              keyExtractor={(item, index) => item.phone}
+              keyExtractor={(item, index) => index}
               dataSource={this.state.contacts}
               noSpinner={true}
               renderItem={(item, index) => {
@@ -400,7 +393,7 @@ updatePhoneContacts = (bool) => {
 
                 return (
                   <View
-                    style={{ height: 60, width: '100%', paddingLeft: '1.3%' }}
+                    style={{ height: 60, width: 250, paddingLeft: '1.3%' }}
                   >
                     <ProfileViewCall
                       phoneInfo={item}

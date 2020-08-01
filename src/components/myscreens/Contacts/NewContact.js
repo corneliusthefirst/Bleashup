@@ -1,10 +1,15 @@
 import React, { Component } from "react";
-import { View, Vibration, TouchableWithoutFeedback, Dimensions, TouchableOpacity } from 'react-native';
+import { 
+  View, 
+  Vibration, 
+  TouchableWithoutFeedback, 
+  Dimensions, 
+  TouchableOpacity,
+  Text
+} from 'react-native';
 
-import {
-  Card,CardItem,Text,Label,Spinner,Button,Container,Icon
-} from 'native-base';
 import bleashupHeaderStyle from "../../../services/bleashupHeaderStyle";
+import  MaterialIcons  from 'react-native-vector-icons/MaterialIcons';
 
 let { height, width } = Dimensions.get('window');
 export default class NewContactView extends Component{
@@ -28,14 +33,14 @@ componentDidMount(){
 
 render(){
     return (
-      <Container style={{ backgroundColor: "#FEFFDE",flexDirection:"column",width:width }}>
+      <View style={{ backgroundColor: "#FEFFDE",flexDirection:"column",width:width }}>
          <View style={{ height: 40, }}>
            <View style={{
                 ...bleashupHeaderStyle,
                 
               }}>
                  <View style={{flexDirection:"row",width:width/2,marginLeft:width/25,justifyContent:"space-between",alignItems:"center"}}>
-                 <Icon name="arrow-back" active={true} type="MaterialIcons" style={{ color: "#1FABAB", }} onPress={() => this.props.navigation.navigate("Contacts")} />
+                 <MaterialIcons name="arrow-back" active={true} type="MaterialIcons" style={{ color: "#1FABAB", }} onPress={() => this.props.navigation.navigate("Contacts")} />
                  <Text style={{fontSize:18,fontWeight:"bold",marginRight:"14%"}}>New Contact</Text>
                  </View>
           </View>
@@ -47,7 +52,7 @@ render(){
          </View>
          :null}
 
-        </Container>
+        </View>
     );
 }
 

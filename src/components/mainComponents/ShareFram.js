@@ -1,16 +1,16 @@
 import React, { Component } from "react";
-import { View, TouchableOpacity} from "react-native";
+import { View, TouchableOpacity, Text,} from "react-native";
 import ActivityProfile from "../myscreens/currentevents/components/ActivityProfile";
 import PhotoViewer from "../myscreens/event/PhotoViewer";
 import DetailsModal from "../myscreens/invitations/components/DetailsModal";
 import ColorList from "../colorList";
-import { Icon, Text, CardItem, Card } from "native-base";
 import moment from 'moment';
 import { format } from '../../services/recurrenceConfigs';
 import Creator from "../myscreens/reminds/Creator";
 import ProfileView from "../myscreens/invitations/components/ProfileView";
 import request from '../../services/requestObjects';
 import BeNavigator from '../../services/navigationServices';
+import GState from "../../stores/globalState";
 export default class ShareFrame extends Component {
     constructor(props) {
         super(props);
@@ -47,13 +47,15 @@ export default class ShareFrame extends Component {
                     }}
                 >
                     {this.props.share && this.props.share.event && this.props.share.event.about && <TouchableOpacity style={{flexDirection: 'row',}} onPress={() => requestAnimationFrame(this.openDetails.bind(this))}>
-                        <View style={{marginTop: 'auto',marginBottom: 'auto',}}><Text style={{fontStyle: 'italic',fontSize: 12,}} note>{'from: '}</Text></View>
-                        <View><Text style={{ fontWeight: '500',fontSize: 13, }} >{this.props.share.event.about.title}</Text></View><View 
+                        <View style={{marginTop: 'auto',marginBottom: 'auto',}}><Text style={{...GState.defaultTextStyle,
+                            fontStyle: 'italic',fontSize: 12,}} note>{'from: '}</Text></View>
+                        <View><Text style={{ ...GState.defaultTextStyle,fontWeight: '500',fontSize: 13, }} >{this.props.share.event.about.title}</Text></View><View 
                         style={{
                             marginTop: 'auto',
                             marginLeft: '2%',
                             marginBottom: 'auto',
                         }} ><Text style={{
+                            ...GState.defaultTextStyle,
                             fontStyle: 'italic',
                         }} note>{"(activity)"}</Text></View>
                     </TouchableOpacity>}

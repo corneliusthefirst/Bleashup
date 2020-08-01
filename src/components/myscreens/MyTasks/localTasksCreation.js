@@ -54,7 +54,9 @@ import stores from "../../../stores/index";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import { Dropdown } from "react-native-material-dropdown";
 import moment from 'moment';
-
+import Toaster from '../../../services/Toaster';
+import MaterialIcons  from 'react-native-vector-icons/MaterialIcons';
+import  Ionicons  from 'react-native-vector-icons/Ionicons';
 var uuid = require("react-native-uuid");
 uuid.v1({
   node: [0x01, 0x23, 0x45, 0x67, 0x89, 0xab],
@@ -336,7 +338,7 @@ export default class LocalTasksCreation extends Component {
   @autobind
   addNewRemind() {
     if (this.state.date == '' || this.state.time == '') {
-      Toast.show({
+      Toaster({
         text: 'Remind date or time cannot be empty !',
         buttonText: 'Okay',
         duration: 6000,
@@ -439,18 +441,6 @@ export default class LocalTasksCreation extends Component {
             borderRadius: 10,
           }}
         >
-          {/*  <View style={{height:"8%",width:"96%",flexDirection:"row",backgroundColor:"#FEFFDE",alignItems:"center",marginLeft:"2%",marginRight:"2%"}}>
-           <View >
-             <TouchableOpacity>
-                <Icon  onPress={this.back} type='MaterialCommunityIcons' name="keyboard-backspace" style={{color:"#1FABAB"}} />
-             </TouchableOpacity>
-           </View>
-
-             <View style={{marginLeft:"20%"}}>
-               <Text style={{fontSize:16}}>New Tasks/Reminds</Text>
-             </View>
-
-         </View>*/}
 
           <ScrollView ref={"scrollView"} showsVerticalScrollIndicator={false}>
             <View
@@ -497,7 +487,7 @@ export default class LocalTasksCreation extends Component {
               >
                 <View style={{ width: "12%" }}>
                   <TouchableOpacity onPress={this.showDateTimePicker}>
-                    <Icon
+                    <MaterialIcons
                       active
                       type="MaterialIcons"
                       name="date-range"
@@ -535,7 +525,7 @@ export default class LocalTasksCreation extends Component {
               >
                 <View style={{ width: "12%" }}>
                   <TouchableOpacity onPress={this.timepicker}>
-                    <Icon
+                    <Ionicons
                       active
                       type="Ionicons"
                       name="ios-clock"

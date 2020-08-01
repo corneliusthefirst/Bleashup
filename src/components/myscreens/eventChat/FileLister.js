@@ -1,13 +1,14 @@
 import React, { Component } from 'react';
 import shadower from '../../shadower';
-import { View, Dimensions, TouchableOpacity, TouchableWithoutFeedback} from "react-native"
+import { View, Dimensions, Text, TouchableOpacity, TouchableWithoutFeedback} from "react-native"
 import CacheImages from '../../CacheImages';
 import BleashupFlatList from '../../BleashupFlatList';
 import testForURL from '../../../services/testForURL';
-import { Thumbnail, Button, Icon, Text } from 'native-base';
 import moment from 'moment';
 import Pickers from '../../../services/Picker';
 import MediaSeparator from './MediaSeparator';
+import  FontAwesome  from 'react-native-vector-icons/FontAwesome';
+import ColorList from '../../colorList';
 
 let { height, width } = Dimensions.get('window');
 export default class File extends Component {
@@ -51,13 +52,12 @@ export default class File extends Component {
                                 </Text>
                             </View>
                             <View style={{ width: '15%', alignItems: 'center', justifyContent: 'center', flex: 1, }}>
-                                <Icon onPress={() => {
+                                <FontAwesome onPress={() => {
                                     this.openFile(item.source)
                                 }} type="FontAwesome" style={{
-                                    color: "#0A4E52",
+                                    color: ColorList.bodyIcon,
                                     fontSize: 22, marginTop: '40%',
-                                }} name="folder-open">
-                                </Icon>
+                                }} name="folder-open"/>
                             </View>
                         </View>
                         <View style={{ margin: '2%', }}>

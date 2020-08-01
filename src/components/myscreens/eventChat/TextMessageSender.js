@@ -1,7 +1,6 @@
 /* eslint-disable prettier/prettier */
 import React, { PureComponent } from "react"
 import { StyleSheet, TouchableOpacity, TouchableWithoutFeedback, View, Vibration } from 'react-native';
-import { Text } from "native-base"
 import TextContent from "./TextContent";
 import ColorList from '../../colorList';
 export default class TextMessageSnder extends PureComponent {

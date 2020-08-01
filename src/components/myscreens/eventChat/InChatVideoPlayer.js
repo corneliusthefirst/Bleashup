@@ -2,10 +2,13 @@ import React, { Component } from "react"
 import { View } from "react-native"
 import ColorList from '../../colorList';
 import VideoController from './VideoController';
-import { Icon } from "native-base";
 import rounder from "../../../services/rounder";
 import { TouchableOpacity } from 'react-native-gesture-handler';
 import BeComponent from '../../BeComponent';
+import  Entypo  from 'react-native-vector-icons/Entypo';
+import AntDesign from 'react-native-vector-icons/AntDesign';
+import MaterialIcons  from 'react-native-vector-icons/MaterialIcons';
+import GState from "../../../stores/globalState";
 export default class InChatVideoPlayer extends BeComponent {
     constructor(props) {
         super(props)
@@ -20,6 +23,7 @@ export default class InChatVideoPlayer extends BeComponent {
             this.props.video !== nextProps.video
     }
     iconStyles = {
+        ...GState.defaultIconSize,
         color: ColorList.bodyBackground
     }
     containerStyle = {
@@ -66,34 +70,31 @@ export default class InChatVideoPlayer extends BeComponent {
                             this.props.focusInput()
                             this.props.reply(this.props.message)
                         })} style={this.containerStyle}>
-                            <Icon name={"reply"} style={this.iconStyles} type={"Entypo"}>
-                            </Icon>
+                            <Entypo name={"reply"} style={this.iconStyles} type={"Entypo"}/>
                         </TouchableOpacity>
                         <TouchableOpacity onPress={() => requestAnimationFrame(() => {
                             this.videoPlayer._pausePlayer()
                             this.props.forward(this.props.message)
                         })} style={this.containerStyle}>
-                            <Icon name="forward" style={this.iconStyles} type={"Entypo"}></Icon>
+                        <Entypo name="forward" style={this.iconStyles} type={"Entypo"}/>
                         </TouchableOpacity>
                         <TouchableOpacity onPress={() => requestAnimationFrame(() => {
                             this.videoPlayer._pausePlayer()
                             this.props.starThis(this.props.message)
                         })} style={this.containerStyle}>
-                            <Icon name={"star"} style={this.iconStyles} type={"AntDesign"}>
-                            </Icon>
+                            <AntDesign name={"star"} style={this.iconStyles} type={"AntDesign"}/>
                         </TouchableOpacity>
                         <TouchableOpacity onPress={() => requestAnimationFrame(() => {
                             this.videoPlayer._pausePlayer()
                             this.props.remindThis(this.props.message)
                         })} style={this.containerStyle}>
-                            <Icon name="bell" style={this.iconStyles} type={"Entypo"}></Icon>
+                            <Entypo name="bell" style={this.iconStyles} type={"Entypo"}/>
                         </TouchableOpacity>
                         <TouchableOpacity onPress={() => requestAnimationFrame(() => {
                             //this.videoPlayer._pausePlayer()
                             this.props.enterFullscreen()
                         })} style={{ ...this.containerStyle }}>
-                            <Icon style={{ color: ColorList.bodyBackground, marginBottom: 'auto', marginTop: 'auto', }} type="MaterialIcons" name="fullscreen">
-                            </Icon>
+                            <MaterialIcons style={{ ...GState.defaultIconSize, color: ColorList.bodyBackground, marginBottom: 'auto', marginTop: 'auto', }} type="MaterialIcons" name="fullscreen"/>
                         </TouchableOpacity>
                     </View>
                 </View>}

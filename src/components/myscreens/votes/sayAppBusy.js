@@ -1,5 +1,6 @@
-import { Toast } from "native-base"
+import Toaster from "../../../services/Toaster"
+
 
 export default () => {
-    Toast.show({text:'App is busy',duration:4000})
+    Toaster({text:'App is busy',duration:4000})
 }

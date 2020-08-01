@@ -21,7 +21,7 @@ import BleashupHorizontalFlatList from '../../../../BleashupHorizotalFlatList';
 import testForURL from '../../../../../services/testForURL';
 import PhotoInputModal from "../../PhotoInputModal";
 import { KeyboardAvoidingView } from 'react-native';
-
+import Toaster from "../../../../../services/Toaster";
 //create an extension to toast so that it can work in my modal
 
 
@@ -207,7 +207,7 @@ export default class EventHighlights extends Component {
     AddHighlight() {
         if (this.state.currentHighlight.url.photo == "") {
 
-            Toast.show({
+            Toaster({
                 text: "Highlight must have atleast an image !",
                 buttonText: "Okay",
                 duration: 6000,

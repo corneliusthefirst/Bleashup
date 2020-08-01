@@ -1,8 +1,8 @@
 /* eslint-disable react-native/no-inline-styles */
 import React, { Component } from "react";
-import { View, TextInput } from "react-native";
-import { Input, Text } from "native-base";
+import { View, TextInput, Text } from "react-native";
 import colorList from "./../../../../colorList";
+import GState from "../../../../../stores/globalState";
 
 export default class CreateTextInput extends Component {
   constructor(props) {
@@ -33,7 +33,7 @@ export default class CreateTextInput extends Component {
             ...this.props.style
         }}
       >
-        <Input
+        <TextInput
           disabled={this.props.disabled}
           onContentSizeChange={(e) => {
             this.props.autogrow
@@ -84,9 +84,11 @@ export default class CreateTextInput extends Component {
         >
           <Text
             style={{
+              ...GState.defaultTextStyle,
               color: this.props.color
                 ? this.props.color
                 : colorList.bodySubtext,
+                fontSize: 12,
               /*backgroundColor: this.props.multiline
                 ? "rgba(0, 0, 0, 0.1)"
                 : null,*/

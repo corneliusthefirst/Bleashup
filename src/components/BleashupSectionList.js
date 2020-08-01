@@ -1,9 +1,6 @@
 import React, { Component } from "react"
-import { FlatList, View } from "react-native";
-import { Spinner, CardItem, Text, List } from "native-base";
-import { observer } from "mobx-react";
-import { SectionList } from 'react-navigation';
-import { thisExpression } from "@babel/types";
+import { FlatList, View, SectionList,Text } from "react-native";
+import Spinner from './Spinner';
 
 
 const ifCloseToTop = ({ layoutMeasurement, contentOffset, contentSize }) => {
@@ -14,7 +11,7 @@ const isCloseToBottom = ({ layoutMeasurement, contentOffset, contentSize }) => {
     return layoutMeasurement.height + contentOffset.y >=
         ((contentSize.height - paddingToBottom) * (0.95));
 };
-@observer export default class BleashupSectionList extends Component {
+export default class BleashupSectionList extends Component {
     constructor(props) {
         super(props)
         this.state = {
@@ -75,11 +72,11 @@ const isCloseToBottom = ({ layoutMeasurement, contentOffset, contentSize }) => {
                         100)}
                     renderItem={({ item }) => this.props.renderItem(item, this.props.keyExtractor(item, 1))}
                     ListFooterComponent={() =>
-                        this.props.numberOfItems < this.props.initialRender ? null : <CardItem style={{ width: "100%", height: 25 }} >
+                        this.props.numberOfItems < this.props.initialRender ? null : <View style={{ width: "100%", height: 25 }} >
                             {this.state.endReached ? <Text style={{
                                 marginLeft: "35%"
                             }}>no more data to load</Text> : <Spinner size={"small"}></Spinner>}
-                        </CardItem>
+                        </View>
                     }
                 >
 

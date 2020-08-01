@@ -1,12 +1,7 @@
 /* eslint-disable prettier/prettier */
 import React, { Component } from "react";
-import {
-  Text, Icon, 
-} from "native-base";
-
-import { StyleSheet, Dimensions, View, TouchableOpacity } from 'react-native';
+import { StyleSheet, Dimensions, View, Text, TouchableOpacity } from 'react-native';
 import Modal from 'react-native-modalbox';
-import autobind from "autobind-decorator";
 import stores from '../../../stores/index';
 import moment from 'moment';
 import { find, isEqual, findIndex, uniqBy } from "lodash";
@@ -24,6 +19,9 @@ import CreateButton from "../event/createEvent/components/ActionButton";
 import shadower from "../../shadower";
 import Swipeout from "../eventChat/Swipeout";
 import BeComponent from '../../BeComponent';
+import MaterialCommunityIcons  from 'react-native-vector-icons/MaterialCommunityIcons';
+import AntDesign  from 'react-native-vector-icons/AntDesign';
+import GState from "../../../stores/globalState";
 
 let { height, width } = Dimensions.get('window')
 
@@ -86,17 +84,15 @@ export default class EventTasksCard extends BeComponent {
     }, 30 * this.props.delay)
   }
 
-  @autobind
   onDone() {
     this.props.markAsDone(this.props.item)
   }
 
-  @autobind
   update() {
     this.props.update(this.props.item)
   }
 
-  @autobind
+  
   assignToMe() {
     this.props.assignToMe(this.props.item)
   }
@@ -254,6 +250,7 @@ export default class EventTasksCard extends BeComponent {
               <CreateButton title={"Assign To Me"} style={{ borderWidth: 0, 
                 borderRadius: 10,
                 width: 135, 
+                alignSelf: 'flex-end',
                 height: 35, 
                 alignItems: 'center', 
                 justifyContent: 'center',
@@ -264,12 +261,13 @@ export default class EventTasksCard extends BeComponent {
             :
             (hasDoneForThisInterval ?
               status ?
-                <Icon type="MaterialCommunityIcons" name="check-all"
-                  style={{ color: "#54F5CA", marginLeft: "90%" }}></Icon>
-                : <Icon type="AntDesign" name="check" style={{
+                <MaterialCommunityIcons type="MaterialCommunityIcons" name="check-all"
+                  style={{...GState.defaultIconSize, color: "#54F5CA", marginLeft: "90%" }}></MaterialCommunityIcons>
+                : <AntDesign type="AntDesign" name="check" style={{
+                  ...GState.defaultIconSize,
                   color: "#1FABAB",
                   marginLeft: "90%"
-                }}></Icon>
+                }}></AntDesign>
               :
               missed ? /*<Button style={{
                   borderWidth: 2, marginTop: 5, borderRadius: 10,
@@ -277,7 +275,7 @@ export default class EventTasksCard extends BeComponent {
                   marginLeft: "78%"
                 }} transparent><Text style={{ fontWeight: 'bold', color: 'red' }}>{"Missed"}</Text></Button>*/ null
                 : canBeDone ? <CreateButton style={{
-                  borderRadius: 10, ...shadower(3),borderWidth: 0,backgroundColor: ColorList.bodyDarkWhite,
+                  borderRadius: 10, alignSelf: 'flex-end',...shadower(3),borderWidth: 0,backgroundColor: ColorList.bodyDarkWhite,
                   width: 70, alignItems: 'center', justifyContent: 'center', height: 35
                 }}
                   title={"Done"}

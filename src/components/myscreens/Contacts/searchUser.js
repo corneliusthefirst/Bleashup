@@ -1,15 +1,22 @@
 import React, { Component } from "react";
-import { View, Animated, TouchableWithoutFeedback, Dimensions, PanResponder, ActivityIndicator, TouchableOpacity, ScrollView } from 'react-native';
-import { Container, Header, Item, Input, Icon, Button, Text,Title,Thumbnail } from 'native-base';
+import { 
+   View, 
+   Dimensions, 
+   ActivityIndicator, 
+   Text, 
+   TextInput as Input 
+} from 'react-native';
 import BleashupFlatList from '../../BleashupFlatList';
 import testForURL from '../../../services/testForURL';
 import stores from "../../../stores/index"
 import GlobalFunctions from "../../globalFunctions"
-import {uniq,concat,find} from "lodash";
 import CacheImages from "../../CacheImages";
 import colorList from '../../colorList';
 import ProfileSimple from '../currentevents/components/ProfileViewSimple';
 import bleashupHeaderStyle from "../../../services/bleashupHeaderStyle";
+import  MaterialIcons  from 'react-native-vector-icons/MaterialIcons';
+import  EvilIcons  from 'react-native-vector-icons/EvilIcons';
+import AntDesign  from 'react-native-vector-icons/AntDesign';
 
 let globalFunctions = GlobalFunctions;
 let { height, width } = Dimensions.get('window');
@@ -45,28 +52,28 @@ searchFilterFunction = (text)=>{
    render(){
        return(
         
-    <Container style={{height:"100%",width:colorList.containerWidth,backgroundColor:colorList.bodyBackground,alignItems:"center"}}>
+    <View style={{height:"100%",width:colorList.containerWidth,backgroundColor:colorList.bodyBackground,alignItems:"center"}}>
        
       
        <View style={{height:70,width:"100%",alignItems:"center",justifyContent:"center"}}>
         <View style={{height:colorList.headerHeight-10,flexDirection:"row",backgroundColor:colorList.bodyBackground,width:"95%",borderColor:"gray",borderWidth:1,
         justifyContent:"center",alignItems:"center",borderRadius:15,}}>
           
-              <Icon onPress={() => {this.props.navigation.goBack()}}
-               style={{ color:colorList.bodyIcon,marginLeft:"2%",marginRight:"2%"}} type={"MaterialIcons"}name={"arrow-back"}></Icon>
+              <MaterialIcons onPress={() => {this.props.navigation.goBack()}}
+               style={{ color:colorList.bodyIcon,marginLeft:"2%",marginRight:"2%"}} type={"MaterialIcons"}name={"arrow-back"}/>
                 
-              <Icon type="EvilIcons" name="search" />
+              <EvilIcons name="search" />
                <Input style={{fontSize:15}} placeholder=" @search for user"  onChangeText={text => this.searchFilterFunction(text)}  value={this.state.value} />
-              <Icon name="user" type="AntDesign" style={{marginRight:"2%"}} />
+              <AntDesign name="user" style={{marginRight:"2%"}} />
         </View>
        </View>
      
       <View style={{flex:1,marginTop:"5%",marginLeft:"4%"}}>
         {this.state.data.length == 0 ? null :
          (this.state.loading == true ?
-            <Container style={{ flex: 1, alignItems: 'center', justifyContent: 'center',backgroundColor:colorList.bodyBackground }}>
+            <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center',backgroundColor:colorList.bodyBackground }}>
                <ActivityIndicator />
-            </Container> : (
+            </View> : (
                <BleashupFlatList
                     initialRender={15}
                     renderPerBatch={5}
@@ -89,7 +96,7 @@ searchFilterFunction = (text)=>{
                 )}
         </View> 
        
-      </Container>
+      </View>
        )
    }
 

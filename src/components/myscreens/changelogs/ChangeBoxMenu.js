@@ -3,8 +3,8 @@ import {
     View, Text, TouchableOpacity
 } from 'react-native';
 import Menu, { MenuItem, MenuDivider } from 'react-native-material-menu';
-import { Icon, } from "native-base"
 import ColorList from '../../colorList';
+import  Entypo from 'react-native-vector-icons/Entypo';
 
 export default class ChangeBoxMenu extends Component {
     constructor(props) {
@@ -43,12 +43,11 @@ export default class ChangeBoxMenu extends Component {
                     ref={this.setMenuRef}
                     button={<TouchableOpacity 
                         onPress={() => requestAnimationFrame(this.showMenu)} >
-                        <Icon style={{
+                        <Entypo style={{
                         color: ColorList.bodyIcon,
                         fontSize: 25,
                     }} 
-                    name="dots-three-vertical" 
-                    type="Entypo"></Icon>
+                    name="dots-three-vertical"></Entypo>
                     </TouchableOpacity>}
                 >
                 <View>

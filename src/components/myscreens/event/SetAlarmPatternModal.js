@@ -5,9 +5,7 @@
 /* eslint-disable prettier/prettier */
 import React, { Component } from 'react';
 
-import { View, Platform, TouchableOpacity } from 'react-native';
-import ModalBox from 'react-native-modalbox';
-import { Button, Content, Text } from 'native-base';
+import { View, Platform, TouchableOpacity, Text } from 'react-native';
 import moment from 'moment';
 import BleashupFlatList from '../../BleashupFlatList';
 import SelectableAlarmPeriod from './SelectableAlarmPeriod';
@@ -19,6 +17,7 @@ import CreateButton from './createEvent/components/ActionButton';
 import shadower from '../../shadower';
 import ColorList from '../../colorList';
 import BleashupModal from '../../mainComponents/BleashupModal';
+import GState from '../../../stores/globalState';
 export default class SetAlarmPatternModal extends BleashupModal {
     initialize() {
         this.state = {
@@ -64,7 +63,7 @@ export default class SetAlarmPatternModal extends BleashupModal {
                 <View style={{ width: "98%", height: 35, }}>
                     <View style={{ flexDirection: 'row', padding: '2%',justifyContent: 'center', }}>
                         <View style={{ textAlign:'center',alignSelf: 'center', }}>
-                            <Text style={{ fontSize: 18, fontWeight: 'bold', padding: '1%', alignSelf: 'center',}}>{"Set Alarm Pattern"}</Text>
+                            <Text style={{...GState.defaultTextStyle, fontSize: 18, fontWeight: 'bold', padding: '1%', alignSelf: 'center',}}>{"Set Alarm Pattern"}</Text>
                         </View>
                     </View>
                 </View>
@@ -88,9 +87,13 @@ export default class SetAlarmPatternModal extends BleashupModal {
                             }
                          />
                     </View>
-                    <View style={{ width: 55,margin: 5,flexDirection: 'column',justifyContent: 'center',alignSelf:'flex-end'}}>
-                        <CreateButton title={"Set"} action={() =>
-                            this.save()} style={{ ...shadower(2), borderWidth: 0, backgroundColor: ColorList.bodyDarkWhite,height:35,borderRadius:10 }} noround />
+                    <View style={{ flexDirection: 'column',justifyContent: 'center',alignSelf:'flex-end'}}>
+                        <CreateButton  
+                        title={"Set"} 
+                        action={() => this.save()} style={{ 
+                            ...shadower(2), borderWidth: 0, 
+                            width: 55, margin: 5,
+                            backgroundColor: ColorList.bodyDarkWhite,height:35,borderRadius:10 }} noround />
                     </View>
                 </View>
             </View>

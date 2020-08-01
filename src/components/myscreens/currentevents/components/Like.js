@@ -1,12 +1,13 @@
 import React, { Component } from "react";
-import { Animated, View, Easing, TouchableWithoutFeedback, TouchableOpacity} from "react-native";
-import { Icon, Spinner, Text, Toast } from "native-base";
+import { Animated, View, Text, TouchableWithoutFeedback} from "react-native";
 import Requester from "../Requester";
 import stores from "../../../../stores";
-import { indexOf, dropWhile, uniq, find, findIndex } from "lodash";
+import { findIndex } from "lodash";
 import emitter from "../../../../services/eventEmiter";
 import ColorList from "../../../colorList";
 import AnimatedComponent from '../../../AnimatedComponent';
+import Toaster from "../../../../services/Toaster";
+import AntDesign  from 'react-native-vector-icons/AntDesign';
 
 export default class Like extends AnimatedComponent {
     state = {
@@ -102,7 +103,7 @@ export default class Like extends AnimatedComponent {
                 .catch((error) => {
                     this.liking = false;
                     this.props.end;
-                    Toast.show({
+                    Toaster({
                         text: "unable to connect to the server !",
                         buttonText: "Okay",
                     });
@@ -125,25 +126,13 @@ export default class Like extends AnimatedComponent {
                 .catch((error) => {
                     console.warn(error);
                     this.unliking = false;
-                    Toast.show({
+                    Toaster({
                         text: "unable to connect to the server ",
                         buttonText: "Okay",
                     });
                 });
         }
     }
-    /*  componentWillReceiveProps(nextProps) {
-              this.didILiked(stores.Likes.likes, nextProps.id).then(result => {
-                  this.setStatePure({
-                      likes: result.likes.likers ? result.likes.likers.length : 0,
-                      liked: result.status,
-                      likers: result.likes.likers,
-                      loaded: true
-                  })
-                  this.likers = this.state.likers
-                  this.likes = this.state.likers.length
-              })
-          }*/
     action() {
         if (this.state.liked) {
             this.unlike();
@@ -156,27 +145,14 @@ export default class Like extends AnimatedComponent {
             <View>
                 <TouchableWithoutFeedback
                     onPress={() => {
-                        /*this.scaleValue.setValue(0);
-                        Animated.timing(this.scaleValue, {
-                            toValue: 1,
-                            duration: 300,
-                            easing: Easing.linear,
-                            userNativeDriver: true,
-                        }).start();*/
                         return this.action();
                     }}
                     onPressOut={() => {
-                        /*Animated.timing(this.scaleValue, {
-                            toValue: 1,
-                            duration: 200,
-                            easing: Easing.linear,
-                            userNativeDriver: true,
-                        }).start();*/
                         
                     }}
                 >
                     <Animated.View style={{ transform: [{ scale: this.cardScale }] }}>
-                        <Icon
+                        <AntDesign
                             name={this.props.icon.name}
                             type={this.props.icon.type}
                             style={{
@@ -186,7 +162,6 @@ export default class Like extends AnimatedComponent {
                                 fontSize: this.props.size,
                             }}
                         />
-                      {/*  <Text note>{`${this.state.likesCount} likes`}</Text>*/}
                     </Animated.View>
                 </TouchableWithoutFeedback>
             </View>

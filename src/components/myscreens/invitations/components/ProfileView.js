@@ -1,16 +1,7 @@
 import React, { Component } from "react";
 import CacheImages from "../../../CacheImages";
-import { View, TouchableOpacity } from "react-native";
-import {
-    Body,
-    Text,
-    Accordion,
-    Content,
-    Thumbnail,
-    Button,
-    Title,
-    Icon,
-} from "native-base";
+import { View, TouchableOpacity, Text} from "react-native";
+
 import ImageActivityIndicator from "../../currentevents/components/imageActivityIndicator";
 import ProfileIdicator from "../../currentevents/components/ProfilIndicator";
 import stores from "../../../../stores";
@@ -20,6 +11,7 @@ import ColorList from "../../../colorList";
 import ProfileSimple from "../../currentevents/components/ProfileViewSimple";
 import { check_user_error_1, check_user_error_2 } from '../../../../stores/temporalUsersStore';
 import BeComponent from '../../../BeComponent';
+import FontAwesome  from 'react-native-vector-icons/FontAwesome';
 
 export default class ProfileView extends BeComponent {
     constructor(props) {
@@ -106,12 +98,10 @@ export default class ProfileView extends BeComponent {
                                     }}
                                 />
                             ) : (
-                                <Icon type={"FontAwesome"} style={{
+                                <FontAwesome type={"FontAwesome"} style={{
                                     fontSize: ColorList.profilePlaceHolderHeight,
                                     color: ColorList.colorArray[Math.floor(Math.random() * 14)]
-                                }} name={"user-circle-o"}>
-
-                               </Icon>
+                                }} name={"user-circle-o"}/>
                             )}
                     </View>}
                 </TouchableOpacity>

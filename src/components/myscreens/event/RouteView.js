@@ -1,16 +1,19 @@
 import React, { Component } from "react"
-import { TouchableOpacity, View, Dimensions, TouchableWithoutFeedback } from 'react-native';
-import { Card, CardItem, Text, Icon, Button } from 'native-base';
+import { TouchableOpacity, View, Dimensions, TouchableWithoutFeedback, Text, StyleSheet } from 'react-native';
 import GState from '../../../stores/globalState';
 import emitter from '../../../services/eventEmiter';
 import firebase from 'react-native-firebase';
 import stores from '../../../stores';
-import { Badge } from "native-base"
 import ColorList from '../../colorList';
 
 const screenWidth = Math.round(Dimensions.get('window').width);
 
 import shadower from "../../shadower";
+import  AntDesign  from 'react-native-vector-icons/AntDesign';
+import  FontAwesome from 'react-native-vector-icons/FontAwesome';
+import  Entypo  from 'react-native-vector-icons/Entypo';
+import MaterialIcons  from 'react-native-vector-icons/MaterialIcons';
+import rounder from "../../../services/rounder";
 export default class RouteView extends Component {
     constructor(props) {
         super(props)
@@ -62,9 +65,9 @@ export default class RouteView extends Component {
                 }
                 )}>
                     <View style={{ display: 'flex', width: "100%", marginTop: '10%', }}>
-                        <Icon type="AntDesign" style={{
+                        <AntDesign type="AntDesign" style={{
                             alignSelf: 'center', fontSize: this.fontSize, color: ColorList.post
-                        }} name="star"></Icon>
+                        }} name="star"/>
                         {/*<Text style={{ padding: "1%", color: this.props.currentPage == "EventDetails" ? "#0A4E52" : "gray", width: "100%" }}>Details</Text>*/}
                     </View>
                 </TouchableOpacity>
@@ -79,14 +82,14 @@ export default class RouteView extends Component {
                 })
                 }>
                     <View style={{ width: "100%", marginTop: '10%', }}>
-                        <View style={{}}><Icon type="FontAwesome" style={{
+                        <View style={{}}><FontAwesome type="FontAwesome" style={{
                             alignSelf: 'center',
                             fontSize: this.fontSize,
                             color: ColorList.bodyIcon
-                        }} name="comments-o"></Icon>
+                        }} name="comments-o"/>
                             {/*<Text style={{ padding: "1%", color: this.props.currentPage == "EventChat" ? "#0A4E52" : "gray", width: "100%" }}>Discusion</Text>*/}</View>
-                        {GState.generalNewMessages.length > 0 ? <Badge style={{ position: 'absolute' }}
-                            primary><Text style={{ marginTop: "30%", }}>{GState.generalNewMessages.length}</Text></Badge> : <View></View>}
+                        {GState.generalNewMessages.length > 0 ? <View style={styles.badge}
+                            primary><Text style={{ marginTop: "30%", }}>{GState.generalNewMessages.length}</Text></View> : <View></View>}
                     </View>
                 </TouchableOpacity>
 
@@ -98,11 +101,11 @@ export default class RouteView extends Component {
                     this.props.setCurrentPage("Reminds")
                 })}>
                     <View style={{ width: "100%", marginTop: '10%', }}>
-                        <Icon type="Entypo" style={{
+                        <Entypo type="Entypo" style={{
                             alignSelf: 'center',
                             fontSize: this.fontSize,
                             color: ColorList.reminds
-                        }} name="bell"></Icon>
+                        }} name="bell"/>
                     </View>
                 </TouchableOpacity>
                 <TouchableOpacity style={{
@@ -114,15 +117,23 @@ export default class RouteView extends Component {
                 }
                 )}>
                     <View style={{ marginTop: '10%', width: "100%" }}>
-                        <Icon type="MaterialIcons" style={{
+                        <MaterialIcons type="MaterialIcons" style={{
                             alignSelf: 'center',
                             fontSize: this.fontSize,
                             color: ColorList.darkGrayText
-                        }} name="history"></Icon>
-                        {/*<Text style={{ padding: "1%", color: this.props.currentPage == "ChangeLogs" ? "#0A4E52" : "gray", width: "100%" }}>{"Logs"}</Text>*/}
+                        }} name="history"/>
                     </View>
                 </TouchableOpacity>
             </View>
         )
     }
 } 
+const styles = StyleSheet.create({
+    badge:{
+        position: 'absolute',
+        ...rounder(30,ColorList.indicatorColor),
+        ...shadower(3),
+        justifyContent: 'center',
+        textAlign:'center'
+    }
+})

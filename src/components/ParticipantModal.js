@@ -1,6 +1,4 @@
 import React from "react"
-import { Content, List, ListItem, Body, Left, Right, Text } from "native-base"
-import ImageActivityIndicator from "./myscreens/currentevents/components/imageActivityIndicator";
 import ParticipantList from "./ParticipantList";
 import BleashupModal from './mainComponents/BleashupModal';
  export default class ParticipantModal extends BleashupModal {

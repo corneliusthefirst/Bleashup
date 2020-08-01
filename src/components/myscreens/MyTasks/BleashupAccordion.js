@@ -12,8 +12,9 @@ import {
   ScrollView,
 } from 'react-native';
 import ColorList from '../../colorList';
-import { Icon } from 'native-base';
 import BleashupScrollView from '../../BleashupScrollView';
+import AntDesign  from 'react-native-vector-icons/AntDesign';
+import GState from '../../../stores/globalState';
 
 export default class AccordionModuleNative extends Component {
   constructor(props) {
@@ -48,9 +49,9 @@ export default class AccordionModuleNative extends Component {
         {!this.props.hideToggler && <TouchableOpacity onPress={() => requestAnimationFrame(() => this.toggleExpand(dataArray))}>
           <View style={{ width: 30 }}>
             {this.expanded(dataArray) ? (
-              <Icon style={{ fontSize: 18 }} type="AntDesign" name="up" />
+              <AntDesign style={{...GState.defaultIconSize, fontSize: 18 }} type="AntDesign" name="up" />
             ) : (
-                <Icon style={{ fontSize: 18 }} type="AntDesign" name="down" />
+                <AntDesign style={{...GState.defaultIconSize, fontSize: 18 }} type="AntDesign" name="down" />
               )}
           </View>
         </TouchableOpacity>}

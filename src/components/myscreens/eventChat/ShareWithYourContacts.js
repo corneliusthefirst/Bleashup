@@ -2,8 +2,7 @@ import React, { Component } from "react";
 import stores from "../../../stores";
 import ColorList from "../../colorList";
 import shadower from "../../shadower";
-import { Item, Icon, Toast, Text } from "native-base";
-import { TextInput, TouchableOpacity, View } from "react-native";
+import { TextInput, TouchableOpacity, View, Text } from "react-native";
 import rounder from "../../../services/rounder";
 import BleashupFlatList from "../../BleashupFlatList";
 import globalFunctions from "../../globalFunctions";
@@ -16,6 +15,9 @@ import TabModal from "../../mainComponents/TabModal";
 import actFilterFunc from "../currentevents/activityFilterFunc";
 import ActivityProfile from "../currentevents/components/ActivityProfile";
 import bleashupHeaderStyle from "../../../services/bleashupHeaderStyle";
+import Toaster from "../../../services/Toaster";
+import  FontAwesome  from 'react-native-vector-icons/FontAwesome';
+import  MaterialIcons  from 'react-native-vector-icons/MaterialIcons';
 export default class ShareWithYourContacts extends TabModal {
   initialize() {
     this.state = {
@@ -125,10 +127,10 @@ export default class ShareWithYourContacts extends TabModal {
         })
         .catch(() => {
           this.sending = false;
-          Toast.show({ text: "unable to send message" });
+          Toaster({ text: "unable to send message" });
         });
     } else {
-      Toast.show({ text: "app busy! " });
+      Toaster({ text: "app busy! " });
     }
   }
   searching = true;
@@ -149,7 +151,7 @@ export default class ShareWithYourContacts extends TabModal {
             marginBottom: "auto",
           }}
         >
-          <Item
+          <View
             style={{
               height: ColorList.headerHeight - 10,
               marginTop: "auto",
@@ -169,7 +171,7 @@ export default class ShareWithYourContacts extends TabModal {
               }}
               placeholder={"Search in your contacts"}
             ></TextInput>
-          </Item>
+          </View>
           <TouchableOpacity
             onPress={() => requestAnimationFrame(this.onClosedModal.bind(this))}
             style={{
@@ -181,7 +183,7 @@ export default class ShareWithYourContacts extends TabModal {
               ...rounder(30, ColorList.bodyBackground),
             }}
           >
-            <Icon
+            <FontAwesome
               type={"FontAwesome"}
               style={{
                 color: ColorList.bodyIcon,
@@ -189,7 +191,7 @@ export default class ShareWithYourContacts extends TabModal {
                 alignSelf: "center",
               }}
               name={"close"}
-            ></Icon>
+            />
           </TouchableOpacity>
         </View>
       </View>
@@ -239,7 +241,7 @@ export default class ShareWithYourContacts extends TabModal {
                 style={{
                   marginTop: "auto",
                   marginBottom: "auto",
-                  width: 160,
+                  width: 250,
                   justifyContent: "flex-start",
                 }}
               >
@@ -271,7 +273,7 @@ export default class ShareWithYourContacts extends TabModal {
                   ...rounder(30, ColorList.indicatorColor),
                 }}
               >
-                <Icon
+                <MaterialIcons
                   style={{
                     fontSize: 15,
                     alignSelf: "center",
@@ -279,7 +281,7 @@ export default class ShareWithYourContacts extends TabModal {
                   }}
                   type={"MaterialIcons"}
                   name={"send"}
-                ></Icon>
+                />
               </TouchableOpacity>
             </View>
           )}

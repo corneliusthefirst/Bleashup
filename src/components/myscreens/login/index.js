@@ -7,6 +7,9 @@ import {
   BackHandler,
   ToastAndroid,
   StyleSheet,
+  ScrollView,
+  Text,
+  Image,
   KeyboardAvoidingView,
 } from "react-native";
 import styles from "./styles";
@@ -19,7 +22,7 @@ import ColorList from "../../colorList";
 import shadower from "../../shadower";
 import HeaderHome from "./header";
 import Texts from "../../../meta/text";
-
+import Toaster from "../../../services/Toaster";
 export default class LoginView extends Component {
   constructor(props) {
     super(props);
@@ -59,7 +62,7 @@ export default class LoginView extends Component {
       BackHandler.exitApp();
     } else {
       this.exiting = true;
-      Toast.show({ text: "Press Again to exit app" });
+      Toaster({ text: "Press Again to exit app" });
       this.timeout = setTimeout(() => {
         this.exiting = false;
       }, 800);
@@ -86,7 +89,6 @@ export default class LoginView extends Component {
   onClickContinue() {
     console.warn(this.state.value.replace(/\s/g, "").replace("+", "00"));
     console.warn("original", this.state.value);
-
     try {
       this.setState({
         loading: true,
@@ -170,11 +172,11 @@ export default class LoginView extends Component {
       <View style={stylesinter.container}>
         <ScrollView showVerticalScrollIndicator={false}>
           <HeaderHome></HeaderHome>
-          <Text style={stylesinter.headerText}>{Texts.phone_number}</Text>
+          <Text style={stylesinter.headerText}>{"Enter Phone Number"}</Text>
           <View style={styles.phoneinput} rounded>
             <PhoneInput
               ref={this.setRef}
-              onChangePhoneNumber={this.updateInfo}
+              onChangePhoneNumber={this.updateInfo.bind(this)}
               onPressFlag={this.onPressFlag}
               value={this.state.value}
               error={globalState.error}
@@ -184,12 +186,12 @@ export default class LoginView extends Component {
           </View>
           <TouchableOpacity
             style={stylesinter.continueButton}
-            onPress={this.onClickContinue}
+            onPress={this.onClickContinue.bind(this)}
           >
             {this.state.loading ? (
-              <Text>{"..."}</Text>
+              <Text style={styles.continueButtonText}>{"..."}</Text>
             ) : (
-              <Text>{Texts.continue}</Text>
+              <Text style={styles.continueButtonText}>{"continue"}</Text>
             )}
           </TouchableOpacity>
           <CountryPicker
@@ -217,7 +219,11 @@ const stylesinter = StyleSheet.create({
   },
   continueButton: {
     ...styles.buttonstyle,
+    borderRadius: 5,
+    height:30,
+    textAlign:"center",
     backgroundColor: ColorList.bodyBackground,
     borderWidth: 0.6,
   },
+  continueButtonText: { margin: 'auto', }
 });

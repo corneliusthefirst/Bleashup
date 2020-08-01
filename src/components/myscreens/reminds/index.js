@@ -1,15 +1,11 @@
 import React, { Component } from 'react';
-import { Icon, Item, Title, Spinner, Toast, Button } from 'native-base';
-
 import {
   StyleSheet,
   View,
   Image,
   TouchableOpacity,
   Dimensions,
-  ToastAndroid,
-  Platform,
-  AlertIOS,
+  Text
 } from "react-native";
 import autobind from 'autobind-decorator';
 import TasksCard from './TasksCard';
@@ -51,6 +47,9 @@ import AnimatedComponent from '../../AnimatedComponent';
 import MessageActions from '../eventChat/MessageActons';
 import Vibrator from '../../../services/Vibrator';
 import GState from '../../../stores/globalState/index';
+import Toaster from '../../../services/Toaster';
+import MaterialIcons  from 'react-native-vector-icons/MaterialIcons';
+import AntDesign  from 'react-native-vector-icons/AntDesign';
 //const MyTasksData = stores.Reminds.MyTasksData
 
 export default class Reminds extends AnimatedComponent {
@@ -82,7 +81,7 @@ export default class Reminds extends AnimatedComponent {
   }
   saveAddMembers(members) {
     if (this.props.working) {
-      Toast.show({ text: "App is Busy" });
+      Toaster({ text: "App is Busy" });
     } else {
       let newMembers = members.filter(
         (ele) =>
@@ -103,7 +102,7 @@ export default class Reminds extends AnimatedComponent {
             this.props.stopLoader();
           });
       } else {
-        Toast.show({ text: "member already exists" });
+        Toaster({ text: "member already exists" });
       }
     }
   }
@@ -192,7 +191,7 @@ export default class Reminds extends AnimatedComponent {
   }
   saveRemoved(members) {
     if (this.props.working) {
-      Toast.show({ text: "App is Busy" });
+      Toaster({ text: "App is Busy" });
     } else {
       this.props.startLoader();
       RemindRequest.removeMembers(
@@ -219,7 +218,7 @@ export default class Reminds extends AnimatedComponent {
   @autobind
   AddRemind() {
     if (!this.props.computedMaster) {
-      Toast.show({
+      Toaster({
         text: "You don't have enough previlidges to add a remind",
         duration: 4000,
       });
@@ -251,7 +250,7 @@ export default class Reminds extends AnimatedComponent {
           this.props.stopLoader();
         });
     } else {
-      Toast.show({ text: "App is Busy" });
+      Toaster({ text: "App is Busy" });
     }
   }
   refreshReminds() {
@@ -286,7 +285,7 @@ export default class Reminds extends AnimatedComponent {
   }
   markAsDone(item) {
     if (this.props.working) {
-      Toast.show({ text: "App is Busy" });
+      Toaster({ text: "App is Busy" });
     } else {
       if (item.must_report) {
         this.setStatePure({
@@ -322,15 +321,11 @@ export default class Reminds extends AnimatedComponent {
     }
   }
   showToastMessage(message) {
-    if (Platform.OS === "android") {
-      ToastAndroid.show(message, ToastAndroid.SHORT);
-    } else {
-      AlertIOS.alert(message);
-    }
+    Toaster({text:message})
   }
   confirm(user, interval) {
     if (this.props.working) {
-      Toast.show({ text: "App is Busy" });
+      Toaster({ text: "App is Busy" });
     } else {
       if (
         findIndex(this.state.currentTask.confirmed, (ele) =>
@@ -361,7 +356,7 @@ export default class Reminds extends AnimatedComponent {
   }
   markAsDoneWithReport(report) {
     if (this.props.working) {
-      Toast.show({ text: "App is Busy" });
+      Toaster({ text: "App is Busy" });
     } else {
       this.setStatePure({
         showReportModal: false,
@@ -408,13 +403,13 @@ export default class Reminds extends AnimatedComponent {
           this.props.stopLoader();
         });
     } else {
-      Toast.show({ text: "App is Busy" });
+      Toaster({ text: "App is Busy" });
     }
   }
   saveAlarms(alarms) {
     console.warn(alarms)
     if (this.props.working) {
-      Toast.show({ text: "App is Busy" });
+      Toaster({ text: "App is Busy" });
     } else {
       this.props.startLoader();
       RemindRequest.addMembers(
@@ -910,8 +905,8 @@ export default class Reminds extends AnimatedComponent {
                     justifyContent: "center",
                   }}
                 >
-                  <Icon
-                    style={{ color: colorList.headerIcon }}
+                  <MaterialIcons
+                    style={{...GState.defaultIconSize, color: colorList.headerIcon }}
                     type={"MaterialIcons"}
                     name={"arrow-back"}
                   />
@@ -926,7 +921,7 @@ export default class Reminds extends AnimatedComponent {
                     justifyContent: "center",
                   }}
                 >
-                  <Title
+                  <Text
                     style={{
                       fontWeight: "bold",
                       alignSelf: "flex-start",
@@ -935,7 +930,7 @@ export default class Reminds extends AnimatedComponent {
                     }}
                   >
                     {"Reminds"}
-                  </Title>
+                  </Text>
                 </View>
 
                 <TouchableOpacity
@@ -947,10 +942,10 @@ export default class Reminds extends AnimatedComponent {
                   }}
                   onPress={() => requestAnimationFrame(() => this.AddRemind())}
                 >
-                  <Icon
+                  <AntDesign
                     type="AntDesign"
                     name="plus"
-                    style={{ color: colorList.headerIcon, alignSelf: "center" }}
+                    style={{...GState.defaultIconSize, color: colorList.headerIcon, alignSelf: "center" }}
                   />
                 </TouchableOpacity>
               </View>

@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { View } from 'native-base';
+import {View} from "react-native"
 import { DotIndicator } from 'react-native-indicators';
 
 export default class TypingIndicator extends Component {

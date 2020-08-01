@@ -27,9 +27,7 @@ import {
     Clipboard, TouchableWithoutFeedback,
     ScrollView
 } from "react-native";
-
 import VideoPlayer from "./VideoController";
-import Image from "react-native-scalable-image";
 import Orientation from "react-native-orientation-locker";
 import ReactNativeZoomableView from "@dudigital/react-native-zoomable-view/src/ReactNativeZoomableView";
 import BleashupFlatList from "../../BleashupFlatList";
@@ -85,6 +83,7 @@ import ShareWithYourContacts from "./ShareWithYourContacts";
 import MessageActions from "./MessageActons";
 import rounder from "../../../services/rounder";
 import replies from './reply_extern';
+import Toaster from "../../../services/Toaster";
 
 const screenWidth = Math.round(Dimensions.get("window").width);
 const screenheight = Math.round(Dimensions.get("window").height);
@@ -264,7 +263,7 @@ class ChatRoom extends Component {
                 typing: false,
             });
         }, 1000);
-        //Toast.show({ text: `typing ...`, position: "top", textStyle: this.toastTextStyles, style: this.toastStyle })
+        //Toaster({ text: `typing ...`, position: "top", textStyle: this.toastTextStyles, style: this.toastStyle })
     }
     setTyingState(typer) {
         this.typingRef.set([typer, moment().format()]);
@@ -1071,7 +1070,7 @@ class ChatRoom extends Component {
     copyMessage() {
         Clipboard.setString(this.state.currentMessage.text);
         Vibration.vibrate(10);
-        Toast.show({ text: "copied !", type: "success" });
+        Toaster({ text: "copied !", type: "success" });
     }
     options = ["Remove message", "Seen Report", "Copy to clipboard", "Cancel"];
     showMessageAction(message, reply) {
@@ -1408,7 +1407,7 @@ class ChatRoom extends Component {
             ? this.setState({
                 isShareWithContactsOpened: true,
             })
-            : Toast.show({ text: "cannot forward unsent messages" });
+            : Toaster({ text: "cannot forward unsent messages" });
     }
     replyMessage() {
         setTimeout(() => {

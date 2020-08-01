@@ -13,7 +13,6 @@ import {
 import styles from './style';
 import CacheImages from "../../CacheImages";
 import Exstyles from './style';
-import svg from '../../../../svg/svg';
 import { createOpenLink } from "react-native-open-maps";
 import ProfileModal from '../invitations/components/ProfileModal';
 import PhotoModal from "../invitations/components/PhotoModal";
@@ -23,12 +22,12 @@ import DoublePhoto from "../invitations/components/doublePhoto";
 import stores from '../../../stores';
 import { forEach, filter } from "lodash";
 import ImageActivityIndicator from '../currentevents/components/imageActivityIndicator';
-import { observer } from 'mobx-react';
 import Requester from "../invitations/Requester"
 import moment from 'moment';
 import { AddParticipant } from '../../../services/cloud_services';
 import testForURL from '../../../services/testForURL';
 import request from '../../../services/requestObjects';
+import Toaster from '../../../services/Toaster';
 
 
 const defaultPlaceholderObject = {
@@ -98,7 +97,7 @@ class CardListItem extends Component {
         console.warn(response)
       })
     }).catch(error => {
-      Toast.show({
+      Toaster({
         text: 'unable to connect to the server ',
         buttonText: 'Okay'
       })
@@ -138,7 +137,7 @@ class CardListItem extends Component {
       this.setState({
         isRequesting: false
       })
-      Toast.show({
+      Toaster({
         text: 'unable to connect to the server ',
         buttonText: 'Okay'
       })

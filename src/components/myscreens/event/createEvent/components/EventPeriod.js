@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import {
-   Text,  Icon, Item,Input,
+   Text,  Icon, Item,
   Button, 
 } from "native-base";
 

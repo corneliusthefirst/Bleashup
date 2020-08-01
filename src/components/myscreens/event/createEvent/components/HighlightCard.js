@@ -1,35 +1,13 @@
 import React, { Component ,PureComponent} from "react";
-import {
-  Card,
-  CardItem,
-  Icon,
-  Label,
-  Title,
-  Input,
-  Left,
-  Right,
-  Button,
-  Thumbnail,
-} from "native-base";
-
-import { View, Dimensions, Text } from "react-native";
-import Modal from "react-native-modalbox";
-import autobind from "autobind-decorator";
-import moment from "moment";
-import { isEqual } from "lodash";
-//import EventHighlights from "./EventHighlights"
-import BleashupAlert from "./BleashupAlert";
+import { View, Dimensions, Text, TouchableOpacity } from "react-native";
 import testForURL from "../../../../../services/testForURL";
-import CacheImages from "../../../../CacheImages";
 import shadower from "../../../../shadower";
-import PostMenu from "./PostMenu";
 import ColorList from "../../../../colorList";
-import buttoner from "../../../../../services/buttoner";
-import { TouchableOpacity} from "react-native-gesture-handler"
 import MedaiView from "./MediaView";
 import Social from "./Social";
 import Swipeout from '../../../eventChat/Swipeout';
 import BePureComponent from '../../../../BePureComponent';
+import GState from "../../../../../stores/globalState";
 
 let { height, width } = Dimensions.get("window");
 
@@ -97,8 +75,9 @@ export default class HighlightCard extends BePureComponent {
           }}
         >
           <View style={{ maxWidth: "100%" }}>
-            <Title
+            <Text
               style={{
+                ...GState.defaultTextStyle,
                 fontSize: 14,
                 color: ColorList.headerBlackText,
                 fontWeight: "bold",
@@ -106,7 +85,7 @@ export default class HighlightCard extends BePureComponent {
               }}
             >
               {this.props.item.title ? this.props.item.title : ""}
-            </Title>
+            </Text>
           </View>
           <View>
           </View>
@@ -129,7 +108,7 @@ export default class HighlightCard extends BePureComponent {
         >
           <Text
             ellipsizeMode="tail"
-            style={{ fontSize: 12 }}
+            style={{ ...GState.defaultTextStyle, fontSize: 12 }}
             numberOfLines={this.containsMedia() ? 3 : 13}
           >
             {this.props.item.description ? this.props.item.description : null}

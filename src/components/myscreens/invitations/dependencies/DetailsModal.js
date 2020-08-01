@@ -2,11 +2,10 @@
 import React, { Component } from 'react'
 import Modal from 'react-native-modalbox';
 import { View, Text, TouchableOpacity, DeviceEventEmitter, Image, TouchableHighlight, ScrollView } from 'react-native'
-import { Button, Icon, Card, CardItem,Right,Left } from 'native-base'
 import CacheImages from '../../../CacheImages'
-import autobind from 'autobind-decorator';
 import ImageActivityIndicator from '../../currentevents/imageActivityIndicator';
 import DeckSwiperModule from './deckswiper/index';
+import  FontAwesome5  from 'react-native-vector-icons/FontAwesome5';
 
 export default class DetailsModal extends Component {
     constructor(props) {
@@ -127,33 +126,36 @@ export default class DetailsModal extends Component {
 
            {this.props.isJoining ?(this.props.hasJoin?
              <View style={{flexDirection:'column',alignItems:'center',marginTop:7}}>
-             <Icon name="comment"  type="FontAwesome5" onPress={{}} style={{color:"#1FABAB"}}/>
+             <FontAwesome5 name="comment"  type="FontAwesome5" onPress={{}} style={{color:"#1FABAB"}}/>
              <Text style={{marginTop:5,color:"#1FABAB"}}>chat</Text>
              </View> :
              
              <View style={{flexDirection:'row',justifyContent:'space-between',marginTop:10}}>
-              <Button onPress={this.props.onAccept}  style ={{marginLeft:40,alignItems:'center',width:100,marginTop:4,borderRadius:5}} success ><Text style={{fontSize:18,fontWeight:"500",marginLeft:31}} onPress={this.props.joined}>Join</Text></Button>
+              <TouchableOpacity onPress={this.props.onAccept}  style ={{marginLeft:40,alignItems:'center',width:100,marginTop:4,borderRadius:5}} success 
+              ><Text style={{fontSize:18,fontWeight:"500",marginLeft:31}} onPress={this.props.joined}>Join</Text></TouchableOpacity>
               <View style={{flexDirection:'column'}}>
-              <Icon name="comment"  type="FontAwesome5" onPress={{}} style={{marginRight:40,color:"#1FABAB"}}/>
+              <FontAwesome5 name="comment"  type="FontAwesome5" onPress={{}} style={{marginRight:40,color:"#1FABAB"}}/>
               <Text style={{marginTop:5,color:"#1FABAB",marginRight:40}}>chat</Text>
               </View>
              </View> )
               :
              (this.props.accept||this.props.deny ?              
              <View style={{flexDirection:'column',alignItems:'center',marginTop:7}}>
-             <Icon name="comment"  type="FontAwesome5" onPress={{}} style={{color:"#1FABAB"}}/>
+             <FontAwesome5 name="comment"  type="FontAwesome5" onPress={{}} style={{color:"#1FABAB"}}/>
              <Text style={{marginTop:5,color:"#1FABAB"}}>chat</Text>
              </View> : 
              
              <View style={{flexDirection:'row',justifyContent:'space-between',marginTop:15}}>
-             <Button onPress={this.props.onAccept}  style ={{marginLeft:40,width:90,borderRadius:5}} success ><Text style={{marginLeft:21}}>Accept</Text></Button>
+             <TouchableOpacity onPress={this.props.onAccept}  style ={{marginLeft:40,width:90,borderRadius:5}} success ><Text style={{marginLeft:21}}>Accept</Text>
+             </TouchableOpacity>
 
               <View style={{flexDirection:'column',alignItems:'center'}}>
-              <Icon name="comment"  type="FontAwesome5" onPress={{}} style={{color:"#1FABAB"}}/>
+              <FontAwesome5 name="comment"  type="FontAwesome5" onPress={{}} style={{color:"#1FABAB"}}/>
               <Text style={{marginTop:5,color:"#1FABAB"}}>chat</Text>
               </View>
 
-             <Button onPress={this.props.onDenied}  style ={{marginRight:40,width:90,borderRadius:5}} danger ><Text style={{marginLeft:25}}>Deny</Text></Button>
+             <TouchableOpacity onPress={this.props.onDenied}  style ={{marginRight:40,width:90,borderRadius:5}} danger ><Text style={{marginLeft:25}}>Deny</Text>
+             </TouchableOpacity>
               </View>
          
              )

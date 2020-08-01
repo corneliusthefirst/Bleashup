@@ -1,10 +1,11 @@
 import React, { Component } from 'react';
 import BleashupModal from '../../mainComponents/BleashupModal';
-import { Text, Icon } from 'native-base';
-import { View, TouchableOpacity, ScrollView } from "react-native"
+import { View, Text, TouchableOpacity, ScrollView } from "react-native"
 import TextMenu from './TextMenu';
 import CreateButton from '../event/createEvent/components/ActionButton';
 import ColorList from '../../colorList';
+import  MaterialIcons  from 'react-native-vector-icons/MaterialIcons';
+import GState from '../../../stores/globalState';
 
 export default class TaskCreationExtra extends BleashupModal {
 
@@ -24,15 +25,15 @@ export default class TaskCreationExtra extends BleashupModal {
                     <View>
                         <TouchableOpacity style={{ width: "95%", flexDirection: 'row', }} onPress={() => requestAnimationFrame(this.props.onComplete)}
                             transparent>
-                            <Icon style={{ ...this.center, color: ColorList.bodyIcon, width: '15%' }} name={
+                            <MaterialIcons style={{...GState.defaultIconSize, ...this.center, color: ColorList.bodyIcon, width: '15%' }} name={
                                 this.props.currentRemind.must_report ? "check-box" :
                                     "radio-button-unchecked"
-                            } type={"MaterialIcons"}></Icon>
-                            <Text style={{ fontWeight: 'bold', ...this.center }}>Request Report on Completion</Text>
+                            } type={"MaterialIcons"}/>
+                            <Text style={{ ...GState.defaultTextStyle,fontWeight: 'bold', ...this.center }}>Request Report on Completion</Text>
                         </TouchableOpacity>
                     </View>
                     <View style={{ flexDirection: 'row', height: 100 }}>
-                        <Text style={{ fontWeight: 'normal', marginRight: '4%', ...this.center }}>{"This Remind is "}</Text>
+                        <Text style={{ ...GState.defaultTextStyle,fontWeight: 'normal', marginRight: '4%', ...this.center }}>{"This Remind is "}</Text>
                         <View style={{ ...this.center }}>
                             <TextMenu
                                 title={this.props.currentRemind.status}

@@ -1,11 +1,11 @@
 import React, { Component } from "react"
-import { View, TouchableWithoutFeedback, Animated,Dimensions} from 'react-native';
-import { Text, Icon, Toast,Thumbnail } from "native-base"
+import { View, TouchableWithoutFeedback, Animated, Dimensions, Text} from 'react-native';
 import stores from '../../../../stores';
 import Requester from "../Requester"
 import emitter from '../../../../services/eventEmiter';
 import request from '../../../../services/requestObjects';
 import { findIndex } from 'lodash';
+import Toaster from "../../../../services/Toaster";
 
 let {height, width} = Dimensions.get('window');
 export default class Join extends Component {
@@ -18,7 +18,7 @@ export default class Join extends Component {
     }
     join() {
         if (this.state.participant) {
-            Toast.show({ text: "Joint Already !", buttonText: "ok" })
+            Toaster({ text: "Joint Already !", buttonText: "ok" })
         } else {
             if (this.props.event.new) {
                 stores.Events.markAsSeen(this.props.event.id).then(() => {
@@ -27,7 +27,7 @@ export default class Join extends Component {
             Requester.join(this.props.event.id, this.props.event.event_host).then((status) => {
                 this.setState({ participant: true, });
             }).catch((error) => {
-                Toast.show({
+                Toaster({
                     text: 'unable to Perform This Action',
                     buttonText: 'Okay'
                 })
@@ -53,14 +53,18 @@ export default class Join extends Component {
     componentWillReceiveProps(nextProps) {
 
     }
+    joinImage1 = require("../../../../../assets/join3.png")
+    joinImage2 = require("../../../../../assets/join1.png")
     render() {
         return (
             
                 <View style={{ alignItem:"flex-start" ,alignItem:"center",justifyContent:"center"}}>
                     <TouchableWithoutFeedback onPress={() => this.join()} >
-                        <View >
-                         {findIndex(this.props.event.participant, { phone: stores.Session.SessionStore.phone }) >= 0 ?<Thumbnail source={require("../../../../../assets/join3.png")} style={{height:height/15,width:70}}></Thumbnail>
-                         :<Thumbnail source={require("../../../../../assets/join1.png")} style={{height:height/15,width:70}}></Thumbnail>}   
+                        <View>
+                         {findIndex(this.props.event.participant, { phone: stores.Session.SessionStore.phone }) >= 0 ?
+                         <Image resizeMode={"cover"} source={this.joinImage1} 
+                         style={{height:height/15,width:70}}></Image>
+                         :<Image resizeMode={"cover"} source={this.joinImage2} style={{height:height/15,width:70}}></Image>}   
                         </View>
                     </TouchableWithoutFeedback>
 
@@ -68,18 +72,3 @@ export default class Join extends Component {
         )
     }
 }
-
-/**
- *                            <Icon
-                                name="account-group"
-                                type="MaterialCommunityIcons"
-                                style={{
-                                    color: findIndex(this.props.event.participant, { phone: stores.Session.SessionStore.phone }) >= 0 ? "#54F5CA" : "#bfc6ea",
-                                    fontSize: 40
-                                }}
-                            />
-                                                {/*<View style={{ marginTop: 5 }}>
-                            <Text style={{ color: this.state.participant ? "#54F5CA" : "#bfc6ea", 
-                            fontSize: 15, }} note>{this.state.participant ? " Joint" :" Join"}</Text>
-                                </View>
- */

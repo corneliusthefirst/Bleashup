@@ -1,12 +1,12 @@
 import React, { Component } from "react";
-import { Content, Card, CardItem, Text, Body, Icon, Header, Button } from "native-base";
-//import GState from "../../../../../stores/globalState";
-import { View, Linking, Alert, Dimensions, ScrollView, TouchableOpacity } from "react-native"
+import { Text, View, Linking, Alert, Dimensions, ScrollView, TouchableOpacity } from "react-native"
 import InAppBrowser from 'react-native-inappbrowser-reborn';
 import Modal from 'react-native-modalbox';
 import autobind from "autobind-decorator";
 import colorList from '../../../../colorList';
 import openLink from "./openLinkOnBrowser";
+import  EvilIcons from 'react-native-vector-icons/EvilIcons';
+import GState from "../../../../../stores/globalState";
 
 let { height, width } = Dimensions.get('window');
 export default class SearchImage extends Component {
@@ -67,8 +67,8 @@ open(url){
       >
         <View style={{ flexDirection: "column", flex: 1, justifyContent: 'space-between', alignItem: 'center', margin: "5%" }}>
           <View style={{ flexDirection: 'row', }}>
-            <TouchableOpacity style={{ alignSelf: "flex-start", width: "100%" }} transparent>
-              <Icon style={{ fontSize: 25, fontWeight: "500" }} name={'close'} type={'EvilIcons'} onPress={() => { this.props.onClosed() }} ></Icon>
+            <TouchableOpacity onPress={() => { this.props.onClosed() }} style={{ alignSelf: "flex-start", width: "100%" }}>
+              <EvilIcons style={{...GState.defaultIconSize, fontSize: 25, fontWeight: "500" }} name={'close'} type={'EvilIcons'} />
             </TouchableOpacity>
 
             {/*<TouchableOpacity style={{ alignSelf: "flex-end", margin: "0%", }}>
@@ -83,28 +83,28 @@ open(url){
           </View>
           <Text style={{ alignSelf: "center", color:colorList.bodyText, fontSize: 15 }}>@Some suggested free sites</Text>
 
-          <Button style={{ alignSelf: 'center', width: "80%", borderRadius: 15, borderColor: "#1FABAB", backgroundColor: "transparent", justifyContent: 'center', alignItem: 'center', marginTop: "5%" }}
+          <TouchableOpacity style={{ alignSelf: 'center', width: "80%", borderRadius: 15, borderColor: "#1FABAB", backgroundColor: "transparent", justifyContent: 'center', alignItem: 'center', marginTop: "5%" }}
             onPress={() => {
               this.open("https://www.pixabay.com")
             }}>
             <Text style={{ alignSelf: "center" }}>Pixabay</Text>
-          </Button>
+          </TouchableOpacity>
 
-          <Button style={{ alignSelf: 'center', width: "80%", borderRadius: 15, borderColor: "#1FABAB", backgroundColor: "transparent", justifyContent: 'center', alignItem: 'center', marginTop: "5%" }}
+          <TouchableOpacity style={{ alignSelf: 'center', width: "80%", borderRadius: 15, borderColor: "#1FABAB", backgroundColor: "transparent", justifyContent: 'center', alignItem: 'center', marginTop: "5%" }}
             onPress={() => {
                this.open("https://www.pixels.com")
 
             }}>
             <Text style={{ alignSelf: "center" }}> Pixels </Text>
-          </Button>
+          </TouchableOpacity>
 
-          <Button style={{ alignSelf: 'center', width: "80%", borderRadius: 15, borderColor: "#1FABAB", backgroundColor: "transparent", justifyContent: 'center', alignItem: 'center', marginTop: "5%" }}
+          <TouchableOpacity style={{ alignSelf: 'center', width: "80%", borderRadius: 15, borderColor: "#1FABAB", backgroundColor: "transparent", justifyContent: 'center', alignItem: 'center', marginTop: "5%" }}
             onPress={() => {
                this.open("https://www.pexels.com")
 
             }}>
             <Text style={{ alignSelf: "center" }}>Pexels</Text>
-          </Button>
+          </TouchableOpacity>
 
           <TouchableOpacity>
             <Text style={{ alignSelf: "flex-start", color: "darkturquoise", margin: "5%",marginLeft:"9%",fontSize:15 }}

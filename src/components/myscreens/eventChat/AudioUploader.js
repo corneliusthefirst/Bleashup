@@ -13,7 +13,6 @@ import {
 } from 'react-native';
 import Sound from 'react-native-sound';
 import { AnimatedCircularProgress } from 'react-native-circular-progress';
-import { Icon, Right, Spinner, Toast } from 'native-base';
 import stores from '../../../stores';
 import GState from '../../../stores/globalState';
 import FileExachange from '../../../services/FileExchange';
@@ -23,6 +22,9 @@ import rnFetchBlob from 'rn-fetch-blob';
 import TextContent from './TextContent';
 import ColorList from '../../colorList';
 import BePureComponent from '../../BePureComponent';
+import EvilIcons  from 'react-native-vector-icons/EvilIcons';
+import  FontAwesome5  from 'react-native-vector-icons/FontAwesome5';
+import Spinner from '../../Spinner';
 const { fs } = rnFetchBlob
 
 
@@ -213,7 +215,7 @@ export default class AudioUploader extends BePureComponent {
                     }}></Slider>
                         <View style={{ display: 'flex', flexDirection: 'row', alignContent: 'space-between', }}>
                             <Text>{converToHMS(Math.floor(this.state.currentTime))}</Text>
-                            <Right><Text>{converToHMS(this.props.message.duration)}</Text></Right>
+                            <View style={{alignSelf: 'flex-end',marginLeft: "auto",}}><Text>{converToHMS(this.props.message.duration)}</Text></View>
                         </View>
                     </View>
                 </View>
@@ -231,19 +233,16 @@ export default class AudioUploader extends BePureComponent {
                                         <TouchableOpacity onPress={() => this.state.downloading ? this.cancelUpLoad(this.tempSource) :
                                             this.uploadAudio(this.tempSource)}>
                                             <View>
-                                                <Icon style={{ color: ColorList.bodyText }} type="EvilIcons"
-                                                    name={this.state.downloading ? "close" : "arrow-up"}></Icon>
+                                                <EvilIcons style={{ ...GState.defaultIconSize,color: ColorList.bodyText }} type="EvilIcons"
+                                                    name={this.state.downloading ? "close" : "arrow-up"}/>
                                             </View>
-                                            <View style={{ position: 'absolute', marginTop: '-103%', marginLeft: '-14%', }}>
-                                                {this.state.downloading ? <Spinner></Spinner> : null}
+                                            <View style={{ position: 'absolute', marginLeft: "-2%",marginTop: "-10%", }}>
                                             </View>
                                         </TouchableOpacity> : !this.state.playing ? <TouchableOpacity
                                             onPress={() => requestAnimationFrame(() => this.plays())}>
-                                            <Icon type="FontAwesome5" style={{ color: ColorList.bodyText, fontSize: 20 }} name="play">
-                                            </Icon>
+                                            <FontAwesome5  style={{ color: ColorList.bodyText, fontSize: 20 }} name="play"/>
                                         </TouchableOpacity> : <TouchableOpacity onPress={() => requestAnimationFrame(() => this.pause())}>
-                                                <Icon type="FontAwesome5" style={{ color: ColorList.bodyText, fontSize: 20 }} name="pause">
-                                                </Icon>
+                                                <FontAwesome5  style={{ color: ColorList.bodyText, fontSize: 20 }} name="pause"/>
                                             </TouchableOpacity>}
                                 </View>
                             )

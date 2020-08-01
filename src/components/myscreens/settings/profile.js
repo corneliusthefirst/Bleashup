@@ -1,12 +1,7 @@
 /* eslint-disable react/self-closing-comp */
 /* eslint-disable prettier/prettier */
 import React, { Component } from "react";
-import autobind from "autobind-decorator";
-import {
-  Content, Text,  Container, Right,Icon,Thumbnail,Card,CardItem,Left,Title,Toast,Spinner
-} from "native-base";
 import { Button,View,Dimensions,TouchableWithoutFeedback,Image} from "react-native";
-
 
 import stores from "../../../stores";
 import { functionDeclaration } from "@babel/types";
@@ -24,7 +19,12 @@ import rounder from "../../../services/rounder";
 import BeNavigator from "../../../services/navigationServices";
 import BleashupCamera from '../../mainComponents/BleashupCamera/index';
 import SwiperView from '../../mainComponents/swipeViews';
-
+import Toaster from "../../../services/Toaster";
+import AntDesign  from 'react-native-vector-icons/AntDesign';
+import MaterialIcons  from 'react-native-vector-icons/MaterialIcons';
+import FontAwesome  from 'react-native-vector-icons/FontAwesome';
+import { TouchableOpacity, Text } from 'react-native';
+import Spinner from '../../Spinner';
 
 let { height, width } = Dimensions.get('window');
 export default class ProfileView extends Component {
@@ -82,10 +82,10 @@ export default class ProfileView extends Component {
             this.setState({uploading: false})
           })
         },() => {
-        Toast.show({text:'Unable To upload photo',position:'top'})
+        Toaster({text:'Unable To upload photo',position:'top'})
         this.setState({uploading:false});
         },(error) => {
-            Toast.show({ text: 'Unable To upload photo', position: 'top' })
+            Toaster({ text: 'Unable To upload photo', position: 'top' })
             this.setState({uploading: false})
         },res.content_type,res.filename,'/photo')
         this.state.photo?exchanger.deleteFile(this.state.photo):null
@@ -122,9 +122,9 @@ export default class ProfileView extends Component {
            <Image source={require("../../../../Images/avatar.svg")} style={{height:ColorList.containerHeight/3,width:ColorList.containerHeight/3,borderRadius:ColorList.containerHeight/6}} ></Image>}
         </TouchableWithoutFeedback>
 
-        <TouchableWithoutFeedback  onPress={this.TakePhotoFromCamera} >
-          <View style={{...shadower(),...rounder(52,ColorList.indicatorColor),alignItems:"center",borderWidth:2,borderColor:ColorList.bodyBackground,position:'absolute',right:width/6,bottom:40}}>
-            <Icon name="add-a-photo" active={true} type="MaterialIcons" style={{ color:ColorList.bodyBackground }}  onPress={this.TakePhotoFromCamera} />
+          <TouchableWithoutFeedback onPress={this.TakePhotoFromCamera}>
+          <View style={{...rounder(52,ColorList.indicatorColor),alignItems:"center",borderWidth:2,borderColor:ColorList.bodyBackground,position:'absolute',right:width/6,bottom:40}}>
+            <MaterialIcons name="add-a-photo" active={true} type="MaterialIcons" style={{...GState.defaultIconSize, color:ColorList.bodyBackground }}  />
           </View>
         </TouchableWithoutFeedback>
     </View>
@@ -138,18 +138,16 @@ export default class ProfileView extends Component {
 
        <View style={{width:"100%",justifyContent:"center",height:height/8,flexDirection:"row",marginTop:15}}>
           <View style={{width:"80%",flexDirection:"row"}}>
-
-            <Icon name="user" active={true} type="AntDesign" style={{ color: ColorList.headerIcon, }}/>
-
+            <AntDesign name="user" active={true} type="AntDesign" style={{ ...GState.defaultTextStyle, color: ColorList.headerIcon, }}/>
             <View style={{flex:1,marginLeft:"5%",flexDirection:"column"}}>
-               <Text style={{alignSelf:"flex-start"}} note>Name</Text>
-               <Title style={{alignSelf:"flex-start"}}>{this.state.userInfo.nickname}</Title>
+               <Text style={{...GState.defaultTextStyle,alignSelf:"flex-start"}} note>Name</Text>
+               <Text style={{...GState.defaultTextStyle,alignSelf:"flex-start"}}>{this.state.userInfo.nickname}</Text>
             </View>
           </View>
 
-          <View style={{width:"10%"}}>
-             <Icon name="edit" type="MaterialIcons" style={{ color:ColorList.bodySubtext }} onPress={this.updateName} />
-          </View>
+          <TouchableOpacity onPress={this.updateName} style={{width:"10%"}}>
+             <MaterialIcons name="edit" type="MaterialIcons" style={{...GState.defaultIconSize, color:ColorList.bodySubtext }}  />
+          </TouchableOpacity>
 
         </View>
 
@@ -157,18 +155,18 @@ export default class ProfileView extends Component {
 
           <View style={{width:"80%",flexDirection:"row"}}>
 
-            <Icon name="infocirlceo" active={true} type="AntDesign" style={{ color:ColorList.headerIcon, }}/>
+            <AntDesign name="infocirlceo" active={true} type="AntDesign" style={{...GState.defaultIconSize, color:ColorList.headerIcon, }}/>
 
             <View style={{flex:1,marginLeft:"5%",flexDirection:"column"}}>
-            <Text style={{alignSelf:"flex-start"}} note>Actu</Text>
-            <Title style={{alignSelf:"flex-start"}} numberOfLines={1}  >{this.state.userInfo.status}</Title>
+            <Text style={{...GState.defaultTextStyle,alignSelf:"flex-start"}} note>Actu</Text>
+            <Text style={{...GState.defaultTextStyle,alignSelf:"flex-start"}} numberOfLines={1}  >{this.state.userInfo.status}</Text>
             </View>
 
           </View>
 
-          <View style={{width:"10%"}}>
-          <Icon name="edit"  type="MaterialIcons" style={{ color:ColorList.bodySubtext }} onPress={this.editActu}/>
-          </View>
+          <TouchableOpacity onPress={this.editActu} style={{width:"10%"}}>
+          <MaterialIcons name="edit"  type="MaterialIcons" style={{...GState.defaultIconSize, color:ColorList.bodySubtext }}/>
+          </TouchableOpacity>
 
         </View>
 
@@ -176,12 +174,10 @@ export default class ProfileView extends Component {
         <View style={{width:"100%",justifyContent:"center",flexDirection:"row",marginTop:height/30}}>
 
           <View style={{width:"90%",flexDirection:"row"}}>
-
-            <Icon name="phone" active={true} type="FontAwesome" style={{ color:ColorList.headerIcon }}/>
-
+            <FontAwesome name="phone" active={true} type="FontAwesome" style={{...GState.defaultIconSize, color:ColorList.headerIcon }}/>
             <View style={{flex:1,marginLeft:"5%",flexDirection:"column"}}>
-               <Text style={{alignSelf:"flex-start"}} note>Telephone</Text>
-               <Title style={{alignSelf:"flex-start",marginLeft:2}}>{this.state.userInfo.phone}</Title>
+               <Text style={{...GState.defaultTextStyle,alignSelf:"flex-start"}} note>Telephone</Text>
+               <Text style={{...GState.defaultTextStyle,alignSelf:"flex-start",marginLeft:2}}>{this.state.userInfo.phone}</Text>
             </View>
           </View>
 

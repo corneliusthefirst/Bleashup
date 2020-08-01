@@ -1,9 +1,13 @@
 import React, { Component } from "react";
 import Menu, { MenuItem, MenuDivider } from "react-native-material-menu";
-import { Icon } from "native-base";
 import { View ,TouchableOpacity} from "react-native";
 import ColorList from "../../../../colorList";
 import shadower from "../../../../shadower";
+import Octicons  from 'react-native-vector-icons/Octicons';
+import EvilIcons  from 'react-native-vector-icons/EvilIcons';
+import  MaterialIcons from 'react-native-vector-icons/MaterialIcons';
+import  AntDesign  from 'react-native-vector-icons/AntDesign';
+import GState from "../../../../../stores/globalState";
 export default class PickersMenu extends Component {
   constructor(props) {
     super(props);
@@ -13,7 +17,16 @@ export default class PickersMenu extends Component {
   setMenuRef = (ref) => {
     this._menu = ref;
   };
-
+ icons = {
+   Octicons: <Octicons style={{ ...GState.defaultIconSize,...this.iconStyle}} name={this.props.icon.name}></Octicons>,
+   EvilIcons: <EvilIcons style={{ ...GState.defaultIconSize,...this.iconStyle}} name={this.props.icon.name}></EvilIcons>,
+   MaterialIcons: <MaterialIcons style={{ ...GState.defaultIconSize,...this.iconStyle}} name={this.props.icon.name}></MaterialIcons>,
+   AntDesign: <AntDesign style={{ ...GState.defaultIconSize,...this.iconStyle}} name={this.props.icon.name}></AntDesign>
+ }
+  iconStyle = {
+    color: ColorList.bodyIcon,
+    fontSize: this.props.fontSize ?this.props.fontSize: 30,
+  }
   hideMenu = () => {
     this._menu.hide();
   };
@@ -56,14 +69,7 @@ export default class PickersMenu extends Component {
             <TouchableOpacity
             onPress={() => requestAnimationFrame(this.showMenu.bind(this))}
             >
-              <Icon
-                style={{
-                  color: ColorList.bodyIcon,
-                  fontSize: this.props.fontSize||30,
-                }}
-                name={this.props.icon.name}
-                type={this.props.icon.type}
-              ></Icon>    
+             {this.icons[this.props.icon.type]}  
             </TouchableOpacity>
           }
         >

@@ -2,7 +2,6 @@ import tcpRequest from '../../../services/tcpRequestData';
 import serverEventListener from '../../../services/severEventListener'
 import stores from '../../../stores';
 import request from '../../../services/requestObjects';
-import { Toast } from 'native-base';
 import uuid from 'react-native-uuid';
 import moment from 'moment';
 import { isEqual } from "lodash"
@@ -11,6 +10,7 @@ import { RemoveParticipant } from '../../../services/cloud_services';
 import CalendarServe from '../../../services/CalendarService';
 import MainUpdater from '../../../services/mainUpdater';
 import toTitleCase from '../../../services/toTitle';
+import Toaster from '../../../services/Toaster';
 
 class Request {
     constructor() {
@@ -49,7 +49,7 @@ class Request {
                     })
                 }).catch(error => {
                     console.warn(error)
-                    Toast.show({ text: "Unable to perform the creation action" })
+                    Toaster({ text: "Unable to perform the creation action" })
                     reject(error)
                 })
             })
@@ -76,12 +76,12 @@ class Request {
                             time: null
                         }
                         stores.ChangeLogs.addChanges(Change).then(() => {
-                            //Toast.show({ text: "update went successfully !", type: "success" }) 
+                            //Toaster({ text: "update went successfully !", type: "success" }) 
                         })
                         resolve()
                     })
                 }).catch(error => {
-                    Toast.show({ text: "Unable to perform the name editing action" })
+                    Toaster({ text: "Unable to perform the name editing action" })
                     reject(error)
                 })
             })
@@ -116,7 +116,7 @@ class Request {
                         resolve()
                     })
                 }).catch((error) => {
-                    Toast.show({ text: "Unable to perform the publish action" })
+                    Toaster({ text: "Unable to perform the publish action" })
                     reject(error)
                 })
             })
@@ -143,12 +143,12 @@ class Request {
                             time: null
                         }
                         stores.ChangeLogs.addChanges(Change).then(() => {
-                            //Toast.show({ text: "members where successfully added !", type: "success" })
+                            //Toaster({ text: "members where successfully added !", type: "success" })
                         })
                         resolve(members)
                     })
                 }).catch((error) => {
-                    Toast.show({ text: "Unable to perform the add action" })
+                    Toaster({ text: "Unable to perform the add action" })
                     reject(error)
                 })
             })
@@ -174,12 +174,12 @@ class Request {
                             time: null
                         }
                         stores.ChangeLogs.addChanges(Change).then(() => {
-                            Toast.show({ text: "The commitee was successfully opened !", type: "success" })
+                            Toaster({ text: "The commitee was successfully opened !", type: "success" })
                         })
                         resolve()
                     })
                 }).catch((error) => {
-                    Toast.show({ text: "Unable to perform the open action" })
+                    Toaster({ text: "Unable to perform the open action" })
                     reject(error)
                 })
             })
@@ -205,12 +205,12 @@ class Request {
                             time: null
                         }
                         stores.ChangeLogs.addChanges(Change).then(() => {
-                            //Toast.show({ text: "The commitee was successfully opened !", type: "success" })
+                            //Toaster({ text: "The commitee was successfully opened !", type: "success" })
                         })
                         resolve()
                     })
                 }).catch((error) => {
-                    Toast.show({ text: "Unable to perform the close action" })
+                    Toaster({ text: "Unable to perform the close action" })
                     reject(error)
                 })
             })
@@ -238,12 +238,12 @@ class Request {
                             time: null
                         }
                         stores.ChangeLogs.addChanges(Change).then(() => {
-                            //Toast.show({ text: "members where successfully removed !", type: "success" })
+                            //Toaster({ text: "members where successfully removed !", type: "success" })
                         })
                         resolve()
                     })
                 }).catch((error) => {
-                    Toast.show({ text: "Unable to perform the remove action" })
+                    Toaster({ text: "Unable to perform the remove action" })
                     reject(error)
                 })
             })
@@ -270,12 +270,12 @@ class Request {
                             time: null
                         }
                         stores.ChangeLogs.addChanges(Change).then(() => {
-                            //Toast.show({ text: "commitee successfully joint !", type: "success" })
+                            //Toaster({ text: "commitee successfully joint !", type: "success" })
                         })
                         resolve()
                     })
                 }).catch((error) => {
-                    Toast.show({ text: "Unable to perform the join action" })
+                    Toaster({ text: "Unable to perform the join action" })
                     reject(error)
                 })
             })
@@ -303,12 +303,12 @@ class Request {
                             time: null
                         }
                         stores.ChangeLogs.addChanges(Change).then(() => {
-                            //Toast.show({ text: "commitee successfully left !!", type: "success" })
+                            //Toaster({ text: "commitee successfully left !!", type: "success" })
                         })
                         resolve()
                     })
                 }).catch((error) => {
-                    Toast.show({ text: "Unable to perform the leave action" })
+                    Toaster({ text: "Unable to perform the leave action" })
                     reject(error)
                 })
             })
@@ -365,7 +365,7 @@ class Request {
                     this.storeInvitations(invitees).then((res) => {
                         console.warn(res)
                         //console.warn("invitations gone!!")
-                        Toast.show({ text: "invitations was successfully sent !", type: "success" });
+                        Toaster({ text: "invitations was successfully sent !", type: "success" });
                         resolve("")
                     })
                 }).catch(error => {
@@ -391,7 +391,7 @@ class Request {
                         })
                     }).catch((error) => {
                         console.warn(error)
-                        Toast.show({text:'unable to perform request'})
+                        Toaster({text:'unable to perform request'})
                         resolve()
                     })
                 })
@@ -454,7 +454,7 @@ class Request {
             leave.phone = [phone]
             tcpRequest.leaveEvent(leave, event_id + "_leave").then(JSONData => {
                 serverEventListener.sendRequest(JSONData, event_id + "_leave").then(() => {
-                    Toast.show({ text: "Activity Successfully Left", type: "success" })
+                    Toaster({ text: "Activity Successfully Left", type: "success" })
                     stores.Events.leaveEvent(event_id).then(() => {
                         stores.Events.removeParticipant(event_id, [phone]).then(() => {
                             let Change = {
@@ -519,7 +519,7 @@ class Request {
             notif.data.activity_id = event_id
             tcpRequest.publishEvent({ event_id: event_id, notif }, event_id + "_publish").then(JSONData => {
                 serverEventListener.sendRequest(JSONData, event_id + "_publish").then(() => {
-                    Toast.show({ text: "Published Successfully", type: "success" })
+                    Toaster({ text: "Published Successfully", type: "success" })
                     stores.Events.publishEvent(event_id).then(() => {
                         stores.Publishers.addPublisher(event_id, {
                             phone: stores.LoginStore.user.phone,
@@ -635,7 +635,7 @@ class Request {
                         })
                     }).catch((e) => {
                         console.warn(e)
-                        Toast.show({ text: "Unable To Perform Request" })
+                        Toaster({ text: "Unable To Perform Request" })
                         reject(e)
                     })
                 })
@@ -665,7 +665,7 @@ class Request {
                         })
                     }).catch((e) => {
                         console.warn(error)
-                        Toast.show({ text: "Unable To Perform Request" })
+                        Toaster({ text: "Unable To Perform Request" })
                         reject(e)
                     })
                 })
@@ -984,7 +984,7 @@ class Request {
                         })
                     })
                 }).catch((error) => {
-                    Toast.show({ text: 'Unable to perform this action', position: 'top' })
+                    Toaster({ text: 'Unable to perform this action', position: 'top' })
                     reject(error)
                 })
             })
@@ -1210,7 +1210,7 @@ class Request {
                     })
                 }).catch((error) => {
                     console.warn(error)
-                    Toast.show({ text: "Unable To Perform Request" })
+                    Toaster({ text: "Unable To Perform Request" })
                     reject(error)
                 })
             })
@@ -1240,7 +1240,7 @@ class Request {
                     })
                 }).catch((error) => {
                     console.warn(error)
-                    Toast.show({ text: "Unable To Perform Request" })
+                    Toaster({ text: "Unable To Perform Request" })
                     reject(error)
                 })
             })

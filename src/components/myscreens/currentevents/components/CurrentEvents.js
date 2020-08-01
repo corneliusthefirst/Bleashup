@@ -17,6 +17,8 @@ export default class CurrentEvents extends AnimatedComponent {
         this.state = {
             participants: [],
             event_id: null,
+            //event:this.props.data[0],
+            //isDetailsModalOpened:true,
             isParticipantModalOpened: false,
             isActionButtonVisible: true,
             newData: []

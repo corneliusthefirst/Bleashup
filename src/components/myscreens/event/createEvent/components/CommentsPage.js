@@ -1,8 +1,7 @@
 import React, { Component } from "react"
 import ChatRoom from "../../../eventChat/ChatRoom";
 import stores from "../../../../../stores";
-import { View, BackHandler } from "react-native"
-import {Text} from "native-base"
+import { View, BackHandler, Text } from "react-native"
 import CreationHeader from "./CreationHeader";
 
 

@@ -1,8 +1,11 @@
 import React, { PureComponent } from 'react';
-import { Content, Text, Button } from 'native-base';
-import { View } from "react-native"
+import { View, Text,ScrollView,TouchableOpacity } from "react-native"
 import Modal from "react-native-modalbox"
 import bleashupHeaderStyle from '../../../services/bleashupHeaderStyle';
+import ColorList from '../../colorList';
+import shadower from '../../shadower';
+import Texts from '../../../meta/text';
+import GState from '../../../stores/globalState';
 
 export default class AreYouSure extends PureComponent {
     constructor(props) {
@@ -12,6 +15,13 @@ export default class AreYouSure extends PureComponent {
         }
     }
     state = {}
+    buttonStyle = {
+        alignItems: 'center',
+        backgroundColor: ColorList.bodyBackground,
+        ...shadower(2),
+        justifyContent: 'center',
+        borderRadius: 10, width: 70, height: 40
+    }
     render() {
         return (
             <Modal
@@ -44,29 +54,39 @@ export default class AreYouSure extends PureComponent {
                     width: 300
                 }}
             >
-                <Content style={{ flexDirection: 'column', }}>
+                <ScrollView style={{ flexDirection: 'column', }}>
                     <View style={{ width: "100%", height: 44 }}>
                         <View style={{...bleashupHeaderStyle,paddingLeft: '1%',}}>
-                            <Text style={{ fontSize: 20, alignSelf: 'center', fontWeight: '400',  }}>{this.props.title}</Text>
+                            <Text style={{ ...GState.defaultTextStyle, fontSize: 20, alignSelf: 'center', fontWeight: '400',  }}>{this.props.title}</Text>
                         </View>
                     </View>
                     <View style={{ margin: '5%', }}>
-                        <Text style={{ color: 'grey' }}>{this.props.message}</Text>
+                        <Text style={{ ...GState.defaultTextStyle, color: 'grey' }}>{this.props.message}</Text>
                     </View>
-                    <View style={{ marginLeft: '10%', flexDirection: 'row', }}>
+                    <View style={{ 
+                        width:"90%",
+                        justifyContent: 'space-between',
+                        height:80,
+                        margin: 'auto', alignSelf: 'center',
+                        flexDirection: 'row', }}>
                     <View style={{width:'50%'}}>
-                        <Button onPress={() => this.props.closed()} 
-                        style={{  alignItems: 'center', 
-                        borderRadius: 10, }} ><Text>Cancel</Text></Button>
+                        <TouchableOpacity onPress={() => this.props.closed()} 
+                        style={this.buttonStyle} >
+                        <Text style={{...GState.defaultTextStyle,
+                            fontWeight: 'bold',}}>{Texts.cancel}</Text>
+                        </TouchableOpacity>
                         </View>
-                        <View style={{width:'50%'}}><Button onPress={() => {
+                        <View style={{width:'50%'}}>
+                        <TouchableOpacity  style={{
+                            ...this.buttonStyle,backgroundColor: ColorList.delete,
+                        }}  onPress={() => {
                             this.props.callback()
                             this.props.closed()
-                        }} style={{ alignItems: 'center',
-                         borderRadius: 10, }} danger><Text>{this.props.ok ? this.props.ok : "Leave"}</Text></Button>
+                        }}><Text>{this.props.ok ? this.props.ok : "Leave"}</Text>
+                         </TouchableOpacity>
                         </View>
                     </View>
-                </Content>
+                </ScrollView>
             </Modal>
         );
     }

@@ -1,8 +1,6 @@
 import React, { Component } from "react";
 
-import { View } from "react-native";
-import { Text } from "native-base";
-import moment from "moment"
+import { View, Text } from "react-native";
 import shadower from "../../shadower";
 export default class NewSeparator extends Component {
     constructor(props) {

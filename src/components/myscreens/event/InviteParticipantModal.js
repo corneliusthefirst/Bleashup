@@ -1,12 +1,15 @@
 import React from "react";
-import { View, TouchableOpacity } from "react-native";
+import { View, TouchableOpacity, Text } from "react-native";
 import BleashupFlatList from "../../BleashupFlatList";
-import { Spinner, Text, Button, Icon } from "native-base";
 import { findIndex, reject } from "lodash";
 import stores from "../../../stores";
 import SelectableContactsMaster from "./SelectableContactsMaster";
 import bleashupHeaderStyle from "../../../services/bleashupHeaderStyle";
 import BleashupModal from "../../mainComponents/BleashupModal";
+import  MaterialIcons  from 'react-native-vector-icons/MaterialIcons';
+import Entypo  from 'react-native-vector-icons/Entypo';
+import EvilIcons  from 'react-native-vector-icons/EvilIcons';
+import GState from "../../../stores/globalState";
 export default class InviteParticipantModal extends BleashupModal {
   initialize() {
     this.state = {
@@ -84,8 +87,7 @@ export default class InviteParticipantModal extends BleashupModal {
             flexDirection: 'row',
             width: 70
           }}>
-            <Icon type={"MaterialIcons"} name={"arrow-back"}>
-            </Icon>
+            <MaterialIcons style={{ ...GState.defaultIconSize }} type={"MaterialIcons"} name={"arrow-back"}/>
           </TouchableOpacity>
           <View
             style={{
@@ -128,11 +130,10 @@ export default class InviteParticipantModal extends BleashupModal {
                   )
                 }
               >
-                {this.props.adding ? <Icon type="Entypo" style={this.saveStyles} name="check"></Icon> : <Icon
-                  type={"EvilIcons"}
+                {this.props.adding ? <Entypo  style={this.saveStyles} name="check"/> : <EvilIcons
                   style={this.saveStyles}
                   name={"sc-telegram"}
-                ></Icon>}
+                />}
               </TouchableOpacity>
             </View>}
           </View>

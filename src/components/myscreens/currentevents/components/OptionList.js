@@ -3,8 +3,6 @@ import {
     View, Text, TouchableOpacity
 } from 'react-native';
 import Menu, { MenuItem, MenuDivider } from 'react-native-material-menu';
-import ImageActivityIndicator from "./imageActivityIndicator";
-import { Icon, } from "native-base"
 
 export default class OptionList extends Component {
     constructor(props) {
@@ -66,6 +64,6 @@ export default class OptionList extends Component {
                     <MenuItem textStyle={{ color: "#0A4E52" }} onPress={() => this.props.showPublishers()}>Hide</MenuItem>
                 </Menu>
             </View>
-        ) : <ImageActivityIndicator />;
+        ) : null;
     }
 } 
