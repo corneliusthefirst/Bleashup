@@ -97,11 +97,12 @@ export default class Reminds {
 
   loadReminds(EventID, fresh) {
     let sorter = (a, b) =>
-      a.created_at > b.created_at ? -1 : a.created_at < b.created_at ? 1 : 0;
+     moment(a.created_at).format("x") > moment( b.created_at).format("x") ? -1
+      : moment(a.created_at).format("x") < moment(b.created_at).format("x") ? 1 : 0;
     return new Promise((resolve, reject) => {
       this.readFromStore().then((Reminds) => {
         let ActReminds = Reminds[EventID];
-        if (ActReminds && ActReminds.length > 0) {
+        if (ActReminds && ActReminds.length > 1) {
           resolve(
             fresh
               ? JSON.stringify(ActReminds.sort(sorter))

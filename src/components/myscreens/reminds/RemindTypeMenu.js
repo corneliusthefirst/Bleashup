@@ -3,7 +3,6 @@ import {
     View, Text, TouchableOpacity
 } from 'react-native';
 import Menu, { MenuItem, MenuDivider } from 'react-native-material-menu';
-import { Icon, } from "native-base"
 import emitter from '../../../services/eventEmiter';
 import ColorList from '../../colorList';
 

@@ -50,8 +50,18 @@ export default {
     
   },
   input:{
-    marginTop:20,
-  }
+    marginTop: 50,
+    width: "90%", height: 40,
+    borderRadius: 20,
+    borderWidth: .8,
+    marginBottom: 100,
+    marginTop: "10%", alignSelf: "center", flexDirection: 'row',
+  },
+  close_button: {
+    alignSelf: 'center',
+    marginLeft: "auto",
+    marginRight: 10,
+  },
 
 };
 

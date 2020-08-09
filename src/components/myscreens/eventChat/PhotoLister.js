@@ -5,7 +5,6 @@ import CacheImages from '../../CacheImages';
 import BleashupFlatList from '../../BleashupFlatList';
 import PhotoViewer from '../event/PhotoViewer';
 import testForURL from '../../../services/testForURL';
-import { Thumbnail, Button, Text, Spinner } from 'native-base';
 import moment from 'moment';
 import MediaSeparator from './MediaSeparator';
 

@@ -1,9 +1,5 @@
 import React, { Component } from "react";
 import {
-  Text, Icon, Item,
-  Button,
-} from "native-base";
-import {
   View, TouchableOpacity,
   TouchableWithoutFeedback, Dimensions, //Keyboard
 } from 'react-native';

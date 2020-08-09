@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
 import { View, TouchableOpacity } from 'react-native';
 import TextContent from './TextContent';
-import { Text, Icon, Spinner, Toast } from 'native-base';
 import labler from './labler';
 import shadower from '../../shadower';
 import stores from '../../../stores';

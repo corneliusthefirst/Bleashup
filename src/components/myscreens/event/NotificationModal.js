@@ -86,65 +86,9 @@ export default class NotificationModal extends PureComponent {
                                 </View>
                                 <View style={{ flexDirection: "row" }}>
                                     <View style={{ width: "90%" }}>
-                                        {typeof this.props.change.updater === "string" ? (
-                                            <ProfileView
-                                                phone={this.props.change.updater}
-                                            ></ProfileView>
-                                        ) : (
-                                                <View style={{ flexDirection: "row" }}>
-                                                    <View style={{ width: "20%" }}>
-                                                        {this.props.change.updater.profile &&
-                                                            testForURL(this.props.change.updater.profile) ? (
-                                                                <CacheImages
-                                                                    thumbnails
-                                                                    source={{
-                                                                        uri: this.props.change.updater.profile,
-                                                                    }}
-                                                                ></CacheImages>
-                                                            ) : (
-                                                                <Image
-                                                                    small
-                                                                    resizeMode={"cover"}
-                                                                    style={styles.smallthumbnail}
-                                                                    source={{
-                                                                        uri: this.props.change.updater.profile
-                                                                            ? this.change.updater.profile
-                                                                            : "",
-                                                                    }}
-                                                                ></Image>
-                                                            )}
-                                                    </View>
-                                                    <View
-                                                        style={{
-                                                            marginTop: "3%",
-                                                            marginLeft: "4%",
-                                                            flexDirection: "column",
-                                                            width: "65%",
-                                                        }}
-                                                    >
-                                                        <Text
-                                                            ellipsizeMode={"tail"}
-                                                            numberOfLines={1}
-                                                            style={{ marginBottom: "2%", fontWeight: "bold" }}
-                                                        >
-                                                            {this.props.change.updater.nickname}
-                                                        </Text>
-                                                        {this.props.change &&
-                                                            this.props.change.updater &&
-                                                            this.props.change.updater.status &&
-                                                            this.props.change.updater.status !== "undefined" ? (
-                                                                <Text
-                                                                    ellipsizeMode={"tail"}
-                                                                    numberOfLines={1}
-                                                                    style={{ marginLeft: "2%" }}
-                                                                    note
-                                                                >
-                                                                    {this.props.change.updater.status}
-                                                                </Text>
-                                                            ) : null}
-                                                    </View>
-                                                </View>
-                                            )}
+                                        <ProfileView
+                                            phone={this.props.change.updater}
+                                        ></ProfileView>
                                     </View>
                                     <View style={{ width: "10%" }}>
                                         <TouchableOpacity
@@ -178,7 +122,9 @@ export default class NotificationModal extends PureComponent {
                                         style={{ fontSize: 12, fontStyle: "italic" }}
                                         numberOfLines={1}
                                     >
-                                        {typeof this.props.change.new_value.new_value === "string"
+                                        {this.props.change.new_value && 
+                                            this.props.change.new_value.new_value && 
+                                            typeof this.props.change.new_value.new_value === "string"
                                             ? this.props.change.new_value.new_value
                                             : ""}
                                     </Text>

@@ -232,7 +232,7 @@ export default class ChatKeyboard extends BeComponent {
                         <TouchableOpacity
                             onPress={() => requestAnimationFrame(() => this.chooseItem(item))}
                         >
-                            <View style={{ width: 150, alignSelf: "flex-start" }}>
+                            <View style={{ width: 200, alignSelf: "flex-start" }}>
                                 <ProfileSimple
                                     searching
                                     searchString={

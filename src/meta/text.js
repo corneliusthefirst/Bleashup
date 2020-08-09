@@ -61,6 +61,74 @@ class TEXTS {
         en: "Join activity through QR Code",
         fr:"Rejoindre par QR"
     }[GState.lang]
+    confirm_password =  {
+        en:"Please confirm password",
+        fr:"Confirmez votre mots de pass"
+    }[GState.lang]
+    password_not_matched = {
+        en: "password not matching",
+        fr: "mots de passes ne correspondent pas"
+    }[GState.lang]
+    sign_up = {
+        en: "SignUp",
+        fr: "Cree un Compte"
+    }[GState.lang]
+    enter_password = {
+        en: "Please enter password",
+        fr:"Entree votre mots de pass"
+    }[GState.lang]
+    invalide_password = {
+        en: "Invalid password",
+        fr: "Mots de pass non valide"
+    }[GState.lang]
+    not_empty_password = {
+        en: "password cannot be empty",
+        fr:"mots de pass ne peut etre vide"
+    }[GState.lang]
+    enter_name = {
+        en: "Please enter your name",
+        fr: "Entree Votre nom"
+    }[GState.lang]
+    not_empty_name = {
+        en: "User name cannot be empty",
+        fr: "Ce champ ne peut etre vide"
+    }[GState.lang]
+    unable_to_verify_account= {
+        en: "Unable To Verify Your Account, Please Check Your Internet Connection",
+        fr: "Votre Compte N'a pas pu etre verifiee; SVP verifiez votre connection internet"
+    }[GState.lang]
+    phone_number_verify = {
+        en:"Verify Your Phone Number",
+        fr:"Verifiez votre numero de telephone"
+    }[GState.lang]
+    ok = {
+        en: "OK",
+        fr:"OK"
+    }[GState.lang]
+    sign_in= {
+        en:"Sign In",
+        fr:"Entree Votre Mots de pass"
+    }[GState.lang]
+    phone_number_verification = {
+        en: "Phone Number Verification",
+        fr:"Numero de verification"
+    }[GState.lang]
+    enter_verification_code =  {
+        en: "Please enter email verification code",
+        fr: "Entree le code de verification recu"
+    }[GState.lang]
+    invalide_verification_code = {
+        en: "Invalid email Verification code",
+        fr: "Code de verfication invalide"
+    }[GState.lang]
+    confirm_you_account = {
+        en:"Please Comfirm your Account; A verification Code was sent to your number",
+        fr:"Confirmez votre compte; Un code de verificaton vous a ete envoyee"
+    }[GState.lang]
+    reset_password = {
+        en: "Reset Password",
+        fr: "changer de mot de pass"
+    }[GState.lang]
 }
-const Texts = new TEXTS(GState.lang)
+const Texts = new TEXTS()
 export default Texts

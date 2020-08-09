@@ -1,7 +1,6 @@
 import React, { Component } from 'react'
 import Modal from 'react-native-modalbox';
 import { View, Text, TouchableOpacity } from 'react-native'
-import { Button, Icon, Item, Thumbnail } from 'native-base';
 import CacheImages from '../../../CacheImages';
 import testForURL from '../../../../services/testForURL';
 

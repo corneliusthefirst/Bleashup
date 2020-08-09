@@ -28,7 +28,7 @@ export default {
   },*/
   phoneinput : {
     flex: 1,
-    marginTop: deviceHeight / 20,
+    marginTop: 20,
     borderRadius:5,
     margin: '2%',
     borderWidth: 1,

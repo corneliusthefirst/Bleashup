@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import Menu, { MenuItem, MenuDivider } from "react-native-material-menu";
-import { View, TouchableOpacity } from "react-native";
+import { View, TouchableOpacity,Text } from "react-native";
 import ColorList from '../../colorList';
 export default class TextMenu extends Component {
     constructor(props) {

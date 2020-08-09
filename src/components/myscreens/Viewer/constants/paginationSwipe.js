@@ -1,16 +1,17 @@
 /* eslint-disable prettier/prettier */
 /* eslint-disable react-native/no-inline-styles */
 import React, { Component } from 'react';
-import {View, Dimensions } from 'react-native';
+import { View, Dimensions, Text } from 'react-native';
 //import Swiper from 'react-native-swiper';
 //import ColorList from '../colorList';
-import {Icon,Text} from 'native-base';
 import data from './paginationdata';
 import GestureRecognizer from 'react-native-swipe-gestures';
 import ProfileSimple from '../../currentevents/components/ProfileViewSimple';
 import bleashupHeaderStyle from '../../../../services/bleashupHeaderStyle';
 import ColorList from '../../../colorList';
 import { TouchableOpacity } from 'react-native-gesture-handler';
+import { MaterialIcons } from 'react-native-vector-icons/MaterialIcons';
+import GState from '../../../../stores/globalState';
 
 let { height, width } = Dimensions.get('window');
 
@@ -89,8 +90,8 @@ export default class PaginationView extends Component {
                 //backgroundColor:'red',
               }}>
                  <View style={{flex:1,flexDirection:"row",width:'50%',marginLeft:width / 25,justifyContent:"space-between",alignItems:"center"}}>
-                 <Icon name="arrow-back" active={true} type="MaterialIcons" style={{ color: ColorList.headerIcon }} onPress={() => this.props.navigation.goBack()} />
-                 <Text style={{fontSize:18,fontWeight:"bold",marginLeft:10}}>Pagination List</Text>
+                 <MaterialIcons me="arrow-back" active={true} type="MaterialIcons" style={{...GState.defaultIconSize, color: ColorList.headerIcon }} onPress={() => this.props.navigation.goBack()} />
+                 <Text style={{...GState.defaultTextStyle,fontSize:18,fontWeight:"bold",marginLeft:10}}>Pagination List</Text>
                  <TouchableOpacity onPress={() => {
                    this.onSwipeUp()
                  }} ><Text>Next</Text></TouchableOpacity>

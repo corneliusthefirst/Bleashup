@@ -1,16 +1,7 @@
 
 import React, { Component } from 'react';
-import {
-  Platform, StyleSheet, Image, TextInput, ScrollView,
-  FlatList, View, Alert, TouchableHighlight, RefreshControl
-} from 'react-native';
 
-import autobind from "autobind-decorator";
-import {
-  Text,
-  Title, Input, Left, Right, H3, H1, H2, Spinner, Button,
-  InputGroup, DatePicker, CheckBox, Thumbnail, List,Container,Content
-} from "native-base";
+
 
 
 import CardListItem from './invitationCard';

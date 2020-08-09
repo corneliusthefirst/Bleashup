@@ -1,43 +1,22 @@
 import React, { Component } from "react";
 import autobind from "autobind-decorator";
-import {
-  Content,
-  Card,
-  CardItem,
-  Text,
-  Body,
-  Container,
-  Icon,
-  Header,
-  Form,
-  Item,
-  Title,
-  Input,
-  Left,
-  Right,
-  H3,
-  H1,
-  H2,
-  Spinner,
-  Button,
-  InputGroup,
-  DatePicker,
-  CheckBox,
-  Thumbnail,
-  Toast
-} from "native-base";
 
-import { Alert, BackHandler } from "react-native";
+import { Alert, BackHandler, View, ScrollView, Text, TextInput as Input, TouchableOpacity } from "react-native";
 import { observer } from "mobx-react";
 import styles from "./styles";
 import stores from "../../../stores";
-import { functionDeclaration } from "@babel/types";
 import globalState from "../../../stores/globalState";
-import { observable } from "mobx";
 import UserServices from "../../../services/userHttpServices";
 import firebase from 'react-native-firebase';
 import connect from '../../../services/tcpConnect';
 import Toaster from "../../../services/Toaster";
+import CreationHeader from "../event/createEvent/components/CreationHeader";
+import Texts from '../../../meta/text';
+import Ionicons  from 'react-native-vector-icons/Ionicons';
+import GState from '../../../stores/globalState/index';
+import CreateButton from '../event/createEvent/components/ActionButton';
+import Spinner from '../../Spinner';
+import ColorList from '../../colorList';
 
 @observer
 export default class EmailVerificationView extends Component {
@@ -57,13 +36,12 @@ export default class EmailVerificationView extends Component {
     this.setState({ code: text });
   }
   componentDidMount() {
-    BackHandler.addEventListener("hardwareBackPress", this.handleBackButton);
-
+    //BackHandler.addEventListener("hardwareBackPress", this.handleBackButton);
   }
   exiting = false
   timeout = null
   componentWillUnmount() {
-    BackHandler.removeEventListener("hardwareBackPress", this.handleBackButton);
+    //BackHandler.removeEventListener("hardwareBackPress", this.handleBackButton);
   }
   handleBackButton() {
     if (this.exiting) {
@@ -79,17 +57,18 @@ export default class EmailVerificationView extends Component {
     return true;
   }
   back(){
-    this.props.navigation.navigate("SignUp")
+    this.props.navigation.goBack()
   }
   componentWillMount() {
-    firebase.auth().onAuthStateChanged(user => {
+    /*firebase.auth().onAuthStateChanged(user => {
+      console.warn(user)
       if (user) {
         this.registerUserAndClean()
       }
-    });
+    });*/
   }
   back() {
-    this.props.navigation.navigate("SignUp");
+    this.props.navigation.goBack();
   }
 
   @autobind
@@ -105,48 +84,13 @@ export default class EmailVerificationView extends Component {
       }).catch(e => {
         alert("Verification Error", "Could not send verifiction code")
       })
-    /* this.temploginStore.counter = 0;
-     emailVerificationCode = Math.floor(Math.random() * 600000) + 1000;
- 
-     subject = "Verify email acccount";
-     name = this.temploginStore.user.name;
-     body =
-       "Welcome to Bleashup" +
-       name +
-       "this is your new code to check " +
-       emailVerificationCode;
- 
-     email = this.temploginStore.user.email;
-     let emailData = {
-       name: name,
-       email: email,
-       subject: subject,
-       body: body
-     };
-     UserService.sendEmail(emailData)
-       .then(response => {
-         if ((response = "ok")) {
-           this.temploginStore
-             .saveData(emailVerificationCode, "emailVerificationCode")
-             .then(response => {
-               if (response) {
-               }
-             })
-             .catch(error => {
-               reject(error);
-             });
-         }
-       })
-       .catch(error => {
-         reject(error);
-       });*/
   } 
   registerUserAndClean() {
     this.temploginStore.getUser().then(user => {
       UserServices.register(user.phone, user.password, user.name, user.birth_date).then(res => {
         this.loginStore.setUser(user).then(response => {
           //Delete temporal data
-          this.temploginStore.deleteData("phonenumber").then(res => {
+          this.temploginStore.deleteData("phone").then(res => {
             this.temploginStore
               .deleteData("temploginStore")
               .then(res => {
@@ -189,33 +133,27 @@ export default class EmailVerificationView extends Component {
 
   render() {
     return (
-      <Container>
-        <Content>
-          <Header>
-            <Left>
-              <Button onPress={this.back} transparent>
-                <Icon type="Ionicons" name="md-arrow-round-back" />
-              </Button></Left>
-            <Body>
-              <Title>Bleashup </Title>
-            </Body>
-          </Header>
-
-          <Button
-            transparent
-            regular
-            style={{ marginBottom: -22, marginTop: 50, marginLeft: -12 }}
+      <View>
+        <ScrollView>
+          <CreationHeader title={Texts.phone_number_verify} back={() => {}}></CreationHeader>
+          <View
+            style={{  marginTop: 50,  }}
           >
-            <Text>Phone Number Verification {"    "}{this.temploginStore.user.phone.replace("00","+")} </Text>
-          </Button>
+            <Text style={{ ...GState.defaultTextStyle }}>Phone Number Verification {"    "}{this.temploginStore.user.phone.replace("00","+")} </Text>
+          </View>
 
-          <Text style={{ color: "skyblue", marginTop: 20 }}>
+          <Text style={{ ...GState.defaultTextStyle, color: "skyblue", marginTop: 20 }}>
             Please Comfirm your Account; A verification Code was sent to your number
           </Text>
 
-          <Item rounded style={styles.input} error={globalState.error}>
-            <Icon active type="Ionicons" name="md-code" />
+          <View rounded style={[styles.input, globalState.error?{backgroundColor: ColorList.errorColor,}:null]}>
+            <View style={{ alignSelf: 'center', marginRight: 5,}}>
+            <Ionicons style={{...GState.defaultIconSize,}} active type="Ionicons" name="md-code" />
+            </View>
             <Input
+             style={{
+               width:"75%"
+             }}
               placeholder={
                 globalState.error == false
                   ? "Please enter email verification code"
@@ -232,36 +170,33 @@ export default class EmailVerificationView extends Component {
             {globalState.error == false ? (
               <Text />
             ) : (
-                <Icon
-                  onPress={this.removeError}
+                <TouchableOpacity style={styles.close_button}  onPress={this.removeError}>
+                <Ionicons
                   type="Ionicons"
-                  name="close-circle"
-                  style={{ color: "#00C497" }}
+                  name="ios-close-circle"
+                  style={{ color: ColorList.errorColor }}
                 />
+                </TouchableOpacity>
               )}
-          </Item>
-
+          </View>
+          <TouchableOpacity onPress={() => this.resendCode()}
+          >
           <Text
             style={{ color: "royalblue", marginTop: 20, marginLeft: 175 }}
-            onPress={() => this.resendCode()}
           >
             Resend verification code
           </Text>
-
-          <Button
-            block
-            rounded
+          </TouchableOpacity>
+          {!this.state.loading ? <CreateButton
+            title={Texts.ok}
             style={styles.buttonstyle}
-            onPress={() => this.onClickEmailVerification()}
+            action={() => this.onClickEmailVerification()}
           >
-            {this.state.loading ? (
-              <Spinner color="#FEFFDE" />
-            ) : (
-                <Text> Ok </Text>
-              )}
-          </Button>
-        </Content>
-      </Container>
+          </CreateButton>:
+          <View style={{...styles.spinner}}>
+              <Spinner color="#FEFFDE" /></View>}
+        </ScrollView>
+      </View>
     );
   }
 }

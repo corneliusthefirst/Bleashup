@@ -1,29 +1,6 @@
 import React, { Component } from "react";
 import autobind from "autobind-decorator";
-import {
-  Content,
-  Card,
-  CardItem,
-  Text,
-  Body,
-  Container,
-  Icon,
-  Header,
-  Form,
-  Item,
-  Title,
-  Input,
-  Left,
-  Right,
-  H3,
-  H1,
-  H2,
-  Spinner,
-  Button,
-  InputGroup,
-  DatePicker,
-  Thumbnail
-} from "native-base";
+
 //import { Button,View } from "react-native";
 
 import { observer } from "mobx-react";

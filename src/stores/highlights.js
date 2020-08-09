@@ -133,69 +133,52 @@ export default class highlights {
   }
 
   fetchHighlightsFromRemote(EventID, fresh) {
-    let sorter = (a, b) =>
-      a.created_at > b.created_at ? -1 : a.created_at < b.created_at ? 1 : 0;
-    return new Promise((resolve, reject) => {
-      this.readFromStore().then((Highlights) => {
-        let ActHighlights = Highlights[EventID];
-        if (ActHighlights && ActHighlights.length > 0) {
-          resolve(
-            fresh
-              ? JSON.stringify(ActHighlights.sort(sorter))
-              : ActHighlights.sort(sorter)
-          );
-        } else {
-          let getHighlight = request.EventID();
-          getHighlight.event_id = EventID;
-          tcpRequest
-            .getHighlights(getHighlight, EventID + "highlights")
-            .then((JSONData) => {
-              serverEventListener
-                .sendRequest(JSONData, EventID + "highlights")
-                .then((response) => {
-                  if (
-                    !response.data ||
-                    response.data === "empty" ||
-                    response.data === "no_such_value"
-                  ) {
-                    resolve(fresh ? JSON.stringify([]) : []);
-                  } else {
-                    this.addHighlights(EventID, response.data).then(() => {
-                      resolve(response.data);
-                    });
-                  }
-                })
-                .catch(() => {
+      return new Promise((resolve, reject) => {
+        let getHighlight = request.EventID();
+        getHighlight.event_id = EventID;
+        tcpRequest
+          .getHighlights(getHighlight, EventID + "highlights")
+          .then((JSONData) => {
+            serverEventListener
+              .sendRequest(JSONData, EventID + "highlights")
+              .then((response) => {
+                if (
+                  !response.data ||
+                  response.data === "empty" ||
+                  response.data === "no_such_value"
+                ) {
                   resolve(fresh ? JSON.stringify([]) : []);
-                });
-            });
-        }
-      });
+                } else {
+                  this.addHighlights(EventID, response.data).then(() => {
+                    resolve(response.data);
+                  });
+                }
+              })
+              .catch(() => {
+                resolve(fresh ? JSON.stringify([]) : []);
+              });
+          });
+        
     });
   }
 
   @action fetchHighlights(EventID) {
     let sorter = (a, b) =>
-      a.created_at > b.created_at ? -1 : a.created_at < b.created_at ? 1 : 0;
+       moment(a.created_at).format("x") >
+       moment(b.created_at).format("x") ? 1 :
+       moment(a.created_at).format("x") < 
+       moment(b.created_at).format("x") ? -1 : 0;
     return new Promise((resolve, reject) => {
-      if (this.highlights[EventID]) {
-        this.readFromStore().then((Highlights) => {
-          let result = Highlights[EventID].sort(sorter);
-
-          if (result.length === 0) {
-            this.fetchHighlightsFromRemote(EventID, true)
-              .then((data) => {
-                resolve(data);
-              })
-              .catch(() => {
-                resolve([]);
-              });
-          } else {
+      if (this.highlights[EventID] && this.highlights[EventID].length > 1) {
+          let result = this.highlights[EventID].sort(sorter);
             resolve(uniqBy(result, "id"));
-          }
-        });
       } else {
+        this.fetchHighlightsFromRemote(EventID, true)
+          .then((data) => {
+            resolve(data.sort(sorter));
+          }).catch(() => {
         resolve([]);
+      });
       }
     });
   }

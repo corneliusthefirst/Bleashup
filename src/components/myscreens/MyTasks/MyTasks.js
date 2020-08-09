@@ -1,9 +1,9 @@
 /* eslint-disable prettier/prettier */
 /* eslint-disable react-native/no-inline-styles */
 import React, { Component } from 'react';
-import { Text, Icon } from 'native-base';
 import {
   Platform,
+  Text,
   UIManager,
   View,
   TouchableOpacity,

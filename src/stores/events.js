@@ -358,6 +358,7 @@ export default class events {
     return new Promise((resolve, reject) => {
       this.readFromStore().then(Events => {
         let eventIndex = findIndex(Events, { id: EventID });
+        console.warn("updating paricipant of ",eventIndex,newParticipant.phone)
         let index = findIndex(Events[eventIndex].participant, {
           phone: newParticipant.phone,
         });

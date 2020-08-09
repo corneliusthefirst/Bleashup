@@ -1,17 +1,13 @@
 import React, { Component } from "react";
-import autobind from "autobind-decorator";
-import {
-  Content, Card, CardItem, Text, Body, Container, Icon, Header,
-  Form, Item, Title, Input, Left, Right, H3, H1, H2, Spinner,
-  Button, InputGroup, DatePicker, Thumbnail, Alert
-} from "native-base";
-//import { Button,View } from "react-native";
-
+import { View ,Text,TextInput as Input} from "react-native";
 import { observer } from "mobx-react";
 import styles from "./styles";
 import stores from "../../../stores";
 import globalState from '../../../stores/globalState';
 import UserService from '../../../services/userHttpServices';
+import CreationHeader from "../event/createEvent/components/CreationHeader";
+import Texts from '../../../meta/text';
+import MaterialIcons  from 'react-native-vector-icons/MaterialIcons';
 
 @observer
 export default class ForgotPasswordView extends Component {
@@ -25,24 +21,20 @@ export default class ForgotPasswordView extends Component {
   loginStore = stores.LoginStore;
   temploginStore = stores.TempLoginStore;
 
-  @autobind
   onChangedEmail(text) {
     this.setState({ email: text });
 
   }
 
-  @autobind
   back() {
     this.props.navigation.navigate('SignIn');
 
   }
 
-  @autobind
   removeError() {
     globalState.error = false
   }
 
-  @autobind
   onClickReset() {
 
     if (this.loginStore.user.email == this.state.email) {
@@ -95,51 +87,35 @@ export default class ForgotPasswordView extends Component {
     return (
 
 
-      <Container>
-        <Content >
-          <Left />
-          <Header>
-            <Button onPress={this.back} transparent>
-              <Icon type='Ionicons' name="md-arrow-round-back" />
-            </Button>
-            <Body>
-              <Title>Bleashup </Title>
-            </Body>
-            <Right>
-            </Right>
-          </Header>
-          <Button transparent regular style={{ marginBottom: -22, marginTop: 50 }}>
-            <Text>Reset Password </Text>
-          </Button>
+      <View>
+        <ScrollView >
+         <CreationHeader title={Texts.reset_password} back={this.back.bind(this)}>
+         </CreationHeader>
 
-
-
-
-
-          <Item rounded style={styles.input} error={globalState.error} >
-            <Icon active type='MaterialIcons' name='email' />
+          <View rounded style={styles.input} error={globalState.error} >
+            <MaterialIcons active type='MaterialIcons' name='email' />
             <Input placeholder={globalState.error == false ? 'Please enter email to reset' : 'Invalid email'} keyboardType='email-address' autoCapitalize="none" returnKeyType='next' inverse last
               onChangeText={(value) => this.onChangedEmail(value)} />
             {globalState.error == false ? <Text></Text> : <Icon onPress={this.removeError} type='Ionicons' name='close-circle' style={{ color: '#00C497' }} />}
-          </Item>
+          </View>
 
 
 
 
 
-          <Button block rounded
+          <TouchableOpacity block rounded
             style={styles.buttonstyle}
             onPress={this.onClickReset}
           >
             {globalState.loading ? <Spinner color="#FEFFDE" /> : <Text> Send Reset Code </Text>}
 
-          </Button>
+          </TouchableOpacity>
 
 
 
 
-        </Content>
-      </Container>
+        </ScrollView>
+      </View>
     );
   }
 }

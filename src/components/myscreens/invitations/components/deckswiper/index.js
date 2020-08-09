@@ -1,5 +1,4 @@
 import React, { Component } from "react";
-import { Content, Card, CardItem, Container, Text, DeckSwiper, Body } from "native-base";
 import { View } from 'react-native';
 import SwiperCard from './swiperCard';
 import SwiperHighlight from './swiperHighlight';

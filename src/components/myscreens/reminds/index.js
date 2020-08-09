@@ -50,9 +50,10 @@ import GState from '../../../stores/globalState/index';
 import Toaster from '../../../services/Toaster';
 import MaterialIcons  from 'react-native-vector-icons/MaterialIcons';
 import AntDesign  from 'react-native-vector-icons/AntDesign';
+import { observer } from 'mobx-react';
 //const MyTasksData = stores.Reminds.MyTasksData
 
-export default class Reminds extends AnimatedComponent {
+@observer class Reminds extends AnimatedComponent {
   initialize(){
     this.state = {
       eventRemindData: [],
@@ -107,30 +108,8 @@ export default class Reminds extends AnimatedComponent {
     }
   }
   updateData(newremind) {
-    //this.state.eventRemindData.unshift(newremind)
-    /*let intervals = getcurrentDateIntervalsNoneAsync(
-      {
-        start: moment(newremind.period).format(format),
-        end: moment(newremind.recursive_frequency.recurrence).format(format),
-      },
-      newremind.recursive_frequency.interval,
-      newremind.recursive_frequency.frequency,
-      newremind.recursive_frequency.days_of_week
-    );
-    thisInterval = getCurrentDateIntervalNonAsync(
-      intervals,
-      moment().format(format)
-    );*/
     this.setStatePure({
       newing: !this.state.newing,
-      /*eventRemindData: [
-        {
-          ...newremind,
-          thisInterval,
-          intervals,
-        },
-        ...this.getRemindData(),
-      ],*/
     });
   }
 
@@ -174,6 +153,12 @@ export default class Reminds extends AnimatedComponent {
     emitter.on("remind-updated", () => {
       this.refreshReminds();
     });
+    if(!stores.Reminds.Reminds[this.props.event_id] ||
+      stores.Reminds.Reminds[this.props.event_id].length <= 1){
+      stores.Reminds.loadReminds(this.props.event_id).then((reminds) => {
+        console.warn("remids fetched", reminds)
+      })
+      }
     this.setStatePure({
       mounted: true,
       RemindCreationState: this.props.currentMembers || this.props.remind ? true : false,
@@ -1008,3 +993,5 @@ export default class Reminds extends AnimatedComponent {
       );
   }
 }
+
+export default Reminds

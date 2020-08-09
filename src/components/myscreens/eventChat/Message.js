@@ -38,12 +38,6 @@ import  AntDesign  from 'react-native-vector-icons/AntDesign';
 export default class Message extends BeComponent {
     constructor(props) {
         super(props);
-        let isDiff =
-            this.props.message.sender &&
-            this.props.PreviousMessage &&
-            this.props.PreviousMessage.sender &&
-            this.props.PreviousMessage.sender.phone !==
-            this.props.message.sender.phone;
         this.state = {
             showTime: false,
             refresh: false,
@@ -57,7 +51,8 @@ export default class Message extends BeComponent {
                 this.props.message.sender &&
                 this.props.message.sender.phone == this.props.user
             ),
-            different: isDiff,
+            different: this.props.PreviousMessage.sender.phone !==
+                this.props.message.sender.phone,
             time:
                 /*!isDiff &&
                     this.props.PreviousMessage &&
@@ -417,6 +412,8 @@ export default class Message extends BeComponent {
             ? this.props.messagelayouts[this.props.message.id]
             : this.placeHolder[this.props.message.type];
     render() {
+        let showName = this.state.sender && this.state.different
+        console.warn(showName,this.props.message.sender.phone)
         let topMostStyle = {
             marginLeft: this.state.sender ? "1%" : 0,
             marginRight: !this.state.sender ? "1%" : 0,
@@ -567,7 +564,8 @@ export default class Message extends BeComponent {
                                                         {"(forwarded)"}
                                                     </Text>
                                                 ) : null}
-                                                {this.state.sender && this.state.different ? (
+                                                {this.state.different && 
+                                                    this.state.sender ? 
                                                     <TouchableOpacity
                                                     onPressIn={this.handlePressIn.bind(this)}
                                                         onLongPress={this.handLongPress.bind(this)}
@@ -583,15 +581,17 @@ export default class Message extends BeComponent {
                                                             style={{
                                                                 marginLeft: "2%",
                                                                 color: ColorList.iconActive,
+                                                                maxWidth: 150,
+                                                                fontWeight: 'bold',
+                                                                fontSize: 10,
                                                             }}
-                                                            note
                                                             ellipsizeMode="tail"
                                                             numberOfLines={1}
                                                         >
-                                                            {this.state.sender_name}
+                                                            {`@${this.state.sender_name}`}
                                                         </Text>
                                                     </TouchableOpacity>
-                                                ) : null}
+                                                 : null}
                                                 <View>
                                                     {this.props.message.reply ? (
                                                         <View

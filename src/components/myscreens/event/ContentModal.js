@@ -7,6 +7,7 @@ import { format } from '../../../services/recurrenceConfigs';
 import MediaPreviewer from './createEvent/components/MediaPeviewer';
 import ColorList from '../../colorList';
 import  EvilIcons from 'react-native-vector-icons/EvilIcons';
+import GState from '../../../stores/globalState';
 
 export default class ContentModal extends PureComponent {
     constructor(props) {
@@ -22,8 +23,8 @@ export default class ContentModal extends PureComponent {
     renderObject(content) {
         return map(content, (value, key) => 
             <View style={{ flexDirection: 'row', }}>
-                <Text style={{ fontWeight: 'bold', fontStyle: 'italic', }}>{key}{": "}</Text>
-                <Text>{Array.isArray(value) ? value.join(',') : key === 'recurrence' ? moment(value).format(format) : value}</Text>
+                <Text style={{...GState.defaultTextStyle, fontWeight: 'bold', fontStyle: 'italic', }}>{key}{": "}</Text>
+                <Text style={{...GState.defaultTextStyle}}>{Array.isArray(value) ? value.join(',') : key === 'recurrence' ? moment(value).format(format) : value}</Text>
             </View>)
     }
     render() {
@@ -55,7 +56,7 @@ export default class ContentModal extends PureComponent {
                 }}
             >
                 <ScrollView style={{ margin: "5%" }}>
-                {this.props.title?<Text style={{margin: '5%',}}>{this.props.title}</Text>:null}
+                {this.props.title?<Text style={{...GState.defaultTextStyle,margin: '5%',}}>{this.props.title}</Text>:null}
                     {this.state.content && (this.state.content.photo || this.state.content.video) ?
                         <View style={{width:'90%',alignSelf: 'center',}}><MediaPreviewer
                             height={280}
@@ -65,7 +66,7 @@ export default class ContentModal extends PureComponent {
                         typeof this.state.content === 'object' ?
                             this.renderObject(this.state.content) : Array.isArray(this.state.content) ?
                                 this.renderContentItems(this.state.content) :
-                                <Text>{this.state.content}</Text>}
+                                <Text style={{...GState.defaultTextStyle,}}>{this.state.content}</Text>}
                     {this.props.votable ? <TouchableOpacity onPress={this.props.vote} style={styles.voteButton}><Text style={{marginBottom: 'auto',color:ColorList.bodyBackground}}>Vote</Text>
                     </TouchableOpacity> :
                     this.props.trashable?<EvilIcons

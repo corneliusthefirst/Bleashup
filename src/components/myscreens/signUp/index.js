@@ -1,30 +1,4 @@
 import React, { Component } from "react";
-//import { StyleSheet,Button,Text, TouchableOpacity , View } from 'react-native';
-import autobind from "autobind-decorator";
-import {
-  Content,
-  Card,
-  CardItem,
-  Text,
-  Body,
-  Container,
-  Icon,
-  Header,
-  Form,
-  Item,
-  Title,
-  Input,
-  Left,
-  Right,
-  H3,
-  H1,
-  H2,
-  Spinner,
-  Button,
-  Toast,
-  DatePicker,
-  Thumbnail
-} from "native-base";
 import styles from "./styles";
 import UserService from "../../../services/userHttpServices";
 import stores from "../../../stores";
@@ -32,11 +6,22 @@ import globalState from "../../../stores/globalState";
 import { observer } from "mobx-react";
 import moment from "moment";
 import firebase from 'react-native-firebase';
-import { BackHandler, TouchableOpacity } from 'react-native';
+import { TouchableOpacity,View,Text,ScrollView, TextInput as Input } from 'react-native';
 import Toaster from "../../../services/Toaster";
+import CreateButton from '../event/createEvent/components/ActionButton';
+import Spinner from '../../Spinner';
+import  Ionicons from 'react-native-vector-icons/Ionicons';
+import Texts from '../../../meta/text';
+import ColorList from '../../colorList';
+import GState from "../../../stores/globalState";
+import  MaterialIcons  from 'react-native-vector-icons/MaterialIcons';
+import EvilIcons  from 'react-native-vector-icons/EvilIcons';
+import CreationHeader from '../event/createEvent/components/CreationHeader';
+import BeNavigator from '../../../services/navigationServices';
+import BeComponent from '../../BeComponent';
 
 @observer
-export default class SignUpView extends Component {
+export default class SignUpView extends BeComponent {
   constructor(props) {
     super(props);
   }
@@ -45,72 +30,45 @@ export default class SignUpView extends Component {
   loginStore = stores.LoginStore;
   temploginStore = stores.TempLoginStore;
 
-  @autobind
   onChangedName(value) {
     this.setState({ name: value });
   }
 
-  @autobind
   onChangedEmail(value) {
     this.setState({ email: value });
   }
-  @autobind
   onChangedAge(value) {
     this.setState({ age: value });
   }
-  @autobind
   onChangedPassword(value) {
     this.setState({ password: value });
   }
 
-  @autobind
   onChangedNewPassword(value) {
     this.setState({ newPassword: value });
   }
-  componentDidMount() {
-    BackHandler.addEventListener("hardwareBackPress", this.handleBackButton);
 
-  }
   exiting = false
   timeout = null
-  componentWillUnmount() {
-    BackHandler.removeEventListener("hardwareBackPress", this.handleBackButton);
-  }
-  handleBackButton() {
-    if (this.exiting) {
-      clearTimeout(this.timeout)
-      this.back()
-    } else {
-      this.exiting = true
-      Toaster({ text: "Press again to go to the previous page" });
-      this.timeout = setTimeout(() => {
-        this.exiting = false
-      }, 800)
-    }
-    return true;
-  }
+
   back(){
     this.props.navigation.navigate("Login")
   }
   //Error state handling
-  @autobind
   removePasswordError() {
     globalState.passwordError = false;
   }
-  @autobind
   removeNewPasswordError() {
     globalState.newPasswordError = false;
   }
-  @autobind
   removeNameError() {
     globalState.nameError = false;
   }
-  @autobind
   removeEmailError() {
     globalState.emailError = false;
   }
 
-  @autobind
+  
   removeAgeError() {
     globalState.ageError = false;
   }
@@ -118,25 +76,25 @@ export default class SignUpView extends Component {
     if (this.state.password != this.state.newPassword) {
       globalState.newPasswordError = true;
     }
-    if (this.state.password == "") {
+    if (!this.state.password) {
       globalState.passwordError = true;
     }
-    if (this.state.name == "") {
+    if (!this.state.name) {
       globalState.nameError = true;
     }
    // if (this.state.email == "") {
    //   globalState.emailError = true;
    // }
-    if (this.state.age == "") {
+    if (!this.state.age) {
       globalState.ageError = true;
     }
 
     if (
-      globalState.newPasswordError == false &&
-      globalState.passwordError == false &&
-      globalState.nameError == false &&
-      globalState.emailError == false &&
-      globalState.ageError == false
+      !globalState.newPasswordError &&
+      !globalState.passwordError &&
+      !globalState.nameError &&
+      !globalState.emailError &&
+      globalState.ageError
     ) {
       this.setState({
         loading:true
@@ -163,8 +121,9 @@ export default class SignUpView extends Component {
       };
       this.temploginStore.loadSaveData("phone").then(phone => {
         this.user = {...this.user,
-          phone: phone,
+          phone: phone.phone,
           status: "",
+          country_code: phone.country_code,
           profile: "",
           profile_ext: "",
           nickname: this.user.name,
@@ -174,64 +133,43 @@ export default class SignUpView extends Component {
         firebase.auth().signInWithPhoneNumber(this.user.phone.replace("00", "+")).then(confirmCode => {
           this.temploginStore.confirmCode = confirmCode
           this.temploginStore.setUser(this.user).then(() => {
-            this.props.navigation.navigate("EmailVerification");
+            BeNavigator.navigateTo("EmailVerification");
           });  
         }).catch(e => {
-          alert(this.user.phone.replace("00", "+"),"Unable To Verify Your Account", "Please Check Your Internet Connection")
-          console.warn(e, "errr here!!!")
+          alert(this.user.phone.replace("00", "+"), Texts.unable_to_verify_account)
         })
       });
-     /* UserService.sendEmail(emailData)
-        .then(response => {
-          if ((response = "ok")) {
-            this.temploginStore
-              .saveData(emailVerificationCode, "emailVerificationCode")
-              .then(() => {
-                this.temploginStore.setUser(this.user).then(() => {
-                  globalState.loading = false;
-                  this.props.navigation.navigate("EmailVerification");
-                });
-              })
-              .catch(error => {
-                alert(
-                  "An error occured when Sending you and email please try later"
-                );
-              });
-          }
-        })
-        .catch(error => {
-          alert("An error Occured When sending you an Email please try later");
-        });*/
     }
   }
 
-  @autobind
   back() {
-    this.props.navigation.navigate("Login");
+    this.props.navigation.goBack();
   }
 
   render() {
     return (
-      <Container>
-        <Content>
-          <Header style={{ marginBottom: 15 }}>
-            <Left><Button onPress={this.back} transparent>
-              <Icon type="Ionicons" name="md-arrow-round-back" />
-            </Button></Left>
-            <Body>
-              <Title>Bleashup </Title>
-            </Body>
-            <Right>
-            </Right>
-          </Header>
-
-          <Item rounded style={styles.input} error={globalState.nameError}>
-            <Icon active name="user" type="EvilIcons"  style={{ color: "#1FABAB" }} />
+        <ScrollView showVerticalScrollIndicator={false}>
+          <CreationHeader title={Texts.sign_up} back={this.back.bind(this)}>
+          </CreationHeader>
+        <View style={styles.mainContainer}>
+          <View style={[styles.input,
+            globalState.nameError?
+            {borderColor: ColorList.errorColor,}:{}]}>
+            <EvilIcons active name="user"   
+            style={{ 
+              marginTop: 5,
+              ...GState.defaultIconSize, 
+              color: ColorList.indicatorColor 
+            }} />
             <Input
+            maxLength={25}
+            style={{
+              width:"70%"
+            }}
               placeholder={
                 globalState.nameError == false
-                  ? "please enter your full name"
-                  : "user name cannot be empty"
+                  ? Texts.enter_name
+                  : Texts.not_empty_name
               }
               autoCapitalize="none"
               onChangeText={value => this.onChangedName(value)}
@@ -240,51 +178,20 @@ export default class SignUpView extends Component {
             {globalState.nameError == false ? (
               <Text />
             ) : (
-                <Icon
-                  onPress={this.removeNameError}
-                  type="Ionicons"
-                  name="close-circle"
-                  style={{ color: "#00C497" }}
+                <TouchableOpacity
+                style={styles.close_button}
+                  onPress={this.removeNameError.bind(this)}
+                ><Ionicons
+                  name="ios-close-circle"
+                  style={{ ...styles.icon, fontSize: 14, color: ColorList.errorColor }}
                 />
+                </TouchableOpacity>
               )}
-          </Item>
-
-        {/*  <Item rounded style={styles.input} error={globalState.emailError}>
-            <Icon
-              active
-              type="MaterialIcons"
-              name="email"
-              style={{ color: "#1FABAB" }}
-            />
-            <Input
-              keyboardType="email-address"
-              placeholder={
-                globalState.emailError == false
-                  ? "please enter email"
-                  : "Please enter valid email"
-              }
-              autoCapitalize="none"
-              onChangeText={value => this.onChangedEmail(value)}
-            />
-
-            {globalState.emailError == false ? (
-              <Text />
-            ) : (
-                <Icon
-                  onPress={this.removeEmailError}
-                  type="Ionicons"
-                  name="close-circle"
-                  style={{ color: "#00C497" }}
-                />
-              )}
-          </Item>
-            */}
-          <Item rounded style={styles.input} error={globalState.ageError}>
-            <Icon
-              active
-              type="MaterialIcons"
+          </View>
+          {/*<View style={styles.input} error={globalState.ageError}>
+            <MaterialIcons
               name="date-range"
-              style={{ color: "#1FABAB" }}
+              style={{ color: ColorList.indicatorColor }}
             />
             <DatePicker
               //defaultDate={new Date(2019, 6, 18)}
@@ -316,21 +223,28 @@ export default class SignUpView extends Component {
                   style={{ color: "#00C497" }}
                 />
               )}
-          </Item>
+            </View>*/}
 
-          <Item rounded style={styles.input} error={globalState.passwordError}>
-            <Icon
+          <View
+            style={[styles.input, globalState.passwordError?
+              {borderColor: ColorList.errorColor,}:{}]} error={globalState.passwordError}>
+            <Ionicons
               active
-              type="Ionicons"
               name="ios-lock"
-              style={{ color: "#1FABAB" }}
+              style={{ 
+                marginTop: 9,
+                ...GState.defaultIconSize,
+                fontSize: 18,
+                color: ColorList.indicatorColor 
+              }}
             />
             <Input
+            style={{width:"70%"}}
               secureTextEntry
               placeholder={
                 globalState.passwordError == false
-                  ? "Please enter   password"
-                  : "password cannot be empty"
+                  ? Texts.enter_password
+                  : Texts.not_empty_password
               }
               autoCapitalize="none"
               returnKeyType="next"
@@ -341,32 +255,41 @@ export default class SignUpView extends Component {
             {globalState.passwordError == false ? (
               <Text />
             ) : (
-                <Icon
-                  onPress={this.removePasswordError}
+                <TouchableOpacity style={styles.close_button} onPress={this.removePasswordError.bind(this)}>
+                <Ionicons
                   type="Ionicons"
-                  name="close-circle"
-                  style={{ color: "#00C497" }}
+                  name="ios-close-circle"
+                  style={{ ...GState.defaultIconSize, 
+                    fontSize: 14,
+                     color: ColorList.errorColor }}
                 />
+                </TouchableOpacity>
               )}
-          </Item>
-
-          <Item
-            rounded
-            style={styles.input}
+          </View>
+          <View
+            style={[styles.input,
+              globalState.newPasswordError?{borderColor: 
+                ColorList.errorColor ,}:{}]}
             error={globalState.newPasswordError}
           >
-            <Icon
-              active
-              type="Ionicons"
+            <Ionicons
               name="ios-lock"
-              style={{ color: "#1FABAB" }}
+              style={{ 
+                marginTop: 9,
+                ...GState.defaultIconSize, 
+                fontSize: 18,
+                color: ColorList.indicatorColor 
+              }}
             />
             <Input
               secureTextEntry
+              style={{
+                width:"70%"
+              }}
               placeholder={
                 globalState.newPasswordError == false
-                  ? "Please confirm password"
-                  : "password not matching"
+                  ? Texts.confirm_password
+                  : Texts.password_not_matched
               }
               autoCapitalize="none"
               returnKeyType="go"
@@ -377,31 +300,26 @@ export default class SignUpView extends Component {
             {globalState.newPasswordError == false ? (
               <Text />
             ) : (
-                <Icon
-                  onPress={this.removeNewPasswordError}
-                  type="Ionicons"
-                  name="close-circle"
-                  style={{ color: "#00C497" }}
+                <TouchableOpacity onPress={() => this.removeNewPasswordError()}
+                style={styles.close_button}>
+                <Ionicons
+                    name="ios-close-circle"
+                  style={{ ...GState.defaultIconSize,fontSize: 14,
+                     color: ColorList.errorColor }}
                 />
+                </TouchableOpacity>
               )}
-          </Item>
-            <Button
-              block
-              rounded
-              onPress={() => {
-                console.warn("Pressing!!!!")
-                this.SignUp()
-              }}
-              style={styles.buttonstyle}
-            >
-              {this.state.loading ? (
-                <Spinner color="#FEFFDE" />
-              ) : (
-                  <Text> SignUp </Text>
-                )}
-            </Button>
-        </Content>
-      </Container>
+          </View>
+          {this.state.loading ? <Spinner></Spinner> : <CreateButton
+            title={Texts.sign_up}
+            action={() => {
+              this.SignUp()
+            }}
+            style={styles.buttonstyle}
+          >
+          </CreateButton>}
+        </View>
+        </ScrollView>
     );
   }
 }

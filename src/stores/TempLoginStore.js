@@ -86,6 +86,7 @@ export default class TempLoginStore {
               birth_date: data.birth_date,
               created_at: data.created_at,
               email: data.email,
+              country_code : data.country_code,
               updated_at: data.updated_at,
               password: data.password,
               profile: data.profile,

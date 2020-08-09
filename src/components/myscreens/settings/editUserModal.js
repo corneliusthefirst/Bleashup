@@ -7,11 +7,9 @@ import {
   Dimensions,
   TouchableWithoutFeedback,
   Image,
-  TextInput,
+  Text,
 } from "react-native";
-import { Title, Text, Label, Input } from "native-base";
-import { filter, map, find } from "lodash";
-import autobind from "autobind-decorator";
+import {  map, } from "lodash";
 import ColorList from '.././../colorList';
 import CreateTextInput from '../event/createEvent/components/CreateTextInput';
 
@@ -29,7 +27,6 @@ export default class EditUserModal extends Component {
     };
   }
 
-  @autobind
   init() {
     //console.warn("here is init")
     setTimeout(() => {
@@ -118,9 +115,9 @@ export default class EditUserModal extends Component {
       >
         {this.state.isMount ? (
           <View style={{ flexDirection: 'column', width: '90%', margin: '5%' }}>
-            <Title style={{ alignSelf: 'flex-start' }}>
+            <Text style={{ alignSelf: 'flex-start',fontWeight: 'bold', }}>
               {this.props.title}
-            </Title>
+            </Text>
 
             <View
               style={{
@@ -158,6 +155,3 @@ export default class EditUserModal extends Component {
     );
   }
 }
-
-/**              <Input  autoCapitalize="none" style={{alignSelf:"flex-start"}} value={this.state.value} style={{}} onChangeText={this.textChanged} maxLength={this.state.textLength} ></Input>
-             <Label>{this.state.textLength}</Label> */

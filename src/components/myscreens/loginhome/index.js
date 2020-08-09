@@ -41,13 +41,11 @@ export default class LoginHomeView extends AnimatedComponent {
   render() {
     this.requestReadAndWritePermission();
     routeName = initialRoute.routeName;
-    if ((globalState.loading = true)) {
       initialRoute.initialRoute().then((route) => {
         if (route !== 'Login') {
           connection
             .init()
             .then((socket) => {
-              globalState.loading = false;
               BeNavigator.navigateTo(route);
             })
             .catch((error) => {
@@ -56,14 +54,12 @@ export default class LoginHomeView extends AnimatedComponent {
             });
           setTimeout(() => BeNavigator.navigateTo(route), 500);
         } else {
-          globalState.loading = false;
           BeNavigator.navigateTo(route);
         }
       });
-    }
     return (
       <View style={styles.container}>
-        {globalState.loading ? <Waiter /> : <Text> Waiting ... </Text>}
+        <Waiter />
       </View>
     );
   }

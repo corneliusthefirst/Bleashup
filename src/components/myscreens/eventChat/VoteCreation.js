@@ -9,7 +9,6 @@ import {
     Platform,
     Text
 } from "react-native";
-import { Button } from "native-base";
 //import Textarea from "react-native-textarea";
 import labler from "./labler";
 import shadower from "../../shadower";

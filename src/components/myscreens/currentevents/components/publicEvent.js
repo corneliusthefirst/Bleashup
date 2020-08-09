@@ -18,7 +18,12 @@ class PublicEvent extends BeComponent {
       master: false,
     };
   }
- 
+  shouldComponentUpdate(nextState,nextProps){
+    return !this.props.Event || 
+    !nextProps.Event ||
+     this.props.Event.background !== nextProps.Event.background || 
+    this.props.Event.about.title !== nextProps.Event.about.title 
+  }
   renderprofile() {
     return <RelationProfile Event={this.props.Event} />;
   }

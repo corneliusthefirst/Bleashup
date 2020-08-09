@@ -878,6 +878,7 @@ class ChatRoom extends AnimatedComponent {
                                                 //height:"3%",
                                                 justifyContent:'flex-end',
                                                 flexDirection: 'column',
+                                                width:"100%",
                                                 alignSelf: 'flex-end',
                                                 alignItems: 'flex-end',
                                                 marginTop: 'auto',
@@ -885,10 +886,16 @@ class ChatRoom extends AnimatedComponent {
                                             }}>
                                                 {!this.props.opened || !this.props.generallyMember ? (
                                                     <Text
-                                                        style={{ fontStyle: 'italic', marginLeft: '3%' }}
+                                                        style={{
+                                                            ...GState.defaultTextStyle, 
+                                                            fontStyle: 'italic',
+                                                            textAlign: "center" ,
+                                                            marginLeft: "auto",
+                                                            marginRight: "auto",
+                                                        }}
                                                         note
                                                     >
-                                                        {`This ${replies.committee}  has been closed for you`}
+                                                        {`This activity has been closed`}
                                                     </Text>
                                                 ) : (
                                                         // ***************** KeyBoard Displayer *****************************
@@ -1179,6 +1186,8 @@ class ChatRoom extends AnimatedComponent {
         this._listViewOffset = currentOffset
     }
     messageList() {
+        let lastIndex = stores.Messages.messages[this.roomID] ? 
+        (stores.Messages.messages[this.roomID].length - 1):0
         return (
             <BleashupFlatList
                 onScroll={this.onScroll.bind(this)}
@@ -1224,14 +1233,13 @@ class ChatRoom extends AnimatedComponent {
                             scrolling={this.scrolling}
                             computedMaster={this.props.computedMaster}
                             activity_id={this.props.activity_id}
-                            showProfile={(pro) => this.props.showProfile(pro)}
+                            showProfile={(pro) => this.props.showProfile(pro.replace("+","00"))}
                             delay={this.delay}
                             isfirst={index === 0}
                             room={this.roomID}
                             PreviousMessage={
                                 stores.Messages.messages[this.roomID] &&
-                                stores.Messages.messages[this.roomID]
-                                [index >= 0 ? index + 1 : 0]
+                                stores.Messages.messages[this.roomID][index >= lastIndex ? lastIndex : index+1]
                             }
                             showActions={(message, reply,sender) => this.showMessageAction(message, reply,sender)}
                             firebaseRoom={this.props.firebaseRoom}

@@ -3,8 +3,9 @@ import React, {Component } from 'react';
 import { Dimensions, Image, StyleSheet, View,Keyboard,ScrollView, TouchableOpacity,Text,StatusBar } from 'react-native';
 import UserView from './UserView';
 import VideoView from './videoView';
-import {Icon,Header} from 'native-base';
 import ColorList from '../../../colorList';
+import  MaterialIcons  from 'react-native-vector-icons/MaterialIcons';
+import GState from '../../../../stores/globalState';
 
 const ScreenWidth  = Dimensions.get('window').width;
 const ScreenHeight = Dimensions.get('window').height;
@@ -44,7 +45,7 @@ componentWillMount(){ }
             <TouchableOpacity style={{marginLeft:3}}>
                 <Text style={{color:ColorList.bodyTextBlue,fontSize:15}}>Subscribe</Text>
             </TouchableOpacity>
-            <Icon name="notifications-none" type="MaterialIcons" style={{color:ColorList.bodyTextBlue}}/>   
+            <MaterialIcons name="notifications-none" type="MaterialIcons" style={{ ...GState.defaultIconSize,color:ColorList.bodyTextBlue}}/>   
          </View>
 
       </View>

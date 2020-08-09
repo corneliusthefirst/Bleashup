@@ -5,6 +5,7 @@ import moment from "moment"
 import dateDisplayer from '../../../services/dates_displayer';
 import shadower from "../../shadower";
 import ColorList from '../../colorList';
+import GState from "../../../stores/globalState";
 export default class DateView extends Component {
     constructor(props) {
         super(props)
@@ -17,7 +18,7 @@ export default class DateView extends Component {
                 justifyContent: 'center',
             display:'flex',
              ...shadower(2) }}>
-                <Text style={{ fontStyle: 'italic',  alignSelf: 'center' }}>{dateDisplayer(this.props.date)}</Text>
+                <Text style={{...GState.defaultTextStyle, fontStyle: 'italic',  alignSelf: 'center' }}>{dateDisplayer(this.props.date)}</Text>
             </View>
         );
     }

@@ -21,6 +21,7 @@ import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import GState from "../../../stores/globalState";
 import EvilIcons  from 'react-native-vector-icons/EvilIcons';
 import Spinner from '../../Spinner';
+import  FontAwesome5  from 'react-native-vector-icons/FontAwesome5';
 
 var event = null;
 export default class Settings extends Component {
@@ -324,10 +325,9 @@ export default class Settings extends Component {
             </TouchableOpacity>
           </View>
           <View pointerEvents={this.props.creator ? null : "none"} style={{marginLeft: "4%",}}>
-            <TouchableOpacity style={{flexDirection: 'row',width:125,justifyContent: 'space-between',}} onPress={() => this.closeActiviy()} transparent>
-                <View>{this.state.closed?<FontAwesome
+            <TouchableOpacity style={{flexDirection: 'row',width:150,justifyContent: 'space-between',}} onPress={() => this.closeActiviy()} transparent>
+                <View>{this.props.event && this.props.event.closed?<FontAwesome5
                 name={"door-open"}
-                type={"FontAwesome5"}
                 style={{
                   ...GState.defaultIconSize,
                   color:  colorList.headerIcon
@@ -337,12 +337,13 @@ export default class Settings extends Component {
                ></AntDesign>}</View>
               <Text
                 style={{
+                  marginLeft: "5%",
                   fontWeight: "bold",
                   color: colorList.bodyText,
                   marginTop: 5,
                 }}
               >
-                {this.state.closed ? "Open" : "Close"} Activiy
+                {this.props.event && this.props.event.closed ? "Open" : "Close"} Activiy
               </Text>
             </TouchableOpacity>
           </View>

@@ -1,9 +1,7 @@
 /* eslint-disable prettier/prettier */
 import React, { Component } from "react";
 import autobind from "autobind-decorator";
-import {
-  Icon,Title,Item,Text
-} from "native-base";
+
 import { Button,View,Dimensions,TouchableWithoutFeedback,Image,ScrollView} from "react-native";
 
 

@@ -12,6 +12,7 @@ import CalendarServe from './CalendarService';
 import { format } from './recurrenceConfigs';
 import request from "./requestObjects";
 import MainUpdater from './mainUpdater';
+import RemindRequest from '../components/myscreens/reminds/Requester';
 class UpdatesDispatcher {
   constructor() { }
   dispatchUpdates(updates,done) {
@@ -27,7 +28,7 @@ class UpdatesDispatcher {
     }
 
   }
-  dispatchUpdate(update) {
+  dispatchUpdate(update,done) {
     return this.UpdatePossibilities[update.update](update);
   }
   infomCurrentRoom(Change, commitee, event_id) {
@@ -395,8 +396,7 @@ class UpdatesDispatcher {
     },
     unpublished: update => {
       return new Promise((resolve, reject) => {
-        stores.Session.getSession().then(session => {
-          stores.Events.isParticipant(update.event_id, session.phone).then(
+          stores.Events.isParticipant(update.event_id, stores.LoginStore.user.phone).then(
             stat => {
               if ((state = false)) {
                 stores.Events.removeEvent(update.event_id).then(() => {
@@ -409,7 +409,7 @@ class UpdatesDispatcher {
                   changed: "UnPublished The Activity",
                   updater: update.updater,
                   id: uuid.v1(),
-                  new_value: { data, new_value: null },
+                  new_value: { data:null, new_value: null },
                   date: update.date,
                   time: update.time
                 };
@@ -425,7 +425,6 @@ class UpdatesDispatcher {
               }
             }
           );
-        });
       });
     },
     url: update => {
@@ -487,7 +486,7 @@ class UpdatesDispatcher {
             let newParti = { ...Participant, master: update.new_value }
             stores.Events.updateEventParticipant(
               update.event_id,
-              Participant,
+              newParti,
               true
             ).then((newEvent) => {
               //console.warn(newEvent.commitee)
@@ -1542,7 +1541,7 @@ class UpdatesDispatcher {
         tcpRequestData.getRemind(RemindID, update.new_value + "reminder").then(JSONData => {
           serverEventListener.sendRequest(JSONData, update.new_value + "reminder").then(Remind => {
             if (Remind.data && Remind.data !== 'empty') {
-              stores.Reminds.addReminds(Remind.data).then(() => {
+              stores.Reminds.addReminds(update.event_id,Remind.data).then(() => {
                 stores.Events.addRemind(update.event_id, Remind.id).then(() => {
                   let Change = {
                     id: uuid.v1(),
@@ -1551,11 +1550,14 @@ class UpdatesDispatcher {
                     updater: update.updater,
                     event_id: update.event_id,
                     changed: "Added A New Remind ",
-                    new_value: { data: update.new_value, new_value: Remind.data.title },
+                    new_value: { data: update.new_value, new_value: Remind.data[0].title },
                     date: update.date,
                     time: null
                   }
-                  this.infomCurrentRoom(Change, Remind.data, update.event_id)
+                  RemindRequest.saveToCanlendar(update.event_id,
+                    Remind.data[0],Remind.data[0].alams,
+                    Remind.data[0].title)
+                  this.infomCurrentRoom(Change, Remind.data[0], update.event_id)
                   stores.ChangeLogs.addChanges(Change).then(() => {
                     GState.newRemind = true;
                     GState.eventUpdated = true;

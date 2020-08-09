@@ -18,7 +18,6 @@ import Requester from '../event/Requester';
 import BleashupAlert from '../event/createEvent/components/BleashupAlert';
 import emitter from '../../../services/eventEmiter';
 import HighlightCard from "../event/createEvent/components/HighlightCard"
-import MapView from "../currentevents/components/MapView";
 import Creator from "../reminds/Creator";
 import bleashupHeaderStyle from "../../../services/bleashupHeaderStyle";
 import QRDisplayer from "../QR/QRCodeDisplayer";
@@ -37,11 +36,12 @@ import  MaterialIcons  from 'react-native-vector-icons/MaterialIcons';
 import  AntDesign  from 'react-native-vector-icons/AntDesign';
 import  Feather  from 'react-native-vector-icons/Feather';
 import ColorList from '../../colorList';
+import { observer } from "mobx-react";
 
 let { height, width } = Dimensions.get('window');
 
 //@observer
-export default class EventDetailView extends AnimatedComponent {
+ @observer class EventDetailView extends AnimatedComponent {
   initialize(){
     this.state = {
       enlargeImage: false,
@@ -80,9 +80,17 @@ export default class EventDetailView extends AnimatedComponent {
       EventHighlightState:this.props.star?true:false,
       participant: participant
     });
+    if ((!stores.Highlights.highlights[this.props.Event.id] ||
+      stores.Highlights.highlights[this.props.Event.id].length <= 1)){
+        stores.Highlights.fetchHighlights(this.props.Event.id).then(() => { 
+
+      })
+      }
    if(this.props.id) this.waitToScroll =  setTimeout(() => {
     this.scrolling = setInterval(() => {
-      this.refs.postList && this.refs.postList.scrollToIndex(findIndex(stores.Highlights.highlights[this.props.Event.id], { id: this.props.id }))
+      this.refs.postList && this.refs.postList.scrollToIndex(
+        findIndex(stores.Highlights.highlights[this.props.Event.id],
+         { id: this.props.id }))
        this.scrolled = this.scrolled + 1
        if(this.scrolled >= 5) clearInterval(this.scrolling) 
      },500)
@@ -499,4 +507,5 @@ action = () => [
 
 
 }
+export default EventDetailView
 

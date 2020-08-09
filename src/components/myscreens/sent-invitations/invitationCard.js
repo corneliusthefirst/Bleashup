@@ -5,11 +5,7 @@ import {
 } from 'react-native';
 
 import autobind from "autobind-decorator";
-import {
-  Content, Card, CardItem, Text, Body, Container, Icon, Header, Form, Thumbnail, Item,
-  Title, Input, Left, Right, H3, H1, H2, Spinner, Button, InputGroup,
-  DatePicker, CheckBox, List, Accordion, DeckSwiper
-} from "native-base";
+
 
 import styles from './style';
 import CacheImages from "../../CacheImages";

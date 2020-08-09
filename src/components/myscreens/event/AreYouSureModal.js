@@ -82,7 +82,11 @@ export default class AreYouSure extends PureComponent {
                         }}  onPress={() => {
                             this.props.callback()
                             this.props.closed()
-                        }}><Text>{this.props.ok ? this.props.ok : "Leave"}</Text>
+                                }}><Text style={{
+                                    ...GState.defaultTextStyle,
+                                    fontWeight: 'bold',
+                                    color: ColorList.bodyBackground,
+                                }}>{this.props.ok ? this.props.ok : "Leave"}</Text>
                          </TouchableOpacity>
                         </View>
                     </View>

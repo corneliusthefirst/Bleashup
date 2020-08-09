@@ -1,9 +1,18 @@
 import React, { Component } from 'react';
 import Modal from "react-native-modalbox"
-import { Button, Container, Text, Item, Input, Icon } from 'native-base';
+import {View,Text,TextInput as Input} from "react-native"
 import globalState from '../../../../stores/globalState/globalState';
 import styles from "./styles"
-export default class VerificationModal extends Component {
+import CreateButton from '../../event/createEvent/components/ActionButton';
+import Texts from '../../../../meta/text';
+import Spinner from '../../../Spinner';
+import Ionicons  from 'react-native-vector-icons/Ionicons';
+import  TouchableOpacity  from 'react-native-gesture-handler';
+import GState from '../../../../stores/globalState';
+import ColorList from '../../../colorList';
+import BleashupModal from '../../../mainComponents/BleashupModal';
+import CreationHeader from '../../event/createEvent/components/CreationHeader';
+export default class VerificationModal extends BleashupModal{
     constructor(props) {
         super(props)
         this.state = {
@@ -22,29 +31,27 @@ export default class VerificationModal extends Component {
     verifyNumber(){
         this.props.verifyCode(this.state.code)
     }
-    render() {
+    modalBody() {
         return (
-            <Modal isOpen={this.props.isOpened} position={"center"} swipeToClose={false} backdrop={false}>
-                <Container>
-                    <Button
-                        transparent
-                        regular
-                        style={{ marginBottom: -22, marginTop: 50, marginLeft: -12 }}
+                <View>
+                <CreationHeader title={Texts.phone_number_verify} back={this.onClosedModal.bind(this)}>
+                </CreationHeader>
+                    <View
+                    style={{ margin: "3%", marginTop: 50, marginLeft: 10 }}
                     >
-                        <Text>Phone Number Verification {"    "}{this.props.phone.replace("00", "+")} </Text>
-                    </Button>
+                        <Text>{Texts.phone_number_verification} {"    "}{this.props.phone.replace("00", "+")} </Text>
+                    </View>
 
                     <Text style={{ color: "skyblue", marginTop: 20 }}>
-                        Please Comfirm your Account; A verification Code was sent to your number
-          </Text>
-
-                    <Item rounded style={styles.input}  error={globalState.error}>
-                        <Icon active type="Ionicons" name="md-code" />
+                        {Texts.confirm_you_account}</Text>
+                    <View  style={[styles.input, globalState.error?
+                        {borderColor: ColorList.errorColor,}:{}]}>
+                        <Ionicons style={{...GState.defaultIconSize,alignSelf: 'center',margin: 2,}} name="md-code" />
                         <Input
                             placeholder={
                                 globalState.error == false
-                                    ? "Please enter email verification code"
-                                    : "Invalid email Verification code"
+                                    ? Texts.enter_verification_code
+                                    : Texts.invalide_verification_code
                             }
                             keyboardType="number-pad"
                             autoCapitalize="none"
@@ -54,31 +61,24 @@ export default class VerificationModal extends Component {
                             last
                             onChangeText={value => this.onChangedCode(value)}
                         />
-                        {globalState.error == false ? (
+                        {!globalState.error  ? (
                             <Text />
                         ) : (
-                                <Icon
-                                    onPress={this.removeError}
-                                    type="Ionicons"
-                                    name="close-circle"
-                                    style={{ color: "#00C497" }}
+                                <TouchableOpacity style={{ ...styles.close_button }} onPress={this.removeError.bind(this)} >
+                                <Ionicons
+                                style={{...GState.defaultIconSize,fontSize: 15,}}
+                                    name="ios-close-circle"
+                                    style={{ color: ColorList.errorColor }}
                                 />
+                            </TouchableOpacity>
                             )}
-                    </Item>
-                    <Button
-                        block
-                        rounded
-                        style={styles.buttonstyle}
-                        onPress={() => this.verifyNumber()}
+                    </View>
+                    {!this.state.loading?<CreateButton
+                    title={Texts.ok}
+                    action={this.verifyNumber.bind(this)}
                     >
-                        {this.state.loading ? (
-                            <Spinner color="#FEFFDE" />
-                        ) : (
-                                <Text> Ok </Text>
-                            )}
-                    </Button>
-                </Container>
-            </Modal>
+                    </CreateButton> : <Spinner />}
+                </View>
         );
     }
 }

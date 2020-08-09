@@ -272,7 +272,7 @@ export default class Event extends Component {
             handleReplyExtern={this.handleReplyExtern.bind(this)}
             generallyMember={this.member}
             public_state={this.state.public_state}
-            opened={this.state.opened}
+            opened={!this.event.closed}
             roomID={this.state.roomID}
             newMessageCount={
               GState.currentCommitee === "Generale" &&
@@ -328,6 +328,7 @@ export default class Event extends Component {
   }
   showProfile(pro) {
     stores.TemporalUsersStore.getUser(pro).then((profile) => {
+      console.warn(profile)
       this.setState({
         isProfileModalOpened: true,
         profile: profile,

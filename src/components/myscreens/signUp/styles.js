@@ -1,4 +1,5 @@
 const React = require("react-native");
+import ColorList from '../../colorList';
 const { Dimensions, Platform } = React;
 const deviceHeight = Dimensions.get("window").height;
 const deviceWidth = Dimensions.get("window").width;
@@ -49,8 +50,26 @@ export default {
     marginLeft: deviceHeight / 50
     
   },
+  spinner:{
+    marginTop: 70,
+  },
+  close_button: {
+    alignSelf: 'center',
+    marginLeft: "auto",
+    marginRight: 10,
+  },
+  mainContainer:{
+    marginLeft: 10,
+  },
   input:{
     marginTop:20,
+    height:40,
+    paddingLeft: 5,
+    flexDirection: 'row',
+    borderRadius: 20,
+    width:"90%",
+    borderWidth: .8,
+    borderColor: ColorList.bodyBackgrounddark,
   }
 
 };

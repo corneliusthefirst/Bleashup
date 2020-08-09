@@ -2,10 +2,8 @@ import React, { Component } from "react";
 
 import SentInvitations from '../sent-invitations/invitationCard';
 import ReceivedInvitations from '../received-invitations/invitationCard';
-import { Spinner, Icon,Title } from "native-base";
 import stores from "../../../stores";
 import { observer } from "mobx-react";
-import { View ,StatusBar,LayoutAnimation,BackHandler} from 'react-native';
 import BleashupFlatList from '../../BleashupFlatList';
 import CreateEvent from '../event/createEvent/CreateEvent';
 import DetailsModal from "./components/DetailsModal";

@@ -4,7 +4,6 @@ import {
   View,
   TouchableOpacity,
   Alert,
-  BackHandler,
   ToastAndroid,
   StyleSheet,
   ScrollView,
@@ -23,6 +22,7 @@ import shadower from "../../shadower";
 import HeaderHome from "./header";
 import Texts from "../../../meta/text";
 import Toaster from "../../../services/Toaster";
+import CreateButton from "../event/createEvent/components/ActionButton";
 export default class LoginView extends Component {
   constructor(props) {
     super(props);
@@ -46,29 +46,13 @@ export default class LoginView extends Component {
   temploginStore = stores.TempLoginStore;
 
   componentDidMount() {
-    BackHandler.addEventListener("hardwareBackPress", this.handleBackButton);
     this.setState({
       pickerData: this.phone.getPickerData(),
     });
   }
   exiting = false;
   timeout = null;
-  componentWillUnmount() {
-    BackHandler.removeEventListener("hardwareBackPress", this.handleBackButton);
-  }
-  handleBackButton() {
-    if (this.exiting) {
-      clearTimeout(this.timeout);
-      BackHandler.exitApp();
-    } else {
-      this.exiting = true;
-      Toaster({ text: "Press Again to exit app" });
-      this.timeout = setTimeout(() => {
-        this.exiting = false;
-      }, 800);
-    }
-    return true;
-  }
+
   onPressFlag() {
     this.countryPicker.openModal();
   }
@@ -130,12 +114,14 @@ export default class LoginView extends Component {
             } else {
               this.temploginStore
                 .saveData(
-                  this.state.value.replace(/\s/g, "").replace("+", "00"),
+                  {
+                    phone: this.state.value.replace(/\s/g, "").replace("+", "00"), 
+                    country_code: this.state.cca2,
+                  },
                   "phone"
                 )
                 .then(() => {
                   this.setState({
-                    value: null,
                     valid: null,
                     loading: false,
                     type: null,
@@ -184,16 +170,10 @@ export default class LoginView extends Component {
               pickerBackgroundColor="blue"
             />
           </View>
-          <TouchableOpacity
-            style={stylesinter.continueButton}
-            onPress={this.onClickContinue.bind(this)}
-          >
-            {this.state.loading ? (
-              <Text style={styles.continueButtonText}>{"..."}</Text>
-            ) : (
-              <Text style={styles.continueButtonText}>{"continue"}</Text>
-            )}
-          </TouchableOpacity>
+          <View style={{marginTop: 50,}}>
+          <CreateButton title={Texts.continue} action={() => this.onClickContinue()}>
+          </CreateButton>
+          </View>
           <CountryPicker
             ref={this.setPickerRef}
             onChange={this.selectCountry}

@@ -40,7 +40,11 @@ export default {
   },*/
   
 
- 
+  close_button: {
+    alignSelf: 'center',
+    marginLeft: "auto",
+    marginRight: 10,
+  },
   buttonstyle: {
     marginTop:50,
     width:deviceWidth/2,
@@ -50,7 +54,11 @@ export default {
   },
  
   input:{
-    marginTop:50
+    marginTop:50,
+     width: "90%", height: 40,
+     borderRadius: 20,
+     borderWidth: .8,
+    marginTop: "10%", alignSelf: "center", flexDirection: 'row',
   }
 
 };

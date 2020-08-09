@@ -7,7 +7,8 @@ import ColorList from '../../../colorList';
 import rounder from "../../../../services/rounder";
 import BePureComponent from '../../../BePureComponent';
 import  AntDesign  from 'react-native-vector-icons/AntDesign';
-export default class ActivityProfile extends BePureComponent {
+import BeComponent from '../../../BeComponent';
+export default class ActivityProfile extends BeComponent {
     constructor(props) {
         super(props);
     }

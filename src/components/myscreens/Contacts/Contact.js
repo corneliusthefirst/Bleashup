@@ -170,7 +170,6 @@ updatePhoneContacts = (bool) => {
           this.array = [phoneUser].concat(this.array);
         }
       });
-
     let cons = uniqBy(this.array, 'phone');
     this.setState({ contacts: cons });
     this.setState({ searchArray: cons });

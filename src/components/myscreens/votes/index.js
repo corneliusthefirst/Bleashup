@@ -1,7 +1,6 @@
 import React, { Component } from "react";
 import { View, Dimensions } from "react-native";
 import bleashupHeaderStyle from "../../../services/bleashupHeaderStyle";
-import { Text, Icon, Spinner, Toast } from "native-base";
 import BleashupFlatList from "../../BleashupFlatList";
 import stores from "../../../stores";
 import Voter from "../eventChat/Voter";

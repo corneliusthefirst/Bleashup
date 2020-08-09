@@ -55,7 +55,7 @@ class ServerEventListener {
   constructor() { }
   socket = () => { };
   dispatch(data) {
-    //console.error(data)
+    //console.warn("data from dispatcher: ",data)
     if (data.response) {
       switch (data.response) {
         case this.responseCases.not_eligible:
@@ -77,7 +77,9 @@ class ServerEventListener {
                 ? -1
                 : 0;
           if (data.updated.length !== 0)
-            UpdatesDispatcher.dispatchUpdates(data.updated.sort(sorter));
+            UpdatesDispatcher.dispatchUpdates(data.updated.sort(sorter),() => {
+              console.warn("done Dispaching !")
+            });
           if (data.new_events.length !== 0) {
             InvitationDispatcher.dispatchUpdates(
               data.new_events,
@@ -108,7 +110,9 @@ class ServerEventListener {
           });
           break;
         case this.responseCases.event_changes:
-          UpdatesDispatcher.dispatchUpdate(data.updated).then(() => { });
+          UpdatesDispatcher.dispatchUpdate(data.updated,() => {
+            console.warn("done dispaching !")
+          })
           break;
         case this.responseCases.current_event:
           emitter.emit(
