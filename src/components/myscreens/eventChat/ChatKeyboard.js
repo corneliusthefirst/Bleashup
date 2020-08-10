@@ -337,7 +337,7 @@ export default class ChatKeyboard extends BeComponent {
             content_type: snap.content_type,
             size: snap.size,
         });
-        this.animateLayout(true);
+        this.animateLayout();
         this.focusTimeout =  setTimeout(() => {
             this.focus()
             clearTimeout(this.focusTimeout)
@@ -388,7 +388,7 @@ export default class ChatKeyboard extends BeComponent {
             if (!this.props.showAudioRecorder) {
                 this.refs.AudioRecorder.stopRecordSimple();
             } else {
-                this._textInput.focus();
+                this.focus()
                 this.refs.AudioRecorder.startRecorder();
             }
             clearTimeout(this.toggleAudioTimeout)

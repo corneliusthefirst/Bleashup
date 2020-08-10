@@ -34,6 +34,7 @@ import  Ionicons  from 'react-native-vector-icons/Ionicons';
 import  EvilIcons  from 'react-native-vector-icons/EvilIcons';
 import  MaterialIconCommunity from 'react-native-vector-icons/MaterialCommunityIcons';
 import  AntDesign  from 'react-native-vector-icons/AntDesign';
+import BleashupShapes from '../../mainComponents/BleashupShapes';
 
 export default class Message extends BeComponent {
     constructor(props) {

@@ -7,6 +7,8 @@ import PaginationView from "./components/myscreens/Viewer/constants/paginationSw
 import ContactView from './components/myscreens/Contacts/Contact';
 import QRScanner from './components/myscreens/QR/index';
 import CreateEventView from './components/myscreens/event/createEvent/index';
+import CameraScreen from './components/mainComponents/BleashupCamera/index';
+import SwiperComponent from './components/SwiperComponent/index';
 
 enableScreens()
 const HomeNavigator = createStackNavigator({
@@ -15,6 +17,8 @@ const HomeNavigator = createStackNavigator({
     Contacts:{screen:ContactView},
     PaginationView: { screen: PaginationView },
     CreateEventView:{screen:CreateEventView},
+    SwiperComponent:{screen:SwiperComponent},
+    CameraScreen:{screen: CameraScreen},
     Event: { screen: Event },
 }, {
     initialRouteName: "Home",

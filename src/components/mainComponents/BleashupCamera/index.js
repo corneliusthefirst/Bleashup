@@ -379,7 +379,7 @@ render(){
             <View style={{ flex: 1, alignItems: 'flex-end' }}>
 
                 <TouchableOpacity onPress={this.onPressZoom.bind(this, 'PLUS')} style={{padding:5,backgroundColor:"rgba(0, 0, 0, 0.3)",borderRadius:20}}>
-                  <FeaT size={25} name="zoom-in" type="Feather"  style={{color:'white', fontSize:25 }} />
+                  <Feather size={25} name="zoom-in" type="Feather"  style={{color:'white', fontSize:25 }} />
                 </TouchableOpacity>
 
                 <TouchableOpacity
