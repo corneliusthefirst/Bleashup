@@ -1,5 +1,4 @@
 import React, { Component } from "react";
-import autobind from "autobind-decorator";
 
 import { Alert, BackHandler, View, ScrollView, Text, TextInput as Input, TouchableOpacity } from "react-native";
 import { observer } from "mobx-react";
@@ -31,7 +30,6 @@ export default class EmailVerificationView extends Component {
   loginStore = stores.LoginStore;
   temploginStore = stores.TempLoginStore;
 
-  @autobind
   onChangedCode(text) {
     this.setState({ code: text });
   }
@@ -71,7 +69,7 @@ export default class EmailVerificationView extends Component {
     this.props.navigation.goBack();
   }
 
-  @autobind
+  
   removeError() {
     globalState.error = false;
   }
@@ -170,7 +168,7 @@ export default class EmailVerificationView extends Component {
             {globalState.error == false ? (
               <Text />
             ) : (
-                <TouchableOpacity style={styles.close_button}  onPress={this.removeError}>
+                <TouchableOpacity style={styles.close_button}  onPress={this.removeError.bind(this)}>
                 <Ionicons
                   type="Ionicons"
                   name="ios-close-circle"

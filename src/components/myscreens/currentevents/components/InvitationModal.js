@@ -16,13 +16,13 @@ import moment from "moment"
 import BleashupFlatList from '../../../BleashupFlatList';
 import Menu, { MenuDivider, MenuItem } from 'react-native-material-menu';
 //import Mailer from 'react-native-mail';
-import uuid from 'react-native-uuid';
 import bleashupHeaderStyle from "../../../../services/bleashupHeaderStyle";
 import BleashupModal from '../../../mainComponents/BleashupModal';
 import CreationHeader from "../../event/createEvent/components/CreationHeader";
 import Spinner from '../../../Spinner';
 import Toaster from "../../../../services/Toaster";
 import  EvilIcons  from 'react-native-vector-icons/EvilIcons';
+import IDMaker from '../../../../services/IdMaker';
 export default class InvitationModal extends BleashupModal {
   initialize(){
     this.state = {
@@ -122,7 +122,7 @@ export default class InvitationModal extends BleashupModal {
       invite.invitation = {
         inviter: stores.Session.SessionStore.phone,
         invitee: contact.phone,
-        invitation_id: uuid.v1(),
+        invitation_id: IDMaker.make(),
         host: stores.Session.SessionStore.host,
         period: moment().format(),
         event_id: this.props.eventID,

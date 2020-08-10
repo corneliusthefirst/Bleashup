@@ -12,7 +12,6 @@ import {
 } from "react-native";
 import UpdateStateIndicator from "../currentevents/components/updateStateIndicator";
 import InvitationModal from "../currentevents/components/InvitationModal";
-import autobind from "autobind-decorator";
 import { observer } from "mobx-react";
 import stores from "../../../stores";
 import RouteView from "./RouteView";
@@ -51,7 +50,7 @@ export default class SWView extends BeComponent {
     position: "absolute",
   };
 
-  @autobind navigateToEventChat() {
+  navigateToEventChat() {
     stores.Events.isParticipant(
       this.props.Event.id,
       stores.Session.SessionStore.phone
@@ -70,7 +69,7 @@ export default class SWView extends BeComponent {
       this.props.seen();
     });
   }
-  @autobind navigateToLogs() {
+ navigateToLogs() {
     stores.Events.isParticipant(
       this.props.Event.id,
       stores.Session.SessionStore.phone
@@ -88,7 +87,7 @@ export default class SWView extends BeComponent {
       openInviteModal: true,
     });
   }
-  @autobind navigateToEventDetails() {
+   navigateToEventDetails() {
     stores.Events.isParticipant(
       this.props.Event.id,
       stores.Session.SessionStore.phone

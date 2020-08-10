@@ -2,11 +2,11 @@
 import tcpRequest from '../../../services/tcpRequestData';
 import EventListener from '../../../services/severEventListener';
 import stores from '../../../stores';
-import uuid from 'react-native-uuid';
 import moment from 'moment';
 import request from '../../../services/requestObjects';
 import { format } from '../../../services/recurrenceConfigs';
 import toTitleCase from '../../../services/toTitle';
+import IDMaker from '../../../services/IdMaker';
 
 class Requester {
     createVote(roomID,Vote, commieeName, activityName) { 
@@ -22,7 +22,7 @@ class Requester {
                     stores.Votes.addVote(roomID,Vote).then(() => {
                         stores.Events.addVote(Vote.event_id, Vote.id).then(() => {
                             let Change = {
-                                id: uuid.v1(),
+                                id: IDMaker.make(),
                                 event_id: Vote.event_id,
                                 updated: 'new_vote',
                                 changed: `Added ${Vote.title} Vote`,
@@ -54,7 +54,7 @@ class Requester {
                     stores.Votes.removeVote(roomID,voteID).then((vote) => {
                         stores.Events.removeVote(eventID, voteID).then(() => {
                             let Change = {
-                                id: uuid.v1(),
+                                id: IDMaker.make(),
                                 event_id: eventID,
                                 updated: 'vote_deleted',
                                 title: `Update On Main Activity`,
@@ -82,7 +82,7 @@ class Requester {
                     stores.Votes.addVote(roomID,Vote).then(() => {
                         stores.Events.addVote(vote.event_id, vote.id).then(() => {
                             let Change = {
-                                id: uuid.v1(),
+                                id: IDMaker.make(),
                                 event_id: vote.event_id,
                                 updated: 'vote_restored',
                                 title: `Update on ${vote.title} vote`,
@@ -133,7 +133,7 @@ class Requester {
                     EventListener.sendRequest(JSData, voteID + '_period').then(() => {
                         stores.Votes.UpdateVotePeriod(roomID,update).then((vote) => {
                             let Change = {
-                                id: uuid.v1(),
+                                id: IDMaker.make(),
                                 event_id: update.event_id,
                                 updated: 'vote_period',
                                 title: `Update on ${vote.title} vote`,

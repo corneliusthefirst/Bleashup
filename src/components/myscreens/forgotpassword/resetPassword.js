@@ -1,5 +1,4 @@
 import React, { Component } from "react";
-import autobind from "autobind-decorator";
 
 //import { Button,View } from "react-native";
 
@@ -20,31 +19,25 @@ export default class ResetPasswordView extends Component {
 
   loginStore = stores.LoginStore;
 
-  @autobind
   onChangedPassword(value) {
     this.setState({ password: value });
   }
 
-  @autobind
   onChangedNewPassword(value) {
     this.setState({ newPassword: value });
   }
 
-  @autobind
   back() {
     this.props.navigation.navigate("ForgotPassword");
   }
 
-  @autobind
   removePasswordError() {
     globalState.passwordError = false;
   }
-  @autobind
   removeNewPasswordError() {
     globalState.newPasswordError = false;
   }
 
-  @autobind
   onClickResetPassword() {
     if (this.state.password != this.state.newPassword) {
       globalState.newPasswordError = true;

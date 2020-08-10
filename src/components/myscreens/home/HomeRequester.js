@@ -2,7 +2,7 @@ import tcpRequest from '../../../services/tcpRequestData';
 import stores from '../../../stores';
 import EventListener from '../../../services/severEventListener';
 import GState from '../../../stores/globalState';
-import uuid  from 'react-native-uuid';
+import IDMaker from '../../../services/IdMaker';
 
 class HomeRequester {
     constructor() {
@@ -16,7 +16,7 @@ class HomeRequester {
                     let newEvent = { ...event, id: response.event_id, calendared: true }
                     stores.Events.addEvent(newEvent).then(() => {
                         let Change = {
-                            id: uuid.v1(),
+                            id: IDMaker.make(),
                             title: `First Update`,
                             updated: "new_event",
                             event_id: response.event_id,

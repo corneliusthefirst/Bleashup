@@ -5,9 +5,9 @@ import serverEventListener from "../../../services/severEventListener";
 import { forEach } from "lodash"
 import moment from "moment"
 import { AddParticipant } from '../../../services/cloud_services';
-import uuid from 'react-native-uuid';
 import firebase from 'react-native-firebase';
 import Toaster from "../../../services/Toaster";
+import IDMaker from '../../../services/IdMaker';
 class Requester {
     constructor() {
         this.currentUserPhone = stores.Session.SessionStore.phone;
@@ -76,7 +76,7 @@ class Requester {
                                 stores.Session.SessionStore.phone, period: { date: moment().format() }
                         }).then(() => {
                             let Change = {
-                                id: uuid.v1(),
+                                id: IDMaker.make(),
                                 title: "Updates On Main Activity",
                                 updated: "publish",
                                 event_id: event_id,
@@ -112,7 +112,7 @@ class Requester {
                     AddParticipant(EventID, [Participant]).then((resp) => { })
                     stores.Events.addParticipant(EventID, Participant, false).then(() => {
                         let Change = {
-                            id: uuid.v1(),
+                            id: IDMaker.make(),
                             title: "Updates On Main Activity",
                             updated: "joint_paticipant",
                             event_id: EventID,

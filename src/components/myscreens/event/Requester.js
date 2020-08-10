@@ -2,7 +2,6 @@ import tcpRequest from '../../../services/tcpRequestData';
 import serverEventListener from '../../../services/severEventListener'
 import stores from '../../../stores';
 import request from '../../../services/requestObjects';
-import uuid from 'react-native-uuid';
 import moment from 'moment';
 import { isEqual } from "lodash"
 import Requesterer from '../currentevents/Requester';
@@ -11,6 +10,7 @@ import CalendarServe from '../../../services/CalendarService';
 import MainUpdater from '../../../services/mainUpdater';
 import toTitleCase from '../../../services/toTitle';
 import Toaster from '../../../services/Toaster';
+import IDMaker from '../../../services/IdMaker';
 
 class Request {
     constructor() {
@@ -32,7 +32,7 @@ class Request {
                     stores.CommiteeStore.addCommitee(commitee.event_id, commitee).then(() => {
                         stores.Events.addEventCommitee(commitee.event_id, commitee.id).then(() => {
                             let Change = {
-                                id: uuid.v1(),
+                                id: IDMaker.make(),
                                 title: "Update On Committees",
                                 updated: 'new_commitee',
                                 event_id: commitee.event_id,
@@ -65,7 +65,7 @@ class Request {
                 serverEventListener.sendRequest(JSONData, ID + "_name").then(response => {
                     stores.CommiteeStore.updateCommiteeName(eventID, ID, newName).then((commitee) => {
                         let Change = {
-                            id: uuid.v1(),
+                            id: IDMaker.make(),
                             title: "Update On Committees",
                             updated: 'commitee_name_updated',
                             event_id: eventID,
@@ -101,7 +101,7 @@ class Request {
                 serverEventListener.sendRequest(JSONData, id + "_publish").then(response => {
                     stores.CommiteeStore.updateCommiteeState(event_id, id, state).then((commitee) => {
                         let Change = {
-                            id: uuid.v1(),
+                            id: IDMaker.make(),
                             title: "Update On Committees",
                             updated: 'published_commitee',
                             event_id: event_id,
@@ -132,7 +132,7 @@ class Request {
                 serverEventListener.sendRequest(JSONData, id + "_members").then(response => {
                     stores.CommiteeStore.addMembers(event_id, id, members).then((commitee) => {
                         let Change = {
-                            id: uuid.v1(),
+                            id: IDMaker.make(),
                             title: "Update On Committees",
                             updated: 'added_commitee_member',
                             event_id: event_id,
@@ -163,7 +163,7 @@ class Request {
                 serverEventListener.sendRequest(JSONData, id + "_open").then((reponse) => {
                     stores.CommiteeStore.changeCommiteeOpenedState(event_id, id, true).then((commitee) => {
                         let Change = {
-                            id: uuid.v1(),
+                            id: IDMaker.make(),
                             title: "Update On Committees",
                             updated: 'commitee_opened',
                             event_id: event_id,
@@ -194,7 +194,7 @@ class Request {
                 serverEventListener.sendRequest(JSONData, id + "_close").then((reponse) => {
                     stores.CommiteeStore.changeCommiteeOpenedState(event_id, id, false).then((commitee) => {
                         let Change = {
-                            id: uuid.v1(),
+                            id: IDMaker.make(),
                             title: "Update On Committees",
                             updated: 'commitee_closed',
                             event_id: event_id,
@@ -227,7 +227,7 @@ class Request {
                 serverEventListener.sendRequest(JSON, id + "_members").then(response => {
                     stores.CommiteeStore.removeMember(event_id, id, memberPhone).then((commitee) => {
                         let Change = {
-                            id: uuid.v1(),
+                            id: IDMaker.make(),
                             title: "Update On Committees",
                             updated: 'removed_commitee_member',
                             event_id: event_id,
@@ -259,7 +259,7 @@ class Request {
                 serverEventListener.sendRequest(JSONData, id + "_join").then((response) => {
                     stores.CommiteeStore.addMembers(event_id, id, member.member_phone).then((commitee) => {
                         let Change = {
-                            id: uuid.v1(),
+                            id: IDMaker.make(),
                             title: "Update On Committees",
                             updated: 'added_commitee_member',
                             event_id: event_id,
@@ -292,7 +292,7 @@ class Request {
                 serverEventListener.sendRequest(JSONData, id + "_leave").then(response => {
                     stores.CommiteeStore.removeMember(event_id, id, member.member_phone).then((commitee) => {
                         let Change = {
-                            id: uuid.v1(),
+                            id: IDMaker.make(),
                             title: "Update On Committees",
                             updated: 'removed_commitee_member',
                             event_id: event_id,
@@ -351,7 +351,7 @@ class Request {
                     invitation: {
                         inviter: stores.LoginStore.user.phone,
                         invitee: ele.phone,
-                        invitation_id: uuid.v1(),
+                        invitation_id: IDMaker.make(),
                         host: stores.Session.SessionStore.host,
                         period: moment().format(),
                         event_id: event_id,
@@ -425,7 +425,7 @@ class Request {
                     serverEventListener.sendRequest(JSONData, event_id + "_update").then((response) => {
                         stores.Events.removeParticipant(event_id, mem, true).then(() => {
                             let Change = {
-                                id: uuid.v1(),
+                                id: IDMaker.make(),
                                 title: "Update On Main Activity",
                                 updated: 'removed',
                                 event_id: event_id,
@@ -458,7 +458,7 @@ class Request {
                     stores.Events.leaveEvent(event_id).then(() => {
                         stores.Events.removeParticipant(event_id, [phone]).then(() => {
                             let Change = {
-                                id: uuid.v1(),
+                                id: IDMaker.make(),
                                 title: "Update On Main Activity",
                                 updated: 'removed',
                                 event_id: event_id,
@@ -490,7 +490,7 @@ class Request {
                     serverEventListener.sendRequest(JSONData, event_id + '_update_sate').then((response) => {
                         stores.Events.updateEventParticipant(event_id, newState, true).then(() => {
                             let Change = {
-                                id: uuid.v1(),
+                                id: IDMaker.make(),
                                 title: "Update On Main Activity",
                                 updated: 'master',
                                 event_id: event_id,
@@ -526,7 +526,7 @@ class Request {
                             period: moment().format()
                         }).then(() => {
                             let Change = {
-                                id: uuid.v1(),
+                                id: IDMaker.make(),
                                 title: "Update On The Main Activity",
                                 updated: 'publish',
                                 event_id: event_id,
@@ -554,7 +554,7 @@ class Request {
                 serverEventListener.sendRequest(JSONData, event_id + "_unpublish").then(() => {
                     stores.Events.unpublishEvent(event_id).then(() => {
                         let Change = {
-                            id: uuid.v1(),
+                            id: IDMaker.make(),
                             title: "Update On The Main Activity",
                             updated: 'publish',
                             event_id: event_id,
@@ -586,7 +586,7 @@ class Request {
                         serverEventListener.sendRequest(JSONData, even.id + "_notes").then(response => {
                             stores.Events.updateNotes(even.id, newNotes).then((Eve) => {
                                 let Change = {
-                                    id: uuid.v1(),
+                                    id: IDMaker.make(),
                                     title: "Updates on Main Activity",
                                     updated: "notes",
                                     event_id: even.id,
@@ -619,7 +619,7 @@ class Request {
                         console.warn(response)
                         stores.Events.updateDescription(eventID, newDescription, false).then(() => {
                             let Change = {
-                                id: uuid.v1(),
+                                id: IDMaker.make(),
                                 title: "Updates On Main Activity",
                                 updated: "description",
                                 updater: stores.LoginStore.user.phone,
@@ -649,7 +649,7 @@ class Request {
                         console.warn(response)
                         stores.Events.updateLocation(eventID, newLocation).then(() => {
                             let Change = {
-                                id: uuid.v1(),
+                                id: IDMaker.make(),
                                 title: "Updates On Main Activity",
                                 updated: "location",
                                 updater: stores.LoginStore.user.phone,
@@ -680,7 +680,7 @@ class Request {
                             console.warn(response)
                             stores.Events.updatePeriod(event.id, newPeriod, false).then((Eve) => {
                                 let Change = {
-                                    id: uuid.v1(),
+                                    id: IDMaker.make(),
                                     title: "Updates On Main Activity",
                                     updated: "period",
                                     updater: stores.LoginStore.user.phone,
@@ -719,7 +719,7 @@ class Request {
                             stores.Events.updateTitle(event.id, newTitle, false).then((Eve) => {
                                 console.warn("title updated successfully ......")
                                 let Change = {
-                                    id: uuid.v1(),
+                                    id: IDMaker.make(),
                                     updated: "title",
                                     event_id: event.id,
                                     updater: stores.LoginStore.user.phone,
@@ -754,7 +754,7 @@ class Request {
                         serverEventListener.sendRequest(JSONData, event.id + '_who_can_update').then(response => {
                             stores.Events.updateWhoCanManage(event.id, whoCanManage).then(eve => {
                                 let Change = {
-                                    id: uuid.v1(),
+                                    id: IDMaker.make(),
                                     title: "Updates On Main Activity",
                                     updated: "who_can_update",
                                     event_id: event.id,
@@ -789,7 +789,7 @@ class Request {
                         serverEventListener.sendRequest(JSONData, event.id + "_recurrency").then(response => {
                             stores.Events.updateRecurrency(event.id, recurrentUpdate).then((Eve) => {
                                 let Change = {
-                                    id: uuid.v1(),
+                                    id: IDMaker.make(),
                                     title: "Updates On Main Activity",
                                     updated: "recurrency",
                                     event_id: event.id,
@@ -824,7 +824,7 @@ class Request {
                             console.warn(response)
                             stores.Events.openClose(event.id, newState, false).then(() => {
                                 let Change = {
-                                    id: uuid.v1(),
+                                    id: IDMaker.make(),
                                     title: "Updates On Main Activity",
                                     updated: "close",
                                     event_id: event.id,
@@ -856,7 +856,7 @@ class Request {
                             console.warn(response)
                             stores.Events.updateCalendarID(event.id, newCalendarID).then(() => {
                                 let Change = {
-                                    id: uuid.v1(),
+                                    id: IDMaker.make(),
                                     title: "Updates On Main Activity",
                                     updated: "calendar_id",
                                     event_id: event.id,
@@ -933,7 +933,7 @@ class Request {
                     serverEventListener.sendRequest(JSONData, event_id + "_background").then(response => {
                         stores.Events.updateBackground(event_id, background, false).then(() => {
                             let Change = {
-                                id: uuid.v1(),
+                                id: IDMaker.make(),
                                 title: "Updates On Main Activity",
                                 updated: "background",
                                 event_id: event_id,
@@ -968,7 +968,7 @@ class Request {
                     stores.Events.addHighlight(newHighlight.event_id, newHighlight.id).then(res => {
                         stores.Highlights.addHighlight(newHighlight.event_id, newHighlight).then(res => {
                             let Change = {
-                                id: uuid.v1(),
+                                id: IDMaker.make(),
                                 title: "Updates On Main Activity",
                                 updated: "add_highlight",
                                 event_id: newHighlight.event_id,
@@ -1007,7 +1007,7 @@ class Request {
                         }, false).then((HighlightJS) => {
                             Highlight = HighlightJS;  //changed json parse
                             let Change = {
-                                id: uuid.v1(),
+                                id: IDMaker.make(),
                                 title: `Update On ${Highlight.title} Post`,
                                 updated: "highlight_title",
                                 event_id: eventID,
@@ -1047,7 +1047,7 @@ class Request {
                             public_state: higlightTitle.new_data
                         }).then((Highlight) => {
                             let Change = {
-                                id: uuid.v1(),
+                                id: IDMaker.make(),
                                 title: `Update On ${Highlight.title} Post`,
                                 updated: "highlight_decription",
                                 event_id: eventID,
@@ -1086,7 +1086,7 @@ class Request {
                             description: higlightTitle.new_data
                         }, false).then((Highlight) => {
                             let Change = {
-                                id: uuid.v1(),
+                                id: IDMaker.make(),
                                 title: `Update On ${Highlight.title} Post`,
                                 updated: "highlight_decription",
                                 event_id: eventID,
@@ -1125,7 +1125,7 @@ class Request {
                             url: newHighlightURL.new_data
                         }, false).then((Highlight) => {
                             let Change = {
-                                id: uuid.v1(),
+                                id: IDMaker.make(),
                                 title: `Update On ${Highlight.title} Post`,
                                 updated: "highlight_url",
                                 event_id: eventID,
@@ -1193,7 +1193,7 @@ class Request {
                     stores.Highlights.removeHighlight(eventID, highlightID).then((Highlight) => {
                         stores.Events.removeHighlight(eventID, highlightID).then(res => {
                             let Change = {
-                                id: uuid.v1(),
+                                id: IDMaker.make(),
                                 title: `Update On Main Activity`,
                                 updated: "highlight_delete",
                                 event_id: eventID,
@@ -1223,7 +1223,7 @@ class Request {
                     stores.Highlights.addHighlight(highlight.event_id, highlight).then(() => {
                         stores.Events.addHighlight(highlight.event_id, highlight.id, false).then(() => {
                             let Change = {
-                                id: uuid.v1(),
+                                id: IDMaker.make(),
                                 title: `Update On Main Activity`,
                                 updated: "highlight_restored",
                                 event_id: highlight.event_id,

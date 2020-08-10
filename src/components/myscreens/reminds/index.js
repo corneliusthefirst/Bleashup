@@ -7,7 +7,6 @@ import {
   Dimensions,
   Text
 } from "react-native";
-import autobind from 'autobind-decorator';
 import TasksCard from './TasksCard';
 import stores from "../../../stores/index";
 import BleashupFlatList from "../../BleashupFlatList";
@@ -42,7 +41,6 @@ import Share from '../../../stores/share';
 import request from '../../../services/requestObjects';
 import replies from "../eventChat/reply_extern";
 import TaskCreationExtra from './TaskCreationExtra';
-import uuid from 'react-native-uuid';
 import AnimatedComponent from '../../AnimatedComponent';
 import MessageActions from '../eventChat/MessageActons';
 import Vibrator from '../../../services/Vibrator';
@@ -51,6 +49,7 @@ import Toaster from '../../../services/Toaster';
 import MaterialIcons  from 'react-native-vector-icons/MaterialIcons';
 import AntDesign  from 'react-native-vector-icons/AntDesign';
 import { observer } from 'mobx-react';
+import IDMaker from '../../../services/IdMaker';
 //const MyTasksData = stores.Reminds.MyTasksData
 
 @observer class Reminds extends AnimatedComponent {
@@ -200,7 +199,6 @@ import { observer } from 'mobx-react';
     
   }
 
-  @autobind
   AddRemind() {
     if (!this.props.computedMaster) {
       Toaster({
@@ -258,7 +256,6 @@ import { observer } from 'mobx-react';
     });
   }
 
-  @autobind
   back() {
     this.props.navigation.navigate("Home");
   }
@@ -446,7 +443,7 @@ import { observer } from 'mobx-react';
   filterConfirmed(interval) {
     return this.state.currentTask.confirmed.filter(ele => this.intervalFilterFunc(ele, interval))
   }
-  @autobind showReport(item, intervals, thisInterval) {
+  showReport(item, intervals, thisInterval) {
     let members = item.members.map((ele) => ele.phone);
     this.setStatePure({
       members: uniq(members),
@@ -460,7 +457,7 @@ import { observer } from 'mobx-react';
   addNewRemind() {
     console.warn("adding remind")
     this.scrollRemindListToTop()
-    RemindRequest.CreateRemind({ ...this.state.currentRemind, id: uuid.v1() },
+    RemindRequest.CreateRemind({ ...this.state.currentRemind, id: IDMaker.make() },
       this.props.event.about.title).then(() => {
         this.refs.task_creator.resetRemind()
         stores.Reminds.removeRemind(this.props.event.id,

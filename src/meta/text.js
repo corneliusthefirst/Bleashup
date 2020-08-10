@@ -129,6 +129,22 @@ class TEXTS {
         en: "Reset Password",
         fr: "changer de mot de pass"
     }[GState.lang]
+    contacts = {
+        en: "Contacts",
+        fr:"Contacts"
+    }[GState.lang]
+    activity = {
+        en: "Activity",
+        fr:"Activitee"
+    }[GState.lang]
+    cannot_send_message = {
+        en: "cannot to forward message",
+        fr:"message ne peut etre transmit"
+    }[GState.lang]
+    search_in_your_contact = {
+        en: "Search in your contacts",
+        fr: "Rechercher dans vos contacts"
+    }[GState.lang]
 }
 const Texts = new TEXTS()
 export default Texts

@@ -7,12 +7,12 @@ import emitter from "./eventEmiter";
 import serverEventListener from "./severEventListener"
 import { find, findIndex, drop, reject, forEach } from "lodash";
 import moment from "moment"
-import uuid from 'react-native-uuid';
 import CalendarServe from './CalendarService';
 import { format } from './recurrenceConfigs';
 import request from "./requestObjects";
 import MainUpdater from './mainUpdater';
 import RemindRequest from '../components/myscreens/reminds/Requester';
+import IDMaker from './IdMaker';
 class UpdatesDispatcher {
   constructor() { }
   dispatchUpdates(updates,done) {
@@ -82,7 +82,7 @@ class UpdatesDispatcher {
       return new Promise((resolve, reject) => {
         stores.Events.updateTitle(update.event_id, update.new_value, true).then((Eve) => {
           let Change = {
-            id: uuid.v1(),
+            id: IDMaker.make(),
             updated: "title",
             event_id: update.event_id,
             updater: update.updater,
@@ -108,7 +108,7 @@ class UpdatesDispatcher {
       return new Promise((resolve, reject) => {
         stores.Events.updateBackground(update.event_id, update.new_value, true).then(() => {
           let Change = {
-            id: uuid.v1(),
+            id: IDMaker.make(),
             title: "Updates On Main Activity",
             updated: "background",
             event_id: update.event_id,
@@ -136,7 +136,7 @@ class UpdatesDispatcher {
           true
         ).then((Eve) => {
           let Change = {
-            id: uuid.v1(),
+            id: IDMaker.make(),
             title: "Updates On Main Activity",
             updated: "description",
             updater: update.updater,
@@ -158,7 +158,7 @@ class UpdatesDispatcher {
       return new Promise((resolve, reject) => {
         stores.Events.updatePeriod(update.event_id, update.new_value, true).then((Eve, calID) => {
           let Change = {
-            id: uuid.v1(),
+            id: IDMaker.make(),
             title: "Updates On Main Activity",
             updated: "period",
             updater: update.updater,
@@ -184,7 +184,7 @@ class UpdatesDispatcher {
       return new Promise((resolve, reject) => {
         stores.Events.openClose(update.event_id, update.new_value, true).then(() => {
           let Change = {
-            id: uuid.v1(),
+            id: IDMaker.make(),
             title: "Updates On Main Activity",
             updated: "close",
             event_id: update.event_id,
@@ -206,7 +206,7 @@ class UpdatesDispatcher {
       return new Promise((resolve, reject) => {
         stores.Events.updateNotes(update.event_id, update.new_value).then((Eve) => {
           let Change = {
-            id: uuid.v1(),
+            id: IDMaker.make(),
             title: "Updates on Main Activity",
             updated: "notes",
             event_id: update.event_id,
@@ -235,7 +235,7 @@ class UpdatesDispatcher {
           true
         ).then((Eve) => {
           let Change = {
-            id: uuid.v1(),
+            id: IDMaker.make(),
             title: "Updates On Main Activity",
             updated: "location",
             updater: update.updater,
@@ -257,7 +257,7 @@ class UpdatesDispatcher {
       return new Promise((resolve, reject) => {
         stores.Events.updateCalendarID(update.event_id, update.new_value, true).then(() => {
           let Change = {
-            id: uuid.v1(),
+            id: IDMaker.make(),
             title: "Updates On Main Activity",
             updated: "calendar_id",
             updater: update.updater,
@@ -279,7 +279,7 @@ class UpdatesDispatcher {
       return new Promise((resolve, reject) => {
         stores.Events.updateWhoCanManage(update.event_id, update.new_value, true).then(Eve => {
           let Change = {
-            id: uuid.v1(),
+            id: IDMaker.make(),
             title: "Updates On Main Activity",
             updated: "who_can_update",
             event_id: update.event_id,
@@ -300,7 +300,7 @@ class UpdatesDispatcher {
       return new Promise((resolve, reject) => {
         stores.Events.updateRecurrency(update.event_id, update.new_value, true).then((Eve) => {
           let Change = {
-            id: uuid.v1(),
+            id: IDMaker.make(),
             title: "Updates On Main Activity",
             updated: "recurrency",
             event_id: update.event_id,
@@ -408,7 +408,7 @@ class UpdatesDispatcher {
                   event_id: update.event_id,
                   changed: "UnPublished The Activity",
                   updater: update.updater,
-                  id: uuid.v1(),
+                  id: IDMaker.make(),
                   new_value: { data:null, new_value: null },
                   date: update.date,
                   time: update.time
@@ -950,7 +950,7 @@ class UpdatesDispatcher {
                   Highlight.data.id
                 ).then(() => {
                   let Change = {
-                    id: uuid.v1(),
+                    id: IDMaker.make(),
                     title: "Updates On Main Activity",
                     updated: "add_highlight",
                     event_id: update.event_id,
@@ -990,7 +990,7 @@ class UpdatesDispatcher {
           true
         ).then((Highlight) => {
           let Change = {
-            id: uuid.v1(),
+            id: IDMaker.make(),
             title: `Update On ${Highlight.title} Post`,
             updated: "highlight_decription",
             event_id: update.event_id,
@@ -1025,7 +1025,7 @@ class UpdatesDispatcher {
           true
         ).then((Highlight) => {
           let Change = {
-            id: uuid.v1(),
+            id: IDMaker.make(),
             title: `Update On ${Highlight.title} Post`,
             updated: "highlight_url",
             event_id: update.event_id,
@@ -1054,7 +1054,7 @@ class UpdatesDispatcher {
         ).then((HighlightJS) => {
           Highlight = JSON.parse(HighlightJS)
           let Change = {
-            id: uuid.v1(),
+            id: IDMaker.make(),
             title: `Update On ${Highlight.title} Post`,
             updated: "highlight_title",
             event_id: update.event_id,
@@ -1076,7 +1076,7 @@ class UpdatesDispatcher {
       return new Promise((resolve, reject) => {
         stores.Highlights.updateHighlightPublicState(update.event_id, update.new_value).then((highlight) => {
           let Change = {
-            id: uuid.v1(),
+            id: IDMaker.make(),
             title: `Update On ${highlight.title} Post`,
             updated: "highlight_public_state",
             event_id: update.event_id,
@@ -1105,7 +1105,7 @@ class UpdatesDispatcher {
             update.new_value
           ).then(() => {
             let Change = {
-              id: uuid.v1(),
+              id: IDMaker.make(),
               title: `Update On Main Activity`,
               updated: "highlight_delete",
               event_id: update.event_id,
@@ -1129,7 +1129,7 @@ class UpdatesDispatcher {
         stores.Highlights.addHighlight(update.event_id, update.new_value).then(() => {
           stores.Events.addHighlight(update.event_id, update.new_value.id).then(() => {
             let Change = {
-              id: uuid.v1(),
+              id: IDMaker.make(),
               title: `Update On Main Activity`,
               updated: "highlight_restored",
               event_id: update.event_id,
@@ -1164,7 +1164,7 @@ class UpdatesDispatcher {
                       console.warn(state)
                       if (state || vote.published === 'public') {
                         let Change = {
-                          id: uuid.v1(),
+                          id: IDMaker.make(),
                           event_id: update.event_id,
                           updated: 'new_vote',
                           changed: `Added ${vote.title} Vote`,
@@ -1207,7 +1207,7 @@ class UpdatesDispatcher {
                 vote.committee_id).then((state) => {
                   if (state || vote.published === 'public') {
                     let Change = {
-                      id: uuid.v1(),
+                      id: IDMaker.make(),
                       event_id: update.event_id,
                       updated: 'vote_deleted',
                       title: `Update On Main Activity`,
@@ -1236,7 +1236,7 @@ class UpdatesDispatcher {
           stores.CommiteeStore.imIInThisCommttee(update.event_id, stores.LoginStore.user.phone, update.new_value.committee_id).then((state) => {
             if (update.published === 'public' || state) {
               let Change = {
-                id: uuid.v1(),
+                id: IDMaker.make(),
                 event_id: update.event_id,
                 updated: 'vote_restored',
                 title: `Update on ${update.new_value.title} vote`,
@@ -1290,7 +1290,7 @@ class UpdatesDispatcher {
               console.warn(state, "--")
               if (state || vote.published === 'public') {
                 let Change = {
-                  id: uuid.v1(),
+                  id: IDMaker.make(),
                   event_id: update.event_id,
                   updated: 'voted',
                   title: `Update on ${vote.title} vote`,
@@ -1314,7 +1314,7 @@ class UpdatesDispatcher {
             vote.committee_id).then((state) => {
               if (state || votes.published === 'public') {
                 let Change = {
-                  id: uuid.v1(),
+                  id: IDMaker.make(),
                   event_id: update.event_id,
                   updated: 'vote_period',
                   title: `Update on ${vote.title} vote`,
@@ -1514,7 +1514,7 @@ class UpdatesDispatcher {
         Participant.host = update.new_value.host;
         Participant.status = update.new_value.status;
         let Change = {
-          id: uuid.v1(),
+          id: IDMaker.make(),
           title: 'Update On Main Activity',
           event_id: update.event_id,
           updated: 'joint',
@@ -1544,7 +1544,7 @@ class UpdatesDispatcher {
               stores.Reminds.addReminds(update.event_id,Remind.data).then(() => {
                 stores.Events.addRemind(update.event_id, Remind.id).then(() => {
                   let Change = {
-                    id: uuid.v1(),
+                    id: IDMaker.make(),
                     title: "Updates On Main Activity",
                     updated: "added_remind",
                     updater: update.updater,
@@ -1599,7 +1599,7 @@ class UpdatesDispatcher {
       return new Promise((resolve, reject) => {
         stores.Reminds.updatePeriod(update.new_value, true).then((oldRemind) => {
           let Change = {
-            id: uuid.v1(),
+            id: IDMaker.make(),
             title: `Updates On ${oldRemind.title} Remind`,
             updated: `remind_period_updated`,
             updater: update.updater,
@@ -1628,7 +1628,7 @@ class UpdatesDispatcher {
       return new Promise((resolve, reject) => {
         stores.Reminds.updateDescription(update.new_value, true).then((oldRemind) => {
           let Change = {
-            id: uuid.v1(),
+            id: IDMaker.make(),
             title: `Updates On ${oldRemind.title} Remind`,
             updated: `remind_description_updated`,
             updater: update.updater,
@@ -1653,7 +1653,7 @@ class UpdatesDispatcher {
       return new Promise((resolve, reject) => {
         stores.Reminds.updateTitle(update.event_id,update.new_value, true).then((oldRemind) => {
           let Change = {
-            id: uuid.v1(),
+            id: IDMaker.make(),
             title: `Updates On ${oldRemind.title} Remind`,
             updated: `remind_title_updated`,
             updater: update.updater,
@@ -1678,7 +1678,7 @@ class UpdatesDispatcher {
       return new Promise((resolve, reject) => {
         stores.Reminds.removeRemind(update.event_id,update.new_value, true).then((oldRemind) => {
           let Change = {
-            id: uuid.v1(),
+            id: IDMaker.make(),
             title: `Updates On ${oldRemind.title} Remind`,
             updated: `delete_remind`,
             updater: update.updater,
@@ -1711,7 +1711,7 @@ class UpdatesDispatcher {
           stores.Events.addRemind(update.new_value.remind.id,
             update.new_value.remind.event_id, true).then(() => {
               let Change = {
-                id: uuid.v1(),
+                id: IDMaker.make(),
                 title: `Updates On ${update.new_value.remind.title} Remind`,
                 updated: `restored_remind`,
                 updater: update.updater,
@@ -1744,7 +1744,7 @@ class UpdatesDispatcher {
       return new Promise((resolve, reject) => {
         stores.Reminds.updateStatus(update.event_id,update.new_value, true).then((oldRemind) => {
           let Change = {
-            id: uuid.v1(),
+            id: IDMaker.make(),
             title: `Updates On ${oldRemind.title} Remind`,
             updated: `remind_public_state_updated`,
             updater: update.updater,
@@ -1769,7 +1769,7 @@ class UpdatesDispatcher {
       return new Promise((resolve, reject) => {
         stores.Reminds.updateRecursiveFrequency(update.event_id,update.new_value, true).then((oldRemind) => {
           let Change = {
-            id: uuid.v1(),
+            id: IDMaker.make(),
             title: `Updates On ${oldRemind.title} Remind`,
             updated: `remind_reurrence_config_updated`,
             updater: update.updater,
@@ -1800,7 +1800,7 @@ class UpdatesDispatcher {
       return new Promise((resolve, reject) => {
         stores.Reminds.addMembers(update.event_id,update.new_value, true).then(oldRemind => {
           let Change = {
-            id: uuid.v1(),
+            id: IDMaker.make(),
             title: `Updates On ${oldRemind.title} Remind`,
             updated: `remind_member_added`,
             updater: update.updater,
@@ -1831,7 +1831,7 @@ class UpdatesDispatcher {
       return new Promise((resolve, reject) => {
         stores.Reminds.removeMember(update.event_id,update.new_value, true).then(oldRemind => {
           let Change = {
-            id: uuid.v1(),
+            id: IDMaker.make(),
             title: `Updates On ${oldRemind.title} Remind`,
             updated: `remind_member_removed`,
             updater: update.updater,
@@ -1863,7 +1863,7 @@ class UpdatesDispatcher {
       return new Promise((resolve, reject) => {
         stores.Reminds.makeAsDone(update.event_id,update.new_value, true).then(oldRemind => {
           let Change = {
-            id: uuid.v1(),
+            id: IDMaker.make(),
             title: `Updates On ${oldRemind.title} Remind`,
             updated: `remind_marked_as_done`,
             updater: update.updater,
@@ -1888,7 +1888,7 @@ class UpdatesDispatcher {
       return new Promise((resolve, reject) => {
         stores.Reminds.confirm(update.event_id,update.new_value, true).then(oldRemind => {
           let Change = {
-            id: uuid.v1(),
+            id: IDMaker.make(),
             title: `Updates On ${oldRemind.title} Remind`,
             updated: `remind_confirmed`,
             updater: update.updater,
@@ -1913,7 +1913,7 @@ class UpdatesDispatcher {
       return new Promise((resolve, reject) => {
         stores.Reminds.updateRequestReportOnComplete(update.event_id,update.new_value, true).then(oldRemind => {
           let Change = {
-            id: uuid.v1(),
+            id: IDMaker.make(),
             title: `Updates On ${oldRemind.title} Remind`,
             updated: `remind_confirmed`,
             updater: update.updater,
@@ -1939,7 +1939,7 @@ class UpdatesDispatcher {
         stores.CommiteeStore.getCommitee(update.event_id, update.new_value).then(commitee => {
           stores.Events.addEventCommitee(update.event_id, update.new_value).then(() => {
             let Change = {
-              id: uuid.v1(),
+              id: IDMaker.make(),
               updated: update.updated,
               title: "Update On Committees",
               event_id: update.event_id,
@@ -1962,7 +1962,7 @@ class UpdatesDispatcher {
         return new Promise((resolve, reject) => {
           stores.CommiteeStore.changeCommiteeOpenedState(update.event_id, update.new_value, true).then(commitee => {
             let Change = {
-              id: uuid.v1(),
+              id: IDMaker.make(),
               updated: update.updated,
               title: "Update On Committees",
               event_id: update.event_id,
@@ -1985,7 +1985,7 @@ class UpdatesDispatcher {
         return new Promise((resolve, reject) => {
           stores.CommiteeStore.changeCommiteeOpenedState(update.event_id, update.new_value, false).then(commitee => {
             let Change = {
-              id: uuid.v1(),
+              id: IDMaker.make(),
               updated: update.updated,
               title: "Update On Committees",
               event_id: update.event_id,
@@ -2007,7 +2007,7 @@ class UpdatesDispatcher {
         stores.CommiteeStore.removeCommitee(update.event_id, update.new_value).then(commitee => {
           stores.Events.removeCommitee(update.event_id, update.new_value).then(() => {
             let Change = {
-              id: uuid.v1(),
+              id: IDMaker.make(),
               updated: update.updated,
               title: "Update On Committees",
               event_id: update.event_id,
@@ -2030,7 +2030,7 @@ class UpdatesDispatcher {
       return new Promise((resolve, reject) => {
         stores.CommiteeStore.addMembers(update.event_id, update.new_value.id, update.new_value.member).then((commitee) => {
           let Change = {
-            id: uuid.v1(),
+            id: IDMaker.make(),
             updated: update.updated,
             title: "Update On Committees",
             event_id: update.event_id,
@@ -2051,7 +2051,7 @@ class UpdatesDispatcher {
       return new Promise((resolve, reject) => {
         stores.CommiteeStore.removeMember(update.event_id, update.new_value.id, update.new_value.phone).then((commitee) => {
           let Change = {
-            id: uuid.v1(),
+            id: IDMaker.make(),
             updated: update.updated,
             title: "Update On Committees",
             event_id: update.event_id,
@@ -2073,7 +2073,7 @@ class UpdatesDispatcher {
         stores.CommiteeStore.getCommitee(update.event_id, update.new_value.id).then(oldCommitee => {
           stores.CommiteeStore.updateCommiteeName(update.event_id, update.new_value.id, update.new_value.name).then(commitee => {
             let Change = {
-              id: uuid.v1(),
+              id: IDMaker.make(),
               updated: update.updated,
               title: "Update On Committees",
               event_id: update.event_id,
@@ -2096,7 +2096,7 @@ class UpdatesDispatcher {
         stores.CommiteeStore.updateCommiteeState(update.event_id, update.new_value.id, update.new_value.state).then((commitee) => {
           //console.warn(update.updater)
           let Change = {
-            id: uuid.v1(),
+            id: IDMaker.make(),
             title: "Update On Committees",
             updated: update.updated,
             event_id: update.event_id,

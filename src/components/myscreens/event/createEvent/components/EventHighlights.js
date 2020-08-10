@@ -41,15 +41,10 @@ import  EvilIcons  from 'react-native-vector-icons/EvilIcons';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import Spinner from '../../../../Spinner';
 import GState from "../../../../../stores/globalState";
+import IDMaker from '../../../../../services/IdMaker';
 //create an extension to toast so that it can work in my modal
 
-var uuid = require("react-native-uuid");
-uuid.v1({
-  node: [0x01, 0x23, 0x45, 0x67, 0x89, 0xab],
-  clockseq: 0x1234,
-  msecs: new Date().getTime(),
-  nsecs: Math.floor(Math.random() * 5678) + 50,
-});
+
 
 const options = {
   title: "Select Avatar",
@@ -223,10 +218,7 @@ export default class EventHighlights extends BleashupModal {
 
   AddHighlight() {
     console.warn("creating highlight")
-    var arr = new Array(32);
-    let num = Math.floor(Math.random() * 16);
-    uuid.v1(null, arr, num);
-    let New_id = uuid.unparse(arr, num);
+    let New_id = IDMaker.make();
     let newHighlight = this.state.currentHighlight;
     newHighlight.id = New_id;
     newHighlight.event_id = this.props.event_id

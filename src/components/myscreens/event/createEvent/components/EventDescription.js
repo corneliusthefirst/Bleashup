@@ -4,7 +4,6 @@ import {
   TouchableWithoutFeedback, Dimensions, //Keyboard
 } from 'react-native';
 import Modal from 'react-native-modalbox';
-import autobind from "autobind-decorator";
 import stores from '../../../../../stores/index';
 import colorList from '../../../../colorList';
 import CreateTextInput from './CreateTextInput';
@@ -23,7 +22,6 @@ export default class EventDescription extends BleashupModal {
     }
   }
 
-  @autobind
   init() {
     this.setStatePure({
       description: this.props.event.about.description,
@@ -54,7 +52,6 @@ export default class EventDescription extends BleashupModal {
     this.keyboardDidHideSub.remove();
     this.keyboardDidShowSub.remove()
   }*/
-  @autobind
   onChangedEventDescription(value) {
 
     this.setStatePure({ description: value });
@@ -63,7 +60,6 @@ export default class EventDescription extends BleashupModal {
     }
   }
   keyboardDissmissed = false
-  @autobind
   updateDescription() {
     /*if (!this.keyboardDissmissed) {
       this.keyboardDissmissed = true

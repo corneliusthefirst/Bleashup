@@ -27,7 +27,11 @@ export default class AnimatedPureComponent extends BePureComponent {
         });
         //  })
     }
+    willUpdatingComponent(){
+        
+    }
     componentWillUpdate(prevProps, preState, preContext) {
         this.animateUI()
+        this.willUpdatingComponent()
     }
 }

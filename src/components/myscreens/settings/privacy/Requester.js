@@ -1,11 +1,11 @@
 import request from "../../../../services/requestObjects";
 import tcpRequest from "../../../../services/tcpRequestData";
 import EventListener from "../../../../services/severEventListener";
-import uuid from 'react-native-uuid';
 import stores from "../../../../stores";
 import toTitleCase from '../../../../services/toTitle';
 import MainUpdater from '../../../../services/mainUpdater';
 import moment  from 'moment';
+import IDMaker from '../../../../services/IdMaker';
 
 export const storeToken = "save_token";
 export const block = "block";
@@ -171,15 +171,14 @@ export class Requster {
 
     sendPrivacyUpdate(data, action) {
         return new Promise((resolve, reject) => {
-            let id = uuid.v1()
             let privacy = request.Privacy();
             privacy.data = data;
             privacy.action = action;
             tcpRequest
-                .update_privacy(privacy, "privacy" + id)
+                .update_privacy(privacy, "privacy_" + stores.LoginStore.user.phone)
                 .then((JSONData) => {
                     EventListener.sendRequest(JSONData,
-                        "privacy" + id).then((res) => {
+                        "privacy_" + stores.LoginStore.user.phone).then((res) => {
                             resolve(res)
                         }).catch((error) => {
                             reject(error)
@@ -228,7 +227,7 @@ export class Requster {
             let share = request.Share()
             share.event_id = eventID
             share.share.activity_id = eventID
-            share.share.id = uuid.v1()
+            share.share.id = IDMaker.make()
             share.share.item_id = itemID
             share.members = members
             share.share.type = type

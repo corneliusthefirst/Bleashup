@@ -24,6 +24,7 @@ import shadower from "../../shadower";
 import bleashupHeaderStyle from "../../../services/bleashupHeaderStyle";
 import colorList from "../../colorList";
 import BeNavigator from "../../../services/navigationServices";
+import IDMaker from '../../../services/IdMaker';
 
 let { height, width } = Dimensions.get("window");
 

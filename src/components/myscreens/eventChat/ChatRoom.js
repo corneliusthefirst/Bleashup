@@ -31,7 +31,6 @@ import stores from '../../../stores';
 import ReactNativeZoomableView from '@dudigital/react-native-zoomable-view/src/ReactNativeZoomableView';
 import VerificationModal from '../invitations/components/VerificationModal';
 import GState from '../../../stores/globalState';
-import uuid from 'react-native-uuid';
 import {
     LoadMoreComments,
 } from '../../../services/cloud_services';
@@ -69,6 +68,7 @@ import SimpleLineIcons from "react-native-vector-icons/SimpleLineIcons"
 import SideButton from '../../sideButton';
 import Toaster from '../../../services/Toaster';
 import  EvilIcons  from 'react-native-vector-icons/EvilIcons';
+import IDMaker from '../../../services/IdMaker';
 
 const screenWidth = Math.round(Dimensions.get('window').width);
 const screenheight = Math.round(Dimensions.get('window').height);
@@ -834,7 +834,7 @@ class ChatRoom extends AnimatedComponent {
                                             ref="scrollViewRef"
                                             //style={{ height: screenheight }}
                                             >
-                                            <View style={{ height: this.state.messageListHeight,flexDirection: 'column',justifyContent: 'flex-end', }}>
+                                            <View style={{ height: this.state.messageListHeight,flexDirection: 'column',justifyContent: 'flex-end', marginHorizontal: 10,}}>
                                                 <TouchableWithoutFeedback
                                                     onPressIn={() => {
                                                         this.scrolling = false;
@@ -856,7 +856,7 @@ class ChatRoom extends AnimatedComponent {
                                                         }}
                                                         action={() => requestAnimationFrame(() => { this.scrollToEnd() })}
                                                         //buttonTextStyle={{color:colorList.bodyBackground}}
-                                                        //offsetX={20}
+                                                        offsetX={10}
                                                         size={20}
                                                         //offsetY={20}
                                                     />}
@@ -945,7 +945,7 @@ class ChatRoom extends AnimatedComponent {
                                 isOpen={this.state.isShareWithContactsOpened}
                                 message={this.state.currentMessage && {
                                     ...this.state.currentMessage,
-                                    id: uuid.v1(),
+                                    id: IDMaker.make(),
                                     created_at: moment().format(),
                                     sender: this.sender,
                                     type: this.state.currentMessage.type === 'image' ? 'photo' :

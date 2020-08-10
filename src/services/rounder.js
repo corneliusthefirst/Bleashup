@@ -8,6 +8,7 @@ export default function rounder(size, bac) {
         borderRadius: size - 5,
         flexDirection: 'column',
         textAlign: 'center',
+        alignItems: 'center',
         backgroundColor: bac ? typeof bac === "string" ? bac : "rgba(34, 0, 0, 0.1)" : ColorList.bodyBackground,
         justifyContent: 'center',
         ...shadower(1),

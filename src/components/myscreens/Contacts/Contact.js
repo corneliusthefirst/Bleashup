@@ -43,13 +43,6 @@ import  AntDesign  from 'react-native-vector-icons/AntDesign';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import Spinner from '../../Spinner';
 
-var uuid = require('react-native-uuid');
-uuid.v1({
-  node: [0x01, 0x23, 0x45, 0x67, 0x89, 0xab],
-  clockseq: 0x1234,
-  msecs: new Date().getTime(),
-  nsecs: Math.floor(Math.random() * 5678) + 50,
-});
 
 let { height, width } = Dimensions.get('window');
 export default class ContactView extends Component {

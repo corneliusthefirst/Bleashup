@@ -9,11 +9,11 @@ import VideoViewer from './VideoModal';
 import InputView from './InputView';
 import stores from '../../../stores';
 import firebase from 'react-native-firebase';
-import uuid from 'react-native-uuid';
 import shadower from '../../shadower';
 import ColorList from '../../colorList';
 import Toaster from '../../../services/Toaster';
 import AntDesign from 'react-native-vector-icons/AntDesign';
+import IDMaker from '../../../services/IdMaker';
 const screenWidth = Math.round(Dimensions.get('window').width);
 const screenheight = Math.round(Dimensions.get('window').height);
 export default class HighLightsDetails extends Component {
@@ -90,7 +90,7 @@ export default class HighLightsDetails extends Component {
     }
     sendReaction(mess) {
         let message = {
-            id: uuid.v1(),
+            id: IDMaker.make(),
             sender: {
                 phone: stores.LoginStore.user.phone.replace("00", "+"),
                 nickname: stores.LoginStore.user.name

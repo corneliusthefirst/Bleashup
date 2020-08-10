@@ -1,5 +1,4 @@
 import React, { Component } from "react";
-import autobind from "autobind-decorator";
 
 //import { Button,View } from "react-native";
 
@@ -25,26 +24,22 @@ export default class ResetCodeView extends Component {
   loginStore = stores.LoginStore;
   temploginStore = stores.TempLoginStore;
 
-  @autobind
   onChangedCode(text) {
     this.setState({ code: text });
 
   }
 
-  @autobind
   back(){
     this.props.navigation.navigate('ForgotPassword');
     
   }
 
-  @autobind
   removeError(){
     globalState.error = false
   }
 
 
 
-  @autobind
   resendCode(){
    this.temploginStore.counter = 0
    resetCode = Math.floor(Math.random() * 600000) + 1000
@@ -83,7 +78,6 @@ export default class ResetCodeView extends Component {
 
 
 
-  @autobind
   onClickReset() {
 
     if( this.temploginStore.counter >= 300){

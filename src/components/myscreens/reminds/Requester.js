@@ -1,7 +1,6 @@
 import tcpRequest from '../../../services/tcpRequestData';
 import EventListener from '../../../services/severEventListener';
 import stores from '../../../stores';
-import uuid from 'react-native-uuid';
 import request from '../../../services/requestObjects';
 import { isEqual } from 'lodash';
 import moment from 'moment';
@@ -10,6 +9,7 @@ import CalendarServe from '../../../services/CalendarService';
 import MainUpdater from '../../../services/mainUpdater';
 import toTitleCase from '../../../services/toTitle';
 import Toaster from '../../../services/Toaster';
+import IDMaker from '../../../services/IdMaker';
 class Requester {
     saveToCanlendar(eventID, remind, alarms,newRemindName) {
         if (findIndex(remind.members, { phone: stores.LoginStore.user.phone }) >= 0) {
@@ -35,7 +35,7 @@ class Requester {
                             stores.Reminds.addReminds(Remind.event_id, Remind).then((res) => {
                                 stores.Events.addRemind(Remind.event_id, Remind.id).then(() => {
                                     let Change = {
-                                        id: uuid.v1(),
+                                        id: IDMaker.make(),
                                         title: "Updates On Main Activity",
                                         updated: "added_remind",
                                         updater: stores.LoginStore.user.phone,
@@ -76,7 +76,7 @@ class Requester {
                                         remindID, title: newName
                                 }, true).then((oldRemind) => {
                                     let Change = {
-                                        id: uuid.v1(),
+                                        id: IDMaker.make(),
                                         title: `Updates On ${oldRemind.title} Remind`,
                                         updated: `remind_title_updated`,
                                         updater: stores.LoginStore.user.phone,
@@ -122,7 +122,7 @@ class Requester {
                             description: newDescription
                         }, true).then((oldRemind) => {
                             let Change = {
-                                id: uuid.v1(),
+                                id: IDMaker.make(),
                                 title: `Updates On ${oldRemind.title} Remind`,
                                 updated: `remind_description_updated`,
                                 updater: stores.LoginStore.user.phone,
@@ -163,7 +163,7 @@ class Requester {
                         confirmed: Member
                     }, true).then((oldRemind) => {
                         let Change = {
-                            id: uuid.v1(),
+                            id: IDMaker.make(),
                             title: `Updates On ${oldRemind.title} Remind`,
                             updated: `remind_confirmed`,
                             updater: stores.LoginStore.user.phone,
@@ -202,7 +202,7 @@ class Requester {
                             recursive_frequency: newConfigs
                         }, remindID).then((oldRemind) => {
                             let Change = {
-                                id: uuid.v1(),
+                                id: IDMaker.make(),
                                 title: `Updates On ${oldRemind.title} Remind`,
                                 updated: `remind_reurrence_config_updated`,
                                 updater: stores.LoginStore.user.phone,
@@ -245,7 +245,7 @@ class Requester {
                     EventListener.sendRequest(JSONData, remindID + '_public_state').then(response => {
                         stores.Reminds.updateStatus(eventID, { remind_id: remindID, status: newState }, true).then(oldRemind => {
                             let Change = {
-                                id: uuid.v1(),
+                                id: IDMaker.make(),
                                 title: `Updates On ${oldRemind.title} Remind`,
                                 updated: `remind_public_state_updated`,
                                 updater: stores.LoginStore.user.phone,
@@ -282,7 +282,7 @@ class Requester {
                     EventListener.sendRequest(JSONData, remindID + '_must_report').then(response => {
                         stores.Reminds.updateRequestReportOnComplete(eventID, { remind_id: remindID, must_report: newMustReport }, false).then(oldRemind => {
                             let Change = {
-                                id: uuid.v1(),
+                                id: IDMaker.make(),
                                 title: `Updates On ${oldRemind.title} Remind`,
                                 updated: `remind_period_updated`,
                                 updater: stores.LoginStore.user.phone,
@@ -319,7 +319,7 @@ class Requester {
                     EventListener.sendRequest(JSONData, remindID + '_period').then(response => {
                         stores.Reminds.updatePeriod(eventID, { remind_id: remindID, period: newPeriod }, true).then(oldRemind => {
                             let Change = {
-                                id: uuid.v1(),
+                                id: IDMaker.make(),
                                 title: `Updates On ${oldRemind.title} Remind`,
                                 updated: `remind_period_updated`,
                                 updater: stores.LoginStore.user.phone,
@@ -407,7 +407,7 @@ class Requester {
                         remind_id: remind.id
                     }, true).then(oldRemind => {
                         let Change = {
-                            id: uuid.v1(),
+                            id: IDMaker.make(),
                             title: `Updates On ${oldRemind.title} Remind`,
                             updated: `remind_member_added`,
                             updater: stores.LoginStore.user.phone,
@@ -448,7 +448,7 @@ class Requester {
                                 remind_id: remindID
                             }, true).then(oldRemind => {
                                 let Change = {
-                                    id: uuid.v1(),
+                                    id: IDMaker.make(),
                                     title: `Updates On ${oldRemind.title} Remind`,
                                     updated: `remind_member_removed`,
                                     updater: stores.LoginStore.user.phone,
@@ -540,7 +540,7 @@ class Requester {
                         remind_id: remind.id
                     }, true).then(oldRemind => {
                         let Change = {
-                            id: uuid.v1(),
+                            id: IDMaker.make(),
                             title: `Updates On ${oldRemind.title} Remind`,
                             updated: `remind_marked_as_done`,
                             updater: stores.LoginStore.user.phone,
@@ -579,7 +579,7 @@ class Requester {
                     stores.Reminds.removeRemind(eventID, remindID).then((oldRemind) => {
                         stores.Events.removeRemind(eventID, remindID, false).then(() => {
                             let Change = {
-                                id: uuid.v1(),
+                                id: IDMaker.make(),
                                 title: `Removed ${oldRemind.title} Remind`,
                                 updated: `delete_remind`,
                                 updater: stores.LoginStore.user.phone,
@@ -616,7 +616,7 @@ class Requester {
                     stores.Reminds.addReminds(remind.event_id, remind).then(() => {
                         stores.Events.addRemind(remind.event_id, remind.id).then(() => {
                             let Change = {
-                                id: uuid.v1(),
+                                id: IDMaker.make(),
                                 title: `Updates On ${remind.title} Remind`,
                                 updated: `restored_remind`,
                                 updater: stores.LoginStore.user.phone,

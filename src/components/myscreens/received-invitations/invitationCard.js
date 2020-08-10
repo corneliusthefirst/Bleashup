@@ -3,7 +3,6 @@ import {
   Platform, StyleSheet, Image, TextInput, FlatList, TouchableOpacity,
   ActivityIndicator, View, Alert, BackHandler, ToastAndroid
 } from 'react-native';
-import autobind from "autobind-decorator";
 
 
 import styles from './style';
@@ -71,7 +70,6 @@ class CardListItem extends Component {
     hasJoin: false
   }
   //accepted invitation
-  @autobind
   onAccept() {
     let invitation = {
       inviter: this.props.item.inviter,
@@ -113,7 +111,6 @@ class CardListItem extends Component {
     })
   }
   //refused invitation
-  @autobind
   onDenied() {
     this.setState({
       isRequesting: true

@@ -2,7 +2,6 @@ import React, { Component } from "react";
 import { Text, View, Linking, Alert, Dimensions, ScrollView, TouchableOpacity } from "react-native"
 import InAppBrowser from 'react-native-inappbrowser-reborn';
 import Modal from 'react-native-modalbox';
-import autobind from "autobind-decorator";
 import colorList from '../../../../colorList';
 import openLink from "./openLinkOnBrowser";
 import  EvilIcons from 'react-native-vector-icons/EvilIcons';

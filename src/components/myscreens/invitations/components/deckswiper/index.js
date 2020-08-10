@@ -2,7 +2,6 @@ import React, { Component } from "react";
 import { View } from 'react-native';
 import SwiperCard from './swiperCard';
 import SwiperHighlight from './swiperHighlight';
-import autobind from 'autobind-decorator';
 
 
 export default class DeckSwiperModule extends Component {
@@ -16,18 +15,15 @@ export default class DeckSwiperModule extends Component {
 
   }
 
-  @autobind
   SwipeLeft() {
     this._deckSwiper._root.swipeLeft()
   }
-  @autobind
   SwipeRight() {
     this._deckSwiper._root.swipeRight()
   }
 
 
 
-  @autobind
   Desc(item) {
     if (item.url) {
       //creating the highlights starting and ending data

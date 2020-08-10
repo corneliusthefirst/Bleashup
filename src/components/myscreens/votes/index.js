@@ -7,7 +7,6 @@ import Voter from "../eventChat/Voter";
 import shadower from "../../shadower";
 import Modal from "react-native-modalbox";
 import VoteCreation from "../eventChat/VoteCreation";
-import uuid from "react-native-uuid";
 import VoteRequest from "./Requester";
 import sayAppBusy from "./sayAppBusy";
 import request from "../../../services/requestObjects";
@@ -24,6 +23,7 @@ import ShareFrame from "../../mainComponents/ShareFram";
 import Share from "../../../stores/share";
 import replies from "../eventChat/reply_extern";
 import Toaster from "../../../services/Toaster";
+import IDMaker from '../../../services/IdMaker';
 let { height, width } = Dimensions.get("window");
 
 export default class Votes extends BleashupModal {
@@ -145,7 +145,7 @@ export default class Votes extends BleashupModal {
       this.props.startLoader();
       let newVote = {
         ...vote,
-        id: uuid.v1(),
+        id: IDMaker.make(),
         committee_id: this.props.committee_id,
         event_id: this.props.event_id,
       };

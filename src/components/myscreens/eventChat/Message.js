@@ -413,7 +413,6 @@ export default class Message extends BeComponent {
             : this.placeHolder[this.props.message.type];
     render() {
         let showName = this.state.sender && this.state.different
-        console.warn(showName,this.props.message.sender.phone)
         let topMostStyle = {
             marginLeft: this.state.sender ? "1%" : 0,
             marginRight: !this.state.sender ? "1%" : 0,

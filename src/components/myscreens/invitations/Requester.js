@@ -3,10 +3,10 @@ import requestObject from "../../../services/requestObjects"
 import stores from "../../../stores";
 import serverEventListener from '../../../services/severEventListener'
 import { AddParticipant } from '../../../services/cloud_services';
-import uuid from 'react-native-uuid';
 import firebase from 'react-native-firebase';
 import { uniqBy } from 'lodash';
 import moment from "moment";
+import IDMaker from '../../../services/IdMaker';
 class Requester {
     seen(invitation) {
         return new Promise((resolve, reject) => {
@@ -63,7 +63,7 @@ class Requester {
                         })
                         stores.Events.addParticipant(invitation.event_id, Participant, true).then(() => {
                             let Change = {
-                                id: uuid.v1(),
+                                id: IDMaker.make(),
                                 title: `First Update`,
                                 updated: "new_event",
                                 event_id: invitation.event_id,

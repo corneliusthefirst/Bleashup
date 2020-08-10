@@ -11,7 +11,6 @@ import {
   KeyboardAvoidingView,
   Platform,
 } from "react-native";
-import autobind from "autobind-decorator";
 import { filter, find, findIndex, concat, uniqBy, uniq, isEmpty } from "lodash";
 import request from "../../../services/requestObjects";
 import stores from "../../../stores/index";
@@ -21,7 +20,6 @@ import moment from "moment";
 import SelectableContactList from "../../SelectableContactList";
 import NumericInput from "react-native-numeric-input";
 import Modal from "react-native-modalbox";
-import uuid from "react-native-uuid";
 import emitter from "../../../services/eventEmiter";
 import {
   frequencyType,
@@ -92,7 +90,6 @@ export default class TasksCreation extends BleashupModal {
   unmountingComponent(){
     clearTimeout(this.initTimeout)
   }
-  @autobind
   init() {
     this.props.remind && typeof this.props.remind !== "string"
       ? this.initTimeout = setTimeout(() => {
@@ -226,7 +223,6 @@ export default class TasksCreation extends BleashupModal {
   componentDidMount() {
     this.init();
   }
-  @autobind
   show(mode) {
     this.setStatePure({
       show: true,
@@ -234,18 +230,15 @@ export default class TasksCreation extends BleashupModal {
     });
   }
 
-  @autobind
   timepicker() {
     this.show("time");
   }
 
   //for date
-  @autobind
   showDateTimePicker() {
     this.setStatePure({ isDateTimePickerVisible: true });
   }
 
-  @autobind
   handleDatePicked(event, date) {
     if (date !== undefined) {
       let newDate = moment(date).format().split("T")[0];
@@ -277,7 +270,6 @@ export default class TasksCreation extends BleashupModal {
     }
   }
 
-  @autobind
   setTime(event, date) {
     if (date !== undefined) {
       let time = moment(date).format().split("T")[1];
@@ -300,7 +292,6 @@ export default class TasksCreation extends BleashupModal {
     }
   }
 
-  @autobind
   onChangedTitle(value) {
     this.state.currentRemind.title = value;
     this.setStatePure({
@@ -316,7 +307,6 @@ export default class TasksCreation extends BleashupModal {
     }
   }
 
-  @autobind
   onChangedDescription(value) {
     this.setStatePure({
       currentRemind: { ...this.state.currentRemind, description: value },
@@ -352,19 +342,16 @@ export default class TasksCreation extends BleashupModal {
     }
   }
 
-  @autobind
   onClickMembers() {
     this.setStatePure({ selectMemberState: true });
   }
 
-  @autobind
   back() {
     //this.setStatePure({
     //  isExtra:false
     // })
     this.props.onClosed();
   }
-  @autobind
   setRecursiveFrequency(value) {
     let NewRemind = {
       remind_id: this.state.currentRemind.id,
@@ -392,7 +379,6 @@ export default class TasksCreation extends BleashupModal {
     }
   }
 
-  @autobind
   resetRemind() {
     this.setStatePure({
       currentRemind: request.Remind(),
@@ -475,7 +461,6 @@ export default class TasksCreation extends BleashupModal {
     }
   }
 
-  @autobind
   addNewRemind() {
     if (!this.props.working) {
       this.props.CreateRemind(
@@ -517,7 +502,6 @@ export default class TasksCreation extends BleashupModal {
     //this.resetRemind();
   }
 
-  @autobind
   takecheckedResult(result) {
     this.setStatePure({ currentMembers: uniqBy(result, "phone") });
     !this.props.update &&
@@ -755,7 +739,7 @@ export default class TasksCreation extends BleashupModal {
                     height={50}
                     value={this.state.currentRemind.title}
                     placeholder={this.isEvent()?"Your event title":"Your remind message"}
-                    onChange={this.onChangedTitle}
+                    onChange={this.onChangedTitle.bind(this)}
                   />
                 </View>
               </View>
@@ -813,7 +797,7 @@ export default class TasksCreation extends BleashupModal {
                     <DateTimePicker
                       mode="date"
                       value={defaultDate}
-                      onChange={this.handleDatePicked}
+                      onChange={this.handleDatePicked.bind(this)}
                     />
                   )}
                   {this.state.show && (
@@ -821,7 +805,7 @@ export default class TasksCreation extends BleashupModal {
                       mode="time"
                       value={defaultDate}
                       display="default"
-                      onChange={this.setTime}
+                      onChange={this.setTime.bind(this)}
                     />
                   )}
                 </View>

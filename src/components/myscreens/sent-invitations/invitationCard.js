@@ -4,7 +4,6 @@ import {
   ActivityIndicator, View, Alert, BackHandler, ToastAndroid
 } from 'react-native';
 
-import autobind from "autobind-decorator";
 
 
 import styles from './style';
@@ -108,14 +107,12 @@ class CardListItem extends Component {
     })
   }
   //accepted invitation
-  @autobind
   onAccept() {
     this.setState({ accept: true })
     this.state.item.accept = true
     //;
   }
   //refused invitation
-  @autobind
   onDenied() {
     this.setState({ deny: true })
     this.state.item.deny = true
@@ -310,12 +307,6 @@ export default CardListItem
      isOpenDetails: false
    })
  }
- @autobind closeAllModals() {
-   return this.setState({
-     isOpenDetails: false,
-     isOpenStatus: false,
-     enlargeEventImage: false
-   })
- }
+ 
 */
 

@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
 import { Platform, StyleSheet, Image, ScrollView, TextInput, FlatList, View, Alert, TouchableHighlight, RefreshControl } from 'react-native';
 
-import autobind from "autobind-decorator";
 
 import cardListData from './EventData';
 
@@ -201,7 +200,6 @@ class ReceivedInvitations extends Component {
     return require('random-string')({ length: numberOfCharacters });
   }
 
-  @autobind
   @action addInvitation() {
     const newKey = this.generateKey(6)
 

@@ -1,10 +1,10 @@
 import tcpRequest from '../../../../services/tcpRequestData';
 import EventListener from '../../../../services/severEventListener';
 import  stores  from '../../../../stores';
-import  uuid  from 'react-native-uuid';
 import  moment  from 'moment';
 import firebase  from 'react-native-firebase';
 import Toaster from '../../../../services/Toaster';
+import IDMaker from '../../../../services/IdMaker';
 
 class CreateRequester {
     createEvent(event){
@@ -20,7 +20,7 @@ class CreateRequester {
                         let newEvent = { ...event, id: response.event_id }
                         stores.Events.addEvent(newEvent).then(() => {
                             let Change = {
-                                id: uuid.v1(),
+                                id: IDMaker.make(),
                                 title: `First Update`,
                                 updated: "new_event",
                                 event_id: response.event_id,

@@ -22,7 +22,6 @@ import Requester from "./Requester";
 import emitter from "../../../services/eventEmiter";
 import GState from "../../../stores/globalState";
 import firebase from "react-native-firebase";
-import uuid from "react-native-uuid";
 import NotificationModal from "./NotificationModal";
 import ContactListModal from "./ContactListModal";
 import ContentModal from "./ContentModal";
@@ -51,6 +50,7 @@ import BeNavigator from "../../../services/navigationServices";
 import replies from "../eventChat/reply_extern";
 import Toaster from "../../../services/Toaster";
 import Spinner from '../../Spinner';
+import IDMaker from '../../../services/IdMaker';
 
 const screenWidth = Math.round(Dimensions.get("window").width);
 
@@ -769,7 +769,7 @@ export default class Event extends Component {
       });
       let arr = [creator, currentCreator];
       let commitee = {
-        id: uuid.v1(),
+        id: IDMaker.make(),
         creator: this.user.phone,
         created_at: moment().format(),
         updated_at: moment().format(),

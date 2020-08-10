@@ -1,12 +1,10 @@
 /* eslint-disable prettier/prettier */
 import React, { Component } from "react";
-import autobind from "autobind-decorator";
 
 import { Button,View,Dimensions,TouchableWithoutFeedback,Image,ScrollView} from "react-native";
 
 
 import stores from "../../../stores";
-import { functionDeclaration } from "@babel/types";
 import bleashupHeaderStyle from "../../../services/bleashupHeaderStyle";
 import EditUserModal from "./editUserModal";
 import shadower from "../../../components/shadower";

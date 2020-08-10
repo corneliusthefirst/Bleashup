@@ -1,7 +1,7 @@
 import stores from "../stores";
-import uuid from "react-native-uuid";
 import CalendarServe from "./CalendarService";
 import toTitleCase from './toTitle';
+import IDMaker from './IdMaker';
 import {
   shared_post,
   shared_remind,
@@ -12,7 +12,7 @@ class mainUpdater {
       stores.Events.addParticipants(eventID, participants, true).then(
         (Event) => {
           let Change = {
-            id: uuid.v1(),
+            id: IDMaker.make(),
             updater: updater,
             updated: updated,
             event_id: eventID,
@@ -36,7 +36,7 @@ class mainUpdater {
         true
       ).then((oldRemind) => {
         let Change = {
-          id: uuid.v1(),
+          id: IDMaker.make(),
           title: `Updates On ${oldRemind.title} Remind`,
           updated: "remind_location",
           updater: updater,
@@ -67,7 +67,7 @@ class mainUpdater {
         true
       ).then((oldRemind) => {
         let Change = {
-          id: uuid.v1(),
+          id: IDMaker.make(),
           title: `Updates On ${oldRemind.title} Remind`,
           updated: "remind_url",
           updater: updater,
@@ -147,7 +147,7 @@ class mainUpdater {
           let shareTitle = this.choseShareTitle(share.type);
           let scope = toTitleCase(share.scope);
           let change = {
-            id: uuid.v1(),
+            id: IDMaker.make(),
             date: date,
             updated: share.type,
             updater: updater,

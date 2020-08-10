@@ -21,7 +21,6 @@ import ProfileSimple from "../currentevents/components/ProfileViewSimple";
 import AudioRecorder from "./AudioRecorder";
 import GrowingInput from "./GrowingInput";
 import ColorList from "../../colorList";
-import uuid from "react-native-uuid";
 import moment from "moment";
 import AudioFilePreviewer from "./AudioFilePreviewer";
 import FilePreview from "./FilePreview";
@@ -35,6 +34,7 @@ import MaterialIconCommunity from 'react-native-vector-icons/MaterialCommunityIc
 import Entypo from 'react-native-vector-icons/Entypo';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import FontAwesome5  from 'react-native-vector-icons/FontAwesome5';
+import IDMaker from '../../../services/IdMaker';
 
 export default class ChatKeyboard extends BeComponent {
     constructor(props) {
@@ -61,7 +61,7 @@ export default class ChatKeyboard extends BeComponent {
         } else if (this.state.textValue !== "" && message !== "") {
             this.props.initialzeFlatList();
             let messager = {
-                id: uuid.v1(),
+                id: IDMaker.make(),
                 type: "text_sender",
                 tags: this.tags,
                 text: message,
@@ -94,7 +94,7 @@ export default class ChatKeyboard extends BeComponent {
         if (!dontsend) {
             this.props.scrollToEnd();
             let message = {
-                id: uuid.v1(),
+                id: IDMaker.make(),
                 source: "file://" + (filename || this.filename),
                 duration: duration || this.duration,
                 type: "audio_uploader",
@@ -355,7 +355,7 @@ export default class ChatKeyboard extends BeComponent {
     sendMedia() {
         this.props.scrollToEnd();
         let message = {
-            id: uuid.v1(),
+            id: IDMaker.make(),
             type: (this.state.imageSelected ? "photo" : "video") + "_upload",
             source: this.state.imageSelected ? this.state.image : this.state.video,
             sender: this.props.sender,
@@ -411,7 +411,7 @@ export default class ChatKeyboard extends BeComponent {
             .then((response) => {
               this.sendAllPhoto(response.map((res) => {
                    return {
-                        id: uuid.v1(),
+                        id: IDMaker.make(),
                         type: "photo" + "_upload",
                         source: res.source,
                         sender: this.props.sender,
@@ -528,7 +528,7 @@ export default class ChatKeyboard extends BeComponent {
     sendFileMessage() {
         this.props.scrollToEnd();
         message = {
-            id: uuid.v1(),
+            id: IDMaker.make(),
             source: this.state.source,
             file_name: this.state.filename,
             reply: this.state.replyContent,
