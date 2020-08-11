@@ -35,6 +35,7 @@ export default class PhotoMessage extends BePureComponent {
         return (
             <View style={{ minHeight: 250, width: this.messageWidth, marginTop: '1%', }}>
                 <TouchableOpacity
+                    onPressIn={this.props.pressingIn}
                     onLongPress={() => this.props.handleLongPress ? this.props.handleLongPress() : null}
                     onPress={() => this.props.showPhoto(this.props.message.photo)}>
                     <CacheImages hasJoin onOpen={() => { }}

@@ -274,7 +274,7 @@ export default class AudioMessage extends BePureComponent {
                     width: 290,
                 }}
             >
-                <TouchableWithoutFeedback
+                <TouchableOpacity
                     onLongPress={() =>
                         this.props.handleLongPress ? this.props.handleLongPress() : null
                     }
@@ -377,7 +377,7 @@ export default class AudioMessage extends BePureComponent {
                                 )}
                         </View>
                     </View>
-                </TouchableWithoutFeedback>
+                </TouchableOpacity>
                 {this.props.message.text ? <View style={{ margin: "1%", alignSelf: "flex-start" }}>
                     <TextContent
                         text={this.props.message.text}

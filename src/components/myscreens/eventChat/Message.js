@@ -151,7 +151,7 @@ export default class Message extends BeComponent {
                         room={this.props.room}
                         pressingIn={() => {
                             this.replying = true;
-                            this.handlePress()
+                            this.handlePressIn()
                         }}
                         index={index}
                         sender={sender}
@@ -277,7 +277,7 @@ export default class Message extends BeComponent {
                         })
                     }
                     style={{
-                        ...rounder(20, true),
+                        ...rounder(20, ColorList.transparent),
                         marginTop: sender ? "-25%" : 0,
                         marginBottom: !sender ? "-25%" : 0,
                         borderWidth: 1,

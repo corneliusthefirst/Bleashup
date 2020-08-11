@@ -103,7 +103,8 @@ export default class PhotoUploader extends BePureComponent {
             <View style={{width:this.messageWidth}}>
                 <View>
                     <View>
-                        <TouchableOpacity onPress={() => this.props.showPhoto(this.props.message.source)}>
+                        <TouchableOpacity //onPress={() => this.props.showPhoto(this.props.message.source)}
+                        >
                             <CacheImages style={{
                                  alignSelf: 'center',
                                 width: this.messageWidth, height: 248,

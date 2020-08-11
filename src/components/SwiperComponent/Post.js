@@ -28,7 +28,7 @@ const Post = (props) => {
           source={{ uri: props.post.url }}
           //onLoadEnd={props.onImageLoaded()}
           style={styles.content}
-          resizeMode="stretch"
+          resizeMode="contain"
           // width={ScreenWidth}
         />
       ) : (

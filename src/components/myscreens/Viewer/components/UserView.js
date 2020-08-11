@@ -5,6 +5,7 @@ import RenderDate from './RenderDate';
 import SwipeMenu from '../../../SwiperComponent/swipeMenu';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import GState from '../../../../stores/globalState';
+import MaterialIcons  from 'react-native-vector-icons/MaterialIcons';
 class UserView extends React.PureComponent {
   constructor(props) {
     super(props);
@@ -44,7 +45,7 @@ class UserView extends React.PureComponent {
           name="close"
           color="white"
           size={25}
-          style={{ marginRight: 8 }}
+          style={{...GState.defaultIconSize, marginRight: 8 }}
         />
       </TouchableOpacity>
        }
@@ -62,11 +63,11 @@ class UserView extends React.PureComponent {
       }}>
         
         <TouchableOpacity onPress={props.onClose}>
-        <Icon
+        <MaterialIcons
           name="arrow-back"
           type="MaterialIcons"
           size={30}
-          style={{...GState.defaultTextStyle, marginRight: 8,color:"white" }}
+          style={{...GState.defaultIconSize, marginRight: 8,color:"white" }}
         />
       </TouchableOpacity>
 

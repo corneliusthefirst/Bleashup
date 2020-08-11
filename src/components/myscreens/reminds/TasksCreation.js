@@ -765,7 +765,7 @@ export default class TasksCreation extends BleashupModal {
                     <TouchableOpacity
                       style={{ marginBottom: "auto", marginTop: "auto" }}
                       onPress={() =>
-                        requestAnimationFrame(this.showDateTimePicker)
+                        requestAnimationFrame(this.showDateTimePicker.bind(this))
                       }
                     >
                       <MaterialIcons
@@ -780,7 +780,7 @@ export default class TasksCreation extends BleashupModal {
                     <TouchableOpacity
                       style={{ marginTop: "auto", marginBottom: "auto" }}
                       onPress={() =>
-                        requestAnimationFrame(this.showDateTimePicker)
+                        requestAnimationFrame(this.showDateTimePicker.bind(this))
                       }
                     >
                       <Text style={{...GState.defaultTextStyle, color: ColorList.bodyText }}>
