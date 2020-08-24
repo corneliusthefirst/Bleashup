@@ -49,12 +49,12 @@ export default class PhotoInputModal extends BleashupModal {
 
 
                 <View style={{ flexDirection: 'row', alignSelf: 'center',alignItems:'center', borderRadius: 4, width:'100%'}}>
-                   <View style={{width:'50%'}}>
+                  {!this.props.isRelation && <View style={{width:'50%'}}>
                       <PickersUpload currentURL={{ photo:this.props.photo }} saveMedia={(url) => this.props.saveBackground(url.photo)} creating={false} notVideo notAudio></PickersUpload>
-                   </View>
+                   </View>}
                  
                    <View style={{flexDirection:'row',flex:1,justifyContent:'flex-end', alignItems:'center'}}>
-                   {this.props.photo ? <TouchableOpacity danger onPress={() => this.props.removePhoto()}
+                   {!this.props.isRelation && this.props.photo ? <TouchableOpacity danger onPress={() => this.props.removePhoto()}
                         transparent><EvilIcons style={{ color: 'red',fontSize: 30 }}
                             name="trash" transparent type="EvilIcons"/></TouchableOpacity> : null}
                     <Entypo name="sound-mute" active={true} style={{ color: 'black',fontSize:22 }} onPress={() => {}} />

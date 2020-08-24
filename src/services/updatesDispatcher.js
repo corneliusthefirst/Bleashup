@@ -48,6 +48,7 @@ class UpdatesDispatcher {
     }
   }
   UpdatePossibilities = {
+    typing_message: update => MainUpdater.sayTyping(update.new_value.committee_id,update.new_value.data),
     message_reaction: update => MainUpdater.reactToMessage(update.new_value.data.message_id,
       update.new_value.committee_id,
       update.event_id,
@@ -586,347 +587,6 @@ class UpdatesDispatcher {
             stores.Events.addMustToContribute(
               update.event_id,
               update.new_value,
-              true
-            ).then(() => {
-              GState.eventUpdated = true;
-              resolve();
-            });
-          });
-        });
-      });
-    },
-    new_contribution: update => {
-      return new Promise((resolve, reject) => {
-        let Change = {
-          event_id: update.event_id,
-          changed: "New Contriburion",
-          updater: update.updater,
-          new_value: update.new_value,
-          date: update.date,
-          time: update.time
-        };
-        stores.ChangeLogs.addChanges(Change).then(() => {
-          let requestObject = requestObjects.CID();
-          requestObject.contribution_id = update.new_value;
-          let requestData = tcpRequestData
-            .getContribution(requestObject)
-            .then(JSONData => {
-              Getter.get_data(JSONData).then(Contribution => {
-                stores.Contributions.addContribution(Contribution).then(() => {
-                  stores.Events.addContribution(
-                    Contribution.event_id,
-                    Contribution.id,
-                    true
-                  ).then(() => {
-                    stores.Contributions.readFromStore().then(Contributions => {
-                      GState.eventUpdated = true;
-                      stores.Events.changeUpdatedStatus(
-                        update.event_id,
-                        "contribution_updated",
-                        true
-                      ).then(() => {
-                        GState.eventUpdated = true;
-                        resolve();
-                      });
-                    });
-                  });
-                });
-              });
-            });
-        });
-      });
-    },
-
-    contribution_state: update => {
-      return new Promise((resolve, reject) => {
-        let Change = {
-          event_id: update.event_id,
-          changed: "New Contribution State",
-          updater: update.updater,
-          new_value: update.new_value,
-          date: update.date,
-          time: update.time
-        };
-        stores.ChangeLogs.addChanges(Change).then(() => {
-          switch (update.new_value.new_state) {
-            case "open":
-              stores.Contributions.openContribution(
-                update.new_value.contribution_id,
-                true
-              ).then(() => {
-                GState.eventUpdated = true;
-                resolve();
-              });
-              break;
-            case "closed":
-              stores.Contributions.closeContribution(
-                update.new_value.contribution_id
-              ).then(() => {
-                stores.Events.changeUpdatedStatus(
-                  update.event_id,
-                  "contribution_updated",
-                  true
-                ).then(() => {
-                  GState.eventUpdated = true;
-                  resolve();
-                });
-              });
-          }
-        });
-      });
-    },
-    contribution_period: update => {
-      return new Promise((resolve, reject) => {
-        let Change = {
-          event_id: update.event_id,
-          changed: "New Contribution Period",
-          updater: update.updater,
-          new_value: update.new_value,
-          date: update.date,
-          time: update.time
-        };
-        stores.ChangeLogs.addChanges(Change).then(() => {
-          stores.Contributions.updateContributionPeriod(
-            {
-              id: update.new_value.contribution_id,
-              period: update.new_value.new_period
-            },
-            true
-          ).then(() => {
-            stores.Events.changeUpdatedStatus(
-              update.event_id,
-              "contribution_updated",
-              true
-            ).then(() => {
-              GState.eventUpdated = true;
-              resolve();
-            });
-          });
-        });
-      });
-    },
-    contribution_published: update => {
-      return new Promise((resolve, reject) => {
-        let Change = {
-          event_id: update.event_id,
-          changed: "Contribution Published",
-          updater: update.updater,
-          new_value: update.new_value,
-          date: update.date,
-          time: update.time
-        };
-        stores.ChangeLogs.addChanges(Change).then(() => {
-          stores.Contributions.publishContribution(update.new_value).then(
-            () => {
-              stores.Events.changeUpdatedStatus(
-                update.event_id,
-                "contribution_updated",
-                true
-              ).then(() => {
-                GState.eventUpdated = true;
-                resolve();
-              });
-            }
-          );
-        });
-      });
-    },
-
-    contribution_title_updated: update => {
-      return new Promise((resolve, reject) => {
-        let Change = {
-          event_id: update.event_id,
-          changed: "Contribution Title Updated",
-          updater: update.updater,
-          new_value: update.new_value,
-          date: update.date,
-          time: update.time
-        };
-        stores.ChangeLogs.addChanges(Change).then(() => {
-          stores.Contributions.updateContributionTitle(
-            {
-              id: update.new_value.contribution_id,
-              title: update.new_value.title
-            },
-            true
-          ).then(() => {
-            stores.Events.changeUpdatedStatus(
-              update.event_id,
-              "contribution_updated",
-              true
-            ).then(() => {
-              GState.eventUpdated = true;
-              resolve();
-            });
-          });
-        });
-      });
-    },
-    contribution_description_updated: update => {
-      return new Promise((resolve, reject) => {
-        let Change = {
-          event_id: update.event_id,
-          changed: "Contribution Description Changed",
-          updater: update.updater,
-          new_value: update.new_value,
-          date: update.date,
-          time: update.time
-        };
-        stores.Contributions.updateDescription(
-          {
-            id: update.new_value.contribution_id,
-            description: update.new_value.description
-          },
-          true
-        ).then(() => {
-          stores.Events.changeUpdatedStatus(
-            update.event_id,
-            "contribution_updated",
-            true
-          ).then(() => {
-            GState.eventUpdated = true;
-            resolve();
-          });
-        });
-      });
-    },
-
-    added_contribution_mean: update => {
-      return new Promise((resolve, reject) => {
-        let Change = {
-          event_id: update.event_id,
-          changed: "New Contribution Mean",
-          updater: update.updater,
-          new_value: update.new_value,
-          date: update.date,
-          time: update.time
-        };
-        stores.ChangeLogs.addChanges(Change).then(() => {
-          stores.Contributions.AddContributionMean(
-            update.new_value.contribution_id,
-            update.new_value.new_mean,
-            true
-          ).then(() => {
-            stores.Events.changeUpdatedStatus(
-              update.event_id,
-              "contribution_updated",
-              true
-            ).then(() => {
-              GState.eventUpdated = true;
-              resolve();
-            });
-          });
-        });
-      });
-    },
-    contribution_mean_removed: update => {
-      return new Promise((resolve, reject) => {
-        let Change = {
-          event_id: update.event_id,
-          changed: "Removed Contribution Mean",
-          updater: update.updater,
-          new_value: update.new_value,
-          date: update.date,
-          time: update.time
-        };
-        stores.ChangeLogs.addChanges(Change).then(() => {
-          stores.Contributions.removeContributionMean(
-            update.new_value.contribution_id,
-            update.new_value.mean_name,
-            true
-          ).then(() => {
-            stores.Events.changeUpdatedStatus(
-              update.event_id,
-              "contribution_updated",
-              true
-            ).then(() => {
-              GState.eventUpdated = true;
-              resolve();
-            });
-          });
-        });
-      });
-    },
-    contribution_amount_updated: update => {
-      return new Promise((resolve, reject) => {
-        let Change = {
-          event_id: update.event_id,
-          changed: "Contribution Amount Changed",
-          updater: update.updater,
-          new_value: update.new_value,
-          date: update.date,
-          time: update.time
-        };
-        stores.ChangeLogs.addChanges(Change).then(() => {
-          stores.Contributions.updateContributionAmount(
-            {
-              id: update.new_value.contribution_id,
-              amount: update.new_value.amount
-            },
-            true
-          ).then(() => {
-            stores.Events.changeUpdatedStatus(
-              update.event_id,
-              "contribution_updated",
-              true
-            ).then(() => {
-              GState.eventUpdated = true;
-              resolve();
-            });
-          });
-        });
-      });
-    },
-    contribution_mean_name_updated: update => {
-      return new Promise((resolve, reject) => {
-        let Change = {
-          event_id: update.event_id,
-          changed: "Contribution Mean Name Changed",
-          updater: update.updater,
-          new_value: update.new_value,
-          date: update.date,
-          time: update.time
-        };
-        stores.ChangeLogs.addChanges(Change).then(() => {
-          stores.Contributions.updateContributionMeanName(
-            update.new_value.contribution_id,
-            update.new_value.mean_name,
-            update.new_value.new_name,
-            true
-          ).then(() => {
-            stores.Events.changeUpdatedStatus(
-              update.event_id,
-              "contribution_updated",
-              true
-            ).then(() => {
-              GState.eventUpdated = true;
-              resolve();
-            });
-          });
-        });
-      });
-    },
-
-    contribution_mean_credentials_updated: update => {
-      return new Promise((resolve, reject) => {
-        let Change = {
-          event_id: update.event_id,
-          changed: "Contribution Mean Credential changed",
-          updater: update.updater,
-          new_value: update.new_value,
-          date: update.date,
-          time: update.time
-        };
-        stores.ChangeLogs.addChanges(Change).then(() => {
-          stores.Contributions.updateContributionMeanCredential(
-            update.new_value.contribution_id,
-            update.new_value.mean_name,
-            update.new_value.new_credential,
-            true
-          ).then(() => {
-            stores.Events.changeUpdatedStatus(
-              update.event_id,
-              "contribution_updated",
               true
             ).then(() => {
               GState.eventUpdated = true;
@@ -1555,7 +1215,7 @@ class UpdatesDispatcher {
                     time: null
                   }
                   RemindRequest.saveToCanlendar(update.event_id,
-                    Remind.data[0],Remind.data[0].alams,
+                    Remind.data[0],Remind.data[0].extra && Remind.data[0].extra.alarms,
                     Remind.data[0].title)
                   this.infomCurrentRoom(Change, Remind.data[0], update.event_id)
                   stores.ChangeLogs.addChanges(Change).then(() => {
@@ -1611,14 +1271,12 @@ class UpdatesDispatcher {
           }
           this.infomCurrentRoom(Change, oldRemind, update.event_id)
           stores.ChangeLogs.addChanges(Change).then(() => {
-            oldRemind.calendar_id ? CalendarServe.saveEvent({
+             RemindRequest.saveToCanlendar(oldRemind.event_id,{
               ...oldRemind, period:
                 update.new_value.period
-            },
-              oldRemind.alams, 'reminds').then(() => {
+            },null).then(() => {
 
-              }) : null
-            GState.eventUpdated = true;
+              })
             resolve('ok')
           })
         });
@@ -1649,9 +1307,17 @@ class UpdatesDispatcher {
         });
       });
     },
+    remind_alarms: update => {
+      return MainUpdater.updateRemindAlarms(update.event_id,
+        update.new_value.remind_id,
+        update.new_value.data.alarms,
+        update.new_value.data.date,
+        update.updater)
+    },
     remind_title_updated: update => {
       return new Promise((resolve, reject) => {
-        stores.Reminds.updateTitle(update.event_id,update.new_value, true).then((oldRemind) => {
+        stores.Reminds.updateTitle(update.event_id,update.new_value, true).
+        then((oldRemind) => {
           let Change = {
             id: IDMaker.make(),
             title: `Updates On ${oldRemind.title} Remind`,
@@ -1690,16 +1356,11 @@ class UpdatesDispatcher {
           }
           this.infomCurrentRoom(Change, oldRemind, update.event_id)
           stores.ChangeLogs.addChanges(Change).then(() => {
-            if (oldRemind.calendar_id && findIndex(oldRemind.members,
-              { phone: stores.LoginStore.user.phone }) >= 0) {
-              CalendarServe.saveEvent({ ...oldRemind, period: null }, null, 'reminds').then(() => {
-                stores.Reminds.updateCalendarID(update.event_id,{ remind_id: oldRemind.id, calendar_id: undefined }).then(() => {
+              RemindRequest.saveToCanlendar(oldRemind.event_id,{ ...oldRemind, period: null }, null).
+              then(() => {
                   console.warn("calendar_id successfully removed")
                   resolve('ok')
-                })
               })
-            }
-            GState.eventUpdated = true;
             resolve('ok')
           })
         });
@@ -1724,17 +1385,10 @@ class UpdatesDispatcher {
               this.infomCurrentRoom(Change, update.new_value.remind,
                 update.event_id)
               stores.ChangeLogs.addChanges(Change).then(() => {
-                if (findIndex(update.new_value.remind.members,
-                  { phone: stores.LoginStore.user.phone }) >= 0) {
-                  CalendarServe.saveEvent(remind, null, 'reminds').then(calendar_id => {
-                    stores.Reminds.updateCalendarID(update.event_id,{
-                      remind_id: update.new_value.remind.id,
-                      calendar_id: calendar_id
-                    }, null).then(() => {
+                  RemindRequest.saveToCanlendar(update.new_value.remind.event_id, update.new_value.remind, null).
+                  then(calendar_id => {
                       resolve()
-                    })
                   })
-                }
               })
             })
         })
@@ -1784,14 +1438,14 @@ class UpdatesDispatcher {
           }
           this.infomCurrentRoom(Change, oldRemind, update.event_id)
           stores.ChangeLogs.addChanges(Change).then(() => {
-            oldRemind.calendar_id ? CalendarServe.saveEvent({
+            RemindRequest.saveToCanlendar(oldRemind.event_id,{
               ...oldRemind,
               recursive_frequency: update.new_value.recurrence
             },
-              oldRemind.alams, 'reminds').then(() => {
+              null).then(() => {
                 GState.eventUpdated = true;
                 resolve('ok')
-              }) : null
+              })
           });
         });
       });
@@ -1815,14 +1469,10 @@ class UpdatesDispatcher {
           }
           this.infomCurrentRoom(Change, oldRemind, update.event_id)
           stores.ChangeLogs.addChanges(Change).then(() => {
-            if (findIndex(update.new_value.members, { phone: stores.LoginStore.user.phone }) >= 0) {
-              CalendarServe.saveEvent(oldRemind, null, 'reminds').then(calendar_id => {
-                stores.Reminds.updateCalendarID(update.event_id,{ remind_id: oldRemind.id, calendar_id: calendar_id }, null).then(() => {
-                  GState.eventUpdated = true;
+              RemindRequest.saveToCanlendar(oldRemind.event_id, 
+                oldRemind, oldRemind.extra && oldRemind.extra.alams).then(calendar_id => {
                   resolve('ok')
-                })
               })
-            }
           });
         });
       });
@@ -1846,15 +1496,9 @@ class UpdatesDispatcher {
           }
           this.infomCurrentRoom(Change, oldRemind, update.event_id)
           stores.ChangeLogs.addChanges(Change).then(() => {
-            if (findIndex(update.new_value.members,
-              rlr => rlr === stores.LoginStore.user.phone) >= 0 && oldRemind.calendar_id) {
-              CalendarServe.saveEvent({ ...oldRemind, period: null }, null, 'reminds').then(() => {
-                stores.Reminds.updateCalendarID(update.event_id,{ remind_id: oldRemind.id, calendar_id: undefined }).then(() => {
-                  GState.eventUpdated = true;
+              RemindRequest.saveToCanlendar(oldRemind.event_id,{ ...oldRemind, period: null }, null).then(() => {
                   resolve('ok')
-                })
               })
-            }
           })
         })
       })

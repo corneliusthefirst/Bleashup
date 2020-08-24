@@ -4,7 +4,7 @@ import moment from 'moment';
 import { findIndex } from 'lodash'
 import stores from '../stores';
 import GState from '../stores/globalState';
-import { daysOfWeeksDefault, AlarmPatterns } from './recurrenceConfigs';
+import { daysOfWeeksDefault, AlarmPatterns, callculateAlarmOffset } from './recurrenceConfigs';
 
 const BleashupCalendarID = "Bleashup-2018-bleashurs"
 const UTCFormat = "YYYY-MM-DDTHH:mm:ss.SSS[Z]"
@@ -109,8 +109,11 @@ class CalendarService {
             })
         }
     }
+    formAlarms(ele){
+        return Platform.os === "ios" ? moment().diff(callculateAlarmOffset(ele.offset), 'minutes').toISOString()
+            : moment().diff(callculateAlarmOffset(ele.offset), 'minutes')
+    }
     translateRemindToCalendar(Bevent, alarms) {
-        console.warn('translating to reminder', this.calendarID, alarms, Bevent.recursive_frequency.days_of_week)
         return Platform.OS === 'android' ? {
             id: Bevent.calendar_id ? Bevent.calendar_id : undefined,
             calendarID: this.calendarID,
@@ -127,10 +130,13 @@ class CalendarService {
                 endDate: moment(Bevent.recursive_frequency.recurrence).utc().format(UTCFormat)
             },
             //recurrenceInterval:Bevent.recurrent? parseInt(Bevent.interval):null,
-            alarms: alarms && alarms.length > 0 ? alarms : AlarmPatterns().filter(ele => ele.autoselected).map(ele => {
+            alarms: alarms && alarms.length > 0 ? alarms.map(ele => {
                 return {
-                    date: Platform.os === "ios" ? moment().diff(ele.date, 'minutes').toISOString()
-                        : moment().diff(ele.date, 'minutes')
+                    date:this.formAlarms(ele)
+                }
+            }) : AlarmPatterns().filter(ele => ele.autoselected).map(ele => {
+                return {
+                    date: this.formAlarms(ele)
                 }
             }),
             location: Bevent.location,

@@ -40,7 +40,7 @@ see: https://github.com/wmcmahan/react-native-calendar-events/issues/12
 
 [*] Add A BackPress handle on Create Activity page and on the mytask page.
 
-[ ] On the likes module if the likes has never been initialized in the store, It will alway fetch likes 
+[*] On the likes module if the likes has never been initialized in the store, It will alway fetch likes 
     on Mount . But one The Likes is initialised in the store . it will never fetch again.
     From Then Likes will be updatable only through updatesDispatcher. 
 
@@ -92,9 +92,9 @@ see: https://github.com/wmcmahan/react-native-calendar-events/issues/12
 [ ] handle error on the upload of posts media when the file is not available . 
 [*] change The storage functioning of TemporalUserStore to follow the way documented on react-native-storage so as the to acheive the benefits of 
     of having a each item in the store attached to and individual expiration time . 
-[ ] Change the Button on the different pages where we have create/update using <Button/> component to use 
+[*] Change the Button on the different pages where we have create/update using <Button/> component to use 
     <TouchableOpacity/> so as to have a better experience that to avoid the issue of having to press the button 2 times before the action is triggered. 
-[ ] adjust the hightlight Display on the HighlightCard Component when there is only title and description in the post so that it should appear nicely . 
+[*] adjust the hightlight Display on the HighlightCard Component when there is only title and description in the post so that it should appear nicely . 
 [*] when adding a users to a reminder, the experince is not the best . it needs to be such a way thay , when a 
     shows all the list of users anded and those who are not yet added but added users should have a tick on them . 
 [*] The networking part of the app should be well handle so as to ensure auto reconnection in case of various connection errors. 
@@ -119,4 +119,24 @@ see: https://github.com/wmcmahan/react-native-calendar-events/issues/12
 [] 
     A solution needs to implemented to handle this . 
     The same applies for sharers.
+
+[] Search implementation on the following pages. 
+    - [] Reminds the user should be able to search by:
+        - title,
+        - description (if provided),
+        - location (if provided)
+    - [] Start; the user should be able to search by: 
+        - title,
+        - description (if provided),
+        - location (if provided)
+    - [] Messages; the user should be able to searchby: 
+        - text,
+        - sender.nickname,
+        
+    - [] Change Logs; the user should be able to search by:
+        - updater.nickname,
+        - changed
+    
+    - [] Relation; the user should be able to search search by
+        - name,
 

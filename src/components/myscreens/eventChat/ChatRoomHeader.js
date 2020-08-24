@@ -11,8 +11,9 @@ import MaterialIcons  from 'react-native-vector-icons/MaterialIcons';
 import GState from '../../../stores/globalState';
 import Entypo  from 'react-native-vector-icons/Entypo';
 import  Ionicons  from 'react-native-vector-icons/Ionicons';
+import BePureComponent from '../../BePureComponent';
 
-export default class ChatRoomHeader extends PureComponent {
+export default class ChatRoomHeader extends BePureComponent {
     constructor(props){
         super(props);
         this.state = {};
@@ -63,7 +64,7 @@ export default class ChatRoomHeader extends PureComponent {
                             {this.props.roomID === this.props.activity_id ? this.props.activity_name : this.props.roomName}
                         </Text>
                         <View style={{ height: 10, position: 'absolute' }}>
-                            {this.props.typing && <TypingIndicator />}
+                            {this.props.typing ? <TypingIndicator />:null}
                         </View>
                     </View>
 

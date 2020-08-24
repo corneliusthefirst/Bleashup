@@ -2,7 +2,7 @@ import tcpRequest from '../../../services/tcpRequestData';
 import EventListener from '../../../services/severEventListener';
 import stores from '../../../stores';
 import request from '../../../services/requestObjects';
-import { isEqual } from 'lodash';
+import { isEqual, differenceWith } from 'lodash';
 import moment from 'moment';
 import { findIndex } from 'lodash';
 import CalendarServe from '../../../services/CalendarService';
@@ -10,15 +10,18 @@ import MainUpdater from '../../../services/mainUpdater';
 import toTitleCase from '../../../services/toTitle';
 import Toaster from '../../../services/Toaster';
 import IDMaker from '../../../services/IdMaker';
+import Texts from '../../../meta/text';
 class Requester {
-    saveToCanlendar(eventID, remind, alarms,newRemindName) {
-        if (findIndex(remind.members, { phone: stores.LoginStore.user.phone }) >= 0) {
-            console.warn("saving reminder to calendar")
-            CalendarServe.saveEvent(remind, alarms, 'reminds',newRemindName).then(calendar_id => {
-                stores.Reminds.updateCalendarID(eventID, { remind_id: remind.id, calendar_id: calendar_id }, alarms).then(() => {
+    saveToCanlendar(eventID, remind, alarms, newRemindName) {
+        return new Promise((resolve,reject) => {
+            if (findIndex(remind.members, { phone: stores.LoginStore.user.phone }) >= 0) {
+                CalendarServe.saveEvent(remind, alarms, 'reminds', newRemindName).then(calendar_id => {
+                    stores.Reminds.updateCalendarID(eventID, { remind_id: remind.id, calendar_id: calendar_id }, alarms).then(() => {
+                        resolve(calendar_id)
+                    })
                 })
-            })
-        }
+            }
+        })
     }
     CreateRemind(Remind, activityName) {
         return new Promise((resolve, reject) => {
@@ -45,7 +48,8 @@ class Requester {
                                         date: moment().format(),
                                         time: null
                                     }
-                                    this.saveToCanlendar(Remind.event_id, Remind)
+                                    this.saveToCanlendar(Remind.event_id, 
+                                        Remind,Remind.extra && Remind.extra.alarms)
                                     stores.ChangeLogs.addChanges(Change).then(() => {
                                         console.warn("completed")
                                     })
@@ -53,7 +57,7 @@ class Requester {
                                 })
                             })
                         }).catch(() => {
-                            Toaster({ text: "Unable To perform This Action" })
+                            Toaster({ text: Texts.unable_to_perform_request })
                             reject()
                         })
                 })
@@ -96,7 +100,7 @@ class Requester {
                                     resolve('ok')
                                 })
                             }).catch(error => {
-                                Toaster({ text: 'Unable to perform network request' })
+                                Toaster({ text: Texts.unable_to_perform_request })
                                 console.warn(error)
                                 reject(error)
                             })
@@ -138,7 +142,7 @@ class Requester {
                             resolve('ok')
                         })
                     }).catch(error => {
-                        Toaster({ text: 'Unable to perform network request' })
+                        Toaster({ text: Texts.unable_to_perform_request })
                         console.warn(error)
                         reject(error)
                     })
@@ -178,6 +182,7 @@ class Requester {
                         resolve('ok')
                     })
                 }).catch(error => {
+                    Toaster({ text: Texts.unable_to_perform_request })
                     console.warn(error)
                     reject(error)
                 })
@@ -189,7 +194,6 @@ class Requester {
         return new Promise((resolve, reject) => {
             if ((typeof newConfigs === "string" && newConfigs !== oldConfig) ||
                 (typeof newConfigs === "object" && !isEqual(newConfigs, oldConfig))) {
-                console.warn("saving ruccrence", newConfigs)
                 let newRemindName = request.RemindUdate()
                 newRemindName.action = 'recurrence'
                 newRemindName.data = newConfigs
@@ -200,7 +204,7 @@ class Requester {
                         stores.Reminds.updateRecursiveFrequency(eventID, {
                             remind_id: remindID,
                             recursive_frequency: newConfigs
-                        }, remindID).then((oldRemind) => {
+                        }, true).then((oldRemind) => {
                             let Change = {
                                 id: IDMaker.make(),
                                 title: `Updates On ${oldRemind.title} Remind`,
@@ -223,7 +227,7 @@ class Requester {
                             })
                         })
                     }).catch(error => {
-                        Toaster({ text: 'Unable to perform network request' })
+                        Toaster({ text: Texts.unable_to_perform_request })
                         console.warn(error)
                         reject(error)
                     })
@@ -260,7 +264,7 @@ class Requester {
                             resolve('ok')
                         })
                     }).catch(error => {
-                        Toaster({ text: 'Unable to perform network request' })
+                        Toaster({ text: Texts.unable_to_perform_request })
                         console.warn(error)
                         reject(error)
                     })
@@ -297,7 +301,7 @@ class Requester {
                             resolve('ok')
                         })
                     }).catch(error => {
-                        Toaster({ text: 'Unable to perform network request' })
+                        Toaster({ text: Texts.unable_to_perform_request })
                         console.warn(error)
                         reject(error)
                     })
@@ -330,7 +334,7 @@ class Requester {
                                 time: null
                             }
                             oldRemind.calendar_id ? CalendarServe.saveEvent({ ...oldRemind, period: newPeriod },
-                                oldRemind.alams, 'reminds').then(() => {
+                                null, 'reminds').then(() => {
 
                                 }) : null
                             resolve('ok')
@@ -340,10 +344,38 @@ class Requester {
                         })
 
                     }).catch(error => {
-                        Toaster({ text: 'Unable to perform network request' })
-                        console.warn(error)
+                        Toaster({ text: Texts.unable_to_perform_request })
                         reject(error)
                     })
+                })
+            } else {
+                resolve()
+            }
+        })
+    }
+    updateRemindAlarms(newExtra, oldExtra, remindID, eventID) {
+        return new Promise((resolve, reject) => {
+            if (newExtra &&
+                oldExtra && (differenceWith(newExtra.alarms, oldExtra.alarms, isEqual).length !==
+                  differenceWith(oldExtra.alarms, newExtra.alarms, isEqual).length)) {
+                let newRemindName = request.RemindUdate()
+                newRemindName.action = "remind_alarms"
+                newRemindName.data = { alarms: newExtra.alarms, date: newExtra.date }
+                newRemindName.event_id = eventID
+                newRemindName.remind_id = remindID
+                tcpRequest.updateRemind(newRemindName, remindID + "_alarms").then(JSONData => {
+                    EventListener.sendRequest(JSONData, remindID + "_alarms").then(response => {
+                        MainUpdater.updateRemindAlarms(eventID,
+                            remindID, newRemindName.data,
+                            moment().format(),
+                            stores.LoginStore.user.phone).
+                            then(() => {
+                                resolve("ok")
+                            })
+                    })
+                }).catch(e => {
+                    Toaster({ text: Texts.unable_to_perform_request })
+                    reject()
                 })
             } else {
                 resolve()
@@ -364,6 +396,9 @@ class Requester {
                             newLocation, moment().format(), stores.LoginStore.user.phone).then(() => {
                                 resolve("ok")
                             })
+                    }).catch(() => {
+                        Toaster({ text: Texts.unable_to_perform_request })
+                        reject()
                     })
                 })
             } else {
@@ -386,6 +421,8 @@ class Requester {
                             newURL, moment().format(), stores.LoginStore.user.phone).then(() => {
                                 resolve("ok")
                             })
+                    }).catch(() => {
+                        reject()
                     })
                 })
             } else {
@@ -424,7 +461,7 @@ class Requester {
                         resolve('ok')
                     })
                 }).catch(error => {
-                    Toaster({ text: 'Unable to perform network request' })
+                    Toaster({ text: Texts.unable_to_perform_request })
                     console.warn(error)
                     reject(error)
                 })
@@ -432,7 +469,6 @@ class Requester {
         })
     }
     removeMembers(members, remindID, eventID) {
-        console.warn(members)
         return new Promise((resolve, reject) => {
             let newRemindName = request.RemindUdate()
             newRemindName.action = 'remove_members'
@@ -471,7 +507,7 @@ class Requester {
                                 })
                             })
                         }).catch(error => {
-                            Toaster({ text: 'Unable to perform network request' })
+                            Toaster({ text: Texts.unable_to_perform_request })
                             console.warn(error)
                             reject(error)
                         })
@@ -497,7 +533,11 @@ class Requester {
                                                                 newRemind.id, newRemind.event_id).then((t7) => {
                                                                     this.updateMustRepot(newRemind.must_report, JSON.parse(previousRemind).must_report,
                                                                         newRemind.id, newRemind.event_id).then(t8 => {
-                                                                            resolve(t1 + t2 + t3 + t4 + t5 + t6 + t7 + t8)
+                                                                            this.updateRemindAlarms(newRemind.extra, JSON.parse(previousRemind).extra, newRemind.id, newRemind.event_id).then(t9 => {
+                                                                                resolve(t1 + t2 + t3 + t4 + t5 + t6 + t7 + t8 + t9)
+                                                                            }).catch(r => {
+                                                                                reject(r)
+                                                                            })
                                                                         }).catch(r => {
                                                                             reject(r)
                                                                         })
@@ -563,6 +603,9 @@ class Requester {
                         })
                         resolve('ok')
                     })
+                }).catch(e => {
+                    Toaster({ text: Texts.unable_to_perform_request })
+                    reject()
                 })
             })
         })
@@ -600,6 +643,9 @@ class Requester {
                             resolve('ok')
                         })
                     })
+                }).catch(() => {
+                    Toaster({ text: Texts.unable_to_perform_request })
+                    reject("delete remind error")
                 })
             })
         })
@@ -626,7 +672,7 @@ class Requester {
                                 date: moment().format(),
                                 time: null
                             }
-                            this.saveToCanlendar(remind.event_id, remind,null)
+                            this.saveToCanlendar(remind.event_id, remind, null)
                             stores.ChangeLogs.addChanges(Change).then(() => {
 
                             })

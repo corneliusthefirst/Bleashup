@@ -69,6 +69,7 @@ export default class SettingsTabModal extends BleashupModal {
         <ScrollView nestedScrollEnabled>
           <View style={{ height: 400 }}>
             <Settings
+              closeModals={this.onClosedModal.bind(this)}
               event={this.props.event}
               master={this.props.master}
               creator={this.props.creator}
@@ -84,6 +85,7 @@ export default class SettingsTabModal extends BleashupModal {
             <View style={{height:"80%"}}>
           {this.state.isMounted ?
             <Members
+             closeModals={this.onClosedModal.bind(this)}
               currentPhone={this.props.currentPhone}
               leaveActivity={this.props.leaveActivity}
               checkActivity={this.props.checkActivity}

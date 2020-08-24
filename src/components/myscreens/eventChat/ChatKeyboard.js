@@ -720,8 +720,6 @@ export default class ChatKeyboard extends BeComponent {
                                     borderRadius: 25,
                                     maxHeight: 300,
                                     backgroundColor: ColorList.bodyBackground,
-                                    borderWidth: 0.2,
-                                    borderColor: "grey",
                                     borderTopLeftRadius:
                                         this.state.replying ||
                                             this.state.tagging ||

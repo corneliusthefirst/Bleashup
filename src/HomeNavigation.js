@@ -9,6 +9,7 @@ import QRScanner from './components/myscreens/QR/index';
 import CreateEventView from './components/myscreens/event/createEvent/index';
 import CameraScreen from './components/mainComponents/BleashupCamera/index';
 import SwiperComponent from './components/SwiperComponent/index';
+import ProfileView from './components/myscreens/settings/profile';
 
 enableScreens()
 const HomeNavigator = createStackNavigator({
@@ -19,6 +20,7 @@ const HomeNavigator = createStackNavigator({
     CreateEventView:{screen:CreateEventView},
     SwiperComponent:{screen:SwiperComponent},
     CameraScreen:{screen: CameraScreen},
+    Profile: {screen:ProfileView},
     Event: { screen: Event },
 }, {
     initialRouteName: "Home",

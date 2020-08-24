@@ -83,8 +83,8 @@ export default class HighLight extends Component {
                         alignSelf: 'center', margin: '1%',
                         backgroundColor: this.props.background ? this.props.background : "#9EEDD3",
                     }}>
-                        <View style={{ height: 55,  borderRadius: 8, }}>
-                            <Text ellipsizeMode={"tail"} numberOfLines={3} style={{
+                        <View>
+                            <Text style={{
                                 alignSelf: 'center',
                                 ...GState.defaultTextStyle,
                                 margin: '3%', fontWeight: 'bold', fontSize: 15,

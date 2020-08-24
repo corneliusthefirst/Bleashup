@@ -2,6 +2,7 @@ import React, { Component } from "react";
 import Menu, { MenuItem, MenuDivider } from "react-native-material-menu";
 import { View, TouchableOpacity,Text } from "react-native";
 import ColorList from '../../colorList';
+import GState from "../../../stores/globalState";
 export default class TextMenu extends Component {
     constructor(props) {
         super(props);
@@ -57,7 +58,7 @@ export default class TextMenu extends Component {
                         <TouchableOpacity
                             onPress={() => requestAnimationFrame(this.showMenu)}
                         >
-                        <Text ellipsizeMode={"tail"} numberOfLines={1} style={{fontWeight: 'bold',}}>{this.props.title}</Text>
+                        <Text ellipsizeMode={"tail"} numberOfLines={1} style={{...GState.defaultTextStyle,fontWeight: 'bold',}}>{this.props.title}</Text>
                         </TouchableOpacity>
                     }
                 >

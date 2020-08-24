@@ -261,7 +261,7 @@ export default class SWView extends BeComponent {
                 marginTop: 5,
               }}
             >
-              <TouchableOpacity
+              {!this.props.isRelation && <TouchableOpacity
                 style={{
                   alignSelf: "center",
                   width: 55,
@@ -277,7 +277,7 @@ export default class SWView extends BeComponent {
                     onPress={() => this.props.openSettingsModal()}
                   ></EvilIcons>
                 </View>
-              </TouchableOpacity>
+              </TouchableOpacity>}
             </View>
 
             <View
@@ -289,7 +289,8 @@ export default class SWView extends BeComponent {
                 paddingHorizontal: "auto",
               }}
             >
-              <View
+              <TouchableOpacity
+                onPress={() => this.navigateToProfile()}
                 style={{
                   ...rounder(50, ColorList.bodyDarkWhite),
                   marginLeft: "auto",
@@ -300,9 +301,8 @@ export default class SWView extends BeComponent {
                 <EvilIcons
                   style={{ color: colorList.bodyIcon, fontSize: 50 }}
                   name="user"
-                  onPress={() => this.navigateToProfile()}
                 ></EvilIcons>
-              </View>
+              </TouchableOpacity>
             </View>
           </View>
 

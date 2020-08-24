@@ -22,7 +22,7 @@ export default class TextContent extends Component {
     }
     copyToClipboard(phone) {
         Clipboard.setString(phone)
-        Vibrator.shortDuration()
+        Vibrator.vibrateShort()
         Toaster({ text: 'copied to clipboard !' })
     }
 

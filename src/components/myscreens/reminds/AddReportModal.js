@@ -7,6 +7,8 @@ import ColorList from '../../colorList';
 import CreateTextInput from '../event/createEvent/components/CreateTextInput';
 import BleashupModal from '../../mainComponents/BleashupModal';
 import GState from '../../../stores/globalState';
+import Entypo  from 'react-native-vector-icons/Entypo';
+import Toaster from '../../../services/Toaster';
 
 let { height, width } = Dimensions.get('window');
 
@@ -42,19 +44,23 @@ export default class AddReport extends BleashupModal {
         return (
             <ScrollView keyboardShouldPersistTaps={"handled"}
                 nestedScrollEnabled showsVerticalScrollIndicator={false} style={{ flex: 1, flexDirection: "column" }}>
+                <TouchableOpacity onPress={() => Toaster({text:"You can enter a link pointing to your report"})} style={{margin: '2%',}}>
+                    <Entypo style={{ ...GState.defaultIconSize }} name={"attachment"}>
+                </Entypo>
+                </TouchableOpacity>
                 <View style={{ height: "65%",width:"95%",alignSelf: 'center', }}>
                     <CreateTextInput
                     height={150}
-                    maxLength={200}
+                    maxLength={1000}
                     multiline
                     placeholder="Add A Report" 
                     value={this.state.description} keyboardType="default"
                     onChange={(value) => this.onChangedEventDescription(value)} />
 
                 </View>
-                {this.state.description ? <View style={{ height: "10%", marginTop: "5%" }}>
+                {this.state.description ? <View style={{ height: "10%", marginTop: "1%" }}>
                     <View style={{
-                        width: width / 4, height: "100%", alignSelf: "flex-end",
+                        width: width / 4, height: 70, alignSelf: "flex-end",
                         marginRight: "1%"
                     }} >
                         <TouchableOpacity onPress={() => this.props.report(this.state.description)} style={{

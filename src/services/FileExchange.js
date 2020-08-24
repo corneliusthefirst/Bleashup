@@ -186,5 +186,8 @@ export default class FileExachange {
     clearCache(url){
         fs.unlink(this.formCacheURL(url))
     }
+    doFileExists(url){
+       return fs.exists(url)
+    }
 
 } 

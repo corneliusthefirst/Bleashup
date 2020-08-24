@@ -5,7 +5,11 @@ import { find } from "lodash";
 import Highlighter from "react-native-highlight-words";
 import BeNavigator from "../../../../services/navigationServices";
 import ColorList from "../../../colorList";
-export default class TitleView extends Component {
+import BePureComponent from '../../../BePureComponent';
+import emitter from "../../../../services/eventEmiter";
+import { sayTyping } from '../../eventChat/services';
+import GState from '../../../../stores/globalState/index';
+export default class TitleView extends BePureComponent {
   constructor(props) {
     super(props);
     this.state = {
@@ -14,7 +18,18 @@ export default class TitleView extends Component {
     };
     this.goToEventDetails = this.goToEventDetails.bind(this);
   }
-  componentDidMount() {}
+  componentMounting(){
+    emitter.on(`${this.props.Event.id}_typing`,(typer) => {
+    !this.sayTyping ? this.sayTyping = sayTyping.bind(this): null;
+      this.sayTyping(typer)
+    })
+  }
+  unmountingComponent(){
+    emitter.off(`${this.props.Event.id}_typing`)
+  }
+  componentDidMount() {
+
+  }
   navigateToEventDetails() {
     stores.Events.isParticipant(
       this.props.Event.id,
@@ -64,6 +79,8 @@ export default class TitleView extends Component {
               </Text>
             )}
           </View>
+          {this.state.typing && <Text style={[GState.defaultTextStyle,{fontSize: 12,
+            color:ColorList.indicatorColor}]}>{`${this.state.typer} is typing ...`}</Text>}
         </TouchableOpacity>
       </View>
     );

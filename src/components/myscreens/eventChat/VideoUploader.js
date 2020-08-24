@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 
-import { View, TouchableOpacity, TouchableWithoutFeedback, PermissionsAndroid } from "react-native"
+import { View, TouchableOpacity, TouchableWithoutFeedback, PermissionsAndroid,Text } from "react-native"
 import { AnimatedCircularProgress } from 'react-native-circular-progress';
 import FileExachange from '../../../services/FileExchange';
 import Pickers from '../../../services/Picker';
@@ -97,8 +97,8 @@ export default class VideoUploader extends BePureComponent {
             <View>
                 <View style={{ padding: "1.5%" ,minWidth: 250,}}>
                     <View>
-                        <TouchableOpacity onPress={() => this.props.showPhoto(this.props.message.source)}>
-                            <View resizeMode={'contain'} style={{
+                        <TouchableOpacity onLongPress={this.props.onLongPress} onPress={() => this.props.playVideo(this.props.message.source)}>
+                            <View style={{
                                 borderRadius: 15,
                                 alignSelf: 'center',
                                 width: 250,
@@ -107,7 +107,7 @@ export default class VideoUploader extends BePureComponent {
                             }}>
                                 <View style={{ alignSelf: 'flex-start', margin: '2%', marginTop: '80%',}}>
                                     {this.state.loaded ? <View style={{ marginTop: 0, ...buttoner, width: 70, height: 25 }}><View><Text
-                                        style={{ color: ColorList.bodyBackground }}>
+                                        style={{...GState.defaultTextStyle, color: ColorList.bodyBackground }}>
                                         {this.toMB(this.state.total).toFixed(2)} {"Mb"}</Text></View></View> :
                                         <View style={{ marginTop: 1 }}>
                                             <View style={{ ...buttoner, alignSelf: 'center', }}>
@@ -133,8 +133,8 @@ export default class VideoUploader extends BePureComponent {
                                                     }
                                                 </AnimatedCircularProgress>
                                             </View>
-                                            {this.state.compressing ? <Text note>{"compressing ..."}</Text> : <View style={{ 
-                                            ...buttoner, width: 70, height: 25 }}><Text style={{ color: ColorList.bodyBackground }} 
+                                            {this.state.compressing ? <Text style={{...GState.defaultTextStyle,fontSize: 12,}} note>{"compressing ..."}</Text> : <View style={{ 
+                                            ...buttoner, width: 70, height: 25 }}><Text style={{...GState.defaultTextStyle, color: ColorList.bodyBackground }} 
                                             note>{"("}{this.toMB(this.state.received).toFixed(1)}{"/"}
                                                 {this.toMB(this.state.total).toFixed(1)}{")Mb"}</Text></View>}</View>}
                                 </View>
@@ -156,7 +156,12 @@ export default class VideoUploader extends BePureComponent {
                     </View>
                 </View>
                 <View>
-                    {this.props.message.text ? <TextContent tags={this.props.message.tags} style={{ margin: '2%', }} text={this.props.message.text}></TextContent> : null}
+                    {this.props.message.text ? <TextContent 
+                        handleLongPress={this.props.onLongPress} 
+                        tags={this.props.message.tags} 
+                        style={{ margin: '2%', }} 
+                        text={this.props.message.text}>
+                        </TextContent> : null}
                 </View>
             </View>
         );

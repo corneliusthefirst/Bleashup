@@ -64,7 +64,6 @@ export default class ContactView extends Component {
   phoneContacts = [];
   init = () => {
     if (stores.Contacts.contacts.phoneContacts && stores.Contacts.contacts.phoneContacts.length > 0){
-      console.warn('here1',stores.Contacts.contacts.phoneContacts);
 
       stores.Contacts.contacts &&
       stores.Contacts.contacts.contacts &&
@@ -80,8 +79,6 @@ export default class ContactView extends Component {
           this.phoneContacts.push(phoneUser);
         }
       });
-
-      console.warn('here they are',this.phoneContacts);
        this.phoneContacts = concat(this.phoneContacts,stores.Contacts.contacts.phoneContacts);
 
        this.setState({ contacts: this.phoneContacts , searchArray: this.phoneContacts });
@@ -102,7 +99,6 @@ updatePhoneContacts = (bool) => {
       message: 'Bleashup would like to view your contacts.',
       buttonPositive: 'Please accept bare mortal',
     }).then(() => {
-      console.warn('here');
         Contacts.getAll((err, contacts) => {
           if (err === 'denied') {
             // error

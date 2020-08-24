@@ -959,7 +959,7 @@ class Request {
             let notif = request.Notification()
             notif.notification.body = toTitleCase(stores.LoginStore.user.nickname) + 'Add a new Post'
             notif.notification.title = 'New Post @ ' + activityName
-            notif.notification.image = newHighlight.url.photo
+            notif.notification.image = newHighlight.url && newHighlight.url.photo
             notif.data.activity_id = newHighlight.event_id
             notif.data.id = newHighlight.id
             newHighlight.notif = notif
@@ -991,7 +991,6 @@ class Request {
         })
     }
     updateHighlightTitle(newTitle, oldTitle, highlightID, eventID) {
-        console.warn('we are in',newTitle, oldTitle, highlightID, eventID);
         return new Promise((resolve, reject) => {
             if (newTitle !== oldTitle) {
                 let higlightTitle = request.HUpdate();
@@ -999,13 +998,13 @@ class Request {
                 higlightTitle.event_id = eventID
                 higlightTitle.h_id = highlightID
                 higlightTitle.new_data = newTitle
-                tcpRequest.updateHighlight(higlightTitle, highlightID).then(JSONData => {
-                    serverEventListener.sendRequest(JSONData, highlightID).then(response => {
+                tcpRequest.updateHighlight(higlightTitle, highlightID+"_title").then(JSONData => {
+                    serverEventListener.sendRequest(JSONData, highlightID+"_title").then(response => {
                         stores.Highlights.updateHighlightTitle(eventID , {
                             id: highlightID,
                             title: newTitle
                         }, false).then((HighlightJS) => {
-                            Highlight = HighlightJS;  //changed json parse
+                            let Highlight = HighlightJS;  //changed json parse
                             let Change = {
                                 id: IDMaker.make(),
                                 title: `Update On ${Highlight.title} Post`,
@@ -1040,8 +1039,8 @@ class Request {
                 higlightTitle.event_id = eventID
                 higlightTitle.h_id = highlightID
                 higlightTitle.new_data = newPublicState
-                tcpRequest.updateHighlight(higlightTitle, highlightID).then(JSONData => {
-                    serverEventListener.sendRequest(JSONData, highlightID).then(response => {
+                tcpRequest.updateHighlight(higlightTitle, highlightID+"_public_state").then(JSONData => {
+                    serverEventListener.sendRequest(JSONData, highlightID+"_public_state").then(response => {
                         stores.Highlights.updateHighlightPublicState(eventID, {
                             highlight_id: higlightTitle.h_id,
                             public_state: higlightTitle.new_data
@@ -1079,8 +1078,8 @@ class Request {
                 higlightTitle.event_id = eventID
                 higlightTitle.h_id = highlightID
                 higlightTitle.new_data = newDescription
-                tcpRequest.updateHighlight(higlightTitle, highlightID).then(JSONData => {
-                    serverEventListener.sendRequest(JSONData, highlightID).then(response => {
+                tcpRequest.updateHighlight(higlightTitle, highlightID+"_description").then(JSONData => {
+                    serverEventListener.sendRequest(JSONData, highlightID+"_description").then(response => {
                         stores.Highlights.updateHighlightDescription(eventID, {
                             id: higlightTitle.h_id,
                             description: higlightTitle.new_data
@@ -1118,8 +1117,8 @@ class Request {
                 newHighlightURL.event_id = eventID
                 newHighlightURL.action = 'url'
                 newHighlightURL.new_data = newURL
-                tcpRequest.updateHighlight(newHighlightURL, highlightID).then(JSONData => {
-                    serverEventListener.sendRequest(JSONData, highlightID).then(response => {
+                tcpRequest.updateHighlight(newHighlightURL, highlightID+"_url").then(JSONData => {
+                    serverEventListener.sendRequest(JSONData, highlightID+"_url").then(response => {
                         stores.Highlights.updateHighlightUrl(eventID, {
                             id: newHighlightURL.h_id,
                             url: newHighlightURL.new_data

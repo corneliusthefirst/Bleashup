@@ -8,6 +8,8 @@ import Social from "./Social";
 import Swipeout from '../../../eventChat/Swipeout';
 import BePureComponent from '../../../../BePureComponent';
 import GState from "../../../../../stores/globalState";
+import TextContent from '../../../eventChat/TextContent';
+import Creator from "../../../reminds/Creator";
 
 let { height, width } = Dimensions.get("window");
 
@@ -58,7 +60,7 @@ export default class HighlightCard extends BePureComponent {
           alignSelf: "center",
           ...(!this.props.shadowless && shadower(1)),
           justifyContent: "center",
-          marginTop: "1%",
+          margin: "1%",
           borderBottomWidth: 0.5,
           borderColor: "ivory",
         }}
@@ -67,57 +69,54 @@ export default class HighlightCard extends BePureComponent {
           style={{
             flexDirection: "row",
             width: "97%",
-            justifyContent: "space-between",
-            marginTop: 2,
-            marginBottom: 2,
-            height: ColorList.containerHeight / 20,
+            justifyContent: 'center',
+            minHeight: 70,
             alignSelf: "center",
           }}
         >
-          <View style={{ maxWidth: "100%" }}>
             <Text
               style={{
                 ...GState.defaultTextStyle,
-                fontSize: 14,
+                fontSize: 15,
+                marginTop: '2%',
+
+                textAlign:'center',
                 color: ColorList.headerBlackText,
                 fontWeight: "bold",
                 //marginTop: "10%",
               }}
+              //numberOfLines={3}
             >
-              {this.props.item.title ? this.props.item.title : ""}
+              {this.props.item.title}
             </Text>
-          </View>
-          <View>
-          </View>
         </View>
         <MedaiView
           width={ColorList.containerWidth}
           height={this.props.height}
-          showItem={() => this.props.showItem(this.props.item)}
-          url={this.props.item.url}
+          showItem={() => this.props.showItem(this.props.item,false,true)}
+          url={this.props.item.url||{}}
         ></MedaiView>
-
-        <TouchableOpacity
-          onPress={() =>
-            requestAnimationFrame(() => this.props.showItem(this.props.item))
-          }
+        <View
           style={{
-            height: this.containsMedia() ? height / 18 : height / 6,
             margin: "1%",
           }}
         >
-          <Text
-            ellipsizeMode="tail"
-            style={{ ...GState.defaultTextStyle, fontSize: 12 }}
-            numberOfLines={this.containsMedia() ? 3 : 13}
+          <TextContent
+              text={this.props.item.description ? this.props.item.description :""}
           >
-            {this.props.item.description ? this.props.item.description : null}
-          </Text>
-        </TouchableOpacity>
-
+          </TextContent>
+        </View>
         <View
-          style={{ width: "90%", alignSelf: "center", alignItems: "center" }}
+          style={{ 
+          width: ColorList.containerWidth, 
+          alignSelf: "center", 
+          alignItems: "center",
+          marginLeft: "3%",
+          flexDirection: 'row',
+          justifyContent: 'space-between', 
+        }}
         > 
+        <Creator creator={this.props.item.creator}></Creator>
         <Social
             title={this.props.item.title}
             activity_name={this.props.activity_name}
@@ -128,14 +127,6 @@ export default class HighlightCard extends BePureComponent {
         </View>
       </View>
       </Swipeout>
-    ) : (
-      <View
-        style={{
-          width: ColorList.containerWidth,
-          height: "100%",
-          ...(!this.props.shadowless && shadower(1)),
-        }}
-      ></View>
-    );
+    ) : null
   }
 }

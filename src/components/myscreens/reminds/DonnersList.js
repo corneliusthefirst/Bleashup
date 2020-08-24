@@ -8,6 +8,7 @@ import AccordionModuleNative from '../MyTasks/BleashupAccordion';
 import  Octicons  from 'react-native-vector-icons/Octicons';
 import { TouchableOpacity, Text,View } from 'react-native';
 import GState from '../../../stores/globalState';
+import ColorList from '../../colorList';
 
 export default class DonnersList extends Component {
     constructor(props) {
@@ -49,11 +50,11 @@ export default class DonnersList extends Component {
                         actualInterval={this.props.actualInterval && item.from === this.props.actualInterval.start &&
                             item.to === this.props.actualInterval.end} first={index == 0 ? true : false} from={item.from} to={item.to}></IntervalSeparator>
                         : item.phone ? <View style={{ width: "90%", alignSelf: 'center', minHeight: 53, }}>
-                            <View style={{ display: 'flex', flexDirection: 'row', }}>
+                            <View style={{ display: 'flex', flexDirection: 'row',justifyContent: 'space-between', }}>
                                 <View style={{ width: "70%", alignSelf: 'center', }}>
                                     <ProfileView delay={this.delay} phone={item.phone}></ProfileView>
                                 </View>
-                                {this.props.must_report && !this.props.cannotReport ?
+                                { !this.props.cannotReport ?
                                     <TouchableOpacity style={{ 
                                         flexDirection: 'column',
                                         justifyContent: 'center',
@@ -66,11 +67,11 @@ export default class DonnersList extends Component {
                                             currentUser: item
                                         })
                                     }} transparent>
-                                        <Octicons style={{...GState.defaultIconSize}} type="Octicons"
+                                        <Octicons style={{...GState.defaultIconSize,color:ColorList.indicatorColor}} type="Octicons"
                                             name="report"/>
-                                            <Text style={{...GState.defaultTextStyle}}>Report</Text></TouchableOpacity> : null}
+                                            <Text style={{...GState.defaultTextStyle,color:ColorList.indicatorColor}}>Report</Text></TouchableOpacity> : null}
                             </View>
-                            <MenuDivider color="#1FABAB" />
+                            <MenuDivider color={ColorList.indicatorColor} />
                         </View> : null)
                 }}
             >

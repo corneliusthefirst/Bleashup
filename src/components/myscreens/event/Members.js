@@ -82,6 +82,7 @@ export default class Members extends Component {
             this.delay = this.delay >= 15 ? 0 : this.delay + 1;
             return (
               <SelectableProfileWithOptions
+                closeModals={this.props.closeModals}
                 simplyMembers
                 delay={this.delay}
                 toggleMaster={(member) => this.toggleMaster(member)}

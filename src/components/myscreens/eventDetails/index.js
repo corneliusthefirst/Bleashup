@@ -37,6 +37,7 @@ import  AntDesign  from 'react-native-vector-icons/AntDesign';
 import  Feather  from 'react-native-vector-icons/Feather';
 import ColorList from '../../colorList';
 import { observer } from "mobx-react";
+import Texts from '../../../meta/text';
 
 let { height, width } = Dimensions.get('window');
 
@@ -101,16 +102,13 @@ let { height, width } = Dimensions.get('window');
   incrementer = 2
   interval = 4000
   handleRefresh() {
-    //console.warn('receiving refresh highlights message')
     this.setStatePure({
       newing: !this.state.newing
     })
   }
   componentMounting() {
-    emitter.on(`refresh-highlights_${this.props.Event.id}`, this.handleRefresh.bind(this))
   }
   unmountingComponent() {
-    emitter.off(`refresh-highlights_${this.props.Event.id}`)
     clearInterval(this.scrolling)
     clearTimeout(this.waitToScroll)
     clearTimeout(this.closeTeporary)
@@ -148,7 +146,6 @@ let { height, width } = Dimensions.get('window');
   }
   reinitializeHighlightsList(newHighlight) {
     this.init()
-    this.sendUpdateHighlight()
   }
 
 
@@ -163,64 +160,32 @@ let { height, width } = Dimensions.get('window');
     if (!this.props.working) {
       this.props.startLoader()
       this.setStatePure({ isAreYouSureModalOpened: false });
-      //console.warn("deleting....")
-      //remove the higlight id from event then remove the highlight from the higlights store
-      if (item.event_id == "newEventId") {
-        //console.warn("inside if....")
-        //console.warn(this.props.item.id);
-        stores.Events.removeHighlight(item.event_id, item.id, false).then(() => {
-          stores.Highlights.removeHighlight(this.props.Event.id, item.id).then(() => {
-            this.state.highlightData = reject(this.state.highlightData, { id: item.id });
-            this.setStatePure({ highlightData: this.state.highlightData });
-            this.props.stopLoader()
-          });
-        });
-        //console.warn("inside if 2....");
-      } else {
         Requester.deleteHighlight(item.id, item.event_id).then(() => {
-          this.props.stopLoader()
-          this.state.highlightData = reject(this.state.highlightData, { id: item.id });
-          this.setStatePure({ highlightData: this.state.highlightData });
-          this.sendUpdateHighlight()
         }).catch((error) => {
           this.props.stopLoader()
         })
-      }
     } else {
-      Toaster({ text: 'App is Busy' })
+      this.sayAppBusy()
     }
   }
 
-
+ sayAppBusy(){
+   Toaster({ text: Texts.app_busy })
+ }
 
   width = width / 2 - width / 40
   _keyExtractor = (item, index) => {
     return item.id;
   }
 
-  updateHighlight(newHighlight, previousHighlight) {
-    console.warn('entered update h', newHighlight, previousHighlight);
+  updateHighlight(newHighlight) {
     if (!this.props.working) {
       this.props.startLoader();
-      Requester.applyAllHighlightsUpdate(newHighlight, previousHighlight).then((response) => {
-        if (response) {
-          let index = findIndex(this.state.highlightData, { id: newHighlight.id })
-          console.warn('here again', index, newHighlight);
-          console.warn('here again 1', this.state.highlightData);
-          this.state.highlightData[index] = newHighlight;
-          this.setStatePure({
-            highlightData: this.state.highlightData
-          })
-        }
-        console.warn('ok');
+      Requester.applyAllHighlightsUpdate(newHighlight, this.previousHighlight).then((response) => {
         this.props.stopLoader();
-        this.setStatePure({
-          update: false
-        })
-        this.sendUpdateHighlight()
       })
     } else {
-      Toaster({ text: 'App is Busy' })
+      this.sayAppBusy()
     }
   }
   sendUpdateHighlight() {
@@ -228,29 +193,17 @@ let { height, width } = Dimensions.get('window');
   }
   newHighlight() {
     this.props.computedMaster ? this.setStatePure({ EventHighlightState: true }) :
-      Toaster({ text: "you don't have enough priviledges to add a post", duration: 4000 })
-  }
-  deleteHighlightHighlight(highlights) {
-
+      Toaster({ text: Texts.not_enough_previledges_to_perform_action, duration: 4000 })
   }
   mention(replyer) {
     this.props.mention(replyer)
-  }
-  showCreator() {
-    this.state.creatorInfo ? this.setStatePure({
-      showProfileModal: true,
-      profile: this.state.creatorInfo
-    }) : null
-  }
-  relationPost(id) {
-    //BeNavigator.navigateTo("HighLightsDetails", { event_id: id })
-    return null;
   }
   delay = 1
   sorter = (a, b) => (a.created_at > b.created_at ? -1 :
     a.created_at < b.created_at ? 1 : 0)
 showActions(item){
   Vibrator.vibrateShort()
+  this.previousHighlight = JSON.stringify(item)
   this.setStatePure({
     selectedItem:item,
     showActions:true
@@ -273,13 +226,13 @@ action = () => [
    {
     title: 'Reply',
     callback: () => this.mention(this.state.selectedItem),
-    iconName: "reply",
+    iconName: Texts.reply,
     condition: () => true,
     iconType: "Entypo",
     color: colorList.replyColor
   },
   {
-    title: "update Star",
+    title: Texts.update,
     condition: () => this.props.master,
     callback: () => this.preUpdate(this.state.selectedItem.id),
     iconName: "history",
@@ -287,7 +240,7 @@ action = () => [
     color: colorList.darkGrayText
   },
   {
-    title: "Delete Delete",
+    title: Texts.delete_,
     callback: () => this.preDeleteHighlight(this.state.selectedItem),
     condition: () => this.props.master,
     iconName: "delete-forever",
@@ -335,12 +288,12 @@ action = () => [
             }} >
 
               <BleashupFlatList
-                initialRender={4}
+                initialRender={9}
                 ref={"postList"}
                 horizontal={false}
                 renderPerBatch={5}
                 firstIndex={0}
-                getItemLayout={(item,index) => GState.getItemLayout(item,index,data)}
+                getItemLayout={(item,index) => GState.getItemLayout(item,index,data,70,15)}
                 refHorizontal={(ref) => { this.detail_flatlistRef = ref }}
                 keyExtractor={this._keyExtractor}
                 dataSource={data}
@@ -359,12 +312,11 @@ action = () => [
                       height={colorList.containerHeight * .45}
                       phone={stores.LoginStore.user.phone}
                       activity_id={this.props.Event.id}
+                      
                       activity_name={this.props.Event.about.title}
                       delay={this.delay}
                       computedMaster={this.props.computedMaster}
-                      showItem={(item) => {
-                        this.props.showHighlight(item)
-                      }}
+                      showItem={this.props.showHighlight}
                       participant={this.state.participant}
                       parentComponent={this}
                       item={item}
@@ -406,11 +358,11 @@ action = () => [
           onClosed={(staring) => {
             this.setStatePure({
               EventHighlightState: false,
+              update:false,
               highlight_id: null
             })
-            staring && this.props.goback()
           }}
-          update={(newHighlight, previousHighlight) => this.updateHighlight(newHighlight, previousHighlight)}
+          update={(newHighlight) => this.updateHighlight(newHighlight)}
           participant={this.state.participant}
           parentComponent={this}
           ref={"highlights"}
@@ -436,7 +388,7 @@ action = () => [
           isOpen={this.state.isAreYouSureModalOpened} onClosed={() => { this.setStatePure({ isAreYouSureModalOpened: false }) }} />
 
 
-        <SideButton
+        {!this.props.isRelation && <SideButton
           buttonColor={'rgba(52, 52, 52, 0.8)'}
           position={"right"}
           //text={"D"}
@@ -450,7 +402,7 @@ action = () => [
           offsetX={10}
           size={40}
           offsetY={30}
-        />
+        />}
 
         <SideButton
           //buttonColor={'rgba(52, 52, 52, 0.8)'}

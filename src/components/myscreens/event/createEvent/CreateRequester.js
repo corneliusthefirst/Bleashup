@@ -5,6 +5,7 @@ import  moment  from 'moment';
 import firebase  from 'react-native-firebase';
 import Toaster from '../../../../services/Toaster';
 import IDMaker from '../../../../services/IdMaker';
+import Texts from '../../../../meta/text';
 
 class CreateRequester {
     createEvent(event){
@@ -38,7 +39,7 @@ class CreateRequester {
                         })
                     }
                 }).catch((error) => {
-                    Toaster({text:'Unable to perform request'})
+                    Toaster({text:Texts.unable_to_perform_request})
                     reject(error)
                 })
             })

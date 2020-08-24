@@ -4,6 +4,7 @@ import {
   View,
   Image,
   TouchableOpacity,
+  Platform,
   Dimensions,
   Text
 } from "react-native";
@@ -22,7 +23,7 @@ import ContactListModal from '../event/ContactListModal';
 import ContactsReportModal from './ContactsReportModal';
 import AreYouSure from '../event/AreYouSureModal';
 import moment from "moment";
-import { format } from '../../../services/recurrenceConfigs';
+import { format, AlarmPatterns, callculateAlarmOffset } from '../../../services/recurrenceConfigs';
 import {
   getcurrentDateIntervalsNoneAsync,
   getCurrentDateIntervalNonAsync,
@@ -50,6 +51,7 @@ import MaterialIcons  from 'react-native-vector-icons/MaterialIcons';
 import AntDesign  from 'react-native-vector-icons/AntDesign';
 import { observer } from 'mobx-react';
 import IDMaker from '../../../services/IdMaker';
+import Texts from '../../../meta/text';
 //const MyTasksData = stores.Reminds.MyTasksData
 
 @observer class Reminds extends AnimatedComponent {
@@ -81,7 +83,7 @@ import IDMaker from '../../../services/IdMaker';
   }
   saveAddMembers(members) {
     if (this.props.working) {
-      Toaster({ text: "App is Busy" });
+      this.sayAppBusy()
     } else {
       let newMembers = members.filter(
         (ele) =>
@@ -89,7 +91,6 @@ import IDMaker from '../../../services/IdMaker';
       );
       if (newMembers.length > 0) {
         this.props.startLoader();
-        console.warn(newMembers);
         RemindRequest.addMembers({
           ...this.state.currentTask,
           members: newMembers,
@@ -102,7 +103,7 @@ import IDMaker from '../../../services/IdMaker';
             this.props.stopLoader();
           });
       } else {
-        Toaster({ text: "member already exists" });
+        Toaster({ text: Texts.member_already_exists });
       }
     }
   }
@@ -155,7 +156,6 @@ import IDMaker from '../../../services/IdMaker';
     if(!stores.Reminds.Reminds[this.props.event_id] ||
       stores.Reminds.Reminds[this.props.event_id].length <= 1){
       stores.Reminds.loadReminds(this.props.event_id).then((reminds) => {
-        console.warn("remids fetched", reminds)
       })
       }
     this.setStatePure({
@@ -165,17 +165,18 @@ import IDMaker from '../../../services/IdMaker';
     if(this.props.id) this.waitToScroll = setTimeout(() => {
       console.warn("scrolling to index")
       this.scrolling = setInterval(() => {
-       this.refs.RemindsList && this.refs.RemindsList.scrollToIndex(findIndex(stores.Reminds.Reminds[this.props.event_id],
+       this.refs.RemindsList && this.refs.RemindsList.scrollToIndex(
+         findIndex(stores.Reminds.Reminds[this.props.event_id],
           { id: this.props.id }))
         this.scrolled = this.scrolled + 1
-        if(this.scrolled > 10) clearInterval(this.scrolling)
+        if(this.scrolled > 5) clearInterval(this.scrolling)
       },500)
       clearTimeout(this.waitToScroll)
-    }, 1000)
+    }, 700)
   }
   saveRemoved(members) {
     if (this.props.working) {
-      Toaster({ text: "App is Busy" });
+      this.sayAppBusy()
     } else {
       this.props.startLoader();
       RemindRequest.removeMembers(
@@ -202,7 +203,7 @@ import IDMaker from '../../../services/IdMaker';
   AddRemind() {
     if (!this.props.computedMaster) {
       Toaster({
-        text: "You don't have enough previlidges to add a remind",
+        text: Texts.not_enough_previledges_to_perform_action,
         duration: 4000,
       });
     } else {
@@ -233,7 +234,7 @@ import IDMaker from '../../../services/IdMaker';
           this.props.stopLoader();
         });
     } else {
-      Toaster({ text: "App is Busy" });
+      this.sayAppBusy()
     }
   }
   refreshReminds() {
@@ -267,7 +268,7 @@ import IDMaker from '../../../services/IdMaker';
   }
   markAsDone(item) {
     if (this.props.working) {
-      Toaster({ text: "App is Busy" });
+      this.sayAppBusy()
     } else {
       if (item.must_report) {
         this.setStatePure({
@@ -307,7 +308,7 @@ import IDMaker from '../../../services/IdMaker';
   }
   confirm(user, interval) {
     if (this.props.working) {
-      Toaster({ text: "App is Busy" });
+      this.sayAppBusy()
     } else {
       if (
         findIndex(this.state.currentTask.confirmed, (ele) =>
@@ -317,7 +318,7 @@ import IDMaker from '../../../services/IdMaker';
           })
         ) >= 0
       ) {
-        this.showToastMessage('confirmed already!');
+        this.showToastMessage(Texts.confirmed_already);
       } else {
         this.props.startLoader();
         RemindRequest.confirm(
@@ -330,7 +331,7 @@ import IDMaker from '../../../services/IdMaker';
             this.props.stopLoader();
           })
           .catch(() => {
-            this.showToastMessage("Unable to perform network request");
+            this.showToastMessage(Texts.unable_to_perform_request);
             this.props.stopLoader();
           });
       }
@@ -338,7 +339,7 @@ import IDMaker from '../../../services/IdMaker';
   }
   markAsDoneWithReport(report) {
     if (this.props.working) {
-      Toaster({ text: "App is Busy" });
+      this.sayAppBusy()
     } else {
       this.setStatePure({
         showReportModal: false,
@@ -385,41 +386,57 @@ import IDMaker from '../../../services/IdMaker';
           this.props.stopLoader();
         });
     } else {
-      Toaster({ text: "App is Busy" });
+     this.sayAppBusy()
     }
   }
-  saveAlarms(alarms) {
-    console.warn(alarms)
-    if (this.props.working) {
-      Toaster({ text: "App is Busy" });
+  sayAppBusy(){
+    Toaster({text:Texts.app_busy})
+  }
+  saveAlarms(alarms,date) {
+    if(this.state.forCurrentRemind){
+      this.setStatePure({
+        forCurrentRemind:false,
+        currentRemind:{
+          ...this.state.currentRemind,
+          extra:{
+            ...this.state.currentRemind.extra,
+            alarms,
+            date
+          }
+        }
+      })
     } else {
-      this.props.startLoader();
-      RemindRequest.addMembers(
-        {
-          ...this.state.currentTask,
-          members: [
-            this.props.shared
-              ? {
-                ...request.Participant(),
-                phone: stores.LoginStore.user.phone,
-                master: false,
-                status: "joint",
-                host: stores.Session.SessionStore.host,
-              }
-              : find(this.props.event.participant, {
-                phone: stores.LoginStore.user.phone,
-              }),
-          ],
-        },
-        alarms
-      )
-        .then(() => {
-          this.props.stopLoader();
-          this.refreshReminds();
-        })
-        .catch((error) => {
-          this.props.stopLoader();
-        });
+      if (this.props.working) {
+        
+      } else {
+        this.props.startLoader();
+        RemindRequest.addMembers(
+          {
+            ...this.state.currentTask,
+            members: [
+              this.props.shared
+                ? {
+                  ...request.Participant(),
+                  phone: stores.LoginStore.user.phone,
+                  master: false,
+                  status: "joint",
+                  host: stores.Session.SessionStore.host,
+                }
+                : find(this.props.event.participant, {
+                  phone: stores.LoginStore.user.phone,
+                }),
+            ],
+          },
+          alarms
+        )
+          .then(() => {
+            this.props.stopLoader();
+            this.refreshReminds();
+          })
+          .catch((error) => {
+            this.props.stopLoader();
+          });
+      }
     }
   }
   flatterarray(array, result, i) {
@@ -543,7 +560,7 @@ import IDMaker from '../../../services/IdMaker';
   actionIndex = this.state.currentIndex ? this.state.currentIndex() : {}
   remindsActions =() => [
     {
-      title:'Reply',
+      title:Texts.reply,
       callback:() => this.mention(this.state.remind),
       iconName:"reply",
       condition:() => true,
@@ -551,7 +568,7 @@ import IDMaker from '../../../services/IdMaker';
       color:colorList.replyColor
     },
     {
-      title:'Share Remind',
+      title:Texts.share,
       callback:() => this.share(),
       condition:() => true,
       iconName:"forward",
@@ -559,7 +576,7 @@ import IDMaker from '../../../services/IdMaker';
       color:colorList.indicatorColor
     },
     {
-      title:"Members",
+      title:Texts.members,
       callback: () => this.showReport(this.state.remind),
       condition:() => true,
       iconName:"ios-people",
@@ -567,7 +584,7 @@ import IDMaker from '../../../services/IdMaker';
       color:colorList.likeActive
     },
     {
-      title:"Update Remind",
+      title:Texts.update,
       condition:() => this.actionIndex.creator || this.props.master,
       callback:() => this.updateRemind(this.state.remind),
       iconName:"history",
@@ -575,14 +592,14 @@ import IDMaker from '../../../services/IdMaker';
       color:colorList.darkGrayText
     },
     {
-      title:"Assign members",
+      title:Texts.assign,
       condition:() => this.props.master,
       callback:() => this.addMembers(uniqBy(this.state.remind.members,"phone"),this.state.remind),
       iconName: "addusergroup",
       iconType: "AntDesign",
       color:colorList.indicatorColor
     },{
-      title: "Unassign Members",
+      title: Texts.unassign,
       condition:() => this.props.master,
       callback: () => this.removeMembers(uniqBy(this.state.remind.members.filter(ele => this.state.creator ||
         ele.phone === stores.LoginStore.user.phone)),this.state.remind),
@@ -591,7 +608,7 @@ import IDMaker from '../../../services/IdMaker';
       color:"orange"
     },
     {
-      title:"Delete Remind",
+      title:Texts.delete_,
       callback:() => this.removeRemind(this.state.remind),
       condition:() => this.props.master,
       iconName: "delete-forever",
@@ -652,7 +669,18 @@ import IDMaker from '../../../services/IdMaker';
           eventRemindData={this.getRemindData()}
         />
         <SetAlarmPatternModal
-          save={(alarms) => this.saveAlarms(alarms)}
+          save={(alarms,date) => this.saveAlarms(alarms,date)}
+          pattern={this.state.currentRemind && 
+            this.state.currentRemind.extra && 
+            this.state.currentRemind.extra.alarms ? 
+            [...AlarmPatterns().map(ele => {return {...ele,autoselected:false}}).filter(ele => 
+              this.state.currentRemind.extra.alarms.findIndex(e => e.id == ele.id) < 0),
+              ...this.state.currentRemind.extra.alarms.map(ele => {
+                return {
+                  ...ele,
+                  autoselected:true
+                }
+              })]:AlarmPatterns()}
           isOpen={this.state.isSelectAlarmPatternModalOpened}
           closed={() => {
             this.setStatePure({
@@ -666,6 +694,12 @@ import IDMaker from '../../../services/IdMaker';
               ? this.addNewRemind.bind(this)
               : this.sendUpdate.bind(this)
           }
+          updateAlarms={() => {
+            this.setStatePure({
+              isSelectAlarmPatternModalOpened:true,
+              forCurrentRemind:true
+            })
+          }}
           onChangedStatus={this.onChangedStatus.bind(this)}
           currentRemind={this.state.currentRemind || {}}
           onComplete={this.updateRequestReportOnComplete.bind(this)}
@@ -791,29 +825,7 @@ import IDMaker from '../../../services/IdMaker';
     );
   }
   mention(itemer) {
-    this.props.mention({
-      id: itemer.id,
-      replyer_phone: itemer.creator.phone,
-      video: itemer.remind_url && itemer.remind_url.video ? true : false,
-      audio:
-        itemer.remind_url && !itemer.remind_url.video && itemer.remind_url.audio
-          ? true
-          : false,
-      photo:
-        itemer.remind_url && !itemer.remind_url.video && itemer.remind_url.photo
-          ? true
-          : false,
-      sourcer:
-        itemer.remind_url && itemer.remind_url.video
-          ? itemer.remind_url.photo
-          : itemer.remind_url && itemer.remind_url.photo
-            ? itemer.remind_url.photo
-            : itemer.remind_url && itemer.remind_url.audio
-              ? itemer.remind_url.audio
-              : null,
-      type_extern: replies.reminds,
-      title: itemer.title + ': \n' + itemer.description,
-    });
+    this.props.mention(GState.prepareRemindsForMetion(itemer));
   }
   showMedia = (url) => {
     if (url.video) {
@@ -937,7 +949,7 @@ import IDMaker from '../../../services/IdMaker';
           <View style={{ height: '92%' }}>
             <BleashupFlatList
               fit={this.props.fit}
-              getItemLayout={(item,index) => GState.getItemLayout(item,index,this.getRemindData())}
+              getItemLayout={(item,index) => GState.getItemLayout(item,index,this.getRemindData(),70,20)}
               initialRender={6}
               ref="RemindsList"
               renderPerBatch={5}
@@ -953,9 +965,9 @@ import IDMaker from '../../../services/IdMaker';
                     onLayout={(layout) => GState.itemDebounce(item,() => {
                       stores.Reminds.persistDimenssion(index,item.event_id,layout)
                     },500)}
-                      showRemindActions={(intervals,thisInterval,creator) => {
+                      showRemindActions={(intervals,thisInterval,creator,date) => {
                         Vibrator.vibrateShort()
-                        this.showRemindActions(item,intervals,thisInterval,creator)
+                        this.showRemindActions({...item,current_date:date},intervals,thisInterval,creator)
                       }}
                       animate={this.animateUI}
                       showMedia={this.showMedia.bind(this)}

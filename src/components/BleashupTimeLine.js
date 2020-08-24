@@ -1,4 +1,3 @@
-"use strict";
 
 import React, { PureComponent } from "react";
 import {
@@ -94,8 +93,7 @@ export default class BleashupTimeLine extends PureComponent {
                     renderItem={(rowData, index) => {
                         this.delayer = this.delayer + 1
                         if (this.delayer >= 6) this.delayer = 0
-                        return <View onLayout={(e) => {
-                        }} >{this._renderItem(rowData, index, this.delayer)}</View>
+                        return <View>{this._renderItem(rowData, index, this.delayer)}</View>
                     }}
                     keyExtractor={(rowData, index) => index + ""}
                     {...this.props.options}
@@ -301,7 +299,7 @@ export default class BleashupTimeLine extends PureComponent {
     mention(change) {
         this.props.mention({
             id: change.id,
-            title: `${change.changed} :\n ${typeof change.new_value.new_value == "string" &&
+            title: `${this.state.changer.nickname}  ${change.changed} :\n ${typeof change.new_value.new_value == "string" &&
                 !testForURL(change.new_value.new_value) ?
                 change.new_value.new_value : ""}`,
             type_extern: this.state.changer.nickname,
@@ -316,7 +314,7 @@ export default class BleashupTimeLine extends PureComponent {
     _renderDetail(rowData, index, delay) {
         let title = (
             <View>
-                <Text style={[styles.title, this.props.titleStyle]}>
+                <Text numberOfLines={2} ellipsizeMode={"tail"} style={[GState.defaultTextStyle,styles.title, this.props.titleStyle]}>
                     {rowData.title}
                 </Text>
                 <ChangeBox onLongPress={(changer) => {

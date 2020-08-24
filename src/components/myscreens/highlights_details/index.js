@@ -14,6 +14,7 @@ import ColorList from '../../colorList';
 import Toaster from '../../../services/Toaster';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import IDMaker from '../../../services/IdMaker';
+import GState from '../../../stores/globalState/index';
 const screenWidth = Math.round(Dimensions.get('window').width);
 const screenheight = Math.round(Dimensions.get('window').height);
 export default class HighLightsDetails extends Component {
@@ -145,21 +146,7 @@ export default class HighLightsDetails extends Component {
                     }}
                     highlight={item}
                     showInput={(replyer) => {
-                        let reply = {
-                            id: replyer.id,
-                            video: replyer.url.video ? true : false,
-                            audio: !replyer.url.video && replyer.url.audio ? true : false,
-                            video: replyer.url.video ? true : false,
-                            photo: !replyer.url.video && replyer.url.photo ? true : false,
-                            sourcer: replyer.url.video ?
-                                replyer.url.photo : replyer.url.photo ?
-                                    replyer.url.photo : replyer.url.audio ?
-                                        replyer.url.audio : null,
-                            replyer_phone: stores.LoginStore.user.phone,
-                            //replyer_name: stores.LoginStore.user.name,
-                            title: `${replyer.title}: \n ${replyer.description}`,
-                            type_extern: 'Posts',
-                        }
+                        let reply = GState.prepareStarForMention(replyer)
                         this.setState({
                             replyer: reply,
                             inputsHeight: this.formHeightPercent(140),

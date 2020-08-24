@@ -5,7 +5,6 @@ import com.facebook.react.ReactApplication;
 import com.swmansion.rnscreens.RNScreensPackage;
 import com.dylanvann.fastimage.FastImageViewPackage;
 import com.bolan9999.SpringScrollViewPackage;
-import org.wonday.orientation.OrientationPackage;
 import com.reactnativecommunity.rnpermissions.RNPermissionsPackage;
 import org.reactnative.camera.RNCameraPackage;
 import com.horcrux.svg.SvgPackage;
@@ -32,7 +31,6 @@ import com.facebook.react.ReactPackage;
 import com.RNFetchBlob.RNFetchBlobPackage;
 import com.facebook.react.shell.MainReactPackage;
 import com.facebook.soloader.SoLoader;
-import com.chirag.RNMail.*;  // <--- import 
 //import android.support.v7.app.AppCompatActivity;
 import com.proyecto26.inappbrowser.RNInAppBrowserPackage;
 import java.util.Arrays;
@@ -54,7 +52,6 @@ public class MainApplication extends Application implements ReactApplication {
             new RNScreensPackage(),
             new FastImageViewPackage(),
             new SpringScrollViewPackage(),
-            new OrientationPackage(),
             new RNPermissionsPackage(),
             new RNCameraPackage(),
             new SvgPackage(),
@@ -75,7 +72,6 @@ public class MainApplication extends Application implements ReactApplication {
             new AsyncStoragePackage(),
             new VectorIconsPackage(),
             new TcpSocketsModule(),
-            new RNMail() ,
             new RNGestureHandlerPackage(),
             new RNFetchBlobPackage(),
             new RNInAppBrowserPackage(),

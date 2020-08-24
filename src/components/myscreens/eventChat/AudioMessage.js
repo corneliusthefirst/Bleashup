@@ -30,7 +30,7 @@ export default class AudioMessage extends BePureComponent {
         super(props);
         this.state = {
             duration: 0,
-            currentPosition: 0,
+            currentPosition: 1,
             currentTime: 0,
             downloadState: 0,
             downloading: true,
@@ -177,12 +177,12 @@ export default class AudioMessage extends BePureComponent {
     }
     player = null;
     pause() {
-        this.setStatePure({
-            playing: false,
-        });
         clearInterval(this.refreshID)
         this.player.pause();
         emitter.off(this.playingEvent)
+        this.setStatePure({
+            playing: false,
+        });
     }
     task = null;
     previousTime = 0;
@@ -200,7 +200,7 @@ export default class AudioMessage extends BePureComponent {
                         });
                     }
                 });
-            }, 1000);
+            }, 500);
         }
         emitter.emit(this.playingEvent)
        if(this.player){
@@ -216,14 +216,15 @@ export default class AudioMessage extends BePureComponent {
     }
     playingEvent = "playing"
     playerCallback(success){
+        this.pause()
         if (success) {
             this.player.getCurrentTime((seconds) => {
                 this.props.message.duration = Math.floor(seconds);
                 this.setStatePure({
                     currentPosition: seconds / this.props.message.duration,
+                    playing:false,
                     currentTime: seconds,
                 });
-                this.pause()
                 stores.Messages.addDuration(this.props.room, seconds).then(
                     (status) => {
                         

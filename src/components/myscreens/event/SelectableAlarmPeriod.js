@@ -10,17 +10,11 @@ export default class SelectableAlarmPeriod extends Component {
             checked: false
         }
     }
-    componentDidMount() {
-        this.props.item.autoselected ? setTimeout(() => this.toggleChecked() , this.props.timeoute * 10) : null
-    }
     state = {
 
     }
     toggleChecked() {
-        this.state.checked ? this.props.unchecked(this.props.item.id) : this.props.checked(this.props.item)
-        this.setState({
-            checked: !this.state.checked
-        })
+        this.props.mechecked ? this.props.unchecked(this.props.item.id) : this.props.checked(this.props.item)
     }
     render() {
         return (
@@ -33,7 +27,7 @@ export default class SelectableAlarmPeriod extends Component {
             }} onPress={() => this.toggleChecked()} transparent>
             <View style={{width:100}}> 
                     <MaterialIcons style={{...GState.defaultIconSize}} name={
-                        this.state.checked ? "radio-button-checked" :
+                        this.props.mechecked ? "radio-button-checked" :
                             "radio-button-unchecked"
                     } type={"MaterialIcons"}/>
                 </View>

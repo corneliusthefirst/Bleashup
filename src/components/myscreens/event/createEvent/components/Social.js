@@ -27,9 +27,9 @@ export default class Social extends Component {
     };
     render() {
         return (
-            <View style={{ width: "100%", margin: 3 }}>
+            <View style={{  margin: 3 }}>
                 <View style={{ flexDirection: "row", }}>
-                    <View style={{ width:"60%", flexDirection: "row",alignSelf: 'center',justifyContent: 'space-between', }}>
+                    <View style={{ width:"55%", flexDirection: "row",alignSelf: 'center',justifyContent: 'space-between', }}>
                         <View style={{...this.itemStyle,width:'20%'}}>
                             <Like
                             icon={{ 
@@ -117,7 +117,7 @@ export default class Social extends Component {
                             })
                         )
                     }
-                    style={{ margin: "1%" }}
+                    style={{ margin: "1%",marginLeft: "-1%", }}
                 >
                     <Text
                         note

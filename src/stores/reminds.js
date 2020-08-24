@@ -461,11 +461,9 @@ export default class Reminds {
   }
 
   @action removeRemind(EventID, RemindId) {
-    console.warn("removing remind")
     return new Promise((resolve, RejectPromise) => {
       this.readFromStore().then((Reminds) => {
         let index = findIndex(Reminds[EventID], { id: RemindId });
-        console.warn(index,RemindId)
         const oldRem  = Reminds[EventID][index]
           Reminds[EventID] = reject(Reminds[EventID], { "id": RemindId });
           RemindId === request.Remind().id
@@ -476,6 +474,22 @@ export default class Reminds {
           resolve(oldRem);
       });
     });
+  }
+  updateAlarmPatern(EventID,remindId,newAlarm,newDate){
+    return new Promise((resolve,reject) => {
+      this.readFromStore().then((reminds) => {
+        let index = findIndex(reminds[EventID],{id:remindId})
+        const oldRemind = reminds[EventID][index]
+        reminds[EventID][index].extra = {
+          ...reminds[EventID][index].extra,
+          alarms:newAlarm,
+          date:newDate
+        }
+        this.setProperty(reminds)
+        GState.eventUpdated = true
+        resolve(oldRemind)
+      })
+    })
   }
 
   loadRemindFromRemote(EventID, id) {

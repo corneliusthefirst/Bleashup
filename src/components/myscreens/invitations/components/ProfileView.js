@@ -12,6 +12,8 @@ import ProfileSimple from "../../currentevents/components/ProfileViewSimple";
 import { check_user_error_1, check_user_error_2 } from '../../../../stores/temporalUsersStore';
 import BeComponent from '../../../BeComponent';
 import FontAwesome  from 'react-native-vector-icons/FontAwesome';
+import emitter from "../../../../services/eventEmiter";
+import { sayTyping } from '../../eventChat/services';
 
 export default class ProfileView extends BeComponent {
     constructor(props) {
@@ -23,6 +25,7 @@ export default class ProfileView extends BeComponent {
     shouldComponentUpdate(nexprops, nexState) {
         return nexState.hide !== this.state.hide ||
             this.state.isMount !== nexState.isMount ||
+            this.state.typing !== nexState.typing ||
             this.state.isModalOpened !== nexState.isModalOpened
     }
     componentDidMount() {
@@ -55,21 +58,27 @@ export default class ProfileView extends BeComponent {
                 }),
             20 * this.props.delay ? this.props.delay : 2
         );
-
-        //small method fro testing
-        /*if(this.props.phone != "00237650594616"){
-                    console.warn("here we are")
-                    this.state.hide = true;
-                    this.props.hideMe(this.state.hide)
-                }*/
     }
 
     openModal() {
         this.setStatePure({ isModalOpened: true });
     }
-
+    componentMounting(){
+        emitter.on(`${this.props.phone}_typing`,(typer) => {
+            !this.sayTyping ? this.sayTyping = sayTyping.bind(this): null
+            this.sayTyping(typer)
+        })
+    }
+    unmountingComponent(){
+        emitter.off(`${this.props.phone}_typing`)
+    }
+    showTyper() {
+        return this.state.typing && <Text style={[GState.defaultTextStyle,
+        {
+            color: ColorList.indicatorColor, fontSize: 12,
+        }]}>{`typing ...`}</Text>
+    }
     render() {
-        console.warn("rendering profile view")
         return !this.state.hide ? (
             <View style={{ flexDirection: "row" }}>
                 <TouchableOpacity
@@ -131,26 +140,7 @@ export default class ProfileView extends BeComponent {
                                 ? stores.TemporalUsersStore.Users[this.props.phone].nickname
                                 : "a bleashup user"}
                     </Text>
-
-                    {stores.TemporalUsersStore.Users &&
-                        stores.TemporalUsersStore.Users[this.props.phone] &&
-                        stores.TemporalUsersStore.Users[this.props.phone].status &&
-                        stores.TemporalUsersStore.Users[this.props.phone].status !=
-                        "undefined" &&
-                        !stores.TemporalUsersStore.Users[
-                            this.props.phone
-                        ].status.isEmpty() ? (
-                            <Text
-                                ellipsizeMode={"tail"}
-                                numberOfLines={1}
-                                style={{ alignSelf: "flex-start", fontStyle: "italic" }}
-                                note
-                            >
-                                {stores.TemporalUsersStore.Users &&
-                                    stores.TemporalUsersStore.Users[this.props.phone] &&
-                                    stores.TemporalUsersStore.Users[this.props.phone].status}
-                            </Text>
-                        ) : null}
+                   {this.showTyper()}
                 </View>
                 {this.state.isModalOpened ? (
                     <ProfileModal

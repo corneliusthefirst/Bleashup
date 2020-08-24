@@ -5,6 +5,7 @@ import {
 import Menu, { MenuItem, MenuDivider } from 'react-native-material-menu';
 import emitter from '../../../services/eventEmiter';
 import ColorList from '../../colorList';
+import Texts from '../../../meta/text';
 
 export default class RemindsTypeMenu extends Component {
     constructor(props) {
@@ -39,13 +40,13 @@ export default class RemindsTypeMenu extends Component {
                 <View><MenuItem textStyle={{ color: ColorList.headerIcon }} onPress={() => {
                     this.hideMenu()
                     this.props.reminder()
-                }}>{"Remind"}</MenuItem>
-                    <MenuDivider color="#1FABAB" /></View>
+                }}>{Texts.reminder}</MenuItem>
+                    <MenuDivider color={ColorList.indicatorColor} /></View>
                 <View>
                     <MenuItem textStyle={{ color: ColorList.headerIcon }} onPress={() => {
                         this.hideMenu()
                         this.props.event()
-                    }}>{"Event"}</MenuItem>
+                    }}>{Texts.program}</MenuItem>
                 </View>
             </Menu>
         </View>

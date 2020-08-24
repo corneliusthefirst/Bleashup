@@ -8,16 +8,27 @@ import Waiter from "./Waiter";
 import GState from '../../../stores/globalState/index';
 import BeNavigator from '../../../services/navigationServices';
 import AnimatedComponent from '../../AnimatedComponent';
+//import BeBackground from '../../../services/backgroundSync';
+//import BackgroundJob from 'react-native-background-job';
 const AppDir = rnFetchBlob.fs.dirs.SDCardDir + '/Bleashup';
 const PhotoDir = AppDir + '/Photo';
 const SounDir = AppDir + '/Sound';
 const VideoDir = AppDir + '/Video';
 const OthersDir = AppDir + '/Others';
 const { fs } = rnFetchBlob;
+
+//BackgroundJob.cancelAll();
+//BackgroundJob.register(backgroundJob);
+
+//BackgroundJob.schedule(backgroundSchedule);
 export default class LoginHomeView extends AnimatedComponent {
   constructor(props) {
     super(props);
     GState.nav = this.props.navigation;
+  }
+  componentDidMount(){
+    //BackgroundJob.
+    //BeBackground.startTask()
   }
   state = {};
   async requestReadAndWritePermission() {

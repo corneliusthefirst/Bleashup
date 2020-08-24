@@ -17,6 +17,8 @@ import Highlighter from "react-native-highlight-words";
 import ColorList from "../../../colorList";
 import BeComponent from "../../../BeComponent";
 import FontAwesome  from 'react-native-vector-icons/FontAwesome';
+import emitter from "../../../../services/eventEmiter";
+import { sayTyping } from '../../eventChat/services';
 
 export default class ProfileSimple extends BeComponent {
   constructor(props) {
@@ -46,6 +48,17 @@ export default class ProfileSimple extends BeComponent {
   url = {
     //uri: this.props.profile.profile,
   };
+  componentMounting(){
+    emitter.on(`${this.props.profile.phone}_typing`,(typer) => {
+      !this.sayTyping ? this.sayTyping = sayTyping.bind(this):null 
+      this.sayTyping(typer)
+    })
+  }
+  showTyper(){
+    return this.state.typing && <Text style={[GState.defaultTextStyle,
+      {color:ColorList.indicatorColor,fontSize: 12,
+      }]}>{`typing ...`}</Text>
+  }
   closeProfileModal() {
     this.setStatePure({ isModalOpened: false });
   }
@@ -84,9 +97,10 @@ export default class ProfileSimple extends BeComponent {
               autoEscape={true}
               textToHighlight={this.props.profile.nickname}
             ></Highlighter>
+            {this.showTyper()}
           </View>
         ) : (
-          <View style={styles.textStyles}>
+          <TouchableOpacity onPress={this.showProfile} style={styles.textStyles}>
             <Text
               ellipsizeMode={"tail"}
               numberOfLines={1}
@@ -97,14 +111,8 @@ export default class ProfileSimple extends BeComponent {
                 ? "You "
                 : this.props.profile && this.props.profile.nickname}
             </Text>
-            {this.props.profile &&
-            this.props.profile.status &&
-            this.props.profile.status !== "undefined" ? (
-              <Text style={styles.text2}>
-                {this.props.profile && this.props.profile.status}
-              </Text>
-            ) : null}
-          </View>
+            {this.showTyper()}
+          </TouchableOpacity>
         )}
 
         {this.props.invite && !this.props.profile.found ? (
@@ -126,7 +134,6 @@ export default class ProfileSimple extends BeComponent {
             profile={this.props.profile}
           ></ProfileModal>
         }
-        {/*<Invite isOpen={this.state.invite} onClosed={() => { this.setStatePure({ invite: false }) }} />*/}
       </View>
     );
   }

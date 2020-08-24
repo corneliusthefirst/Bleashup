@@ -117,6 +117,7 @@ export default class Message extends BeComponent {
             case "text_sender":
                 return (
                     <TextMessageSnder
+                        onLongPress={this.handLongPress.bind(this)}
                         sendMessage={(message) => this.props.sendMessage(message)}
                         firebaseRoom={this.props.firebaseRoom}
                         user={2}
@@ -192,6 +193,7 @@ export default class Message extends BeComponent {
                 return (
                     <PhotoUploader
                         room={this.props.room}
+                        onLongPress={this.handLongPress.bind(this)}
                         showPhoto={(photo) => this.props.showPhoto(photo)}
                         replaceMessage={(data) => this.props.replaceMessage(data)}
                         sender={false}
@@ -202,6 +204,7 @@ export default class Message extends BeComponent {
             case "video_upload":
                 return (
                     <VideoUploader
+                        onLongPress={this.handLongPress.bind(this)}
                         playVideo={(video) => this.props.playVideo(video)}
                         replaceMessage={(data) => this.props.replaceMessageVideo(data)}
                         message={data}
@@ -215,6 +218,7 @@ export default class Message extends BeComponent {
                     <FileAttarchementUploader
                         room={this.props.room}
                         index={index}
+                        onLongPress={this.handLongPress.bind(this)}
                         message={data}
                         replaceMessage={(data) => this.props.replaceMessageFile(data)}
                     ></FileAttarchementUploader>
@@ -222,6 +226,7 @@ export default class Message extends BeComponent {
             case "audio_uploader":
                 return (
                     <AudioUploader
+                        onLongPress={this.handLongPress.bind(this)}
                         room={this.props.room}
                         message={data}
                         index={data.id}
@@ -565,7 +570,7 @@ export default class Message extends BeComponent {
                                                     </Text>
                                                 ) : null}
                                                 {this.state.different && 
-                                                    this.state.sender ? 
+                                                    this.state.sender && !this.props.isRelation ? 
                                                     <TouchableOpacity
                                                     onPressIn={this.handlePressIn.bind(this)}
                                                         onLongPress={this.handLongPress.bind(this)}

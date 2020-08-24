@@ -22,6 +22,7 @@ import BeComponent from '../../BeComponent';
 import MaterialCommunityIcons  from 'react-native-vector-icons/MaterialCommunityIcons';
 import AntDesign  from 'react-native-vector-icons/AntDesign';
 import GState from "../../../stores/globalState";
+import BePureComponent from '../../BePureComponent';
 
 let { height, width } = Dimensions.get('window')
 
@@ -81,6 +82,9 @@ export default class EventTasksCard extends BeComponent {
       this.setStatePure({
         mounted: true
       })
+      setTimeout(() => {
+        this.loadIntervals()
+      })
     }, 30 * this.props.delay)
   }
 
@@ -106,12 +110,16 @@ export default class EventTasksCard extends BeComponent {
       this.state.newing !== nextState.newing
   }
   componentDidUpdate(prevProps, prevState) {
-    this.previousItem = JSON.stringify(this.props.item)
-    if (prevProps.item.period !== this.props.item.period || !isEqual(this.props.item.recursive_frequency,
-      prevProps.item.recursive_frequency) || this.state.mounted !== prevState.mounted) {
+    let previousItem = JSON.parse(this.previousItem)
+    let canUpdate = this.state.mounted && (!previousItem || previousItem.period
+      !== this.props.item.period ||
+       !isEqual(this.props.item.recursive_frequency,
+        previousItem.recursive_frequency))
+    if (canUpdate) {
       this.loadIntervals().then(() => {
       })
     }
+    this.previousItem = JSON.stringify(this.props.item)
   }
   unmountingComponent() {
   }
@@ -122,6 +130,18 @@ export default class EventTasksCard extends BeComponent {
     title: null,
     content: null
   }
+  returnActualDatesIntervals(){
+    return this.state.correspondingDateInterval ?
+      {
+        period: moment(this.state.correspondingDateInterval.end, format).format(),
+        recurrence: moment(this.state.correspondingDateInterval.end, format).format(),
+        title: this.props.item.title
+      } : {
+        period: moment(this.state.currentDateIntervals[this.state.currentDateIntervals.length - 1].end, format).format(),
+        recurrence: moment(this.state.currentDateIntervals[this.state.currentDateIntervals.length - 1].end, format).format(),
+        title: this.props.item.title
+      }
+  }
   render() {
     let hasDoneForThisInterval = find(this.props.item.donners, (ele) =>
       ele.status.date &&
@@ -131,7 +151,7 @@ export default class EventTasksCard extends BeComponent {
         format).format("X") && moment(ele.status.date).format("X") <=
       moment(this.state.correspondingDateInterval.end, format).format("X") &&
       ele.phone === stores.LoginStore.user.phone) ? true : false
-    canBeDone = this.state.correspondingDateInterval ? true : false
+    canBeDone = this.state.correspondingDateInterval  ? true : false
     missed = dateDiff({
       recurrence: this.state.correspondingDateInterval ?
         moment(this.state.correspondingDateInterval.end, format).format() :
@@ -149,9 +169,11 @@ export default class EventTasksCard extends BeComponent {
     return !this.state.mounted ? null : (
       <Swipeout onLongPress={() => {
         this.props.showRemindActions(this.state.currentDateIntervals,
-          this.state.correspondingDateInterval,this.state.creator)
+          this.state.correspondingDateInterval, 
+          this.state.creator,
+           this.returnActualDatesIntervals().period)
       }} disabled swipeRight={() => {
-        this.props.mention(this.props.item)
+        this.props.mention({...this.props.item,current_date:this.returnActualDatesIntervals().period,})
         }}><View onLayout={(e) => this.props.onLayout(e.nativeEvent.layout)} style={{
         width:"98%",
         flexDirection: 'column',
@@ -166,7 +188,7 @@ export default class EventTasksCard extends BeComponent {
           justifyContent: 'space-between',
           flexDirection: 'row',
         }}>
-          <View style={{ width: "90%" }}>
+          <View style={{ width: "95%" }}>
             <Text style={{
               width: '100%', fontWeight: "300", fontSize: 14, color: ColorList.bodySubtext,
               color: dateDiff({
@@ -176,34 +198,10 @@ export default class EventTasksCard extends BeComponent {
               }) > 0 ? ColorList.bodySubtext : ColorList.iconActive,
               alignSelf: 'flex-end',
             }}
-            >{`${writeDateTime(
-              this.state.correspondingDateInterval ?
-                {
-                  period: moment(this.state.correspondingDateInterval.end, format).format(),
-                  recurrence: moment(this.state.correspondingDateInterval.end, format).format(),
-                  title: this.props.item.title
-                } : {
-                  period: moment(this.state.currentDateIntervals[this.state.currentDateIntervals.length - 1].end, format).format(),
-                  recurrence: moment(this.state.currentDateIntervals[this.state.currentDateIntervals.length - 1].end, format).format(),
-                  title: this.props.item.title
-                }).
+            >{`${writeDateTime(this.returnActualDatesIntervals()).
               replace("Starting", "Due").
               replace("Ended", "Past").
               replace("Started", "Past")}`}</Text>
-          </View>
-          <View style={{ width: 22, flexDirection: 'row', }}>
-            {/*<View style={{ flexDirection: 'row', alignSelf: 'flex-end' }}>
-              <RemindsMenu
-                reply={() => this.props.mention({ ...this.props.item, creator: this.state.creator })}
-                members={() => this.props.showReport(this.props.item, this.state.currentDateIntervals, this.state.correspondingDateInterval)}
-                update={() => this.props.updateRemind(this.props.item)}
-                creator={this.props.master}
-                addMembers={() => { this.props.addMembers(uniqBy(this.props.item.members, "phone"), this.props.item) }}
-                removeMembers={() => this.props.removeMembers(uniqBy(this.props.item.members.filter(ele => this.state.creator ||
-                  ele.phone === stores.LoginStore.user.phone), 'phone'), this.props.item)}
-                deleteRemind={() => this.props.deleteRemind(this.props.item)}
-              ></RemindsMenu>
-                </View>*/}
           </View>
         </View>
 
@@ -212,12 +210,12 @@ export default class EventTasksCard extends BeComponent {
             let Query = { query: this.props.item.location };
             createOpenLink({ ...Query, zoom: 50 })();
           })}>
-            <Text style={{ fontWeight: 'bold', }}>{"Venue: "}</Text><Text style={{ textDecorationLine: 'underline' }}>{this.props.item.location}</Text>
+            <Text style={{ ...GState.defaultTextStyle,fontWeight: 'bold', }}>{"Venue: "}</Text><Text style={{ textDecorationLine: 'underline' }}>{this.props.item.location}</Text>
           </TouchableOpacity>
         </View> : null}
         <View style={{flexDirection: 'row',}}>
           <View>
-            <Text ellipsizeMode={'tail'} numberOfLines={7} style={{ fontWeight: "500", marginBottom: "5%", marginLeft: "0%", fontSize: 17, color: ColorList.bodyText, textTransform: "capitalize", }}>{this.props.item.title}</Text>
+            <Text ellipsizeMode={'tail'} numberOfLines={7} style={{...GState.defaultTextStyle, fontWeight: "500", marginBottom: "5%", marginLeft: "0%", fontSize: 17, color: ColorList.bodyText, textTransform: "capitalize", }}>{this.props.item.title}</Text>
           </View>
         </View>
         {this.props.item.remind_url &&

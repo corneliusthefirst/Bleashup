@@ -3,6 +3,8 @@ import { Dimensions, View } from "react-native"
 import Modal from "react-native-modalbox";
 import ColorList from '../colorList';
 import AnimatedPureComponent from '../AnimatedPureComponent';
+import emitter from "../../services/eventEmiter";
+import { close_all_modals } from "../../meta/events";
 
 const screenheight = Math.round(Dimensions.get('window').height);
 
@@ -20,6 +22,14 @@ export default class BleashupModal extends AnimatedPureComponent {
     }
     onClosedModal() {
 
+    }
+    componentMounting(){
+        emitter.on(close_all_modals,() => {
+            this.onClosedModal()
+        })
+    }
+    unmountingComponent(){
+        //!emitter.off("close-all-modals")
     }
     jusify = false
     backdropOpacity = 0.7

@@ -6,6 +6,8 @@ import ColorList from '../../colorList';
 import BleashupModal from '../../mainComponents/BleashupModal';
 import rounder from '../../../services/rounder';
 import MaterialCommunityIcons  from 'react-native-vector-icons/MaterialCommunityIcons';
+import GState from '../../../stores/globalState';
+import Texts from '../../../meta/text';
 
 export default class RemindReportContent extends BleashupModal {
     initialize(){
@@ -28,20 +30,21 @@ export default class RemindReportContent extends BleashupModal {
     }
     swipeToClose = false
     position = "center"
-    modalHeight=400 
+    modalHeight = this.props.report.report ? 400 : 100 
     modalWidth="90%"
     entry="top"
     modalBody() {
         return (
             <View>
-                <ScrollView style={{ margin: "5%", height: "75%" }}>
-                    <Text>{this.props.report.report}</Text>
-                </ScrollView>
+                {this.props.report.report &&<Text style={{...GState.defaultTextStyle, margin: '5%',
+            fontWeight: 'bold',fontStyle: 'italic',color:ColorList.bodySubtext}}>{`@${Texts.report}`}</Text>}
+                {this.props.report.report && <ScrollView style={{ margin: "5%", height: "50%" }}>
+                    <Text style={{...GState.defaultTextStyle}}>{this.props.report.report}</Text>
+                </ScrollView>}
                 <View style={{ margin: '2%' }}>
-                <Text note>{moment(this.props.report.date).
-                    format("dddd, MMMM Do YYYY, h:mm:ss a")}</Text></View>
-                {this.props.master ? <View style={{justifyContent: 'flex-end',flexDirection: 'row',}}>
-                    <TouchableOpacity transparent style={{ flexDirection: 'column', justifyContent: 'center', height: 35 }} onPress={() => {
+                <Text style={{...GState.defaultTextStyle,fontStyle: 'italic',}}>{moment(this.props.report.date).calendar()}</Text></View>
+                {this.props.master ? <View style={{justifyContent: 'flex-end',flexDirection: 'row', margin: '2%',}}>
+                    <TouchableOpacity transparent style={{ flexDirection: 'column', justifyContent: 'center', ...rounder(40,ColorList.bodyDarkWhite) }} onPress={() => {
                         this.props.confirm()
                         this.props.closed()
                     }}>

@@ -20,7 +20,7 @@ export default class ProfileWithCheckBox extends PureComponent {
     render() {
         return this.state.hide ? null : (
             <TouchableOpacity onPress={() => requestAnimationFrame(() => {
-                if (this.state.checked == true) {
+                if (this.props.checked) {
                     this.props.uncheck(this.props.phone)
                 } else {
                     this.props.check(this.props.phone)

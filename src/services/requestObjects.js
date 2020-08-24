@@ -1,5 +1,6 @@
 import moment from "moment"
 import stores from '../stores';
+import { AlarmPatterns } from "./recurrenceConfigs";
 class Request {
     constructor() { }
 
@@ -120,7 +121,10 @@ class Request {
             status: "public",
             members: [],
             donners: [],
-            isDone: false
+            isDone: false,
+            extra :{
+                alarms:AlarmPatterns().filter(ele => ele.autoselected)
+            }
         }
     }
 

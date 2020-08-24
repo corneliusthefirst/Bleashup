@@ -83,47 +83,18 @@ export default class EventHighlights extends BleashupModal {
   }
 
   componentDidUpdate(prevProps, prevState) {
-    if (prevProps.highlight_id !== this.props.highlight_id) {
+   if (prevProps.highlight_id !== this.props.highlight_id) {
          stores.Highlights.readFromStore().then((Highlights) => {
           let highlight = find(Highlights[this.props.event_id], {
-            id: this.props.highlight_id
-              ? this.props.highlight_id
-              : request.Highlight().id,
+            id: this.props.highlight_id || request.Highlight().id,
           });
-          //console.warn('black check',highlight);
-          this.previoushighlight = JSON.stringify(highlight);
-          console.warn('previous',this.previoushighlight);
-          if (!this.props.event_id) {
-            let event_id = request.Highlight().id;
-            stores.Highlights.fetchHighlights(event_id).then((Highlights) => {
-              this.setStatePure({
-                newing: !this.state.newing,
-                highlightData: Highlights[this.props.event_id],
-                isMounted: true,
-                currentHighlight: highlight ? highlight : request.Highlight(),
-                update: this.props.highlight_id ? true : false,
-              });
-            });
-          } else {
-            this.setStatePure({
-              newing: !this.state.newing,
-              isMounted: true,
-              currentHighlight: highlight ? highlight : request.Highlight(),
-              update: this.props.highlight_id ? true : false,
-            });
-          }
+          this.setStatePure({
+            newing: !this.state.newing,
+            isMounted: true,
+            currentHighlight: highlight ? highlight : request.Highlight(),
+            update: this.props.highlight_id ? true : false,
+          });
         });
-        /*setInterval(() => {
-          if ((this.state.animateHighlight == true) && (this.state.highlightData.length > 2)) {
-            this.highlight_flatlistRef.scrollToIndex({ animated: true, index: this.state.initialScrollIndex, viewOffset: 0, viewPosition: 0 });
-  
-            if (this.state.initialScrollIndex >= (this.state.highlightData.length) - 2) {
-              this.setStatePure({ newing: !this.state.newing, initialScrollIndex: 0 })
-            } else {
-              this.setStatePure({ newing: !this.state.newing, initialScrollIndex: this.state.initialScrollIndex + 2 })
-            }
-          }
-        }, 4000)*/
     }
   }
 
@@ -131,29 +102,13 @@ export default class EventHighlights extends BleashupModal {
    this.openModalTimeout = setTimeout(() => {
       stores.Highlights.readFromStore().then((Highlights) => {
         let highlight = find(Highlights[this.props.event_id], {
-          id: this.props.highlight_id
-            ? this.props.highlight_id
-            : request.Highlight().id,
+          id: this.props.highlight_id || request.Highlight().id,
         });
-        if (!this.props.event_id) {
-          let event_id = request.Highlight().id;
-          stores.Highlights.fetchHighlights(event_id).then((Highlights) => {
-            this.setStatePure({
-              newing: !this.state.newing,
-              highlightData: Highlights,
-              isMounted: true,
-              currentHighlight: highlight ? highlight : request.Highlight(),
-              update: this.props.highlight_id ? true : false,
-            });
-          });
-        } else {
-          this.setStatePure({
-            newing: !this.state.newing,
-            isMounted: true,
-            currentHighlight:this.props.star?this.props.star:highlight ? highlight : request.Highlight(),
-            update: this.props.highlight_id ? true : false,
-          });
-        }
+        this.setStatePure({
+          newing: !this.state.newing,
+          isMounted: true,
+          currentHighlight:this.props.star?this.props.star:highlight ? highlight : request.Highlight(),
+        });
       });
     }, 100);
   }
@@ -174,11 +129,9 @@ export default class EventHighlights extends BleashupModal {
   }
 
   onChangedTitle(value) {
-    //this.setStatePure({newing:!this.state.newing,title:value})
-    this.state.currentHighlight.title = value;
     this.setStatePure({
       newing: !this.state.newing,
-      currentHighlight: this.state.currentHighlight,
+      currentHighlight: {...this.state.currentHighlight,title:value},
     });
     if (!this.props.updateState) {
       stores.Highlights.updateHighlightTitle(this.props.event_id,
@@ -189,10 +142,10 @@ export default class EventHighlights extends BleashupModal {
   }
   onChangedDescription(value) {
     //this.setStatePure({newing:!this.state.newing,description:value})
-    this.state.currentHighlight.description = value;
+    //this.state.currentHighlight.description = value;
     this.setStatePure({
       newing: !this.state.newing,
-      currentHighlight: this.state.currentHighlight,
+      currentHighlight: {...this.state.currentHighlight,description:value},
     });
 
     if (!this.props.updateState) {
@@ -217,14 +170,12 @@ export default class EventHighlights extends BleashupModal {
   }
 
   AddHighlight() {
-    console.warn("creating highlight")
     let New_id = IDMaker.make();
     let newHighlight = this.state.currentHighlight;
     newHighlight.id = New_id;
     newHighlight.event_id = this.props.event_id
       ? this.props.event_id
-      : "newEventId"; //new event id
-    //add the new highlights to global highlights
+      : request.Event().id; //new event id
     newHighlight.creator = stores.LoginStore.user.phone;
     newHighlight.created_at = moment().format();
       this.props.startLoader();
@@ -240,7 +191,6 @@ export default class EventHighlights extends BleashupModal {
         });
         Requester.createHighlight(newHighlight,this.props.event.about.title)
           .then(() => {
-            this.props.reinitializeHighlightsList(newHighlight);
             this.resetHighlight();
             stores.Highlights.removeHighlight(newHighlight.event_id, request.Highlight().id).then(() => {
               this.props.stopLoader();
@@ -268,7 +218,7 @@ export default class EventHighlights extends BleashupModal {
   updateHighlight() {
     this.setStatePure({ newing: !this.state.newing, update: false });
     if (this.props.highlight_id) {
-      this.props.update(this.state.currentHighlight, this.previoushighlight);
+      this.props.update(this.state.currentHighlight);
       this.props.onClosed();
       //this.resetHighlight();
     }
@@ -438,7 +388,7 @@ export default class EventHighlights extends BleashupModal {
                 <PickersUpload
                   //notAudio
                   creating={!this.props.updateState}
-                  currentURL={this.state.currentHighlight.url}
+                  currentURL={this.state.currentHighlight.url||{}}
                   id={this.state.currentHighlight.id}
                   saveMedia={(url) => {
                     this.applySave(url);
@@ -449,11 +399,13 @@ export default class EventHighlights extends BleashupModal {
               <MediaPreviewer
                 height={ColorList.containerHeight * 0.22}
                 defaultPhoto={this.state.defaultUrl}
-                url={this.state.currentHighlight.url}
+                url={this.state.currentHighlight.url||{}}
                 cleanMedia={() => this.cleanMedia()}
               ></MediaPreviewer>
               </View>
-              {this.state.currentHighlight.url.audio ? (
+              {this.state.currentHighlight && 
+                this.state.currentHighlight.url &&
+                this.state.currentHighlight.url.audio ? (
                 <View
                   style={{
                     height: height / 11,

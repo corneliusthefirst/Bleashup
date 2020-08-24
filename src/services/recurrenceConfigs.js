@@ -1,3 +1,5 @@
+import Texts from "../meta/text";
+
 var moment = require("moment")
 var _ = require("lodash")
 const UTCFormat = "YYYY-MM-DDTHH:mm:ss.SSS[Z]"
@@ -13,43 +15,160 @@ export const frequencyType = [{
 
 export function AlarmPatterns() {
     return [{
-        id: '1',
-        date: moment().subtract(7, 'days'),
-        text: "1 Week Before"
+        id: 1,
+        offset: 604800,
+        text: Texts.a_week_before
     }, {
-        id: '2',
-        date: moment().subtract(2, 'days'),
-        text: "2 Days Befors"
+        id: 2,
+        offset: 172800,
+        text: Texts.two_days_before
     }, {
-        id: '3',
-        date: moment().subtract(1, 'days'),
-        text: "1 day Before"
+        id: 3,
+        offset: 86400,
+        text: Texts.one_day_before
 
     }, {
-        id: '4',
-        autoselected: true,
-        date: moment().subtract(3 * 600, 'seconds'),
-        text: "30 Minuts Before",
+
+        id: 4,
+        offset: 72000,
+        text: Texts.twenty_hours_before
+
     }, {
-        id: '5',
-        autoselected: true,
-        date: moment().subtract(600, 'seconds'),
-        text: "10 Minuts Before"
+
+        id: 5,
+        offset: 68400,
+        text: Texts.nineteen_hours_before
+
     }, {
-        id: '6',
-        autoselected: true,
-        date: moment().subtract(60 * 5, 'seconds'),
-        text: "5 Minuts Before"
+
+        id: 6,
+        offset: 64800,
+        text: Texts.eighteen_hours_before
+
     }, {
-        id: '7',
-        autoselected: true,
-        date: moment().subtract(60 * 2, 'seconds'),
-        text: "2 Minuts Before"
+
+        id: 7,
+        offset: 61200,
+        text: Texts.seventeen_hours_before
+
     }, {
-        id: '8',
-        date: moment().utc().format(UTCFormat),
-        text: "On Time"
+
+        id: 8,
+        offset: 57600,
+        text: Texts.sixteen_hours_before
+
+    }, {
+
+        id: 9,
+        offset: 54000,
+        text: Texts.fifteen_hours_before
+
+    }, {
+
+        id: 10,
+        offset: 50400,
+        text: Texts.fourteen_hours_before
+
+    }, {
+
+        id: 11,
+        offset: 46800,
+        text: Texts.thirteen_hours_before
+
+    }, {
+
+        id: 12,
+        offset: 43200,
+        text: Texts.twelve_hours_before
+
+    }, {
+
+        id: 13,
+        offset: 39600,
+        text: Texts.eleven_hours_before
+
+    }, {
+
+        id: 14,
+        offset: 36000,
+        text: Texts.ten_hours_before
+
+    }, {
+
+        id: 15,
+        offset: 32400,
+        text: Texts.nine_hours_before
+
+    }, {
+
+        id: 16,
+        offset: 28800,
+        text: Texts.eight_hours_before
+
+    }, {
+
+        id: 17,
+        offset: 25200,
+        text: Texts.seven_hours_before
+
+    }, {
+
+        id: 18,
+        offset: 21600,
+        text: Texts.six_hours_before
+
+    }, {
+
+        id: 19,
+        offset: 18000,
+        text: Texts.five_hours_before,
+
+    }, {
+
+        id: 20,
+        offset: 14400,
+        text: Texts.four_hours_before,
+
+    }, {
+
+        id: 21,
+        offset: 10800,
+        text: Texts.three_hours_before,
+
+    }, {
+        id: 22,
+        offset: 7200,
+        text: Texts.two_hours_before,
+    }, {
+        id: 23,
+        offset: 3600,
+        text: Texts.one_hour_before,
+    }, {
+        id: 24,
+        offset: 1800,
+        text: Texts.thirty_mins_before,
+    }, {
+        id: 25,
+        autoselected: true,
+        offset: 600,
+        text: Texts.ten_minutes_before
+    }, {
+        id: 26,
+        offset: 300,
+        text: Texts.five_minutes_before
+    }, {
+        id: 27,
+        autoselected: true,
+        offset: 120,
+        text: Texts.two_minuts_before
+    }, {
+        id: 28,
+        offset: 0,
+        text: Texts.on_time
     }]
+}
+export function callculateAlarmOffset(offset) {
+    return offset ? moment().subtract(offset, 'seconds') : moment().utc().format(UTCFormat)
 }
 export const daysOfWeeksDefault = [
     { code: "SU", day: 'Sunday' },
@@ -117,33 +236,42 @@ export function returnAllIntervals(period, interval, frequency, daysOfWeek) {
     function returnFutureDate(count, interval) {
         return moment(period.start, format).add(count, intervaler[interval]).format("x")
     }
+    function calculatePreviousWeekIntervalEndDate(previousInterval) {
+        return previousInterval.weeks_interval[previousInterval.weeks_interval.length - 1].end
+    }
     let date = returnFutureDate(i, frequency)
+    let compareDate = date
     let endDate = returnFutureDate(i + interval, frequency)
     let end = moment(period.end, format).format('x')
     let dates = []
     for (let p = 0; p <= 366; p++) {
         date = returnFutureDate(i, frequency)
+        compareDate = dates[dates.length - 1] && dates[dates.length - 1].end ?
+            moment(dates[dates.length - 1].end, format).format("x") :
+            returnFutureDate(i, frequency)
         endDate = returnFutureDate(i + interval, frequency)
-        if (date > end) {
+        if (compareDate >= end) {
             break
         }
         let formatedDate = moment(date, "x").format(format)
         let formatedEndDate = moment(endDate, "x").format(format)
+        let isWeekIntervaling = daysOfWeek && daysOfWeek.length > 0 && frequency === 'weekly'
+        let weeksIntervals = isWeekIntervaling ? formWeekIntervals(daysOfWeek,
+            {
+                start: formatedDate,
+                end: formatedEndDate
+            },
+            i > 0 ? calculatePreviousWeekIntervalEndDate(dates[dates.length - 1]) :
+                formatedDate).
+            filter(ele =>
+                moment(ele.start, format).format("x") >= moment(period.start, format).format("x") &&
+                moment(ele.start, format).format("x") < moment(period.end, format).format("x") &&
+                true //moment(el.end, format).format("x") <= moment(period.start, format).format("x")
+            ) : null
         dates[dates.length] = {
             start: formatedDate, round: dates.length + 1,
-            weeks_interval: daysOfWeek && daysOfWeek.length > 0 && frequency === 'weekly' ? formWeekIntervals(daysOfWeek,
-                {
-                    start: formatedDate,
-                    end: formatedEndDate
-                },
-                i > 0 ? (dates[dates.length - 1].weeks_interval[dates[dates.length - 1].weeks_interval.length - 1].end) :
-                    formatedDate).
-                filter(ele =>
-                    moment(ele.start, format).format("x") >= moment(period.start, format).format("x") &&
-                    moment(ele.start, format).format("x") < moment(period.end, format).format("x") &&
-                    true //moment(el.end, format).format("x") <= moment(period.start, format).format("x")
-                ) : null,
-            end: formatedEndDate
+            weeks_interval: weeksIntervals,
+            end: isWeekIntervaling && weeksIntervals && weeksIntervals.length > 0 ? weeksIntervals[weeksIntervals.length - 1].end : formatedEndDate
         }
         i = i + interval
     } //while ();

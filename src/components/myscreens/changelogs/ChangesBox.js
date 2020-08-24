@@ -17,47 +17,36 @@ export default class ChangeBox extends AnimatedComponent {
     initialize(){
         this.state = {
             loaded: true,
-            newThing: false
+            newThing: false,
+            changer: typeof this.props.change.updater === 'string' ?
+            stores.TemporalUsersStore.Users[this.props.change.updater]:
+            this.props.change.updater
         }
     }
-    state = {}
+    state = {
+        changer: typeof this.props.change.updater === 'string' ?
+            stores.TemporalUsersStore.Users[this.props.change.updater] :
+            this.props.change.updater
+    }
     shouldComponentUpdate(nextProps, nextState, nextContext) {
-        return this.state.loaded !== nextState.loaded ||
-            this.state.newThing !== nextState.newThing
+        return this.state.newThing !== nextState.newThing
     }
-    componentDidMount() {
-       this.mountTimeout = setTimeout(() => {
-            typeof this.props.change.updater === 'string' ? stores.TemporalUsersStore.getUser(this.props.change.updater).then(user => {
-                this.setStatePure({
-                    loaded: true,
-                    changer: user
-                })
-            }) :
-                this.setStatePure({
-                    loaded: true,
-                    changer: this.props.change.updater
-                })
-        }, 60 * this.props.delayer)
-    }
-   mention(){
-       this.props.mention(this.props.change)
+   mention(changer){
+       this.props.mention({...this.props.change,changer})
    }
     containerStyle = { margin: '1%', borderRadius: 3, backgroundColor: colorList.bodyBackground, ...shadower(3), }
     render() {
-        return (!this.state.loaded ? <View style={{ 
-            ...this.containerStyle, width: '95%', height: 100,
-            ...this.props.change && this.props.change.dimensions,  }}></View> :
-            <Swipeout disabled onLongPress={() => this.props.onLongPress(this.state.changer)} swipeRight={() => {
-                this.mention()
+        return <Swipeout disabled onLongPress={() => this.props.onLongPress(this.state.changer)} swipeRight={() => {
+                this.mention(this.state.changer.nickname)
             }}>
                 <View onLayout={(e) => this.props.takeNewLayout(e.nativeEvent.layout)} style={this.containerStyle}>
                     {!this.props.change ? null : <View style={{ flexDirection: 'column', margin: '1%', }}>
-                        <View style={{ flexDirection: 'row', maxHeight: 40, }}>
-                            <View style={{ width: '93%', height: '100%', justifyContent: 'space-between', }}>
-                                <View style={{ width: 170, height: '100%' }}><ProfileSimple hidePhoto showPhoto={(url) => {
+                        <View style={{ flexDirection: 'row', maxHeight: 20,marginLeft: "-5%", }}>
+                            <View style={{ width: '97%', height: '100%', justifyContent: 'space-between', }}>
+                                <View style={{ width: "100%", height: '100%', }}><ProfileSimple hidePhoto showPhoto={(url) => {
                                     this.props.showPhoto(url)
                                 }} delay={this.props.delayer}
-                                    profile={this.state.changer}>
+                                    profile={this.state.changer||{}}>
                                 </ProfileSimple></View>
                             </View>
                         </View>
@@ -75,6 +64,5 @@ export default class ChangeBox extends AnimatedComponent {
                     </View>}
                 </View>
             </Swipeout>
-        )
     }
 }

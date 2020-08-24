@@ -95,7 +95,7 @@ export default class ReplyText extends BePureComponent {
             flexDirection: "row",
             borderBottomWidth: 0,
             backgroundColor: ColorList.replyBackground,
-            padding: "1%", //margin: '1%',
+            padding: 2, //margin: '1%',
             minHeight: 50,
             maxWidth:"100%",
             maxHeight: 120,

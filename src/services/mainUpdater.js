@@ -6,6 +6,8 @@ import {
   shared_post,
   shared_remind,
 } from '../components/myscreens/settings/privacy/Requester';
+import Requester from "../components/myscreens/eventChat/Requester";
+import emitter from './eventEmiter';
 class mainUpdater {
   addParticipants(eventID, participants, updater, updated, date) {
     return new Promise((resolve, reject) => {
@@ -173,6 +175,7 @@ class mainUpdater {
   saveMessage(message, eventID, committeeID, me) {
     return new Promise((resolve, reject) => {
       !me ? stores.Messages.addNewMessage(committeeID, message) : null;
+      !me && Requester.seenMessage(message.id,committeeID,eventID).then(() => {})
       this.informCommitteeAndEvent(message, committeeID, eventID).then(() => {
         resolve();
       });
@@ -223,8 +226,9 @@ class mainUpdater {
       });
     });
   }
-  sayTyping(commiteeID, typer) {
+  sayTyping(commiteeID, typer,dontEmit) {
     return new Promise((resolve, reject) => {
+      emitter.emit(`${commiteeID}_typing`,typer)
       resolve();
     });
   }
@@ -240,6 +244,29 @@ class mainUpdater {
         }
       );
     });
+  }
+  updateRemindAlarms(eventID, remindID, newAlarms, date, updater) {
+    return new Promise((resolve,reject) => {
+      stores.Reminds.updateAlarmPatern(eventID,
+        remindID,
+        newAlarms.alarms,
+        newAlarms.date).
+        then((oldRemind) => {
+          let change = {
+            id:IDMaker.make(),
+            date: date,
+            updated: "remind_alarms",
+            updater: updater,
+            title: `Updates on ${oldRemind.title} Program`,
+            event_id: eventID,
+            changed:"Changed the default alarms definition of the propgram",
+            new_value: { data: null, new_value: newAlarms },
+          };
+          stores.ChangeLogs.addChanges(change).then(() => {
+            resolve()
+          })
+      })
+    })
   }
 }
 

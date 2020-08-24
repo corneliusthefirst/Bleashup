@@ -12,9 +12,8 @@ export default class DateView extends Component {
     }
     render() {
         return (
-            <View style={{ width: 150, height: 30, 
-                backgroundColor: "transparent", 
-                borderRadius: 10, alignSelf: 'center', backgroundColor: ColorList.bodyBackground,
+            <View style={{ width: 150, height: 20, 
+                borderRadius: 10, alignSelf: 'center', backgroundColor: ColorList.bodyDarkWhite,
                 justifyContent: 'center',
             display:'flex',
              ...shadower(2) }}>

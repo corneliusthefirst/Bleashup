@@ -18,14 +18,21 @@ import shadower from '../../shadower';
 import ColorList from '../../colorList';
 import BleashupModal from '../../mainComponents/BleashupModal';
 import GState from '../../../stores/globalState';
+import Texts from '../../../meta/text';
 export default class SetAlarmPatternModal extends BleashupModal {
     initialize() {
         this.state = {
-            selected: []
+            selected: this.props.pattern ? 
+            this.props.pattern.filter(ele => ele.autoselected):
+            AlarmPatterns().filter(ele => ele.autoselected),
+            date: moment().format()
         };
     }
     state = {
-        selected: []
+        selected: this.props.pattern ?
+            this.props.pattern.filter(ele => ele.autoselected) :
+            AlarmPatterns().filter(ele => ele.autoselected),
+        date: moment().format()
     }
     addItem(item) {
         this.setStatePure({
@@ -39,13 +46,7 @@ export default class SetAlarmPatternModal extends BleashupModal {
     }
     patterns = AlarmPatterns()
     save() {
-        this.props.save(this.state.selected.map(ele => {
-            return {
-                date: parseInt(Platform.OS === 'ios'
-                    ? moment(this.props.date).diff(ele.date, 'minutes')
-                        .toISOString() : moment(this.props.date).diff(ele.date, 'minutes'))
-            };
-        }));
+        this.props.save(this.state.selected,this.state.date);
         this.props.closed();
     }
     position = "center"
@@ -55,6 +56,14 @@ export default class SetAlarmPatternModal extends BleashupModal {
     onClosedModal() {
         this.props.closed();
     }
+    onOpenModal(){
+        this.setStatePure({
+             selected: this.props.pattern ?
+            this.props.pattern.filter(ele => ele.autoselected) :
+            AlarmPatterns().filter(ele => ele.autoselected),
+        //date: moment().format()
+        })
+    }
     borderRadius = 10
     _keyExtractor = (item, index) => { return item ? item.id : null; };
     modalBody() {
@@ -63,7 +72,13 @@ export default class SetAlarmPatternModal extends BleashupModal {
                 <View style={{ width: "98%", height: 35, }}>
                     <View style={{ flexDirection: 'row', padding: '2%',justifyContent: 'center', }}>
                         <View style={{ textAlign:'center',alignSelf: 'center', }}>
-                            <Text style={{...GState.defaultTextStyle, fontSize: 18, fontWeight: 'bold', padding: '1%', alignSelf: 'center',}}>{"Set Alarm Pattern"}</Text>
+                            <Text style={{
+                                ...GState.defaultTextStyle, 
+                                fontSize: 18, 
+                                fontWeight: 'bold', 
+                                padding: '1%', 
+                                alignSelf: 'center',
+                            }}>{this.props.dontSet ? Texts.alarms : Texts.set_alarm_pattern}</Text>
                         </View>
                     </View>
                 </View>
@@ -72,7 +87,7 @@ export default class SetAlarmPatternModal extends BleashupModal {
                         <BleashupFlatList
                             listKey={"contacts"}
                             keyExtractor={this._keyExtractor}
-                            dataSource={this.props.pattern ? this.props.pattern : this.patterns}
+                            dataSource={(this.props.pattern ? this.props.pattern : this.patterns).sort((a,b) => a.offset < b.offset ? 1 : -1)}
                             firstIndex={0}
                             renderPerBatch={7}
                             initialRender={15}
@@ -81,19 +96,19 @@ export default class SetAlarmPatternModal extends BleashupModal {
                                 // console.error(item, "pppppp")
                                 return item ?
                                     <View style={{ margin: '2%', }}>
-                                        <SelectableAlarmPeriod item={item} timeoute={parseInt(index) * 20} key={index} checked={item => this.addItem(item)} unchecked={(id => this.removeItem(id))} />
+                                        <SelectableAlarmPeriod mechecked={this.state.selected.findIndex(ele => ele.id === item.id) >= 0} item={item} timeoute={parseInt(index) * 20} key={index} checked={item => this.addItem(item)} unchecked={(id => this.removeItem(id))} />
                                     </View> : null;
                             }
                             }
                          />
                     </View>
                     <View style={{ flexDirection: 'column',justifyContent: 'center',alignSelf:'flex-end'}}>
-                        <CreateButton  
+                        {!this.props.dontSet && <CreateButton  
                         title={"Set"} 
                         action={() => this.save()} style={{ 
                             ...shadower(2), borderWidth: 0, 
                             width: 55, margin: 5,
-                            backgroundColor: ColorList.bodyDarkWhite,height:35,borderRadius:10 }} noround />
+                            backgroundColor: ColorList.bodyDarkWhite,height:35,borderRadius:10 }} noround />}
                     </View>
                 </View>
             </View>

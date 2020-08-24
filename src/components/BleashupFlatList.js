@@ -1,5 +1,6 @@
 import React, { Component } from "react"
 import { FlatList, View, StyleSheet, Text } from "react-native";
+import Spinner from './Spinner';
 
 const ifCloseToTop = ({ layoutMeasurement, contentOffset, contentSize }) => {
     return contentOffset.y == 0;
@@ -120,26 +121,20 @@ export default class BleashupFlatList extends Component {
                     ref="bleashupFlatlist"
                     //canCancelContentTouches={true}
                     inverted={this.props.inverted ? this.props.inverted : false}
-                    //style={this.props.style}
+                    style={{ paddingHorizontal: 10,paddingTop: 5, }}
                     //ItemSeparatorComponent={this.props.ItemSeparatorComponent}
                     maxToRenderPerBatch={this.props.renderPerBatch ? this.props.renderPerBatch : this.props.inverted ? 5 : this.state.endReached ? 1 : 3}
                     //updateCellsBatchingPeriod={10}
                     showsHorizontalScrollIndicator={false}
-                    showsVerticalScrollIndicator={false}
+                    showsVerticalScrollIndicator={true}
                     keyExtractor={this.props.keyExtractor}
                     data={this.data}
                     extraData={this.props.extraData}
-                    //heightForIndexPath={(index) =>  
-                     //   data[index.row].dimensions?data[index.row].dimensions.height:70}
-                    //renderIndexPath={(index) => <View>{this.props.renderItem(data[index.row], index.row)}</View>}
                     renderItem={this.renderItem}
-                    /*ListFooterComponent={() =>
-                        this.state.currentRender >= this.props.numberOfItems - 1 ? null : <CardItem style={{ width: "100%", height: 25 }} >
-                            {this.state.endReached ? <Text style={{
-                                marginLeft: "35%"
-                            }}>no more data to load</Text> : (this.props.noSpinner ? null : <Spinner size={"small"}></Spinner>)}
-                        </CardItem>
-                    }*/
+                    ListFooterComponent={() =>
+                        !this.props.fit && <View style={{ width: "100%", height: 200 }} >
+                            </View>
+                    }
                 />
             </View>)
     }

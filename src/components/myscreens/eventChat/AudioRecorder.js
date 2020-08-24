@@ -11,6 +11,7 @@ import  Entypo  from 'react-native-vector-icons/Entypo';
 import FontAwesome  from 'react-native-vector-icons/FontAwesome';
 import  EvilIcons  from 'react-native-vector-icons/EvilIcons';
 import GState from '../../../stores/globalState';
+import emitter from '../../../services/eventEmiter';
 let dirs = rnFetchBlob.fs.dirs
 export default class AudioRecorder extends BeComponent{
     constructor(props){
@@ -26,7 +27,12 @@ export default class AudioRecorder extends BeComponent{
     stopRecordTiming() {
         clearInterval(this.recordInterval)
     }
+    playingEvent = "playing"
+    pausePLayingAudio(){
+        emitter.emit(this.playingEvent)
+    }
     startRecorder() {
+        this.pausePLayingAudio()
         let recordAudioRequest;
         if (Platform.OS == 'android') {
             recordAudioRequest = this._requestRecordAudioPermission();

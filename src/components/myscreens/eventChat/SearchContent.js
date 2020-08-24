@@ -60,7 +60,6 @@ export default class SearchContent extends BeComponent {
             this.sending = true;
             Requester.sendMessage(this.props.message, item.id, item.id, true)
                 .then((response) => {
-                    console.warn(response);
                     this.setStatePure({
                         activity: reject(this.state.activity, { id: item.id }),
                     });
