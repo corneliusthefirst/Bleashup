@@ -26,10 +26,11 @@ export default class PhotoPreview extends BeComponent {
     containerHeight= this.props.showVideo ? 200 : 100
     logOutZoomState = (event, gestureState, zoomableViewEventObject) => { };
     render() {
+        let containerHeight = this.props.showVideo ? 200 : 100
         return !this.props.showVideo ? (
             <View
                 style={{
-                    height: this.containerHeight,
+                    height: containerHeight,
                     borderTopLeftRadius: 5, backgroundColor: ColorList.bodyBackground,
                     borderTopRightRadius: 5,
                     width: "100%",
@@ -37,7 +38,7 @@ export default class PhotoPreview extends BeComponent {
             >
                 <ReactNativeZoomableView
                     style={{
-                        height: this.containerHeight,
+                        height: containerHeight,
                         borderTopLeftRadius: 5, backgroundColor: ColorList.bodyBackground,
                         borderTopRightRadius: 5,
                         backgroundColor: ColorList.bodyBackground,
@@ -81,7 +82,7 @@ export default class PhotoPreview extends BeComponent {
                 </TouchableOpacity>
             </View>
         ) : (
-                <View style={{ width: "100%", height: this.containerHeight }}>
+                <View style={{ width: "100%", height: containerHeight }}>
                     <VideoController
                         source={{ uri: this.props.video }}
                         resizeMode={"contain"}

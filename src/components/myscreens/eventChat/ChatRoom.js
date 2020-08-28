@@ -379,6 +379,7 @@ class ChatRoom extends AnimatedComponent {
             playingMessage: message,
             playingIndex: index,
             video: video,
+            fullScreen:true,
             showPhoto: false,
             showVideo: true,
         });
@@ -427,9 +428,9 @@ class ChatRoom extends AnimatedComponent {
         };
         return data.map((element) => this.chooseComponent(element));
     }
-    enterFullscreen() {
+    enterFullscreen(exit) {
         this.setStatePure({
-            fullScreen: !this.state.fullScreen
+            fullScreen: exit ? false: !this.state.fullScreen
         })
     }
     togglePlay() {

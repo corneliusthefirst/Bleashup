@@ -142,3 +142,6 @@ see: https://github.com/wmcmahan/react-native-calendar-events/issues/12
     - [] Relation; the user should be able to search search by
         - name,
 
+[] while picking audion files, the picker has the possibility of 
+giving out a file wchich is stored drive. hence the app crashes
+

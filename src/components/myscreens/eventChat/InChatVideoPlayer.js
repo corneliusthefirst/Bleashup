@@ -68,6 +68,7 @@ export default class InChatVideoPlayer extends BeComponent {
                     <View style={{ flexDirection: 'row', }}>
                         <TouchableOpacity onPress={() => requestAnimationFrame(() => {
                             this.props.focusInput()
+                            this.props.enterFullscreen(true)
                             this.props.reply(this.props.message)
                         })} style={this.containerStyle}>
                             <Entypo name={"reply"} style={this.iconStyles} type={"Entypo"}/>
