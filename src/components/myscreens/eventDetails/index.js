@@ -296,7 +296,7 @@ action = () => [
                 horizontal={false}
                 renderPerBatch={5}
                 firstIndex={0}
-                getItemLayout={(item,index) => GState.getItemLayout(item,index,data,70,15)}
+                getItemLayout={(item,index) => GState.getItemLayout(item,index,data,70,20)}
                 refHorizontal={(ref) => { this.detail_flatlistRef = ref }}
                 keyExtractor={this._keyExtractor}
                 dataSource={data}

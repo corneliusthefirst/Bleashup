@@ -244,6 +244,16 @@ export function returnAllIntervals(period, interval, frequency, daysOfWeek) {
     let endDate = returnFutureDate(i + interval, frequency)
     let end = moment(period.end, format).format('x')
     let dates = []
+    function returnDaysOfWeekOffset(daysOfWeek,start){
+        daysOfWeek = daysOfWeek.filter(ele => ele)
+        let sorter = (a, b) => (a > b ? 1 : a < b ? -1 : 0)
+        let daysOffset = daysOfWeek && daysOfWeek.map(ele => daysOffseter(ele))
+        let startDateOffseset = daysOffseter(daysOfWeeksDefault.filter(ele => ele.day === start.split(",")[0])[0].code)
+        return daysOffset.map((ele) => {
+            return ele - startDateOffseset
+        }).sort(sorter) // relative offset is very important for calculating 
+    }
+    let dayOfWeekOffset = returnDaysOfWeekOffset(daysOfWeek,period.start)
     for (let p = 0; p <= 366; p++) {
         date = returnFutureDate(i, frequency)
         compareDate = dates[dates.length - 1] && dates[dates.length - 1].end ?
@@ -258,7 +268,7 @@ export function returnAllIntervals(period, interval, frequency, daysOfWeek) {
         let isWeekIntervaling = daysOfWeek && daysOfWeek.length > 0 && frequency === 'weekly'
         let weeksIntervals = null
         if(isWeekIntervaling){
-            let dateIntervals = formWeekIntervals(daysOfWeek,
+            let dateIntervals = formWeekIntervals(dayOfWeekOffset,
                 {
                     start: formatedDate,
                     end: formatedEndDate
@@ -266,8 +276,8 @@ export function returnAllIntervals(period, interval, frequency, daysOfWeek) {
                 i > 0 ? calculatePreviousWeekIntervalEndDate(dates[dates.length - 1]) :
                     formatedDate)
             let filteredDatesIntervals = dateIntervals.filter(ele =>
-                    moment(ele.start, format).format("x") >= moment(formatedDate, format).format("x") &&
-                    moment(ele.start, format).format("x") < moment(formatedEndDate, format).format("x")
+                    moment(ele.start, format).format("x") >= moment(period.start, format).format("x") &&
+                    moment(ele.start, format).format("x") < moment(period.end, format).format("x")
                 )
             weeksIntervals = filteredDatesIntervals
         }
@@ -287,18 +297,9 @@ export function formWeekIntervals(daysOfWeek, period, start) {
 
 
 function formWeekIntervaler(daysOfWeek, period, start) {
-    daysOfWeek = daysOfWeek.filter(ele => ele)
     let previousStart = JSON.stringify(start)
     let i = 0
-    let sorter = (a, b) => (a > b ? 1 : a < b ? -1 : 0)
-    let daysOffset = daysOfWeek.map(ele => daysOffseter(ele))
-    let startDateOffseset = daysOffseter(daysOfWeeksDefault.filter(ele => ele.day === period.start.split(",")[0])[0].code)
-    let daysOfWeekRelativeOffset = daysOffset.map((ele) => {
-        return ele - startDateOffseset
-    }).sort(sorter) // relative offset is very important for calculating 
-    let currentResult = {}
-    let endDate = null
-    return daysOfWeekRelativeOffset.map((ele,index) => {
+    let intervals = daysOfWeek.map((ele,index) => {
         endDate = moment(period.start, format).add(ele,
             'days').format(format)
         currentResult = {
@@ -310,6 +311,7 @@ function formWeekIntervaler(daysOfWeek, period, start) {
         i = i + 1;
         return currentResult
     })
+    return intervals
 }
 export function filterWeekInervals(daysOfWeek, period, start) {
     let weeksIntervals = formWeekIntervaler(daysOfWeek, period, start);

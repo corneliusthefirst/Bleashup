@@ -165,14 +165,14 @@ export default class TasksCreation extends BleashupModal {
     return dayOb.code;
   }
   computeDaysOfWeek(data) {
+    let currentDayPeriod = daysOfWeeksDefault.find(ele => ele.day === getDay(this.state.date)).code
     let newDate = this.state.currentRemind.period;
     let NewRemind = {
       remind_id: this.state.currentRemind.id,
       recursive_frequency: {
         ...this.state.currentRemind.recursive_frequency,
         days_of_week: data && data.length > 0 ?
-          data : [daysOfWeeksDefault.find(ele => ele.day ===
-            moment(this.state.date).format(format).split(",")[0]).code],
+          uniq([...[currentDayPeriod],...data]) : [currentDayPeriod],
       },
       period: newDate,
     };
@@ -435,7 +435,7 @@ export default class TasksCreation extends BleashupModal {
       this.state.currentRemind.recursive_frequency.frequency !==
       prevState.currentRemind.recursive_frequency.frequency
     ) {
-      this.computeDaysOfWeek(null);
+      this.computeDaysOfWeek([]);
     } else if (
       this.state.currentRemind.period !== prevState.currentRemind.period
     ) {
