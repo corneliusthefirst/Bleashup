@@ -5,10 +5,11 @@ import ColorList from '../colorList';
 import AnimatedPureComponent from '../AnimatedPureComponent';
 import emitter from "../../services/eventEmiter";
 import { close_all_modals } from "../../meta/events";
+import AnimatedComponent from '../AnimatedComponent';
 
 const screenheight = Math.round(Dimensions.get('window').height);
 
-export default class BleashupModal extends AnimatedPureComponent {
+export default class BleashupModal extends AnimatedComponent {
     constructor(props) {
         super(props);
         this.state = {}
@@ -23,13 +24,21 @@ export default class BleashupModal extends AnimatedPureComponent {
     onClosedModal() {
 
     }
+    unMountingModal(){
+
+    }
+    mountingModal(){
+        
+    }
     componentMounting(){
         emitter.on(close_all_modals,() => {
-            this.onClosedModal()
+            this.onClosedModal(true)
         })
+        this.mountingModal()
     }
     unmountingComponent(){
         //!emitter.off("close-all-modals")
+        this.unMountingModal()
     }
     jusify = false
     backdropOpacity = 0.7

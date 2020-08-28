@@ -21,12 +21,12 @@ import GState from '../../../stores/globalState';
 import Texts from '../../../meta/text';
 export default class SetAlarmPatternModal extends BleashupModal {
     initialize() {
-        this.state = {
+       /* this.state = {
             selected: this.props.pattern ? 
             this.props.pattern.filter(ele => ele.autoselected):
             AlarmPatterns().filter(ele => ele.autoselected),
             date: moment().format()
-        };
+        };*/
     }
     state = {
         selected: this.props.pattern ?
@@ -57,10 +57,11 @@ export default class SetAlarmPatternModal extends BleashupModal {
         this.props.closed();
     }
     onOpenModal(){
-        this.setStatePure({
-             selected: this.props.pattern ?
+        let alarms = this.props.pattern ?
             this.props.pattern.filter(ele => ele.autoselected) :
-            AlarmPatterns().filter(ele => ele.autoselected),
+            AlarmPatterns().filter(ele => ele.autoselected)
+        this.setStatePure({
+             selected: alarms
         //date: moment().format()
         })
     }
@@ -93,10 +94,15 @@ export default class SetAlarmPatternModal extends BleashupModal {
                             initialRender={15}
                             numberOfItems={this.props.pattern ? this.props.pattern.length : this.patterns.length}
                             renderItem={(item, index) => {
-                                // console.error(item, "pppppp")
                                 return item ?
                                     <View style={{ margin: '2%', }}>
-                                        <SelectableAlarmPeriod mechecked={this.state.selected.findIndex(ele => ele.id === item.id) >= 0} item={item} timeoute={parseInt(index) * 20} key={index} checked={item => this.addItem(item)} unchecked={(id => this.removeItem(id))} />
+                                        <SelectableAlarmPeriod 
+                                        mechecked={this.state.selected.findIndex(ele => ele.id === item.id) >= 0} 
+                                        item={item} 
+                                        timeoute={parseInt(index) * 20} 
+                                        key={index} 
+                                        checked={item => this.addItem(item)} 
+                                        unchecked={(id => this.removeItem(id))} />
                                     </View> : null;
                             }
                             }

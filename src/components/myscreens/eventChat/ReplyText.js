@@ -98,7 +98,7 @@ export default class ReplyText extends BePureComponent {
             padding: 2, //margin: '1%',
             minHeight: 50,
             maxWidth:"100%",
-            maxHeight: 120,
+            maxHeight: 150,
             minWidth: 100,
             borderTopLeftRadius: 5,
             borderTopRightRadius: 5,

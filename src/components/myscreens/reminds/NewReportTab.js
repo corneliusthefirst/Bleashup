@@ -30,11 +30,12 @@ export default class ReportTabModal extends TabModal {
     });
   }
   shouldComponentUpdate(prevprops, prevState) {
-    return prevState.mounted !== this.state.mounted ||
+    return (prevState.mounted !== this.state.mounted ||
       this.props.isOpen !== prevprops.isOpen ||
       (this.props.concernees && 
         prevprops.concernees &&
-         this.props.concernees.length !== prevprops.concernees.length)
+         this.props.concernees.length !== prevprops.concernees.length))
+         ?true:false
   }
   onOpenModal() {
     /*setTimeout(() => {

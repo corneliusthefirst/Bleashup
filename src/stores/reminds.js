@@ -236,7 +236,6 @@ export default class Reminds {
   }
 
   @action updateRecursiveFrequency(EventID, NewRemind, inform) {
-    console.warn("entered  updateRecursiveFrequenc ",NewRemind);
     return new Promise((resolve, Reject) => {
       this.readFromStore().then((Reminds) => {
         let RemindIndex = findIndex(Reminds[EventID], {

@@ -9,6 +9,8 @@ import shadower from "../../shadower";
 import BeComponent from '../../BeComponent';
 import  EvilIcons  from 'react-native-vector-icons/EvilIcons';
 import GState from "../../../stores/globalState";
+import PhotoViewer from '../event/PhotoViewer';
+import BeNavigator from '../../../services/navigationServices';
 export default class PhotoPreview extends BeComponent {
     constructor(props) {
         super(props)
@@ -18,7 +20,10 @@ export default class PhotoPreview extends BeComponent {
         return this.props.video !== nextProp.video || 
         this.props.image !== nextProp.image
     }
-    containerHeight=100
+    showPhoto(){
+        BeNavigator.pushTo("PhotoViewer",{photo:this.props.image,hideActions:true})
+    }
+    containerHeight= this.props.showVideo ? 200 : 100
     logOutZoomState = (event, gestureState, zoomableViewEventObject) => { };
     render() {
         return !this.props.showVideo ? (
@@ -45,18 +50,20 @@ export default class PhotoPreview extends BeComponent {
                     bindToBorders={true}
                     onZoomAfter={this.logOutZoomState}
                 >
+                <TouchableOpacity onPress={this.showPhoto.bind(this)}>
                     <CacheImages thumbnails square
                         style={{ width: "98%", height: "98%",alignSelf:"center",margin: '1%',
                         borderTopLeftRadius: 5,backgroundColor: ColorList.bodyBackground,
                         borderTopRightRadius: 5,}}
                         source={{ uri: this.props.image }}
                     ></CacheImages>
+                    </TouchableOpacity>
                 </ReactNativeZoomableView>
                 <TouchableOpacity
                     onPress={() => requestAnimationFrame(this.props.hideCaption)}
                     style={{
                         position: "absolute",
-                        ...rounder(15, ColorList.bodyBackground),
+                        ...rounder(20, ColorList.bodyBackground),
                         alignSelf: "flex-end",
                         justifyContent: "center",
                         justifyContent: "center",
@@ -68,7 +75,7 @@ export default class PhotoPreview extends BeComponent {
                         type="EvilIcons"
                         style={{
                             ...GState.defaultIconSize,
-                            fontSize: 15,
+                            fontSize: 17,
                         }}
                     />
                 </TouchableOpacity>

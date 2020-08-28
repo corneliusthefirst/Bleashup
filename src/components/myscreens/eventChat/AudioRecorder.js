@@ -79,8 +79,8 @@ export default class AudioRecorder extends BeComponent{
     }
     filename = dirs.DocumentDir + "/test.mp3"
     unmountingComponent(){
-        SoundRecorder.stop().then(() => {
-            //this.BackHandler.remove()
+        SoundRecorder.stop().catch(() => {
+
         })
     }
     _stopRecoder(dontsend) {

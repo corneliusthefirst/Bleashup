@@ -15,6 +15,7 @@ import  MaterialIcons  from 'react-native-vector-icons/MaterialIcons';
 import getRelation from '../../Contacts/Relationer';
 import BeNavigator from '../../../../services/navigationServices';
 import { close_all_modals } from "../../../../meta/events";
+import Vibrator from '../../../../services/Vibrator';
 
 export default class ProfileModal extends BleashupModal {
   initialize(props) {
@@ -47,6 +48,7 @@ export default class ProfileModal extends BleashupModal {
   goToRelation(){
     this.onClosedModal()
     getRelation(this.props.profile).then(relation => {
+      Vibrator.vibrateShort()
       BeNavigator.pushActivity(relation,"EventChat")
     })
     emitter.emit(close_all_modals)

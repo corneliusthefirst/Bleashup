@@ -15,8 +15,6 @@ import { reject } from 'lodash';
 import Toaster from "../../../services/Toaster";
 import Texts from '../../../meta/text';
 
-
-
 export default class SearchContent extends BeComponent {
     constructor(props) {
         super(props)

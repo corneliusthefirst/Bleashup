@@ -8,24 +8,27 @@ import MaterialIcons  from 'react-native-vector-icons/MaterialIcons';
 import rounder from '../../../services/rounder';
 import ColorList from '../../colorList';
 import GState from '../../../stores/globalState/index';
-import SearchContent from './SearchContent';
+import SearchContent from "./SearchContent";
 export default class ShareWithYourContacts extends TabModal {
   initialize() {
     this.state = {
       searchString: "",
       users: [],
+      mounted:false,
       activity: [],
     };
   }
   state = {
     searchString: "",
     users: [],
+    mounted:false,
     activity: [],
   };
   shouldComponentUpdate(prevprops,prevState){
-    return prevState.mounted !== this.state.mounted || 
-    this.props.isOpen !== prevprops.isOpen || 
-    this.state.users.length !== prevState.users.length
+    let canUpate = (prevState.mounted !== this.state.mounted ||
+      this.props.isOpen !== prevprops.isOpen ||
+      this.state.users.length !== prevState.users.length)
+    return canUpate
   }
   onOpenModal() {
     stores.Contacts.getContacts().then((contacts) => {
@@ -34,7 +37,7 @@ export default class ShareWithYourContacts extends TabModal {
         [],
         (users) => {
           setTimeout(() => {
-            this.setState({
+            this.setStatePure({
               users: users,
               activity: stores.Events.events.filter(
                 (ele) => actFilterFunc(ele) && ele.type

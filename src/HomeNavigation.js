@@ -1,5 +1,5 @@
 import React, { Component } from "react"
-import { createStackNavigator, createNavigationContainer } from "react-navigation"
+import { createStackNavigator, createNavigationContainer, createAppContainer } from "react-navigation"
 import homePage from "./components/myscreens/home/homePage"
 import { enableScreens } from 'react-native-screens';
 import Event from './components/myscreens/event/index';
@@ -10,6 +10,7 @@ import CreateEventView from './components/myscreens/event/createEvent/index';
 import CameraScreen from './components/mainComponents/BleashupCamera/index';
 import SwiperComponent from './components/SwiperComponent/index';
 import ProfileView from './components/myscreens/settings/profile';
+import PhotoViewer from './components/myscreens/event/PhotoViewer';
 
 enableScreens()
 const HomeNavigator = createStackNavigator({
@@ -21,12 +22,13 @@ const HomeNavigator = createStackNavigator({
     SwiperComponent:{screen:SwiperComponent},
     CameraScreen:{screen: CameraScreen},
     Profile: {screen:ProfileView},
+    PhotoViewer: {screen: PhotoViewer},
     Event: { screen: Event },
 }, {
     initialRouteName: "Home",
     headerMode: "none"
 })
-const HomeContainer = createNavigationContainer(HomeNavigator)
+const HomeContainer = createAppContainer(HomeNavigator)
 
 export default () => {
     return <HomeContainer id={1}></HomeContainer>

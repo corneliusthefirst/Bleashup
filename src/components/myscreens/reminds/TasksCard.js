@@ -4,7 +4,7 @@ import { StyleSheet, Dimensions, View, Text, TouchableOpacity } from 'react-nati
 import Modal from 'react-native-modalbox';
 import stores from '../../../stores/index';
 import moment from 'moment';
-import { find, isEqual, findIndex, uniqBy } from "lodash";
+import { find, isEqual, findIndex, uniqBy,cloneDeep } from "lodash";
 import AccordionModule from '../invitations/components/Accordion';
 import Creator from "./Creator";
 import RemindsMenu from "./RemindsMenu";
@@ -103,23 +103,31 @@ export default class EventTasksCard extends BeComponent {
   previousItem = null
   shouldComponentUpdate(nextProps, nextState, nextContext) {
     this.props.animate()
-    let previousItem = JSON.parse(this.previousItem)
     return this.state.mounted !== nextState.mounted ||
-      !isEqual(previousItem, nextProps.item) || 
-      previousItem.period !== nextProps.item.period ||
+      !isEqual(this.previousItem, nextProps.item) || 
+      this.previousItem.period !== nextProps.item.period ||
       this.state.newing !== nextState.newing
   }
+  compareRecurrenceConfig(prev,current){
+    let equalRecurrence = prev.recursive_frequency.recurrence == current.recursive_frequency.recurrence
+    let equalFrequency = prev.recursive_frequency.frequency == current.recursive_frequency.frequency
+    let equaInterval = prev.recursive_frequency.interval == current.recursive_frequency.interval 
+    let reduceFunc = (a, b) => a + b
+    let prevDayOfWeekString = prev.recursive_frequency.days_of_week && 
+    prev.recursive_frequency.days_of_week.reduce(reduceFunc,"")
+    let currentDaysOfWeekString = current.recursive_frequency.days_of_week && 
+    current.recursive_frequency.days_of_week.reduce(reduceFunc,"")
+    let equalDaysOfWeek = prevDayOfWeekString == currentDaysOfWeekString
+    return equaInterval && equalFrequency && equalRecurrence && equalDaysOfWeek
+  }
   componentDidUpdate(prevProps, prevState) {
-    let previousItem = JSON.parse(this.previousItem)
-    let canUpdate = this.state.mounted && (!previousItem || previousItem.period
-      !== this.props.item.period ||
-       !isEqual(this.props.item.recursive_frequency,
-        previousItem.recursive_frequency))
+    let canUpdate = this.state.mounted && (!this.previousItem || this.previousItem.period
+      !== this.props.item.period || !isEqual(this.props.item.recursive_frequency, this.previousItem.recursive_frequency))
     if (canUpdate) {
-      this.loadIntervals().then(() => {
+         this.loadIntervals().then(() => {
       })
     }
-    this.previousItem = JSON.stringify(this.props.item)
+    this.previousItem = cloneDeep(this.props.item)
   }
   unmountingComponent() {
   }
@@ -170,7 +178,7 @@ export default class EventTasksCard extends BeComponent {
       <Swipeout onLongPress={() => {
         this.props.showRemindActions(this.state.currentDateIntervals,
           this.state.correspondingDateInterval, 
-          this.state.creator,
+          this.state.creator.phone,
            this.returnActualDatesIntervals().period)
       }} disabled swipeRight={() => {
         this.props.mention({...this.props.item,current_date:this.returnActualDatesIntervals().period,})

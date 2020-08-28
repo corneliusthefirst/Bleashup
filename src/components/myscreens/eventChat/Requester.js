@@ -151,7 +151,6 @@ class MessageRequest {
             tcpRequest.messaging(messageData, messageID + seen).then((JSONdata) => {
                 EventListener.sendRequest(JSONdata, messageID + seen).then(
                     (response) => {
-                        console.warn(response);
                         MainUpdater.seenMessage(
                             messageID,
                             committeeID,

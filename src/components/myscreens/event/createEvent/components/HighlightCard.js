@@ -56,13 +56,15 @@ export default class HighlightCard extends BePureComponent {
             this.props.onLayout(e.nativeEvent.layout)}
           }
         style={{
-          width: ColorList.containerWidth,
+          width: "98%",
           alignSelf: "center",
           ...(!this.props.shadowless && shadower(1)),
           justifyContent: "center",
           margin: "1%",
-          borderBottomWidth: 0.5,
-          borderColor: "ivory",
+          backgroundColor: ColorList.bodyBackground,
+          borderRadius: 5,
+          //borderBottomWidth: 0.5,
+          //borderColor: "ivory",
         }}
       >
         <View

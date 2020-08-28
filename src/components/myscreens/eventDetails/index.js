@@ -38,6 +38,7 @@ import  Feather  from 'react-native-vector-icons/Feather';
 import ColorList from '../../colorList';
 import { observer } from "mobx-react";
 import Texts from '../../../meta/text';
+import globalFunctions from '../../globalFunctions';
 
 let { height, width } = Dimensions.get('window');
 
@@ -52,6 +53,7 @@ let { height, width } = Dimensions.get('window');
       EventData: request.Event(),
       isMounted: false,
       update: false,
+      selectedItem:{},
       highlight_id: null,
       animateHighlight: false,
       defaultDetail: "No Description Provided !!",
@@ -69,7 +71,7 @@ let { height, width } = Dimensions.get('window');
     }
   }
   state = {
-
+    selectedItem:{}
   }
   scrolled = 0
   initializer() {
@@ -94,9 +96,9 @@ let { height, width } = Dimensions.get('window');
          { id: this.props.id }))
        this.scrolled = this.scrolled + 1
        if(this.scrolled >= 5) clearInterval(this.scrolling) 
-     },500)
+     },100)
      clearTimeout(this.waitToScroll)
-    },1000)
+    },100)
   }
   initialScrollIndexer = 2
   incrementer = 2
@@ -222,6 +224,7 @@ preDeleteHighlight = (item) => {
       highlight_id: hid
     })
   }
+  
 action = () => [
    {
     title: 'Reply',
@@ -233,7 +236,7 @@ action = () => [
   },
   {
     title: Texts.update,
-    condition: () => this.props.master,
+    condition: () => this.props.master || globalFunctions.isMe(this.state.selectedItem.creator),
     callback: () => this.preUpdate(this.state.selectedItem.id),
     iconName: "history",
     iconType: "MaterialIcons",
@@ -242,7 +245,7 @@ action = () => [
   {
     title: Texts.delete_,
     callback: () => this.preDeleteHighlight(this.state.selectedItem),
-    condition: () => this.props.master,
+    condition: () => this.props.master || globalFunctions.isMe(this.state.selectedItem.creator),
     iconName: "delete-forever",
     iconType: "MaterialCommunityIcons",
     color: colorList.delete

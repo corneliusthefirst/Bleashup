@@ -17,8 +17,11 @@ export default class TaskCreationExtra extends BleashupModal {
     modalWidth = '80%'
     borderRadius = 10 
     position = "center"
-    onClosedModal() {
+    onClosedModal(global) {
+        if(!global){
         this.props.proceed()
+        this.props.onClosed()
+        }
     }
     writeAlarms() {
         let reduceFun = (prev, current) => prev + "  " + current

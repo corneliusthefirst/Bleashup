@@ -35,16 +35,15 @@ import Entypo from 'react-native-vector-icons/Entypo';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import FontAwesome5  from 'react-native-vector-icons/FontAwesome5';
 import IDMaker from '../../../services/IdMaker';
+import AnimatedComponent from '../../AnimatedComponent';
+import Texts from '../../../meta/text';
 
-export default class ChatKeyboard extends BeComponent {
+export default class ChatKeyboard extends AnimatedComponent {
     constructor(props) {
         super(props);
         this.state = {
             textValue: "",
             isOptionsOpened: false,
-        };
-        if (Platform.OS === "android") {
-            UIManager.setLayoutAnimationEnabledExperimental(true);
         }
     }
     componentMounting() {
@@ -281,7 +280,7 @@ export default class ChatKeyboard extends BeComponent {
                 <TouchableOpacity
                     onPress={() => requestAnimationFrame(this.cancleReply.bind(this))}
                     style={{
-                        ...rounder(15, ColorList.bodyBackground),
+                        ...rounder(20, ColorList.bodyBackground),
                         position: "absolute",
                         marginRight: 6,
                         marginTop: 1,
@@ -292,7 +291,7 @@ export default class ChatKeyboard extends BeComponent {
                         name={"close"}
                         type={"EvilIcons"}
                         style={{
-                            fontSize: 15,
+                            fontSize: 17,
                             alignSelf: "center",
                         }}
                     />
@@ -562,7 +561,7 @@ export default class ChatKeyboard extends BeComponent {
                 name="close"
                 style={{
                     ...GState.defaultIconSize,
-                    fontSize: 15,
+                    fontSize: 17,
                 }}
                 type={"EvilIcons"}
             />
@@ -570,7 +569,7 @@ export default class ChatKeyboard extends BeComponent {
     }
     closeStyle = {
         position: "absolute",
-        ...rounder(15,
+        ...rounder(20,
             ColorList.bodyBackground),
         alignItems: "center",
         textAlign: "center",
@@ -643,7 +642,7 @@ export default class ChatKeyboard extends BeComponent {
     }
     attemptAudio(){
         Vibrator.vibrateShort()
-        Toaster({"text":"Long press to start recording"})
+        Toaster({"text":Texts.press_long_to_record})
     }
     render() {
         return (
@@ -718,7 +717,7 @@ export default class ChatKeyboard extends BeComponent {
                                     ,
                                     flexDirection: "column",
                                     borderRadius: 25,
-                                    maxHeight: 300,
+                                    maxHeight: 500,
                                     backgroundColor: ColorList.bodyBackground,
                                     borderTopLeftRadius:
                                         this.state.replying ||

@@ -462,7 +462,9 @@ export default class TasksCreation extends BleashupModal {
           {
             ...this.state.currentRemind.recursive_frequency,
             recurrence: this.state.currentRemind
-              .recursive_frequency.recurrence
+              .recursive_frequency.recurrence && 
+              moment(this.state.currentRemind.recursive_frequency.recurrence).format("x") > 
+              moment(this.state.date).format("x")
               ? this.state.currentRemind.recursive_frequency.recurrence
               : moment(this.state.date).add(1, "h").format()
           },
@@ -473,7 +475,7 @@ export default class TasksCreation extends BleashupModal {
         this.props.event.about.title
       )
     } else {
-      Toaster({ text: "App is Busy" });
+      Toaster({ text: Texts.app_busy });
     }
   }
 
@@ -484,7 +486,7 @@ export default class TasksCreation extends BleashupModal {
       ...rem,
       recursive_frequency: {
         ...rem.recursive_frequency,
-        recurrence: moment(rem.period).format("x") >= 
+       recurrence:rem.recursive_frequency.recurrence && moment(rem.period).format("x") >= 
         moment(rem.recursive_frequency.recurrence).format("x") ? 
         moment(rem.period).add(1, "h").format() : rem.recursive_frequency.recurrence
       }

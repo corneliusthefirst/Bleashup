@@ -34,7 +34,7 @@ export default class ChangeBox extends AnimatedComponent {
    mention(changer){
        this.props.mention({...this.props.change,changer})
    }
-    containerStyle = { margin: '1%', borderRadius: 3, backgroundColor: colorList.bodyBackground, ...shadower(3), }
+    containerStyle = { margin: '1%', borderRadius: 5, backgroundColor: colorList.bodyBackground, ...shadower(2), }
     render() {
         return <Swipeout disabled onLongPress={() => this.props.onLongPress(this.state.changer)} swipeRight={() => {
                 this.mention(this.state.changer.nickname)

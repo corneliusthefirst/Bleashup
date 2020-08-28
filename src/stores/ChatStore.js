@@ -21,7 +21,7 @@ class ChatStore {
     addToStore(data, message_id) {
         this.setProperties(data);
         this.currentModif = moment().format();
-        if(message_id){
+        if (message_id) {
             console.warn("emitting message update")
             emitter.emit("updated" + message_id)
         }
@@ -128,12 +128,14 @@ class ChatStore {
     }
     seenMessage(roomID, messageID, seer) {
         return new Promise((resolve, reject) => {
-            let index = findIndex(messages[roomID], { id: messageID });
-            messages[roomID][index].seer
-                ? messages[roomID][index].seer.unshift(player)
-                : (messages[roomID][index].seer = [player]);
-            this.addToStore(messages);
-            resolve();
+            this.readFromStore().then(messages => {
+                let index = findIndex(messages[roomID], { id: messageID });
+                messages[roomID][index].seer
+                    ? messages[roomID][index].seer.unshift(seer)
+                    : (messages[roomID][index].seer = [seer]);
+                this.addToStore(messages);
+                resolve();
+            })
         });
     }
     @action reactToMessage(roomID, messageID, reaction) {

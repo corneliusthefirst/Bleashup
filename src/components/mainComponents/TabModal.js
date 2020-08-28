@@ -19,13 +19,9 @@ export default class TabModal extends BleashupModal {
     return null;
   }
   onOpenModal() {
-    this.openModalTimeout = setTimeout(() => {
-      this.setStatePure({
-        content: this.props.content,
-      });
-    }, 20);
+    
   }
-  willUpdatingComponent(){
+  componentDidUpdate(){
     this.initRoutes()
   }
   initRoutes(){
@@ -47,21 +43,13 @@ export default class TabModal extends BleashupModal {
         lazy:true,
       }
     )
-    this.Tabs = createNavigationContainer(this.AppNavigator)
+    this.Tabs = createAppContainer(this.AppNavigator)
   }
   componentDidMount(){
     this.initRoutes()
-    setTimeout(() => {
-      this.setStatePure({
-        mounted:true
-      })
-    },100)
   }
   onClosedModal() {
     this.props.closed();
-    this.setStatePure({
-      content: null,
-    });
   }
   isCurrentTab(index) {
     return this.state.currentTab === index;
@@ -89,11 +77,11 @@ export default class TabModal extends BleashupModal {
   inialPage = 0;
   isOpened = this.props.isOpen;
   modalBody() {
-    return this.state.mounted && <View style={{
+    return <View style={{
       flex: 1,
     }}>
       <View>{this.TabHeader()}</View>
-    <this.Tabs></this.Tabs>
+    {this.Tabs && <this.Tabs></this.Tabs>}
     </View>
   }
 }

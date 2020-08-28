@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import {
   createStackNavigator,
   createNavigationContainer,
+  createAppContainer,
 } from 'react-navigation';
 import HomeNavigation from "./HomeNavigation";
 import LoginView from './components/myscreens/login/index';
@@ -26,7 +27,7 @@ const HomeNavigator = createStackNavigator(
     headerMode: 'none',
   }
 );
-const HomeContainer = createNavigationContainer(HomeNavigator);
+const HomeContainer = createAppContainer(HomeNavigator);
 
 export default () => {
   return <HomeContainer id={1} />;

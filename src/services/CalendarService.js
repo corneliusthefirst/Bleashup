@@ -100,7 +100,8 @@ class CalendarService {
         } else {
             return new Promise((resolve, reject) => {
                 if (Bevent.calendar_id) {
-                    RNCalendarEvents.removeEvent(Bevent.calendar_id, { futureEvents: type === 'reminds' ? all ? true : false : true }).then((res) => {
+                    RNCalendarEvents.removeEvent(Bevent.calendar_id, 
+                        { futureEvents: type === 'reminds' ? all ? true : false : true }).then((res) => {
                         resolve()
                     })
                 } else {

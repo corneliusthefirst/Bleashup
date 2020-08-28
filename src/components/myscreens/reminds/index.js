@@ -52,7 +52,7 @@ import AntDesign  from 'react-native-vector-icons/AntDesign';
 import { observer } from 'mobx-react';
 import IDMaker from '../../../services/IdMaker';
 import Texts from '../../../meta/text';
-//const MyTasksData = stores.Reminds.MyTasksData
+import globalFunctions from '../../globalFunctions';
 
 @observer class Reminds extends AnimatedComponent {
   initialize(){
@@ -64,12 +64,9 @@ import Texts from '../../../meta/text';
       event_id: this.props.event_id,
       RemindCreationState: false,
     };
-    console.warn('running remind index con');
   }
-  //manual event_id
   state = {};
   addMembers(currentMembers, item) {
-    console.warn('pressing add contacts');
     this.setStatePure({
       isSelectableContactsModalOpened: true,
       currentTask: item,
@@ -170,9 +167,9 @@ import Texts from '../../../meta/text';
           { id: this.props.id }))
         this.scrolled = this.scrolled + 1
         if(this.scrolled > 5) clearInterval(this.scrolling)
-      },500)
+      },200)
       clearTimeout(this.waitToScroll)
-    }, 700)
+    }, 100)
   }
   saveRemoved(members) {
     if (this.props.working) {
@@ -222,12 +219,6 @@ import Texts from '../../../meta/text';
         this.state.currentRemind
       )
         .then((res) => {
-          if (res) {
-            this.setStatePure({
-              newing: !this.state.newing,
-              update: false
-            });
-          }
           this.props.stopLoader();
         })
         .catch(() => {
@@ -262,6 +253,7 @@ import Texts from '../../../meta/text';
   }
   assignToMe(item) {
     this.setStatePure({
+      currentRemind:item,
       isSelectAlarmPatternModalOpened: true,
       currentTask: item,
     });
@@ -464,22 +456,19 @@ import Texts from '../../../meta/text';
     let members = item.members.map((ele) => ele.phone);
     this.setStatePure({
       members: uniq(members),
-      //actualInterval: thisInterval,
       isReportModalOpened: true,
-      //intervals,
       currentTask: item,
       complexReport: false,
     });
   }
   addNewRemind() {
-    console.warn("adding remind")
     this.scrollRemindListToTop()
     RemindRequest.CreateRemind({ ...this.state.currentRemind, id: IDMaker.make() },
       this.props.event.about.title).then(() => {
         this.refs.task_creator.resetRemind()
         stores.Reminds.removeRemind(this.props.event.id,
           request.Remind().id).then(() => {
-            this.updateData(this.state.currentRemind)
+            //this.updateData(this.state.currentRemind)
           })
       }).catch(() => {
         console.warn("an error occured while creating the remind")
@@ -585,7 +574,7 @@ import Texts from '../../../meta/text';
     },
     {
       title:Texts.update,
-      condition:() => this.actionIndex.creator || this.props.master,
+      condition:() => globalFunctions.isMe(this.state.creator) || this.props.master,
       callback:() => this.updateRemind(this.state.remind),
       iconName:"history",
       iconType:"MaterialIcons",
@@ -593,14 +582,14 @@ import Texts from '../../../meta/text';
     },
     {
       title:Texts.assign,
-      condition:() => this.props.master,
+      condition: () => globalFunctions.isMe(this.state.creator) || this.props.master,
       callback:() => this.addMembers(uniqBy(this.state.remind.members,"phone"),this.state.remind),
       iconName: "addusergroup",
       iconType: "AntDesign",
       color:colorList.indicatorColor
     },{
       title: Texts.unassign,
-      condition:() => this.props.master,
+      condition: () => globalFunctions.isMe(this.state.creator) || this.props.master,
       callback: () => this.removeMembers(uniqBy(this.state.remind.members.filter(ele => this.state.creator ||
         ele.phone === stores.LoginStore.user.phone)),this.state.remind),
       iconName:"deleteusergroup",
@@ -610,7 +599,7 @@ import Texts from '../../../meta/text';
     {
       title:Texts.delete_,
       callback:() => this.removeRemind(this.state.remind),
-      condition:() => this.props.master,
+      condition: () => globalFunctions.isMe(this.state.creator) || this.props.master,
       iconName: "delete-forever",
       iconType: "MaterialCommunityIcons",
       color:colorList.delete

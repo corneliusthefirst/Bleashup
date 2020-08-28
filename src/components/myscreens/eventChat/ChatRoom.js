@@ -216,57 +216,6 @@ class ChatRoom extends AnimatedComponent {
         });
     }
     showMessage = [];
-    /*loadComments() {
-        if (
-            !stores.Messages.messages[this.roomID] ||
-            stores.Messages.messages[this.roomID].length <= 0
-        ) {
-            this.fireRef
-                .orderByKey()
-                .limitToLast(50)
-                .once('value', (snapshot) => {
-                    if (snapshot.val()) {
-                        this.formStorableData(values(snapshot.val())).then((newVal) => {
-                            stores.Messages.messages[this.roomID] = newVal;
-                            this.setStatePure({
-                                newMessage: !this.state.newMessage,
-                                commentLoaded: true,
-                                loaded: true,
-                            });
-                            this.adjutRoomDisplay();
-                        });
-                    } else {
-                        this.setStatePure({
-                            commentLoaded: true,
-                            loaded: true,
-                        });
-                        this.adjutRoomDisplay();
-                    }
-                });
-        } else {
-            LoadMoreComments(
-                this.props.firebaseRoom,
-                stores.Messages.messages[this.roomID].length,
-                stores.Messages.messages[this.roomID].length + 50
-            ).then((res) => {
-                res.json().then((data) => {
-                    data &&
-                        data.length > 0 &&
-                        this.formStorableData(data).then((mess) => {
-                            stores.Messages.messages[this.roomID] = uniqBy(
-                                stores.Messages.messages[this.roomID].concat(mess),
-                                'id'
-                            );
-                            this.setStatePure({
-                                newMessage: !this.state.newMessage,
-                                loaded: true,
-                            });
-                            this.adjutRoomDisplay();
-                        });
-                });
-            });
-        }
-    }*/
     initializeNewMessageForRoom() {
         return new Promise((resolve, reject) => {
             this.formStorableData(this.props.newMessages).then((news) => {
@@ -374,6 +323,9 @@ class ChatRoom extends AnimatedComponent {
         } else if (this.state.showAudioRecorder) {
             this.refs.keyboard && this.refs.keyboard.toggleAudioRecorder()
             return true
+        }else if(this.refs.keyboard  && this.refs.keyboard.state.showCaption){
+            this.refs.keyboard.hideCaption()
+            return  true
         } else {
             return false
         }
@@ -651,12 +603,12 @@ class ChatRoom extends AnimatedComponent {
         this.deleteMessage(this.state.currentMessage.id);
     }
     showReceived() {
-        this.props.showContacts(
+       this.state.currentMessage.received? this.props.showContacts(
             this.state.currentMessage.received.map((ele) =>
                 ele.phone.replace('+', '00')
             ),
             Texts.seen_by
-        );
+        ):Toaster({text:Texts.this_message_was_never_sent});
     }
     copyMessage() {
         Clipboard.setString(this.state.currentMessage.text);

@@ -45,6 +45,9 @@ import stores from "../stores";
      });   
   }
 
+     isMe(phone) {
+        return phone === stores.LoginStore.user.phone
+     }
   /*getOponentSimple(participant){
      let oponent = participant.find(ele => ele.phone !== stores.LoginStore.user.phone)
       return stores.TemporalUsersStore.User.find((ele) => ele.phone === oponent.phone)

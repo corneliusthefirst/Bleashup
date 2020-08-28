@@ -453,7 +453,14 @@ class TEXTS {
         en: "The activity must have a name",
         fr: "Une activitee doit avoir un nom"
     }[GState.lang]
-
+    this_message_was_never_sent = {
+        en:"This messages wa never sent",
+        fr: "Ce message n'a jamais ete envoyee"
+    }[GState.lang]
+    press_long_to_record = {
+        en: "Long press to start recording",
+        fr: "Apuiez Logntemp pour commencer a enregister"
+    }
 }
 const Texts = new TEXTS()
 export default Texts

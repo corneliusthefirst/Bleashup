@@ -201,6 +201,7 @@ class Requester {
                 newRemindName.remind_id = remindID
                 tcpRequest.updateRemind(newRemindName, remindID + '_recurrence').then((JSONData) => {
                     EventListener.sendRequest(JSONData, remindID + '_recurrence').then(reponse => {
+                        console.warn("update completely sent !")
                         stores.Reminds.updateRecursiveFrequency(eventID, {
                             remind_id: remindID,
                             recursive_frequency: newConfigs
@@ -216,11 +217,7 @@ class Requester {
                                 date: moment().format(),
                                 time: null
                             }
-                            oldRemind.calendar_id ? CalendarServe.saveEvent({ ...oldRemind, recursive_frequency: newConfigs },
-                                oldRemind.alams, 'reminds').then(() => {
-
-                                }) : null
-
+                            this.saveToCanlendar(eventID,oldRemind,oldRemind.extra && oldRemind.extra.alarms)
                             resolve('ok')
                             stores.ChangeLogs.addChanges(Change).then(() => {
 
@@ -354,6 +351,7 @@ class Requester {
         })
     }
     updateRemindAlarms(newExtra, oldExtra, remindID, eventID) {
+        console.warn("applying update for reminds")
         return new Promise((resolve, reject) => {
             if (newExtra &&
                 oldExtra && (differenceWith(newExtra.alarms, oldExtra.alarms, isEqual).length !==

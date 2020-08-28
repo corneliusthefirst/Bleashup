@@ -1,12 +1,12 @@
 import React, { Component } from "react";
 import Menu, { MenuItem, MenuDivider } from "react-native-material-menu";
-import { View ,TouchableOpacity} from "react-native";
+import { View, TouchableOpacity } from "react-native";
 import ColorList from "../../../../colorList";
 import shadower from "../../../../shadower";
-import Octicons  from 'react-native-vector-icons/Octicons';
-import EvilIcons  from 'react-native-vector-icons/EvilIcons';
-import  MaterialIcons from 'react-native-vector-icons/MaterialIcons';
-import  AntDesign  from 'react-native-vector-icons/AntDesign';
+import Octicons from 'react-native-vector-icons/Octicons';
+import EvilIcons from 'react-native-vector-icons/EvilIcons';
+import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
+import AntDesign from 'react-native-vector-icons/AntDesign';
 import GState from "../../../../../stores/globalState";
 export default class PickersMenu extends Component {
   constructor(props) {
@@ -17,15 +17,17 @@ export default class PickersMenu extends Component {
   setMenuRef = (ref) => {
     this._menu = ref;
   };
- icons = {
-   Octicons: <Octicons style={{ ...GState.defaultIconSize,...this.iconStyle}} name={this.props.icon.name}></Octicons>,
-   EvilIcons: <EvilIcons style={{ ...GState.defaultIconSize,...this.iconStyle}} name={this.props.icon.name}></EvilIcons>,
-   MaterialIcons: <MaterialIcons style={{ ...GState.defaultIconSize,...this.iconStyle}} name={this.props.icon.name}></MaterialIcons>,
-   AntDesign: <AntDesign style={{ ...GState.defaultIconSize,...this.iconStyle}} name={this.props.icon.name}></AntDesign>
- }
+  icons(type) {
+    switch (type) {
+      case "Octicons": return <Octicons style={{ ...GState.defaultIconSize, ...this.iconStyle }} name={this.props.icon.name}></Octicons>;
+      case "EvilIcons": return <EvilIcons style={{ ...GState.defaultIconSize, ...this.iconStyle }} name={this.props.icon.name}></EvilIcons>;
+      case "MaterialIcons": return <MaterialIcons style={{ ...GState.defaultIconSize, ...this.iconStyle }} name={this.props.icon.name}></MaterialIcons>;
+      case "AntDesign": return <AntDesign style={{ ...GState.defaultIconSize, ...this.iconStyle }} name={this.props.icon.name}></AntDesign>
+    }
+  }
   iconStyle = {
     color: ColorList.bodyIcon,
-    fontSize: this.props.fontSize ?this.props.fontSize: 30,
+    fontSize: this.props.fontSize ? this.props.fontSize : 30,
   }
   hideMenu = () => {
     this._menu.hide();
@@ -42,7 +44,7 @@ export default class PickersMenu extends Component {
           <View>
             <MenuDivider color="#1FABAB" />
             <MenuItem
-              textStyle={{ color:ColorList.headerIcon }}
+              textStyle={{ color: ColorList.headerIcon }}
               onPress={() => {
                 this.hideMenu();
                 ele.callback();
@@ -67,9 +69,9 @@ export default class PickersMenu extends Component {
           ref={this.setMenuRef}
           button={
             <TouchableOpacity
-            onPress={() => requestAnimationFrame(this.showMenu.bind(this))}
+              onPress={() => requestAnimationFrame(this.showMenu.bind(this))}
             >
-             {this.icons[this.props.icon.type]}  
+              {this.icons(this.props.icon.type)}
             </TouchableOpacity>
           }
         >

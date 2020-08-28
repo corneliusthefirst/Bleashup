@@ -8,13 +8,17 @@ export function writeDateTime(event) {
     let end = moment(typeof event.recurrence === "string" ? event.recurrence : null)
     let mathDiff = moment.duration(statDate.diff(currentDate)).asDays()
     let endMathdiff = moment.duration(end.diff(currentDate)).asDays()
-    return mathDiff >= 0 ? `${mathDiff >= 0 ? "Starting" : "Ended"} ${moment(event.period).isValid()?moment(event.period).calendar():' ...'}` :
-        `${endMathdiff >= 0 ? "Ends" : "Ended"} ${moment(event.recurrence).isValid()?moment(event.recurrence).calendar():' ...'}`
+    return mathDiff >= 0 ? `${mathDiff >= 0 ? "Starting" : "Ended"} ${moment(event.period).isValid() ? moment(event.period).calendar() : ' ...'}` :
+        `${endMathdiff >= 0 ? "Ends" : "Ended"} ${moment(event.recurrence).isValid() ? moment(event.recurrence).calendar() : ' ...'}`
 }
 export function dateDiff(event) {
     let currentDate = moment()
-    let end = moment(event.recurrence ? event.recurrence : null)
-    return daysDiff = moment.duration(currentDate.diff(end)).asDays()
+    if (moment(event.recurrence).isValid()) {
+        let end = moment(event.recurrence ? event.recurrence : moment(currentDate).format())
+        return daysDiff = moment.duration(currentDate.diff(end)).asDays()
+    } else {
+        return -1
+    }
 }
 
 export function writeInterval(frequency) {
@@ -33,14 +37,14 @@ export function writeInterval(frequency) {
 }
 export function getDayMonth(date) {
     return moment(date, format).format(format) === date ?
-        moment(date, format).format('Do') :moment(date).format("Do")
+        moment(date, format).format('Do') : moment(date).format("Do")
 }
 
 export function getMonthDay(date) {
     return moment(date, format).format(format) === date ?
-        moment(date, format).format('MM Do') :moment(date).format("MMMM Do")
+        moment(date, format).format('MM Do') : moment(date).format("MMMM Do")
 }
 export function getDay(date) {
-    return moment(date, format,true).isValid() ?
+    return moment(date, format, true).isValid() ?
         moment(date, format).format('dddd') : moment(date).format('dddd')
 }   

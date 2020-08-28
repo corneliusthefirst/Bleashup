@@ -125,14 +125,16 @@ see: https://github.com/wmcmahan/react-native-calendar-events/issues/12
         - title,
         - description (if provided),
         - location (if provided)
+
     - [] Start; the user should be able to search by: 
         - title,
         - description (if provided),
         - location (if provided)
+
     - [] Messages; the user should be able to searchby: 
         - text,
         - sender.nickname,
-        
+
     - [] Change Logs; the user should be able to search by:
         - updater.nickname,
         - changed
