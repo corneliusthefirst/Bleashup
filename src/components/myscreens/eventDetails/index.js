@@ -308,7 +308,7 @@ action = () => [
                     <HighlightCard
                       onLayout={(layout) => {
                         GState.itemDebounce(item,() => {
-                          stores.Highlights.persistDimenssion(index,item.event_id,layout)
+                          stores.Highlights.persistDimenssion(index,this.props.event_id,layout)
                         })
                       }}
                       showActions={() => this.showActions(item)}

@@ -122,7 +122,7 @@ export default class highlights {
     return new Promise((resolve, RejectPromise) => {
       this.readFromStore().then((Highlights) => {
         Highlights[EventID] = reject(Highlights[EventID], ["id", HighlightId]);
-        HighlightId === "newHighlightId"
+        HighlightId === request.Highlight().id
           ? Highlights[EventID].unshift(request.Highlight())
           : null;
         this.setProperty(Highlights);
@@ -301,7 +301,7 @@ export default class highlights {
     });
   }
   persistDimenssion(index,eventID,layout){
-    this.highlights[eventID][index].dimensions = layout
+   this.highlights[eventID] && this.highlights[eventID][index] ? this.highlights[eventID][index].dimensions = layout:null
     this.setProperty(this.highlights)
   }
 

@@ -313,7 +313,7 @@ class Request {
     Highlight() {
         return {
             id: "newHighlightId",
-            creator: "",
+            creator: stores.LoginStore.user.phone,
             event_id: "",
             public_state: 'public',
             created_at: moment().format(),

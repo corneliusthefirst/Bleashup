@@ -123,6 +123,8 @@ export default class TasksCreation extends BleashupModal {
       ).then((rem) => {
         rem = isEmpty(rem) ? request.Remind() : rem
         let remind = !this.props.update && this.props.starRemind || rem;
+        this.props.starRemind && stores.Reminds.addReminds(this.props.event_id,
+          [this.props.starRemind]).then(() =>{})
         this.setStatePure({
           currentRemind: remind,
           mounted: true,
@@ -607,11 +609,6 @@ export default class TasksCreation extends BleashupModal {
       //this.props.onClosed();
       Toaster({
         text: Texts.remind_must_have_atleate_date_time_or_title,
-        buttonText: "Okay",
-        duration: 6000,
-        buttonTextStyle: { color: "#008000" },
-        buttonStyle: { backgroundColor: "#5cb85c" },
-        textStyle: { fontSize: 15 },
       });
     } else {
       if (this.props.update) {
