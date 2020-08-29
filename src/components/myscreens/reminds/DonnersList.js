@@ -148,7 +148,6 @@ export default class DonnersList extends Component {
               });
             }}
             confirm={() => {
-              console.warn(this.state.interval, "interval from confirm");
               this.props.confirm(this.state.currentUser, this.state.interval);
               //this.props.onClosed()
             }}

@@ -27,6 +27,7 @@ import {
   nameToDataMapper,
   daysOfWeeksDefault,
   formWeekIntervals,
+  CorrectDays,
   format,
 } from "../../../services/recurrenceConfigs";
 import SelectDays from "../event/SelectDaysModal";
@@ -48,8 +49,8 @@ import rounder from "../../../services/rounder";
 import Toaster from "../../../services/Toaster";
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import GState from "../../../stores/globalState";
-import  MaterialIcons from 'react-native-vector-icons/MaterialIcons';
-import EvilIcons  from 'react-native-vector-icons/EvilIcons';
+import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
+import EvilIcons from 'react-native-vector-icons/EvilIcons';
 import Texts from '../../../meta/text';
 
 let { height, width } = Dimensions.get("window");
@@ -88,7 +89,7 @@ export default class TasksCreation extends BleashupModal {
       ? "event"
       : "reminder";
   }
-  unmountingComponent(){
+  unmountingComponent() {
     clearTimeout(this.initTimeout)
   }
   init() {
@@ -124,7 +125,7 @@ export default class TasksCreation extends BleashupModal {
         rem = isEmpty(rem) ? request.Remind() : rem
         let remind = !this.props.update && this.props.starRemind || rem;
         this.props.starRemind && stores.Reminds.addReminds(this.props.event_id,
-          [this.props.starRemind]).then(() =>{})
+          [this.props.starRemind]).then(() => { })
         this.setStatePure({
           currentRemind: remind,
           mounted: true,
@@ -158,21 +159,55 @@ export default class TasksCreation extends BleashupModal {
   }
 
   getCode(day) {
-    let dayOb = find(find(daysOfWeeksDefault, { day: day }))
+    let dayOb = find(daysOfWeeksDefault, { day: day })
     !dayOb
       ? console.error(this.state.currentRemind.period)
       : null;
     return dayOb.code;
   }
-  computeDaysOfWeek(data) {
-    let currentDayPeriod = daysOfWeeksDefault.find(ele => ele.day === getDay(this.state.date)).code
-    let newDate = this.state.currentRemind.period;
+  getDayFromCode(code) {
+    let dayOb = find(daysOfWeeksDefault, { code: code })
+    !dayOb
+      ? console.error(this.state.currentRemind.period)
+      : null;
+    return dayOb.day;
+  }
+  computeDaysOfWeek(data, shouldNotFilter, previousDate) {
+    let date = moment(this.state.currentRemind.period).isValid() ?
+      this.state.currentRemind.period : moment().format()
+    let currentDayPeriod = this.getCode(getDay(date))
+    let dayOfWeek = []
+    if (shouldNotFilter) {
+      dayOfWeek = uniq([...data])
+
+    } else {
+      let uniqCodes = uniq([...[currentDayPeriod], ...data])
+      if (previousDate) {
+        console.warn("previous date: ", previousDate)
+        let previousPeriodCode = this.getCode(getDay(previousDate))
+        dayOfWeek = uniqCodes.filter(ele => CorrectDays[ele] >= CorrectDays[currentDayPeriod] && CorrectDays[ele] !== CorrectDays[previousPeriodCode])
+      } else {
+        dayOfWeek = uniqCodes.filter(ele => CorrectDays[ele] >= CorrectDays[currentDayPeriod])
+      }
+    }
+    dayOfWeek = dayOfWeek.sort((a, b) => CorrectDays[a] <= CorrectDays[b] ? -1 : 1)
+    let startRelativeOffset = CorrectDays[dayOfWeek[0]] - CorrectDays[currentDayPeriod]
+    let endRelativeOffset = CorrectDays[dayOfWeek[dayOfWeek.length - 1]] - CorrectDays[currentDayPeriod]
+    let lastDate = moment(date).add(endRelativeOffset, "day").format()
+    let newDate = moment(date).add(startRelativeOffset, "day").format()
+    let recurrenceEnDate = this.state.currentRemind.recursive_frequency.recurrence && 
+    moment(this.state.currentRemind.recursive_frequency.recurrence).format("x") >=
+      moment(lastDate).format("x") ?
+      this.state.currentRemind.recursive_frequency.recurrence :
+      lastDate
+    console.warn(recurrenceEnDate)
     let NewRemind = {
       remind_id: this.state.currentRemind.id,
       recursive_frequency: {
         ...this.state.currentRemind.recursive_frequency,
+        recurrence: recurrenceEnDate,
         days_of_week: data && data.length > 0 ?
-          uniq([...[currentDayPeriod],...data]) : [currentDayPeriod],
+          dayOfWeek : [currentDayPeriod],
       },
       period: newDate,
     };
@@ -242,9 +277,9 @@ export default class TasksCreation extends BleashupModal {
       //deactivate the date picker before setting the obtain time
       this.setStatePure({
         date: dateTime,
-        currentRemind:{
+        currentRemind: {
           ...this.state.currentRemind,
-          period:dateTime,
+          period: dateTime,
         },
         isDateTimePickerVisible: false,
         show: true,
@@ -378,15 +413,15 @@ export default class TasksCreation extends BleashupModal {
     });
   }
   setInterval(value) {
-     this.setStatePure({
-        currentRemind: {
-          ...this.state.currentRemind,
-          recursive_frequency: {
-            ...this.state.currentRemind.recursive_frequency,
-            interval: value,
-          },
+    this.setStatePure({
+      currentRemind: {
+        ...this.state.currentRemind,
+        recursive_frequency: {
+          ...this.state.currentRemind.recursive_frequency,
+          interval: value,
         },
-      });
+      },
+    });
   }
   updateRequestReportOnComplete() {
     !this.props.update
@@ -437,12 +472,12 @@ export default class TasksCreation extends BleashupModal {
     ) {
       this.computeDaysOfWeek([]);
     } else if (
-      this.state.currentRemind.period !== prevState.currentRemind.period
+      this.state.currentRemind.period !== prevState.currentRemind.period && !this.periodChanged
     ) {
-      this.computeDaysOfWeek(data);
+      this.computeDaysOfWeek(data, false, prevState.currentRemind.period);
     }
-    if (this.state.currentRemind.recursive_frequency.interval !== 
-      prevState.currentRemind.recursive_frequency.interval && 
+    if (this.state.currentRemind.recursive_frequency.interval !==
+      prevState.currentRemind.recursive_frequency.interval &&
       !this.props.update) {
       stores.Reminds.updateRecursiveFrequency(this.props.event_id, {
         recursive_frequency: {
@@ -464,8 +499,8 @@ export default class TasksCreation extends BleashupModal {
           {
             ...this.state.currentRemind.recursive_frequency,
             recurrence: this.state.currentRemind
-              .recursive_frequency.recurrence && 
-              moment(this.state.currentRemind.recursive_frequency.recurrence).format("x") > 
+              .recursive_frequency.recurrence &&
+              moment(this.state.currentRemind.recursive_frequency.recurrence).format("x") >
               moment(this.state.date).format("x")
               ? this.state.currentRemind.recursive_frequency.recurrence
               : moment(this.state.date).add(1, "h").format()
@@ -488,9 +523,9 @@ export default class TasksCreation extends BleashupModal {
       ...rem,
       recursive_frequency: {
         ...rem.recursive_frequency,
-       recurrence:rem.recursive_frequency.recurrence && moment(rem.period).format("x") >= 
-        moment(rem.recursive_frequency.recurrence).format("x") ? 
-        moment(rem.period).add(1, "h").format() : rem.recursive_frequency.recurrence
+        recurrence: rem.recursive_frequency.recurrence && moment(rem.period).format("x") >=
+          moment(rem.recursive_frequency.recurrence).format("x") ?
+          moment(rem.period).add(1, "h").format() : rem.recursive_frequency.recurrence
       }
     });
 
@@ -618,8 +653,8 @@ export default class TasksCreation extends BleashupModal {
       }
     }
   }
-  goback(){
-    this.props.onClosed(this.props.currentMembers||this.props.starRemind)
+  goback() {
+    this.props.onClosed(this.props.currentMembers || this.props.starRemind)
   }
   swipeToClose = false;
   modalBody() {
@@ -631,7 +666,7 @@ export default class TasksCreation extends BleashupModal {
         keyboardShouldPersistTaps={"handled"}
         showsVerticalScrollIndicator={false}
       >
-        <View style={{ flex: 1, justifyContent: "flex-end"}}>
+        <View style={{ flex: 1, justifyContent: "flex-end" }}>
           <CreationHeader
             back={this.goback.bind(this)}
             title={
@@ -664,7 +699,7 @@ export default class TasksCreation extends BleashupModal {
                       <Ionicons
                         name="ios-people"
                         type="Ionicons"
-                        style={{...GState.defaultIconSize, color: ColorList.likeActive }}
+                        style={{ ...GState.defaultIconSize, color: ColorList.likeActive }}
                       />
                       <Text
                         style={{
@@ -727,7 +762,7 @@ export default class TasksCreation extends BleashupModal {
                   <CreateTextInput
                     height={50}
                     value={this.state.currentRemind.title}
-                    placeholder={this.isEvent()?Texts.your_event_title:Texts.remind_message}
+                    placeholder={this.isEvent() ? Texts.your_event_title : Texts.remind_message}
                     onChange={this.onChangedTitle.bind(this)}
                   />
                 </View>
@@ -761,7 +796,7 @@ export default class TasksCreation extends BleashupModal {
                         active
                         type="MaterialIcons"
                         name="date-range"
-                        style={{...GState.defaultIconSize, color: ColorList.indicatorColor }}
+                        style={{ ...GState.defaultIconSize, color: ColorList.indicatorColor }}
                       />
                     </TouchableOpacity>
                   </View>
@@ -772,12 +807,12 @@ export default class TasksCreation extends BleashupModal {
                         requestAnimationFrame(this.showDateTimePicker.bind(this))
                       }
                     >
-                      <Text style={{...GState.defaultTextStyle, color: ColorList.bodyText }}>
+                      <Text style={{ ...GState.defaultTextStyle, color: ColorList.bodyText }}>
                         {this.state.date
                           ? `${moment(this.state.date).format(
                             "dddd, MMMM Do YYYY"
                           )} at ${moment(this.state.date).format("hh:mm a")}`
-                          :Texts.remind_date}
+                          : Texts.remind_date}
                       </Text>
                     </TouchableOpacity>
                   </View>
@@ -813,11 +848,11 @@ export default class TasksCreation extends BleashupModal {
                     }
                   >
                     <EvilIcons
-                      style={{...GState.defaultIconSize, width: "13%", color: ColorList.bodyIcon }}
+                      style={{ ...GState.defaultIconSize, width: "13%", color: ColorList.bodyIcon }}
                       name={this.state.recurrent ? "arrow-up" : "arrow-down"}
                       type={"EvilIcons"}
                     />
-                    <Text style={{...GState.defaultTextStyle, fontWeight: "bold", }}>{Texts.repeat}</Text>
+                    <Text style={{ ...GState.defaultTextStyle, fontWeight: "bold", }}>{Texts.repeat}</Text>
                   </TouchableOpacity>
                 </View>
                 {this.state.recurrent ? (
@@ -827,7 +862,7 @@ export default class TasksCreation extends BleashupModal {
                         width: "95%",
                         flexDirection: "column",
                         justifyContent: "space-between",
-                        
+
                       }}
                     >
                       <View>
@@ -843,7 +878,7 @@ export default class TasksCreation extends BleashupModal {
                               style={{ marginLeft: "1%", flexDirection: "row" }}
                             >
                               <Text
-                                style={{...GState.defaultTextStyle, fontStyle: "italic", marginTop: 3 }}
+                                style={{ ...GState.defaultTextStyle, fontStyle: "italic", marginTop: 3 }}
                               >
                                 Every{" "}
                               </Text>
@@ -936,7 +971,7 @@ export default class TasksCreation extends BleashupModal {
                                       })
                                     }
                                   >
-                                    <Text style={{...GState.defaultTextStyle}}>
+                                    <Text style={{ ...GState.defaultTextStyle }}>
                                       {this.state.ownership
                                         ? Texts.select_days
                                         : Texts.view_days}
@@ -954,7 +989,7 @@ export default class TasksCreation extends BleashupModal {
                                           this.showDateTimePicker();
                                         }}
                                       >
-                                        <Text style={{...GState.defaultTextStyle}}>{` ${Texts.on_the} ${getDayMonth(
+                                        <Text style={{ ...GState.defaultTextStyle }}>{` ${Texts.on_the} ${getDayMonth(
                                           this.state.date
                                         )}`}</Text>
                                       </TouchableOpacity>
@@ -977,7 +1012,7 @@ export default class TasksCreation extends BleashupModal {
                                         </TouchableOpacity>
                                       </View>
                                     ) : (
-                                      <Text style={{...GState.defaultTextStyle}}>
+                                      <Text style={{ ...GState.defaultTextStyle }}>
                                         {this.state.currentRemind.recursive_frequency
                                           .interval === 1
                                           ? Texts.all_days
@@ -991,7 +1026,7 @@ export default class TasksCreation extends BleashupModal {
                           pointerEvents={this.state.ownership ? null : "none"}
                           style={{ marginLeft: "4%" }}
                         >
-                          <Text style={{...GState.defaultTextStyle, fontWeight:"bold",color:ColorList.bodyText }}>End Date:</Text>
+                          <Text style={{ ...GState.defaultTextStyle, fontWeight: "bold", color: ColorList.bodyText }}>End Date:</Text>
                           <TouchableOpacity
                             pointerEvents={this.state.ownership ? null : "none"}
                             style={{ width: "90%" }}
@@ -1056,7 +1091,7 @@ export default class TasksCreation extends BleashupModal {
               {this.isEvent() && this.state.ownership && (
                 <View
                   pointerEvents={this.state.ownership ? null : "none"}
-                  style={{ width: "90%", alignSelf: "center" , marginTop:20}}
+                  style={{ width: "90%", alignSelf: "center", marginTop: 20 }}
                 >
                   <PickersUpload
                     currentURL={this.state.currentRemind.remind_url || {}}
@@ -1099,17 +1134,17 @@ export default class TasksCreation extends BleashupModal {
               )}
               {!this.state.creating ? (
                 this.state.ownership && (
-                  <TouchableOpacity onPress={()=> this.propceed()} style={{ margin: '5%',alignSelf:'flex-end',}}>
-                  <View style={{ alignSelf:'center',alignItems:'center',...rounder(40,ColorList.likeActive)}}>
-                     <Text style={{
-                       ...GState.defaultTextStyle,
-                       fontWeight: '400',
-                       color:ColorList.bodyBackground,
-                       fontSize: 20,
-                     }}>ok</Text>
-                  </View>
+                  <TouchableOpacity onPress={() => this.propceed()} style={{ margin: '5%', alignSelf: 'flex-end', }}>
+                    <View style={{ alignSelf: 'center', alignItems: 'center', ...rounder(40, ColorList.likeActive) }}>
+                      <Text style={{
+                        ...GState.defaultTextStyle,
+                        fontWeight: '400',
+                        color: ColorList.bodyBackground,
+                        fontSize: 20,
+                      }}>ok</Text>
+                    </View>
                   </TouchableOpacity>
-                
+
                 )
               ) : (
                   null
@@ -1123,14 +1158,14 @@ export default class TasksCreation extends BleashupModal {
                     code,
                     ...this.state.currentRemind.recursive_frequency
                       .days_of_week,
-                  ])
+                  ]), true
                 );
               }}
               removeCode={(code) => {
                 this.computeDaysOfWeek(
                   this.state.currentRemind.recursive_frequency.days_of_week.filter(
                     (ele) => ele !== code
-                  )
+                  ), true
                 );
               }}
               ownership={this.state.ownership}

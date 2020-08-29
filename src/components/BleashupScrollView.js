@@ -23,8 +23,8 @@ export default class BleashupScrollView extends Component {
     renderPerBatch = 3
     previousRendered = 0
     _renderItems(array) {
-        return array.map((element) => {
-            return this.props.renderItem(element, this.props.keyExtractor(element, 1))
+        return array.map((element,index) => {
+            return this.props.renderItem(element, this.props.keyExtractor(element, 1),index)
         })
     }
     continueScrollDown() {

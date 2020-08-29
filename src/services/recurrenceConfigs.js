@@ -192,7 +192,7 @@ export const nameToDataMapper = {
     'Month(s)': 'monthly',
     'Year(s)': 'yearly'
 }
-const CorrectDays = {
+export const CorrectDays = {
     'SU': 0,
     'MO': 1,
     'TU': 2,

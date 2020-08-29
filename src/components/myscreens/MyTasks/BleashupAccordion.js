@@ -27,7 +27,7 @@ export default class AccordionModuleNative extends Component {
       UIManager.setLayoutAnimationEnabledExperimental(true);
     }
   }
-  renderItem(dataArray, index) {
+  renderItem(dataArray,key, index) {
     return <View>
       <View
         style={{
@@ -75,7 +75,7 @@ export default class AccordionModuleNative extends Component {
       keyExtractor={this.props.keyExtractor}
       dataSource={this.props.dataSource}
       backgroundColor={this.props.backgroundColor}
-      renderItem={(item, index) => this.renderItem(item,index)}
+      renderItem={(item, key,index) => this.renderItem(item,key,index)}
      />;
   }
   toggleExpand = (item) => {
