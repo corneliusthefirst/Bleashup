@@ -452,7 +452,7 @@ export default class TasksCreation extends BleashupModal {
     let data = this.state.currentRemind.recursive_frequency.days_of_week &&
       this.state.currentRemind.recursive_frequency.frequency === "weekly"
       ? this.state.currentRemind.recursive_frequency.days_of_week
-      : [this.getCode(getDay(moment(date)))];
+      : [this.getCode(getDay(moment(date).format(format)))];
     if (this.props.currentMembers !== prevProp.currentMembers) {
       this.init();
     }
