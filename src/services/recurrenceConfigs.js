@@ -245,11 +245,11 @@ export function returnAllIntervals(period, interval, frequency, daysOfWeek) {
     let end = moment(period.end, format).format('x')
     let dates = []
     function returnDaysOfWeekOffset(daysOfWeek,start){
-        daysOfWeek = daysOfWeek.filter(ele => ele)
+        daysOfWeek = daysOfWeek && daysOfWeek.filter(ele => ele)
         let sorter = (a, b) => (a > b ? 1 : a < b ? -1 : 0)
         let daysOffset = daysOfWeek && daysOfWeek.map(ele => daysOffseter(ele))
         let startDateOffseset = daysOffseter(daysOfWeeksDefault.filter(ele => ele.day === start.split(",")[0])[0].code)
-        return daysOffset.map((ele) => {
+        return daysOffset && daysOffset.map((ele) => {
             return ele - startDateOffseset
         }).sort(sorter) // relative offset is very important for calculating 
     }
