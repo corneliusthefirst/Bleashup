@@ -195,11 +195,19 @@ export default class TasksCreation extends BleashupModal {
     let endRelativeOffset = CorrectDays[dayOfWeek[dayOfWeek.length - 1]] - CorrectDays[currentDayPeriod]
     let lastDate = moment(date).add(endRelativeOffset, "day").format()
     let newDate = moment(date).add(startRelativeOffset, "day").format()
-    let recurrenceEnDate = this.state.currentRemind.recursive_frequency.recurrence && 
-    moment(this.state.currentRemind.recursive_frequency.recurrence).format("x") >=
-      moment(lastDate).format("x") ?
-      this.state.currentRemind.recursive_frequency.recurrence :
-      lastDate
+    let recurrence = this.state.currentRemind.recursive_frequency.recurrence
+    let isWeekly = this.state.currentRemind.recursive_frequency.frequency == "weekly"
+    let recurrenceEnDate = this.state.currentRemind.recursive_frequency.recurrence
+    if (recurrence){
+      let remindEndDayCode = this.getCode(getDay(recurrence))
+      let recurrenceEndOffset = CorrectDays[dayOfWeek[dayOfWeek.length - 1]] - CorrectDays[remindEndDayCode]
+      isWeekly? recurrence = moment(recurrence).add(recurrenceEndOffset,"day"):null;
+      recurrenceEnDate =
+        moment(recurrence).format("x") >=
+          moment(lastDate).format("x") ?
+          recurrence :
+          lastDate
+    }
     let NewRemind = {
       remind_id: this.state.currentRemind.id,
       recursive_frequency: {
