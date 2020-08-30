@@ -161,13 +161,13 @@ import globalFunctions from '../../globalFunctions';
     });
     if(this.props.id) this.waitToScroll = setTimeout(() => {
       console.warn("scrolling to index")
-      this.scrolling = setInterval(() => {
+      //this.scrolling = setInterval(() => {
        this.refs.RemindsList && this.refs.RemindsList.scrollToIndex(
          findIndex(stores.Reminds.Reminds[this.props.event_id],
           { id: this.props.id }))
-        this.scrolled = this.scrolled + 1
-        if(this.scrolled > 5) clearInterval(this.scrolling)
-      },200)
+      //  this.scrolled = this.scrolled + 1
+       // if(this.scrolled > 5) clearInterval(this.scrolling)
+      //},200)
       clearTimeout(this.waitToScroll)
     }, 100)
   }
@@ -858,6 +858,7 @@ import globalFunctions from '../../globalFunctions';
 
   }
   renderReminds() {
+    let data = this.getRemindData()
     return !this.state.mounted ? (
       <View style={{ width: "100%", height: "100%" }} />
     ) : (
@@ -938,7 +939,7 @@ import globalFunctions from '../../globalFunctions';
           <View style={{ height: '92%' }}>
             <BleashupFlatList
               fit={this.props.fit}
-              getItemLayout={(item,index) => GState.getItemLayout(item,index,this.getRemindData(),70,20)}
+              getItemLayout={(item,index) => GState.getItemLayout(item,index,data,70,0)}
               initialRender={6}
               ref="RemindsList"
               renderPerBatch={5}
@@ -946,7 +947,7 @@ import globalFunctions from '../../globalFunctions';
               firstIndex={0}
               //showVerticalScrollIndicator={false}
               keyExtractor={(item, index) => index.toString()}
-              dataSource={this.getRemindData()}
+              dataSource={data}
               renderItem={(item, index) => {
                 this.delay = index >= 5 ? 0 : this.delay + 1;
                 return (item.id == request.Remind().id ? null:

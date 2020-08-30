@@ -1187,7 +1187,10 @@ class ChatRoom extends AnimatedComponent {
                 vote_id: replyer.id,
             });
         } else {
-            this.props.handleReplyExtern(replyer);
+            Keyboard.dismiss()
+            setTimeout(() => {
+                this.props.handleReplyExtern(replyer);
+            },150)
         }
     }
     openOptions() {

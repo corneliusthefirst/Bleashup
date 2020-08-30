@@ -45,7 +45,17 @@ export default class HighlightCard extends BePureComponent {
       });
     }, 50 * this.props.delay);
   }
-
+  container = {
+    width: "98%",
+    alignSelf: "center",
+    ...(!this.props.shadowless && shadower(1)),
+    justifyContent: "center",
+    margin: "1%",
+    backgroundColor: ColorList.bodyBackground,
+    borderRadius: 5,
+    //borderBottomWidth: 0.5,
+    //borderColor: "ivory",
+  }
   render() {
     return this.state.mounted ? (
       <Swipeout disabled onLongPress={this.props.showActions} swipeLeft={() => { }} swipeRight={() => {
@@ -55,17 +65,7 @@ export default class HighlightCard extends BePureComponent {
           onLayout={(e) => {
             this.props.onLayout(e.nativeEvent.layout)}
           }
-        style={{
-          width: "98%",
-          alignSelf: "center",
-          ...(!this.props.shadowless && shadower(1)),
-          justifyContent: "center",
-          margin: "1%",
-          backgroundColor: ColorList.bodyBackground,
-          borderRadius: 5,
-          //borderBottomWidth: 0.5,
-          //borderColor: "ivory",
-        }}
+        style={this.container}
       >
         <View
           style={{
@@ -129,6 +129,6 @@ export default class HighlightCard extends BePureComponent {
         </View>
       </View>
       </Swipeout>
-    ) : null
+    ) : <View style={{ ...this.container, height: 100, ...this.props.item.dimensions}}></View>
   }
 }

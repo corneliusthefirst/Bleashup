@@ -211,7 +211,7 @@ export default class globalState {
           (a, b) =>
             a + (b.dimensions
               ? b.dimensions.height
-              :def ) - (.5 + newOffset||0),
+              :def ) + (.5 + newOffset||0),
           0
         )
       : index * def

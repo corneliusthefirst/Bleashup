@@ -90,14 +90,14 @@ let { height, width } = Dimensions.get('window');
       })
       }
    if(this.props.id) this.waitToScroll =  setTimeout(() => {
-    this.scrolling = setInterval(() => {
-      this.refs.postList && this.refs.postList.scrollToIndex(
+    //this.scrolling = setInterval(() => {
+     this.refs.postList && this.refs.postList.scrollToIndex(
         findIndex(stores.Highlights.highlights[this.props.Event.id],
          { id: this.props.id }))
-       this.scrolled = this.scrolled + 1
-       if(this.scrolled >= 5) clearInterval(this.scrolling) 
-     },100)
-     clearTimeout(this.waitToScroll)
+      // this.scrolled = this.scrolled + 1
+     //  if(this.scrolled >= 5) clearInterval(this.scrolling) 
+     //},100)
+    // clearTimeout(this.waitToScroll)
     },100)
   }
   initialScrollIndexer = 2
@@ -296,7 +296,7 @@ action = () => [
                 horizontal={false}
                 renderPerBatch={5}
                 firstIndex={0}
-                getItemLayout={(item,index) => GState.getItemLayout(item,index,data,70,20)}
+                getItemLayout={(item,index) => GState.getItemLayout(item,index,data,70,0)}
                 refHorizontal={(ref) => { this.detail_flatlistRef = ref }}
                 keyExtractor={this._keyExtractor}
                 dataSource={data}

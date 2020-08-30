@@ -160,6 +160,14 @@ export default class EventTasksCard extends BeComponent {
         recurrence: this.state.currentDateIntervals[this.state.currentDateIntervals.length - 1].end,
       }
   }
+  container = {
+    width: "98%",
+    flexDirection: 'column',
+    borderRadius: 5,
+    backgroundColor: ColorList.bodyBackground,
+    alignSelf: 'center',
+    margin: '1%', padding: "1%", ...shadower(1)
+  }
   render() {
 
     let hasDoneForThisInterval = find(this.props.item.donners, (ele) =>
@@ -198,7 +206,7 @@ export default class EventTasksCard extends BeComponent {
     }) > 0
     member = findIndex(this.props.item.members,
       { phone: stores.LoginStore.user.phone }) >= 0;
-    return !this.state.mounted ? null : (
+    return !this.state.mounted ? <View style={{ ...this.container, height: 100, ...this.props.item.dimensions}}></View> : (
       <Swipeout onLongPress={() => {
         this.props.showRemindActions(this.state.currentDateIntervals,
           this.state.correspondingDateInterval,
@@ -206,14 +214,7 @@ export default class EventTasksCard extends BeComponent {
           this.returnActualDatesIntervals().period)
       }} disabled swipeRight={() => {
         this.props.mention({ ...this.props.item, current_date: this.returnActualDatesIntervals().period, })
-      }}><View onLayout={(e) => this.props.onLayout(e.nativeEvent.layout)} style={{
-        width: "98%",
-        flexDirection: 'column',
-        borderRadius: 5,
-        backgroundColor: ColorList.bodyBackground,
-        alignSelf: 'center',
-        margin: '1%', padding: "1%", ...shadower(1)
-      }}>
+      }}><View onLayout={(e) => this.props.onLayout(e.nativeEvent.layout)} style={this.container}>
           <View>
             <View style={{
               justifyContent: 'space-between',
