@@ -55,7 +55,6 @@ export default class EventTasksCard extends BeComponent {
 
   }
   componentMounting() {
-
   }
   loadIntervals() {
     return new Promise((resolve, reject) => {
@@ -169,7 +168,6 @@ export default class EventTasksCard extends BeComponent {
     margin: '1%', padding: "1%", ...shadower(1)
   }
   render() {
-
     let hasDoneForThisInterval = find(this.props.item.donners, (ele) =>
       ele.status.date &&
       this.state.correspondingDateInterval &&

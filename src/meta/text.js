@@ -460,7 +460,7 @@ class TEXTS {
     press_long_to_record = {
         en: "Long press to start recording",
         fr: "Apuiez Logntemp pour commencer a enregister"
-    }
+    }[GState.lang]
 }
 const Texts = new TEXTS()
 export default Texts

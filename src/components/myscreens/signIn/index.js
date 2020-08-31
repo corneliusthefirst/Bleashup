@@ -28,6 +28,7 @@ export default class SignInView extends Component {
     super(props);
     this.state = {
       password: "",
+      mounted : false,
       isModalOpened:false
     };
   }
@@ -45,13 +46,19 @@ export default class SignInView extends Component {
     globalState.error = false;
   }
   componentWillMount() {
-    /*firebase.auth().onAuthStateChanged(user => {
+    firebase.auth().onAuthStateChanged(user => {
       if (user) {
-        this.login()
+        this.state.mounted && this.login()
       }
-    });*/
+    });
   }
-
+  componentDidMount(){
+    setTimeout(() => {
+      this.setState({
+        mounted:true
+      })
+    },1000)
+  }
   user = {}
   exiting = false
   timeout = null

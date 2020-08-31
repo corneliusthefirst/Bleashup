@@ -9,27 +9,25 @@ import {
 import Getter from "./Getter";
 import moment from "moment"
 class InvitationDispatcher {
-    dispatchUpdates(Invitations, action) {
-        return new Promise((resolve, reject) => {
-            forEach(Invitations, (Invitation) => {
-                let i = 0
-                this.dispatcher(Invitation, action).then(() => {
-                    i++;
-                })
-                if (i == Invitations.length - 1) resolve()
+    dispatchUpdates(Invitations, action, callback) {
+        if (Invitations.length <= 0) {
+            callback("done!")
+        } else {
+            let Invitation = Invitations.pop()
+            this.dispatcher(Invitation, action).then(() => {
+                this.dispatchUpdates(Invitations, action)
             })
-        })
+        }
     }
-    dispatchInvitationsUpdates(Updates) {
-        return new Promise((resolve, reject) => {
-            let i = 0;
-            forEach(Updates, update => {
-                this.dispatcher(update.body, update.response).then(() => {
-                    i++
-                })
+    dispatchInvitationsUpdates(Updates, callback) {
+        if (Updates.length == 0) {
+            callback("done")
+        } else {
+            let update = Updates.pop()
+            this.dispatcher(update.body, update.response).then(() => {
+                this.dispatchInvitationsUpdates(Updates, i + 1, callback)
             })
-            if (i == Updates.length - 1) resolve()
-        })
+        }
     }
     dispatcher(invitation, action) {
         return new Promise((resolve, reject) => {
@@ -42,7 +40,7 @@ class InvitationDispatcher {
     InvitationPossibilities = {
         accepted_invitation(Invitation) {
             return new Promise((resolve, reject) => {
-                stores.Invitations.acceptInvitation(Invitation.invitation_id,true).then(() => {
+                stores.Invitations.acceptInvitation(Invitation.invitation_id, true).then(() => {
                     GState.invitationUpdated = true
                     resolve()
                 })
@@ -50,7 +48,7 @@ class InvitationDispatcher {
         },
         denied_invitation(Invitation) {
             return new Promise((resolve, reject) => {
-                stores.Invitations.denieInvitation(Invitation.invitation_id,true).then(() => {
+                stores.Invitations.denieInvitation(Invitation.invitation_id, true).then(() => {
                     GState.invitationUpdated = true;
                     resolve()
                 })
@@ -76,8 +74,8 @@ class InvitationDispatcher {
                 invite.invitation = Invitation;
                 invite.host = stores.Session.SessionStore.host;
                 invite.invitee = stores.Session.SessionStore.phone;
-                requestData.received_invitation(invite,Invitation.invitation_id).then(JSONData => {
-                    ServerEventListener.sendRequest(JSONData,Invitation.invitation_id).then((response) => {
+                requestData.received_invitation(invite, Invitation.invitation_id).then(JSONData => {
+                    ServerEventListener.sendRequest(JSONData, Invitation.invitation_id).then((response) => {
                         Invitation.type = "received"
                         Invitation.arrival_date = moment().format()
                         stores.Invitations.addInvitations(Invitation).then(() => {

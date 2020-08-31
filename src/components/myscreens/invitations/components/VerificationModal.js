@@ -23,6 +23,9 @@ export default class VerificationModal extends BleashupModal{
     removeError() {
         globalState.error = false;
     }
+    onClosedModal(){
+        this.props.onClose()
+    }
     onChangedCode(value){
         this.setState({
             code:value

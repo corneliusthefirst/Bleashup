@@ -21,6 +21,9 @@ export const shared_post = 'post-share'
 export const shared_remind = 'remind-share'
 export const shared_votes = 'vote-share'
 export const contacts_scope = 'contacts'
+export const make_online = "me_online"
+export const make_offline = "me_offline"
+export const check_status = "check_user_status"
 export const follewers_scope = 'follow'
 export const some = 'some'
 export class Requster {
@@ -34,7 +37,36 @@ export class Requster {
             })
         });
     }
-
+    makeOffline(){
+        return new Promise((resolve,reject) => {
+            this.sendPrivacyUpdate(moment().format(),make_offline).then(response => {
+                resolve(response)
+            }).catch((err) => {
+                console.warn("error in makeOffline: ",err)
+                reject(err)
+            })
+        })
+    }
+    makeOnline(){
+        return new Promise((resolve, reject) => {
+            this.sendPrivacyUpdate(moment().format(), make_online).then(response => {
+                resolve(response)
+            }).catch((err) => {
+                console.warn("error in makeOnline: ", err)
+                reject(err)
+            })
+        })
+    }
+    checkUserStatus(phone){
+        return new Promise((resolve, reject) => {
+            this.sendPrivacyUpdate(phone, check_status).then(response => {
+                resolve(resposne.data)
+            }).catch((err) => {
+                console.warn("error in makeOnline: ", err)
+                reject(err)
+            })
+        })
+    }
     get(privacy) {
         return new Promise((resolve, reject) => {
             this.sendPrivacyUpdate(privacy, get).then(privacy => {
@@ -175,10 +207,10 @@ export class Requster {
             privacy.data = data;
             privacy.action = action;
             tcpRequest
-                .update_privacy(privacy, "privacy_" + stores.LoginStore.user.phone)
+                .update_privacy(privacy, action + "_" + stores.LoginStore.user.phone)
                 .then((JSONData) => {
                     EventListener.sendRequest(JSONData,
-                        "privacy_" + stores.LoginStore.user.phone).then((res) => {
+                        action + "_" + stores.LoginStore.user.phone).then((res) => {
                             resolve(res)
                         }).catch((error) => {
                             reject(error)

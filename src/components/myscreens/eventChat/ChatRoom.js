@@ -331,6 +331,7 @@ class ChatRoom extends AnimatedComponent {
         }
     }
     componentMounting() {
+        PrivacyRequester.makeOnline()
         //this.fireRef = this.getRef(this.props.firebaseRoom);
         this.keyboardDidShowSub = Keyboard.addListener('keyboardDidShow', this.handleKeyboardDidShow.bind(this));
         this.keyboardDidHideSub = Keyboard.addListener('keyboardDidHide', this.handleKeyboardDidHide.bind(this));
@@ -350,6 +351,7 @@ class ChatRoom extends AnimatedComponent {
         this.props.isComment ? (stores.Messages.messages[this.roomID] = []) : null;
     }
     unmountingComponent() {
+        PrivacyRequester.makeOffline()
         BackHandler.removeEventListener("hardwareBackPress", this.handleBackButton.bind(this));
         this.keyboardDidHideSub.remove();
         this.keyboardDidShowSub.remove();

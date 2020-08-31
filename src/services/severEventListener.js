@@ -37,6 +37,7 @@ class ServerEventListener {
   responseCases = {
     not_eligible: "not_eligible",
     cleared: "cleared",
+    wrong_json: "wrong_json",
     all_updates: "all_updates",
     current_events: "current_events",
     presence: "presence",
@@ -55,10 +56,32 @@ class ServerEventListener {
   };
   constructor() { }
   socket = () => { };
+  clearUpdates() {
+    console.warn("trying to clean all",this.infoDispatched,this.invitationsDispatched,this.updatesDispatched)
+    if (this.invitationsDispatched &&
+      this.updatesDispatched &&
+      this.infoDispatched) {
+      tcpRequest.clear().then((JSONData) => {
+        emitter.once(this.events.cleared, (data) => {
+          console.warn(this.sayClearAll);
+          this.updatesDispatched = false
+          this.invitationsDispatched = false
+          this.infoDispatched = false
+        });
+        this.writeToSocket(JSONData);
+      });
+    }
+  }
+  infoDispatched = false
+  updatesDispatched = false
+  invitationsDispatched = false
   dispatch(data) {
     //console.warn("data from dispatcher: ",data)
     if (data.response) {
       switch (data.response) {
+        case this.responseCases.wrong_json:
+          console.warn("wrong json data was sent to the server: ", data.data)
+          break;
         case this.responseCases.not_eligible:
           emitter.emit(
             this.events.unsuccessful_ + data.message.id,
@@ -77,26 +100,27 @@ class ServerEventListener {
               : moment(a.date).format("x") > moment(b.date).format("x")
                 ? -1
                 : 0;
-          if (data.updated.length !== 0)
-            UpdatesDispatcher.dispatchUpdates(data.updated.sort(sorter),() => {
+          const sortedUpdates = data.updated.sort(sorter)
+            UpdatesDispatcher.dispatchUpdates(sortedUpdates, () => {
               console.warn("done Dispaching !")
+              this.updatesDispatched = true
+              this.clearUpdates()
             });
-          if (data.new_events.length !== 0) {
             InvitationDispatcher.dispatchUpdates(
               data.new_events,
               "invitation"
-            ).then(() => { });
-          }
+              , () => {
+                console.warn("invitations completely dispachd")
+                this.invitationsDispatched = true
+                this.clearUpdates()
+              });
           if (data.reschedules)
             RescheduleDispatcher.dispatchReschedules(data.reschedules);
           if (data.info)
-            InvitationDispatcher.dispatchInvitationsUpdates(data.info);
-          tcpRequest.clear().then((JSONData) => {
-            emitter.once(this.events.cleared, (data) => {
-              console.warn(this.sayClearAll);
+            InvitationDispatcher.dispatchInvitationsUpdates(data.info, () => {
+              this.infoDispatched = true
+              this.clearUpdates()
             });
-            this.writeToSocket(JSONData);
-          });
           break;
         case this.responseCases.current_events:
           emitter.emit(this.events.current_events, data.body);
@@ -111,7 +135,7 @@ class ServerEventListener {
           });
           break;
         case this.responseCases.event_changes:
-          UpdatesDispatcher.dispatchUpdate(data.updated,() => {
+          UpdatesDispatcher.dispatchUpdate(data.updated, () => {
             console.warn(this.sayDispatchingDone)
           })
           break;
@@ -129,7 +153,7 @@ class ServerEventListener {
           InvitationDispatcher.dispatcher(
             data.body,
             this.responseCases.invitation
-          ).then(() => {  });
+          ).then(() => { });
           break;
         case this.responseCases.reschedule:
           RescheduleDispatcher.applyReschedule(body).then(() => { });
@@ -354,7 +378,7 @@ class ServerEventListener {
   sayEnteringReconnectionTimmer = "entering reconnection timmier"
   reconnectAfterTimeout() {
     console.warn(this.sayEnteringReconnectionTimmer);
-        this.reconnect();
+    this.reconnect();
   }
   collectRetriesTimeout = 5000
   collectRetries = null
@@ -373,8 +397,8 @@ class ServerEventListener {
         console.warn("unsuccessful, " + response);
         reject(response);
       });
-     !this.requestUnprocessed[id] && this.writeToSocket(data);
-     !this.requestUnprocessed[id] && this.startRetryer(data, id, reject);
+      !this.requestUnprocessed[id] && this.writeToSocket(data);
+      !this.requestUnprocessed[id] && this.startRetryer(data, id, reject);
       this.requestUnprocessed[id] = true;
     });
   }
@@ -382,7 +406,7 @@ class ServerEventListener {
     clearInterval(this.retries[id]);
     delete this.retries[id]
   }
-  clearRetriesFinal(id){
+  clearRetriesFinal(id) {
     this.clearRetries(id);
     delete this.retries[id];
     delete this.retriesCounter[id];
@@ -404,15 +428,15 @@ class ServerEventListener {
         this.retriesCounter[id] = this.retriesCounter[id] > 0
           ? this.retriesCounter[id] + 1
           : 1;
-        console.warn(this.retryInterval * (Object.keys(this.requestUnprocessed).length + 1),"current retries counter is: ",this.retriesCounter[id],id)
+        console.warn(this.retryInterval * (Object.keys(this.requestUnprocessed).length + 1), "current retries counter is: ", this.retriesCounter[id], id)
         emitter.once(this.events.cleared_ + id, () => {
-         this.requestUnprocessed[id] && this.handleRerequest(data,id)
+          this.requestUnprocessed[id] && this.handleRerequest(data, id)
         });
         this.reconnectAfterTimeout();
       }
     }, this.retryInterval);
   }
-  handleRerequest(data,id){
+  handleRerequest(data, id) {
     console.warn("clear message received for ", id)
     this.writeToSocketFresh(data)
     this.clearRetries(id)

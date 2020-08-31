@@ -58,7 +58,17 @@ export default class TemporalUsersStore {
             })
         })
     }
-
+    updateUserInfo(phone,field,data){
+        return new Promise((resolve,reject) => {
+            this.getUser(phone).then(user => {
+                user[field] = data
+                user.updated_at = moment().format()
+                this.addUser(user).then((response) => {
+                    resolve()
+                })
+            })
+        })
+    }
     addUsers(newUsers) {
         return new Promise((resolve, reject) => {
             this.readFromStore().then(users => {
@@ -74,7 +84,7 @@ export default class TemporalUsersStore {
     }
     getUser(phone) {
         return new Promise((resolve, reject) => {
-            if (this.Users[phone] && (!this.Users[phone].updated_at ||
+            if (this.Users[phone] && (this.Users[phone].updated_at ||
                 (moment().format("x") - moment(this.Users[phone].updated_at).format("x")) <
                 this.towDayMillisec())) {
                 resolve(this.Users[phone])
@@ -88,7 +98,11 @@ export default class TemporalUsersStore {
                         resolve(profile)
                     }
                 }).catch(err => {
-                    reject(err)
+                    if (this.Users[phone]){
+                        resolve(this.Users[phone])
+                    }else{
+                        reject()
+                    }
                 })
             }
         })

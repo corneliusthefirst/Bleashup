@@ -23,7 +23,8 @@ export default class EmailVerificationView extends Component {
     super(props);
     this.state = {
       code: "",
-      loading: false
+      loading: false,
+      mounted:false
     };
   }
   state = {}
@@ -32,9 +33,6 @@ export default class EmailVerificationView extends Component {
 
   onChangedCode(text) {
     this.setState({ code: text });
-  }
-  componentDidMount() {
-    //BackHandler.addEventListener("hardwareBackPress", this.handleBackButton);
   }
   exiting = false
   timeout = null
@@ -57,13 +55,20 @@ export default class EmailVerificationView extends Component {
   back(){
     this.props.navigation.goBack()
   }
+  componentDidMount(){
+    setTimeout(() => {
+      this.setState({
+        mounted:true
+      })
+    },1000)
+  }
   componentWillMount() {
-    /*firebase.auth().onAuthStateChanged(user => {
+    firebase.auth().onAuthStateChanged(user => {
       console.warn(user)
       if (user) {
-        this.registerUserAndClean()
+      this.state.mounted && this.registerUserAndClean()
       }
-    });*/
+    });
   }
   back() {
     this.props.navigation.goBack();

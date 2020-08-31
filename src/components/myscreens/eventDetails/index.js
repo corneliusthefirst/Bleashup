@@ -90,14 +90,9 @@ let { height, width } = Dimensions.get('window');
       })
       }
    if(this.props.id) this.waitToScroll =  setTimeout(() => {
-    //this.scrolling = setInterval(() => {
      this.refs.postList && this.refs.postList.scrollToIndex(
         findIndex(stores.Highlights.highlights[this.props.Event.id],
          { id: this.props.id }))
-      // this.scrolled = this.scrolled + 1
-     //  if(this.scrolled >= 5) clearInterval(this.scrolling) 
-     //},100)
-    // clearTimeout(this.waitToScroll)
     },100)
   }
   initialScrollIndexer = 2

@@ -34,15 +34,14 @@ export default class PickersMenu extends Component {
   };
 
   showMenu = () => {
-    console.warn("showing menu")
     this._menu.show();
   };
   renderMenuItems() {
     return this.props.menu.map((ele) => {
       return (
         ele.condition && (
-          <View>
-            <MenuDivider color="#1FABAB" />
+          <View key={ele.title}>
+            <MenuDivider color={ColorList.indicatorColor} />
             <MenuItem
               textStyle={{ color: ColorList.headerIcon }}
               onPress={() => {

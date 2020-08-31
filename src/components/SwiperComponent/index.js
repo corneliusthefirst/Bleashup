@@ -127,9 +127,11 @@ export default class SwiperComponent extends AnimatedComponent {
         {this.state.itemswiper.creator ? (
           <SwipeAccordion
             startThis={() => {
+              this.goBack()
               this.execParam("starThis");
             }}
             reply={() => {
+              this.goBack()
               this.execParam('remindThis');
             }}
             dataArray={this.state.itemswiper}

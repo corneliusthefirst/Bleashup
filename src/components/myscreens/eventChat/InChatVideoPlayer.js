@@ -75,18 +75,21 @@ export default class InChatVideoPlayer extends BeComponent {
                         </TouchableOpacity>
                         <TouchableOpacity onPress={() => requestAnimationFrame(() => {
                             this.videoPlayer._pausePlayer()
+                            this.props.enterFullscreen(true)
                             this.props.forward(this.props.message)
                         })} style={this.containerStyle}>
                         <Entypo name="forward" style={this.iconStyles} type={"Entypo"}/>
                         </TouchableOpacity>
                         <TouchableOpacity onPress={() => requestAnimationFrame(() => {
                             this.videoPlayer._pausePlayer()
+                            this.props.enterFullscreen(true)
                             this.props.starThis(this.props.message)
                         })} style={this.containerStyle}>
                             <AntDesign name={"star"} style={this.iconStyles} type={"AntDesign"}/>
                         </TouchableOpacity>
                         <TouchableOpacity onPress={() => requestAnimationFrame(() => {
                             this.videoPlayer._pausePlayer()
+                            this.props.enterFullscreen(true)
                             this.props.remindThis(this.props.message)
                         })} style={this.containerStyle}>
                             <Entypo name="bell" style={this.iconStyles} type={"Entypo"}/>

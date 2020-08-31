@@ -63,7 +63,7 @@ export default class contacts {
   @action removeContact(phone) {
     return new Promise((resolve, reject) => {
       this.readFromStore().then((Contacts) => {
-        Contacts.contacts = reject(Contacts.contacts, ['phone', phone]);
+        Contacts.contacts = reject(Contacts.contacts, {phone: phone});
         this.setProperties(Contacts);
         resolve();
       });
