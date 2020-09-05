@@ -9,6 +9,7 @@ import ReactNativeZoomableView from '@dudigital/react-native-zoomable-view/src/R
 import VideoController from '../eventChat/VideoController';
 import moment from 'moment';
 import BleashupModal from '../../mainComponents/BleashupModal';
+import ColorList from '../../colorList';
 
 export default class VideoViewer extends BleashupModal {
     initialize() {
@@ -40,6 +41,11 @@ export default class VideoViewer extends BleashupModal {
     componentWillUnmount() {
         //StatusBar.setHidden(false, false)
     }
+    getNavParam(param){
+        return this.props.navigation && this.props.navigation.getParam(param)
+    } 
+    isRoute = this.getNavParam("video")
+    navVideo = this.getNavParam("video")
     transparent = "rgba(50, 51, 53, 0.8)";
     backdropOpacity = 0.1
     entry = "top"
@@ -62,9 +68,13 @@ export default class VideoViewer extends BleashupModal {
         }), 100)
 
     }
+    date = this.getNavParam("date") || this.props.created_at
+    render(){
+        return this.isRoute ? this.modalBody() : this.modal()
+    }
     modalBody() {
         return (
-            <View>
+            <View style={{flex: 1,backgroundColor: 'black',}}>
                 <StatusBar animated={true} barStyle="light-content" backgroundColor="black"></StatusBar>
                 <View style={{ height: screenheight - 60, width: screenWidth, borderRadius: 8, }}>
                     <View style={{
@@ -73,23 +83,25 @@ export default class VideoViewer extends BleashupModal {
                         backgroundColor: 'black',
                         alignSelf: 'center',
                     }}>
-                        <VideoController source={{ uri: this.props.video }} // Can be a URL or a local file.
+                        <VideoController 
+                        source={{ uri: this.navVideo || this.props.video }} // Can be a URL or a local file.
                             ref={(ref) => {
                                 this.videoPlayer = ref;
-                            }} onBuffer={() => this.buffering()} // Callback when remote video is buffering
+                            }} 
+                            onBuffer={() => this.buffering()} // Callback when remote video is buffering
                             onError={(error) => {
                                 console.error(error);
-                            }} toggleResizeModeOnFullscreen={false}
-                            //pictureInPicture={true}
-                            resizeMode={"contain"} disableVolume={true} seekColor="#1FABAB" controlTimeout={null}
-                            //disablePlayPause={true}
-                            //disableFullscreen={true}
-                            onBack={() => this.props.hideVideo()}
+                            }} 
+                            toggleResizeModeOnFullscreen={false}
+                            resizeMode={"contain"} 
+                            disableVolume={true} 
+                            seekColor={ColorList.indicatorColor} 
+                            controlTimeout={null}
+                            onBack={() => this.isRoute ? this.props.navigation.goBack()
+                                : this.props.hideVideo()}
                             onEnterFullscreen={() => this.enterFullscreen()}
                             onExitFullscreen={() => this.enterFullscreen()}
                             fullscreenOrientation={"landscape"}
-                            //fullscreen={true}
-                            //controls={true}
                             style={{
                                 backgroundColor: this.transparent,
                             }} videoStyle={{
@@ -105,7 +117,7 @@ export default class VideoViewer extends BleashupModal {
                     </View>
                 </View>
                 <View style={{ backgroundColor: 'black', height: 60 }}>
-                    <Text style={{ color: '#FEFFDE' }} note>{this.props.created_at ? moment(this.props.created_at).calendar() : ""}</Text>
+                    <Text style={{ color: ColorList.bodyBackground }} note>{this.date ? moment(this.date).calendar() : ""}</Text>
                 </View>
             </View>
         );

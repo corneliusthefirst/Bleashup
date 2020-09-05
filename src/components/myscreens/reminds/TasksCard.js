@@ -210,7 +210,7 @@ export default class EventTasksCard extends BeComponent {
           this.state.correspondingDateInterval,
           this.state.creator.phone,
           this.returnActualDatesIntervals().period)
-      }} disabled swipeRight={() => {
+      }} disabled={false} swipeRight={() => {
         this.props.mention({ ...this.props.item, current_date: this.returnActualDatesIntervals().period, })
       }}><View onLayout={(e) => this.props.onLayout(e.nativeEvent.layout)} style={this.container}>
           <View>

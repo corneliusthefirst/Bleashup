@@ -14,20 +14,23 @@ import BeComponent from '../../../BeComponent';
 import FontAwesome  from 'react-native-vector-icons/FontAwesome';
 import emitter from "../../../../services/eventEmiter";
 import { sayTyping } from '../../eventChat/services';
+import { typing } from "../../../../meta/events";
+import { observer } from "mobx-react";
+import BePureComponent from '../../../BePureComponent';
 
-export default class ProfileView extends BeComponent {
+@observer class ProfileView extends BePureComponent {
     constructor(props) {
         super(props);
         this.state = {isMount:false,hide:false}
     }
 
     state = { isMount: false, hide: false };
-    shouldComponentUpdate(nexprops, nexState) {
+    /*shouldComponentUpdate(nexprops, nexState) {
         return nexState.hide !== this.state.hide ||
             this.state.isMount !== nexState.isMount ||
             this.state.typing !== nexState.typing ||
             this.state.isModalOpened !== nexState.isModalOpened
-    }
+    }*/
     componentDidMount() {
         setTimeout(
             () =>
@@ -47,7 +50,6 @@ export default class ProfileView extends BeComponent {
                         this.props.contact && this.props.updateContact(user);
 
                         this.setStatePure({
-                            profile: user,
                             isModalOpened: false,
                             isMount: true,
                         });
@@ -64,13 +66,13 @@ export default class ProfileView extends BeComponent {
         this.setStatePure({ isModalOpened: true });
     }
     componentMounting(){
-        emitter.on(`${this.props.phone}_typing`,(typer) => {
+        emitter.on(typing(this.props.phone),(typer) => {
             !this.sayTyping ? this.sayTyping = sayTyping.bind(this): null
             this.sayTyping(typer)
         })
     }
     unmountingComponent(){
-        emitter.off(`${this.props.phone}_typing`)
+        //!emitter.off(typing(this.props.phone))
     }
     showTyper() {
         return this.state.typing && <Text style={[GState.defaultTextStyle,
@@ -163,3 +165,4 @@ export default class ProfileView extends BeComponent {
             );
     }
 }
+export default ProfileView

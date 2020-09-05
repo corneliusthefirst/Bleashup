@@ -58,7 +58,7 @@ export default class HighlightCard extends BePureComponent {
   }
   render() {
     return this.state.mounted ? (
-      <Swipeout disabled onLongPress={this.props.showActions} swipeLeft={() => { }} swipeRight={() => {
+      <Swipeout disabled={false} onLongPress={this.props.showActions} swipeLeft={() => { }} swipeRight={() => {
         this.props.mention(this.props.item)
       }}>
       <View

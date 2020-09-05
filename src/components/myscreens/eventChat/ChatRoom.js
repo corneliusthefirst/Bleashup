@@ -72,6 +72,8 @@ import IDMaker from '../../../services/IdMaker';
 import FileExachange from '../../../services/FileExchange';
 import Texts from '../../../meta/text';
 import { sayTyping } from './services';
+import { typing } from '../../../meta/events';
+import { reply_me } from '../../../meta/events';
 
 const screenWidth = Math.round(Dimensions.get('window').width);
 const screenheight = Math.round(Dimensions.get('window').height);
@@ -186,12 +188,14 @@ class ChatRoom extends AnimatedComponent {
     };
     typingRef = null;
     currentTyper = null;
+    typingListener = this.props.isRelation ? this.props.oponent : this.props.firebaseRoom
     showTypingToast(newTyper) {
-     !this.sayTyping ? this.sayTyping = sayTyping.bind(this) : null
-       this.sayTyping(newTyper)
+        console.warn("receving say typing")
+        !this.sayTyping ? this.sayTyping = sayTyping.bind(this) : null
+        this.sayTyping(newTyper)
     }
     setTyingState() {
-      return Requester.sayTyping(this.props.firebaseRoom,
+        return Requester.sayTyping(this.typingListener,
             this.props.activity_id)
     }
     formStorableData(messages) {
@@ -323,9 +327,9 @@ class ChatRoom extends AnimatedComponent {
         } else if (this.state.showAudioRecorder) {
             this.refs.keyboard && this.refs.keyboard.toggleAudioRecorder()
             return true
-        }else if(this.refs.keyboard  && this.refs.keyboard.state.showCaption){
+        } else if (this.refs.keyboard && this.refs.keyboard.state.showCaption) {
             this.refs.keyboard.hideCaption()
-            return  true
+            return true
         } else {
             return false
         }
@@ -336,7 +340,7 @@ class ChatRoom extends AnimatedComponent {
         this.keyboardDidShowSub = Keyboard.addListener('keyboardDidShow', this.handleKeyboardDidShow.bind(this));
         this.keyboardDidHideSub = Keyboard.addListener('keyboardDidHide', this.handleKeyboardDidHide.bind(this));
         BackHandler.addEventListener("hardwareBackPress", this.handleBackButton.bind(this));
-        emitter.on("reply-me", (rep) => {
+        emitter.on(reply_me, (rep) => {
             this.props.openMenu()
             this.replying(rep, null)
             this.focusInputTimeout = setTimeout(() => {
@@ -345,7 +349,7 @@ class ChatRoom extends AnimatedComponent {
                 clearTimeout(this.focusInputTimeout)
             }, 700)
         })
-        emitter.on(`${this.props.firebaseRoom}_typing`,(typer) =>{
+        emitter.on(typing(this.typingListener), (typer) => {
             this.showTypingToast(typer);
         })
         this.props.isComment ? (stores.Messages.messages[this.roomID] = []) : null;
@@ -355,9 +359,9 @@ class ChatRoom extends AnimatedComponent {
         BackHandler.removeEventListener("hardwareBackPress", this.handleBackButton.bind(this));
         this.keyboardDidHideSub.remove();
         this.keyboardDidShowSub.remove();
-        emitter.off(`${this.props.firebaseRoom}_typing`)
+        emitter.off(typing(this.typingListener))
         //this.fireRef.off();
-        emitter.off('reply-me');
+        emitter.off(reply_me);
         //this.typingRef.off();
         this.markAsRead();
         GState.currentRoom = null;
@@ -381,7 +385,7 @@ class ChatRoom extends AnimatedComponent {
             playingMessage: message,
             playingIndex: index,
             video: video,
-            fullScreen:true,
+            fullScreen: true,
             showPhoto: false,
             showVideo: true,
         });
@@ -409,7 +413,7 @@ class ChatRoom extends AnimatedComponent {
         });
         this.refs.keyboard.animateLayout();
     }
-   
+
     buffering() {
         this.setStatePure({
             buffering: true,
@@ -432,7 +436,7 @@ class ChatRoom extends AnimatedComponent {
     }
     enterFullscreen(exit) {
         this.setStatePure({
-            fullScreen: exit ? false: !this.state.fullScreen
+            fullScreen: exit ? false : !this.state.fullScreen
         })
     }
     togglePlay() {
@@ -459,16 +463,16 @@ class ChatRoom extends AnimatedComponent {
         return new Promise((resolve, reject) => {
             if (messager) {
                 GState.reply = null;
-                    messager = { ...messager, sent: true };
-                        Requester.sendMessage(
-                            messager,
-                            this.roomID,
-                            this.props.activity_id
-                        ).then((response) => {
-                            setTimeout(() => {
-                                resolve(messager);
-                            },100)
-                        });
+                messager = { ...messager, sent: true };
+                Requester.sendMessage(
+                    messager,
+                    this.roomID,
+                    this.props.activity_id
+                ).then((response) => {
+                    setTimeout(() => {
+                        resolve(messager);
+                    }, 100)
+                });
             } else {
                 resolve(messager);
             }
@@ -490,14 +494,15 @@ class ChatRoom extends AnimatedComponent {
     user = this.props.user;
     creator = 1;
     showPhoto(photo, item) {
-        this.setStatePure({
+        /*this.setStatePure({
             playingMessage: item,
             showVideo: false,
-        }, () => {
-            Keyboard.dismiss();
-            this.navigateToFullView();
-
-        });
+        })*/
+        Keyboard.dismiss();
+        this.refs.keyboard.blur()
+        setTimeout(() => {
+            this.navigateToFullView(item);
+        },200)
     }
     captionMessages = [];
     sendingCaptionMessages = false;
@@ -606,12 +611,12 @@ class ChatRoom extends AnimatedComponent {
         this.deleteMessage(this.state.currentMessage.id);
     }
     showReceived() {
-       this.state.currentMessage.received? this.props.showContacts(
+        this.state.currentMessage.received ? this.props.showContacts(
             this.state.currentMessage.received.map((ele) =>
                 ele.phone.replace('+', '00')
             ),
             Texts.seen_by
-        ):Toaster({text:Texts.this_message_was_never_sent});
+        ) : Toaster({ text: Texts.this_message_was_never_sent });
     }
     copyMessage() {
         Clipboard.setString(this.state.currentMessage.text);
@@ -722,6 +727,7 @@ class ChatRoom extends AnimatedComponent {
         }
     ]
     render() {
+        let canShowHeder = this.state.showHeader && !this.state.showCaption && !this.state.fullScreen
         return (
             <ImageBackground style={{
                 resizeMode: 'cover',
@@ -730,12 +736,12 @@ class ChatRoom extends AnimatedComponent {
                 <View style={{ height: '100%', justifyContent: 'flex-end' }}>
                     {
                         // **********************Header************************ //
-                        this.state.showHeader && !this.state.showCaption ? (
-                            <View style={{ height: '7.5%' }}>{this.header()}</View>
+                        canShowHeder ? (
+                            <View style={{ height:  '7.5%' }}>{this.header()}</View>
                         ) : null
                     }
 
-                    <View style={{ height: this.state.showHeader && !this.state.showCaption ? '92.5%' : '100%' }}>
+                    <View style={{ height:canShowHeder ? '92.5%' : '100%' }}>
                         <View style={{ height: '100%', justifyContent: 'flex-end' }}>
                             {!this.state.loaded ? (
                                 <Waiter />
@@ -785,7 +791,7 @@ class ChatRoom extends AnimatedComponent {
                                                 </TouchableWithoutFeedback>
                                                 {
                                                     this.state.showOptions && <Options
-                                                       openAudioPicker={this.openAudioPicker.bind(this)}
+                                                        openAudioPicker={this.openAudioPicker.bind(this)}
                                                         openFilePicker={this.openFilePicker.bind(this)}
                                                         addRemind={this.props.addRemind}
                                                         openPhotoSelector={this.openPhotoSelector.bind(this)}
@@ -885,10 +891,10 @@ class ChatRoom extends AnimatedComponent {
                                 reacters={this.state.currentReacters || []}
                             />
                         </View>
-                        {
-                            // ******************Photo Viewer View ***********************//
+                        {/*
+                             ******************Photo Viewer View ***********************
                             this.state.showPhoto ? this.PhotoShower() : null
-                        }
+                        */}
                         {
                             //** ####### Vidoe PLayer View ################ */
 
@@ -1192,7 +1198,7 @@ class ChatRoom extends AnimatedComponent {
             Keyboard.dismiss()
             setTimeout(() => {
                 this.props.handleReplyExtern(replyer);
-            },150)
+            }, 300)
         }
     }
     openOptions() {
@@ -1234,6 +1240,8 @@ class ChatRoom extends AnimatedComponent {
     header() {
         return (
             <ChatRoomHeader
+                oponent={this.props.oponent}
+                isRelation={this.props.isRelation}
                 goback={this.props.goback}
                 activity_id={this.props.activity_id}
                 roomID={this.roomID}
@@ -1262,7 +1270,10 @@ class ChatRoom extends AnimatedComponent {
                 master={this.props.master}
                 openSettings={this.props.openSettings}
                 editCommitteeName={this.props.editCommitteeName}
-                openMenu={this.props.openMenu}
+                openMenu={() => {
+                    Keyboard.dismiss()
+                    this.props.openMenu && this.props.openMenu()
+                }}
             />
         );
     }
@@ -1299,17 +1310,17 @@ class ChatRoom extends AnimatedComponent {
             />
         );
     }
-    navigateToFullView(index) {
-        let data = stores.Messages.messages[this.roomID].filter(ele =>
-            ele.type == 'photo');
+    navigateToFullView(item) {
+        let data = stores.Messages.messages[this.roomID];
         BeNavigator.pushTo('SwiperComponent', {
             dataArray: data,
+            filterFunc: ele => ele.type == 'photo',
             reply: (mess) => this.initReply({ ...mess, url: null }),
             remindThis: (mess) => this.remindThis(mess),
             forward: (mess) => this.forwardToContacts(mess),
             starThis: (mess) => this.addStar(mess),
             mapFunction: this.mapFunction,
-            currentIndex: data.findIndex(ele => ele.id === this.state.playingMessage.id),
+            currentIndex: item ? item.id : this.state.playingMessage.id
         });
     }
     mapFunction = (ele) => {
@@ -1328,7 +1339,7 @@ class ChatRoom extends AnimatedComponent {
             },
         };
     }
-    PhotoShower() {
+    /*PhotoShower() {
         return (
             <View
                 style={{
@@ -1383,6 +1394,6 @@ class ChatRoom extends AnimatedComponent {
                 </View>
             </View>
         );
-    }
+    }*/
 }
 export default ChatRoom;

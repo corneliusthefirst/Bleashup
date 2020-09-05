@@ -93,6 +93,7 @@ export default class TasksCreation extends BleashupModal {
     clearTimeout(this.initTimeout)
   }
   init() {
+    this.shouldPersist = !this.props.update && !this.props.starRemind
     this.props.remind && typeof this.props.remind !== "string"
       ? this.initTimeout = setTimeout(() => {
         let remind = this.props.remind;
@@ -124,8 +125,8 @@ export default class TasksCreation extends BleashupModal {
       ).then((rem) => {
         rem = isEmpty(rem) ? request.Remind() : rem
         let remind = !this.props.update && this.props.starRemind || rem;
-        this.props.starRemind && stores.Reminds.addReminds(this.props.event_id,
-          [this.props.starRemind]).then(() => { })
+        //this.props.starRemind && stores.Reminds.addReminds(this.props.event_id,
+        //  [this.props.starRemind]).then(() => { })
         this.setStatePure({
           currentRemind: remind,
           mounted: true,
@@ -178,13 +179,13 @@ export default class TasksCreation extends BleashupModal {
     let currentDayPeriod = this.getCode(getDay(date))
     let dayOfWeek = []
     if (shouldNotFilter) {
-        dayOfWeek = uniq([...data])
+      dayOfWeek = uniq([...data])
     } else {
       let uniqCodes = uniq([...[currentDayPeriod], ...data])
       if (previousDate && moment(previousDate).isValid()) {
         let previousPeriodCode = this.getCode(getDay(previousDate))
-        dayOfWeek = uniqCodes.filter(ele => CorrectDays[ele] >= 
-          CorrectDays[currentDayPeriod] && 
+        dayOfWeek = uniqCodes.filter(ele => CorrectDays[ele] >=
+          CorrectDays[currentDayPeriod] &&
           CorrectDays[ele] !== CorrectDays[previousPeriodCode])
       } else {
         dayOfWeek = uniqCodes.filter(ele => CorrectDays[ele] >= CorrectDays[currentDayPeriod])
@@ -195,13 +196,13 @@ export default class TasksCreation extends BleashupModal {
     let endRelativeOffset = CorrectDays[dayOfWeek[dayOfWeek.length - 1]] - CorrectDays[currentDayPeriod]
     let lastDate = moment(date).add(endRelativeOffset, "day").format()
     let newDate = moment(date).add(startRelativeOffset, "day").format()
-    let recurrence = this.state.currentRemind.recursive_frequency.recurrence
+    let recurrence = this.state.currentRemind.recursive_frequency.recurrence || this.state.currentRemind.period
     let isWeekly = this.state.currentRemind.recursive_frequency.frequency == "weekly"
-    let recurrenceEnDate = this.state.currentRemind.recursive_frequency.recurrence
-    if (recurrence){
+    let recurrenceEnDate = recurrence
+    if (recurrence) {
       let remindEndDayCode = this.getCode(getDay(recurrence))
       let recurrenceEndOffset = CorrectDays[dayOfWeek[dayOfWeek.length - 1]] - CorrectDays[remindEndDayCode]
-      isWeekly? recurrence = moment(recurrence).add(recurrenceEndOffset,"day"):null;
+      isWeekly ? recurrence = moment(recurrence).add(recurrenceEndOffset, "day") : null;
       recurrenceEnDate =
         moment(recurrence).format("x") >=
           moment(lastDate).format("x") ?
@@ -218,7 +219,7 @@ export default class TasksCreation extends BleashupModal {
       },
       period: newDate,
     };
-    if (!this.props.update) {
+    if (this.shouldPersist) {
       stores.Reminds.updateRecursiveFrequency(
         this.props.event_id,
         NewRemind,
@@ -333,7 +334,7 @@ export default class TasksCreation extends BleashupModal {
       currentRemind: { ...this.state.currentRemind, title: value },
     });
     let NewRemind = { remind_id: this.state.currentRemind.id, title: value };
-    if (!this.props.update) {
+    if (this.shouldPersist) {
       stores.Reminds.updateTitle(
         this.props.event_id,
         NewRemind,
@@ -350,7 +351,7 @@ export default class TasksCreation extends BleashupModal {
       remind_id: this.state.currentRemind.id,
       description: value,
     };
-    if (!this.props.update) {
+    if (this.shouldPersist) {
       stores.Reminds.updateDescription(
         this.props.event_id,
         NewRemind,
@@ -368,7 +369,7 @@ export default class TasksCreation extends BleashupModal {
       remind_id: this.state.currentRemind.id,
       status: newstatus,
     };
-    if (!this.props.update) {
+    if (this.shouldPersist) {
       stores.Reminds.updateStatus(
         this.props.event_id,
         NewRemind,
@@ -395,7 +396,7 @@ export default class TasksCreation extends BleashupModal {
         frequency: nameToDataMapper[value],
       },
     };
-    if (!this.props.update) {
+    if (this.shouldPersist) {
       stores.Reminds.updateRecursiveFrequency(
         this.props.event_id,
         NewRemind,
@@ -455,8 +456,8 @@ export default class TasksCreation extends BleashupModal {
       });
   }
   componentDidUpdate(prevProp, prevState) {
-    let date = moment(this.state.currentRemind.period).isValid() ? 
-    this.state.currentRemind.period : moment().format()
+    let date = moment(this.state.currentRemind.period).isValid() ?
+      this.state.currentRemind.period : moment().format()
     let data = this.state.currentRemind.recursive_frequency.days_of_week &&
       this.state.currentRemind.recursive_frequency.frequency === "weekly"
       ? this.state.currentRemind.recursive_frequency.days_of_week

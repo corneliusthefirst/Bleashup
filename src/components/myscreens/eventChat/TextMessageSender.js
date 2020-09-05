@@ -30,7 +30,8 @@ export default class TextMessageSnder extends PureComponent {
         return (
             <TouchableWithoutFeedback onLongPress={this.props.onLongPress} onPressIn={()=> this.senderMessage}>
             <View style={{ alignSelf: 'flex-start',borderColor: !this.state.sender ? ColorList.senTBoxColor : ColorList.receivedBox }}>
-                <TextContent handleLongPress={this.props.onLongPress} tags={this.props.message.tags} text={this.props.message.text}></TextContent>
+                <TextContent //handleLongPress={this.props.onLongPress} 
+                tags={this.props.message.tags} text={this.props.message.text}></TextContent>
                 </View></TouchableWithoutFeedback>
         );
     }

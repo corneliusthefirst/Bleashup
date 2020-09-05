@@ -11,6 +11,7 @@ import buttoner from '../../../services/buttoner';
 import EvilIcons from 'react-native-vector-icons/EvilIcons';
 import ColorList from '../../colorList';
 import GState from '../../../stores/globalState';
+import BeNavigator from '../../../services/navigationServices';
 
 let { height, width } = Dimensions.get('window');
 export default class Video extends Component {
@@ -23,6 +24,9 @@ export default class Video extends Component {
     state = {}
     shouldComponentUpdate(nextProps, nextState, nextContext) {
         return this.state.showVideo !== nextState.showVideo
+    }
+    openVideo(url,date){
+        BeNavigator.openVideo(url,date)
     }
     render() {
         //console.warn(this.props.video)
@@ -39,11 +43,7 @@ export default class Video extends Component {
                 renderItem={(item, index) => {
                     return item.type === 'date_separator' ?<MediaSeparator item={item} style={{height:width/3,width:width/3,borderColor:"white",borderWidth:1}}>
                     </MediaSeparator>: <TouchableOpacity transparent style={{height:width/3,width:width/3}} onPress={() => {
-                        this.setState({
-                            showVideo: true,
-                            created_at: item.created_at,
-                            video:item.source
-                        })
+                        this.openVideo(item.source,item.created_at)
                     }}><View style={{ ...shadower(),alignSelf: 'center', }}>
                             {testForURL(item.thumbnailSource) ? <CacheImages style={{height:width/3,width:width/3,borderColor:"white",borderWidth:1}} source={{ uri: item.thumbnailSource }} square thumbnails ></CacheImages> :
                                 <Image resizeMode={"cover"} style={{height:width/3,width:width/3,borderColor:"white",borderWidth:1}} source={{ uri: item.thumbnailSource }}></Image>}
@@ -57,11 +57,6 @@ export default class Video extends Component {
                 dataSource={this.props.video}
             ></BleashupFlatList>
             </View>
-            {this.state.showVideo ? <VideoViewer created_at={this.state.created_at} open={this.state.showVideo} video={this.state.video} hideVideo={() => {
-                this.setState({
-                    showVideo: false
-                })
-            }}></VideoViewer> : null}
         </View>
     }
 }

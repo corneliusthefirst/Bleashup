@@ -11,11 +11,50 @@ class NavigatorClass {
     navigateTo(page, param) {
         GState.nav.navigate(page, param)
     }
+    resetPushingState(){
+        this.pushing = false
+    }
+    sayPushing(){
+        this.pushing = true
+    }
+    pushWaite = 2000
+    pushing = false
+    pushTimeoutRef = null 
+    waitAfterPush(){
+        this.pushTimeoutRef = setTimeout(() => this.resetPushingState(), this.pushWaite)
+    }
+    push(route,params){
+        GState.nav.push(route, params)
+    }
+    pushRoute(route,params){
+        if(this.pushing){
+            clearTimeout(this.pushTimeoutRef)
+            this.waitAfterPush()
+            
+        }else{
+            this.sayPushing()
+            this.push(route,params)
+            this.waitAfterPush()
+        }
+    }
+    openVideo(url,date){
+        this.pushRoute("Video",{
+            video:url,
+            date
+        })
+    }
+    openPhoto(url,hideActions,date){
+        this.pushRoute('PhotoViewer', { 
+            photo: url,
+            date,
+            hideActions: hideActions||false
+        })
+    }
     pushTo(page, param){
-        GState.nav.push(page, param)
+        this.pushRoute(page,param)
     }
     pushActivity(event, page,options) {
-        GState.nav.push('Event', { Event: event, tab: page || 'EventDetails',...options })
+        this.pushRoute('Event', { Event: event, tab: page || 'EventDetails', ...options })
     }
     goBack() {
         GState.nav.goBack()

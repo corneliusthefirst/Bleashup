@@ -35,8 +35,6 @@ import ReportTabModal from "./NewReportTab";
 import bleashupHeaderStyle from '../../../services/bleashupHeaderStyle';
 import { dateDiff } from '../../../services/datesWriter';
 import colorList from "../../colorList";
-import PhotoViewer from "../event/PhotoViewer";
-import VideoViewer from '../highlights_details/VideoModal';
 import ShareFrame from '../../mainComponents/ShareFram';
 import Share from '../../../stores/share';
 import request from '../../../services/requestObjects';
@@ -53,6 +51,7 @@ import { observer } from 'mobx-react';
 import IDMaker from '../../../services/IdMaker';
 import Texts from '../../../meta/text';
 import globalFunctions from '../../globalFunctions';
+import BeNavigator from '../../../services/navigationServices';
 
 @observer class Reminds extends AnimatedComponent {
   initialize(){
@@ -767,24 +766,6 @@ import globalFunctions from '../../globalFunctions';
           }}
           isOpen={this.state.isReportModalOpened}
         />
-        <PhotoViewer
-          open={this.state.showPhoto}
-          photo={this.state.photo}
-          hidePhoto={() => {
-            this.setStatePure({
-              showPhoto: false,
-            });
-          }}
-        />
-        <VideoViewer
-          video={this.state.video}
-          isOpen={this.state.showVideo}
-          hideVideo={() => {
-            this.setStatePure({
-              showVideo: false,
-            });
-          }}
-        />
         <AreYouSure
           isOpen={this.state.isAreYouModalOpened}
           title={"Delete Remind"}
@@ -819,15 +800,9 @@ import globalFunctions from '../../globalFunctions';
   showMedia = (url) => {
     if (url.video) {
       console.warn('showing video');
-      this.setStatePure({
-        showVideo: true,
-        video: url.video,
-      });
+      BeNavigator.openVideo(url.video)
     } else {
-      this.setStatePure({
-        showPhoto: true,
-        photo: url.photo,
-      });
+      BeNavigator.openPhoto(url.photo)
     }
   };
   showMembers = (members) => {

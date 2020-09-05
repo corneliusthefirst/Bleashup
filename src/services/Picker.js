@@ -1,8 +1,9 @@
 import ImagePicker from 'react-native-image-crop-picker';
 import DocumentPicker from 'react-native-document-picker';
 import FileViewer from 'react-native-file-viewer';
-import { LogLevel, RNFFmpeg } from 'react-native-ffmpeg';
+import { LogLevel, RNFFmpeg, RNFFprobe } from 'react-native-ffmpeg';
 import { PermissionsAndroid } from 'react-native';
+import Texts from '../meta/text';
 
 class Picker {
   constructor() {}
@@ -110,6 +111,10 @@ class Picker {
       });
     });
   }
+  
+  /**
+   * Picks multiple photos from the phone
+   */
   TakeManyPhotos() {
     return new Promise((resolve, reject) => {
       ImagePicker.openPicker({
@@ -138,6 +143,9 @@ class Picker {
       });
     });
   }
+  /**
+   * Picks audio files from the mobile device
+   */
   async TakeAudio() {
     try {
       const res = await DocumentPicker.pick({
@@ -152,6 +160,10 @@ class Picker {
       }
     }
   }
+
+  /**
+   * Picks file from the phone
+   */
   async TakeFile() {
     try {
       const res = await DocumentPicker.pick({
@@ -167,19 +179,28 @@ class Picker {
       }
     }
   }
+  /**
+   * 
+   * @param {string} url
+   * checks the duration of a media be it locally or web. 
+   * But so far, only web is tested and confirmed as working. 
+   */
+  determineMediaDuration(url){
+    return RNFFprobe.getMediaInformation(url)
+  }
   openFile(source) {
     FileViewer.open(
       source
     ).then(
       () => {}
-    ); /*.catch((e) => {
+    ).catch((e) => {
             PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.MANAGE_DOCUMENTS, {
-                title: "Write To Storage Permission",
-                message: "Bleashup Wants to write to disk"
+                title: Texts.write_to_disk_permission,
+                message: Texts.writ_to_disk_permission_message
             }).then(pers => {
                 console.warn(pers)
             })
-        })*/
+        })
   }
   CleanAll() {
     if (this.uploaded) {

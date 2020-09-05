@@ -97,7 +97,8 @@ export default class VideoUploader extends BePureComponent {
             <View>
                 <View style={{ padding: "1.5%" ,minWidth: 250,}}>
                     <View>
-                        <TouchableOpacity onLongPress={this.props.onLongPress} onPress={() => this.props.playVideo(this.props.message.source)}>
+                        <TouchableOpacity //onLongPress={this.props.onLongPress} 
+                        onPress={() => this.props.playVideo(this.props.message.source)}>
                             <View style={{
                                 borderRadius: 15,
                                 alignSelf: 'center',
@@ -157,7 +158,7 @@ export default class VideoUploader extends BePureComponent {
                 </View>
                 <View>
                     {this.props.message.text ? <TextContent 
-                        handleLongPress={this.props.onLongPress} 
+                        //handleLongPress={this.props.onLongPress} 
                         tags={this.props.message.tags} 
                         style={{ margin: '2%', }} 
                         text={this.props.message.text}>

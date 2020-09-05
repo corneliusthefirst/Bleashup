@@ -1,7 +1,6 @@
 import React, { Component } from "react";
 import { View, TouchableOpacity, Text,} from "react-native";
 import ActivityProfile from "../myscreens/currentevents/components/ActivityProfile";
-import PhotoViewer from "../myscreens/event/PhotoViewer";
 import DetailsModal from "../myscreens/invitations/components/DetailsModal";
 import ColorList from "../colorList";
 import moment from 'moment';
@@ -18,10 +17,7 @@ export default class ShareFrame extends Component {
     }
     state = {};
     showPhoto(photo) {
-        this.setState({
-            photo: photo,
-            showPhoto: photo,
-        });
+        BeNavigator.openPhoto(photo)
     }
     openDetails(event) {
         console.warn("showing details")
@@ -64,15 +60,6 @@ export default class ShareFrame extends Component {
                     {this.props.content && this.props.content()}
                 </View>
             </View>
-            <PhotoViewer
-                open={this.state.showPhoto}
-                hidePhoto={() => {
-                    this.setState({
-                        showPhoto: false,
-                    });
-                }}
-                photo={this.state.photo}
-            ></PhotoViewer>
             {this.state.showDetails ? <DetailsModal
                 goToActivity={
                     () => BeNavigator.pushActivity(this.props.share.event, 'EventDetails')

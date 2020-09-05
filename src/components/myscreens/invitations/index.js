@@ -7,9 +7,9 @@ import { observer } from "mobx-react";
 import BleashupFlatList from '../../BleashupFlatList';
 import CreateEvent from '../event/createEvent/CreateEvent';
 import DetailsModal from "./components/DetailsModal";
-import PhotoViewer from "../event/PhotoViewer";
 import shadower from "../../shadower";
 import bleashupHeaderStyle from "../../../services/bleashupHeaderStyle";
+import BeNavigator from '../../../services/navigationServices';
 
 @observer export default class InvitationView extends Component {
   constructor(props) {
@@ -50,6 +50,9 @@ import bleashupHeaderStyle from "../../../services/bleashupHeaderStyle";
       goback(){
         this.props.navigation.goBack()
       }
+      showPhoto(url){
+        BeNavigator.openPhoto(url)
+      }
       /*handleBackButton(){
         this.goback()
         return true
@@ -81,18 +84,12 @@ import bleashupHeaderStyle from "../../../services/bleashupHeaderStyle";
               this.delay = (index % this.renderPerBatch) === 0 ? 0 : this.delay + 1
               return item.sent ? <SentInvitations
                 showPhoto={(photo) => {
-                  this.setState({
-                    showPhoto:true,
-                    photo:photo
-                  })
+                  this.showPhoto(photo)
                 }}
               {...this.props} time_delay={this.delay * 300} item={item} key={index} parentCardList={this} /> :
                 <ReceivedInvitations 
                   showPhoto={(photo) => {
-                    this.setState({
-                      showPhoto: true,
-                      photo: photo
-                    })
+                   this.showPhoto(photo)
                   }}
                 openDetails={(event) => this.setState({
                   isDetailsModalOpened: true,
@@ -121,11 +118,6 @@ import bleashupHeaderStyle from "../../../services/bleashupHeaderStyle";
           })
         }}>
       </DetailsModal> : null}
-      {this.state.showPhoto?<PhotoViewer photo={this.state.photo} open={this.state.showPhoto} hidePhoto={() =>{
-        this.setState({
-          showPhoto:false
-        })
-      }}></PhotoViewer>:null}
        
     </View>
   }

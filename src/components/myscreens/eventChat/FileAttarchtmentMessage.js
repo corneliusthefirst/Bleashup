@@ -184,7 +184,7 @@ export default class FileAttarchementMessaege extends BePureComponent {
                                 <Text style={{ fontSize: 10,alignSelf: 'center',justifyContent: 'center', }} note>{"("}{this.toMB(isNaN(this.state.received) ? 0 : this.state.received).toFixed(1)}{"/"}
                                     {this.toMB(this.state.total).toFixed(1)}{")Mb"}</Text>}</View></View>
                 </View>
-                {this.props.message.text ? <TextContent handleLongPress={this.props.handleLongPress}
+                {this.props.message.text ? <TextContent //handleLongPress={this.props.handleLongPress}
                     pressingIn={this.props.pressingIn} text={this.props.message.text}
                     tags={this.props.message.tags}></TextContent> : null}
             </View>

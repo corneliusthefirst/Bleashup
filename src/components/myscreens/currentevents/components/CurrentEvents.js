@@ -5,7 +5,6 @@ import PublicEvent from "./publicEvent.js"
 import Relation from "./Relation"
 import BleashupFlatList from '../../../BleashupFlatList';
 import DetailsModal from '../../invitations/components/DetailsModal.js';
-import PhotoViewer from '../../event/PhotoViewer.js';
 import CreateEvent from '../../event/createEvent/CreateEvent';
 import BeNavigator from "../../../../services/navigationServices"
 import AnimatedComponent from '../../../AnimatedComponent.js';
@@ -45,10 +44,7 @@ export default class CurrentEvents extends AnimatedComponent {
 
 
     showPhoto(url) {
-        this.setStatePure({
-            showPhoto: true,
-            photo: url
-        })
+        BeNavigator.openPhoto(url)
     }
     delay = 0
     renderPerbatch = 10
@@ -103,10 +99,6 @@ export default class CurrentEvents extends AnimatedComponent {
                     numberOfItems={this.props.data.length}
                 >
                 </BleashupFlatList>
-                {
-                    // ******************Photo Viewer View ***********************//
-                    <PhotoViewer photo={this.state.photo} open={this.state.showPhoto} hidePhoto={this.hidePhoto}></PhotoViewer>
-                }
                 {<DetailsModal goToActivity={this.goToActivity} isToBeJoint event={this.state.event}
                     isOpen={this.state.isDetailsModalOpened}
                     onClosed={this.hideDetails}>

@@ -34,14 +34,12 @@ import {
   RemoveMembers,
 } from "../../../services/cloud_services";
 import PhotoInputModal from "./PhotoInputModal";
-import PhotoViewer from "./PhotoViewer";
 import SearchImage from "./createEvent/components/SearchImage";
 import Pickers from "../../../services/Picker";
 import HighlightCardDetail from "./createEvent/components/HighlightCardDetail";
 import TasksCreation from "../reminds/TasksCreation";
 import testForURL from "../../../services/testForURL";
 import ProfileModal from "../invitations/components/ProfileModal";
-import VideoViewer from "../highlights_details/VideoModal";
 import Drawer from "react-native-drawer";
 import shadower from "../../shadower";
 import colorList from "../../colorList";
@@ -54,7 +52,7 @@ import IDMaker from '../../../services/IdMaker';
 import SetAlarmPatternModal from "./SetAlarmPatternModal";
 import BeComponent from '../../BeComponent';
 import Texts from '../../../meta/text';
-import { close_all_modals } from '../../../meta/events';
+import { close_all_modals, reply_me } from '../../../meta/events';
 
 const screenWidth = Math.round(Dimensions.get("window").width);
 
@@ -243,6 +241,7 @@ export default class Event extends BeComponent {
       case "EventChat":
         return (
           <EventChat
+            oponent={this.oponent.phone}
             isRelation={this.isRelation}
             startThis={this.startThis.bind(this)}
             remindThis={this.remindThis.bind(this)}
@@ -448,10 +447,7 @@ export default class Event extends BeComponent {
     });
   }
   openPhoto(url) {
-    this.setStatePure({
-      showPhoto: true,
-      photo: url,
-    });
+    this.showPhoto(url)
   }
   showContent(content) {
     this.setStatePure({
@@ -614,7 +610,7 @@ export default class Event extends BeComponent {
   mention(data) {
     GState.reply = data;
     Vibration.vibrate(this.duration);
-    emitter.emit("reply-me", GState.reply);
+    emitter.emit(reply_me, GState.reply);
     this.goback()
   }
   startLoader() {
@@ -680,6 +676,7 @@ export default class Event extends BeComponent {
   }
   returnRealEvent(event) {
     let oponent = this.getOponent(event.participant)
+    this.oponent = oponent
     this.isRelation = event.type === "relation"
     return {
       ...event,
@@ -1348,17 +1345,10 @@ export default class Event extends BeComponent {
       });
   }
   showPhoto(photo) {
-    this.setStatePure({
-      showPhoto: true,
-      photo: photo,
-    });
+    BeNavigator.openPhoto(photo)
   }
   showVideo(url) {
-    this.setStatePure({
-      video: url,
-      showVideoModal: true,
-      isHighlightDetailModalOpened: false,
-    });
+    BeNavigator.openVideo(url)
   }
   mentionPost(replyer) {
     this.mention(GState.prepareStarForMention(replyer));
@@ -1611,24 +1601,6 @@ export default class Event extends BeComponent {
           })
         }
       ></PhotoInputModal>
-      <PhotoViewer
-        open={this.state.showPhoto}
-        photo={this.state.photo}
-        hidePhoto={() => {
-          this.setStatePure({
-            showPhoto: false,
-            woking: true,
-          });
-          setTimeout(() => {
-            this.setStatePure({
-              working: false,
-            });
-          }, 2000);
-          // doing this because if the profile picture is being clicked from the
-          // the changeBox Component , the onPress function of the BleashupTimline Compoent is automatically
-          // triggered . so this is an attempt to restore the blocking done when that photo is being pressed
-        }}
-      ></PhotoViewer>
       <HighlightCardDetail
         mention={(item) => {
           this.mentionPost(item);
@@ -1683,16 +1655,6 @@ export default class Event extends BeComponent {
           });
         }}
       ></ProfileModal>
-      <VideoViewer
-        video={this.state.video}
-        open={this.state.showVideoModal}
-        hideVideo={() => {
-          this.setStatePure({
-            showVideoModal: false,
-            isHighlightDetailModalOpened: this.state.highlight ? true : false,
-          });
-        }}
-      ></VideoViewer>
       <SettingsTabModal
         addMembers={() => this.startInvitation(true)}
         invite={() => this.startInvitation()}

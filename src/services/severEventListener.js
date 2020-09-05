@@ -227,8 +227,9 @@ class ServerEventListener {
       }
     }
     if (data.error) {
-      console.warn(this.sayReconnectionAttempt, " deu to ", data);
-      this.initPresence();
+      //emitter.emit(this.events.unsuccessful_+data.id,data.error)
+      //console.warn(this.sayReconnectionAttempt, " deu to ", data);
+      //this.initPresence();
       //emitter.emit("unsuccessful", data.message);
     }
   }

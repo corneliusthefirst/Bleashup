@@ -27,7 +27,7 @@ class InitialRouteName {
           temploginStore
             .getUser()
             .then(user => {
-              resolve("SignIn");
+              resolve("Login");
             })
             .catch(error => {
               resolve("Login");

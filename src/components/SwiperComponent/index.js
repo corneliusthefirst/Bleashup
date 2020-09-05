@@ -7,25 +7,32 @@ import UserView from '../myscreens/Viewer/components/UserView';
 import SwipeAccordion from '../myscreens/Viewer/components/swipeAccordion';
 import Post from './Post';
 import AnimatedComponent from '../AnimatedComponent';
+import Spinner from '../Spinner';
 //const ScreenHeight = Dimensions.get('window').height;
 
 export default class SwiperComponent extends AnimatedComponent {
   initialize() {
     this.state = {
       itemswiper: {},
+      mounted:false,
       isPause: true,
-      currentIndex: this.props.navigation.getParam('currentIndex')
-        ? this.props.navigation.getParam('currentIndex')
-        : 0,
-      media: this.props.navigation.getParam('dataArray'),
-      mapFunction: this.props.navigation.getParam('mapFunction'),
     };
   }
-  init = (currentIndex) => {
-    this.setStatePure({
-      itemswiper: this.state.mapFunction(this.state.media[currentIndex]),
-    });
+  initialID = this.props.navigation.getParam('currentIndex')
+  mapFunction = this.props.navigation.getParam('mapFunction')
+  filterFunc = this.props.navigation.getParam('filterFunc')
+  init(currentIndex) {
+    return new Promise(() => {
+      let data = this.props.navigation.getParam('dataArray').filter(this.filterFunc)
+      let initialIndex = this.initialID ? data.findIndex(ele => ele.id === this.initialID) : 0
+      this.setStatePure({
+        media:data,
+        currentIndex:initialIndex ,
+        itemswiper: this.mapFunction(data[initialIndex]),
+        mounted:true
+      });
     //this.post.setPause(false);  //modified
+    })
   };
 
   componentDidMount() {
@@ -35,7 +42,7 @@ export default class SwiperComponent extends AnimatedComponent {
 
   onchageIndex = (index) => {
     this.setStatePure({
-      itemswiper: this.state.mapFunction(this.state.media[index]),
+      itemswiper: this.mapFunction(this.state.media[index]),
       // isPause: true,
     });
    // this.post.setPause(false); //modified
@@ -62,7 +69,10 @@ export default class SwiperComponent extends AnimatedComponent {
   }
   render() {
     return (
-      <View style={{ flex: 1 }}>
+      !this.state.mounted?<View style={{
+        flex: 1,
+        backgroundColor: 'black',
+      }}></View>:<View style={{ flex: 1 }}>
         <StatusBar
           barStyle={'light-content'}
           backgroundColor={'black'}
@@ -96,7 +106,7 @@ export default class SwiperComponent extends AnimatedComponent {
                 <Post
                   ref={(ref) => (this.post = ref)}
                   //isPause={this.state.isPause}
-                  post={this.state.mapFunction(itemswiper)}
+                  post={this.mapFunction(itemswiper)}
                   onClose={() => {
                     this.props.navigation.goBack();
                   }}

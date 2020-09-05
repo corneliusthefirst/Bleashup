@@ -101,7 +101,7 @@ export default class Message extends BeComponent {
             case "text":
                 return (
                     <TextMessage
-                        handleLongPress={() => this.handLongPress()}
+                        //handleLongPress={() => this.handLongPress()}
                         pressingIn={() => {
                             this.handlePressIn()
                             this.replying = true;
@@ -117,7 +117,7 @@ export default class Message extends BeComponent {
             case "text_sender":
                 return (
                     <TextMessageSnder
-                        onLongPress={this.handLongPress.bind(this)}
+                        //onLongPress={this.handLongPress.bind(this)}
                         sendMessage={(message) => this.props.sendMessage(message)}
                         firebaseRoom={this.props.firebaseRoom}
                         user={2}
@@ -131,7 +131,7 @@ export default class Message extends BeComponent {
                 return (
                     <PhotoMessage
                         room={this.props.room}
-                        handleLongPress={() => this.handLongPress()}
+                        //handleLongPress={() => this.handLongPress()}
                         pressingIn={() => {
                             this.replying = true;
                             this.handlePressIn()
@@ -148,7 +148,7 @@ export default class Message extends BeComponent {
             case "audio":
                 return (
                     <AudioMessage
-                        handleLongPress={() => this.handLongPress()}
+                        //handleLongPress={() => this.handLongPress()}
                         room={this.props.room}
                         pressingIn={() => {
                             this.replying = true;
@@ -162,7 +162,7 @@ export default class Message extends BeComponent {
             case "video":
                 return (
                     <VideoMessage
-                        handleLongPress={() => this.handLongPress()}
+                        //handleLongPress={() => this.handLongPress()}
                         pressingIn={() => {
                             this.replying = true;
                             this.handlePressIn()
@@ -182,7 +182,7 @@ export default class Message extends BeComponent {
                         pressingIn={() => {
                             this.handlePressIn()
                         }}
-                        handleLongPress={() => this.handLongPress()}
+                        //handleLongPress={() => this.handLongPress()}
                         room={this.props.room}
                         sender={sender}
                         index={index}
@@ -193,7 +193,7 @@ export default class Message extends BeComponent {
                 return (
                     <PhotoUploader
                         room={this.props.room}
-                        onLongPress={this.handLongPress.bind(this)}
+                        //onLongPress={this.handLongPress.bind(this)}
                         showPhoto={(photo) => this.props.showPhoto(photo)}
                         replaceMessage={(data) => this.props.replaceMessage(data)}
                         sender={false}
@@ -204,7 +204,7 @@ export default class Message extends BeComponent {
             case "video_upload":
                 return (
                     <VideoUploader
-                        onLongPress={this.handLongPress.bind(this)}
+                        //onLongPress={this.handLongPress.bind(this)}
                         playVideo={(video) => this.props.playVideo(video)}
                         replaceMessage={(data) => this.props.replaceMessageVideo(data)}
                         message={data}
@@ -218,7 +218,7 @@ export default class Message extends BeComponent {
                     <FileAttarchementUploader
                         room={this.props.room}
                         index={index}
-                        onLongPress={this.handLongPress.bind(this)}
+                        //onLongPress={this.handLongPress.bind(this)}
                         message={data}
                         replaceMessage={(data) => this.props.replaceMessageFile(data)}
                     ></FileAttarchementUploader>
@@ -226,7 +226,7 @@ export default class Message extends BeComponent {
             case "audio_uploader":
                 return (
                     <AudioUploader
-                        onLongPress={this.handLongPress.bind(this)}
+                        //onLongPress={this.handLongPress.bind(this)}
                         room={this.props.room}
                         message={data}
                         index={data.id}
@@ -522,8 +522,8 @@ export default class Message extends BeComponent {
                                             if (data.translateX >= 50) {
                                                 this.handleReply()
                                             } else if (data.translateX <= -50) {
-                                                Vibration.vibrate([100, 0, 0, 100])
-                                                this.props.forwardMessage()
+                                                Vibrator.vibrateLong()
+                                                this.handLongPress()
                                             }
                                         }}
                                         leftOpenValue={0}
@@ -573,7 +573,7 @@ export default class Message extends BeComponent {
                                                     this.state.sender && !this.props.isRelation ? 
                                                     <TouchableOpacity
                                                     onPressIn={this.handlePressIn.bind(this)}
-                                                        onLongPress={this.handLongPress.bind(this)}
+                                                        ///onLongPress={this.handLongPress.bind(this)}
                                                         onPress={() =>
                                                             requestAnimationFrame(() => {
                                                                 this.props.showProfile(
@@ -612,7 +612,7 @@ export default class Message extends BeComponent {
                                                             }}
                                                         >
                                                             <ReplyText
-                                                                handLongPress={() => this.handLongPress()}
+                                                                //handLongPress={() => this.handLongPress()}
                                                                 showProfile={(pro) => this.props.showProfile(pro)}
                                                                 pressingIn={() => {
                                                                     this.handlePressIn()
@@ -633,10 +633,10 @@ export default class Message extends BeComponent {
                                                     ) : null}
                                                     <TouchableWithoutFeedback
                                                     onPressIn={this.handlePressIn.bind(this)}
-                                                    onPress={this.handlePress.bind(this)}
-                                                        onLongPress={() => {
+                                                    //onPress={this.handlePress.bind(this)}
+                                                        /*onLongPress={() => {
                                                             this.handLongPress();
-                                                        }}
+                                                        }}*/
                                                     >
                                                         <View
                                                             style={{
@@ -655,7 +655,8 @@ export default class Message extends BeComponent {
                                                 <View
                                                     style={{
                                                         flexDirection: "row",
-                                                        justifyContent: "space-between",
+                                                        justifyContent: "flex-end",
+                                                        margin: '1%',
                                                     }}
                                                 >
                                                     <View>
@@ -676,7 +677,7 @@ export default class Message extends BeComponent {
                                                                     )
                                                             ) : (
                                                                     <MaterialIconCommunity
-                                                                        style={{ ...this.iconStyles, color: "#FFF" }}
+                                                                        style={{ ...this.iconStyles, color: ColorList.darkGrayText }}
                                                                         type="MaterialCommunityIcons"
                                                                         name="progress-check"
                                                                     />
@@ -689,7 +690,7 @@ export default class Message extends BeComponent {
                                         </View>
                                         {this.state.sender && this.state.showReacter ? (
                                             <TouchableOpacity
-                                                onLongPress={this.handLongPress.bind(this)}
+                                                //onLongPress={this.handLongPress.bind(this)}
                                                 onPress={this.openReaction.bind(this)}
                                             >
                                                     <View style={{

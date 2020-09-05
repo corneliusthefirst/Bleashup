@@ -60,9 +60,9 @@ export class Requster {
     checkUserStatus(phone){
         return new Promise((resolve, reject) => {
             this.sendPrivacyUpdate(phone, check_status).then(response => {
-                resolve(resposne.data)
+                resolve(response.data)
             }).catch((err) => {
-                console.warn("error in makeOnline: ", err)
+                console.warn("error in checkUser status ", err)
                 reject(err)
             })
         })

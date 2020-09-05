@@ -9,9 +9,9 @@ export default class LoginStore {
       console.warn("user is",user)
       this.user = user;
     })
-      storage.remove({
+      /*storage.remove({
       key: 'loginStore'
-      });
+      });*/
   }
 
   @observable phonenumber = "";

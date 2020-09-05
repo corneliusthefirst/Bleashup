@@ -104,7 +104,7 @@ export default class PhotoUploader extends BePureComponent {
                 <View>
                     <View>
                         <TouchableOpacity
-                        onLongPress={this.props.onLongPress}
+                        //onLongPress={this.props.onLongPress}
                          //onPress={() => this.props.showPhoto(this.props.message.source)}
                         >
                             <CacheImages style={{
@@ -143,7 +143,8 @@ export default class PhotoUploader extends BePureComponent {
                                     {this.toMB(this.state.total).toFixed(1)}{")Mb"}</Text></View></View>}</View>
                 </View>
                 <View>
-                    {this.props.message.text ? <TextContent handleLongPress={this.props.onLongPress} text={this.props.message.text} 
+                    {this.props.message.text ? <TextContent //handleLongPress={this.props.onLongPress} 
+                    text={this.props.message.text} 
                     tags={this.props.message.tags} ></TextContent> : null}
                 </View>
             </View>

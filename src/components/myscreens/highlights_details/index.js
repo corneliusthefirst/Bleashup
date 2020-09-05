@@ -4,8 +4,6 @@ import { View, StatusBar, Text, Dimensions, BackHandler, Keyboard, ScrollView, T
 import BleashupSectionList from '../../BleashupSectionList';
 import BleashupFlatList from '../../BleashupFlatList';
 import HighLight from './Highlight';
-import PhotoViewer from '../event/PhotoViewer';
-import VideoViewer from './VideoModal';
 import InputView from './InputView';
 import stores from '../../../stores';
 import firebase from 'react-native-firebase';
@@ -15,6 +13,7 @@ import Toaster from '../../../services/Toaster';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import IDMaker from '../../../services/IdMaker';
 import GState from '../../../stores/globalState/index';
+import BeNavigator from '../../../services/navigationServices';
 const screenWidth = Math.round(Dimensions.get('window').width);
 const screenheight = Math.round(Dimensions.get('window').height);
 export default class HighLightsDetails extends Component {
@@ -84,10 +83,7 @@ export default class HighLightsDetails extends Component {
 
     }
     showPhoto(photo) {
-        this.setState({
-            showPhoto: true,
-            photo: photo
-        })
+        BeNavigator.openPhoto(photo)
     }
     sendReaction(mess) {
         let message = {
@@ -118,6 +114,9 @@ export default class HighLightsDetails extends Component {
             }
         }))
     }
+    showVideo(url){
+        BeNavigator.openVideo(url)
+    }
     textColor = "#FFF"
     messageList() {
         return <BleashupFlatList
@@ -134,10 +133,7 @@ export default class HighLightsDetails extends Component {
                     showPhoto={(photo) => this.showPhoto(photo)}
                     replying={(replyer, color) => this.replying(replyer, color)}
                     showVideo={(url) => {
-                        this.setState({
-                            video: url,
-                            showVideo: true
-                        })
+                        this.showVideo(url)
                     }}
                     showInput={() => {
                         this.setState({
@@ -239,16 +235,6 @@ export default class HighLightsDetails extends Component {
                             this.goback()
                         }} name="doubleleft" style={{ marginLeft: '8%', color: ColorList.bodyBackground, marginBottom: '7%', alignSelf: 'center', }} type={"AntDesign"} />
                     </View>
-                    {this.state.showPhoto ? <PhotoViewer photo={this.state.photo} open={this.state.showPhoto} hidePhoto={() => {
-                        this.setState({
-                            showPhoto: false
-                        })
-                    }}></PhotoViewer> : null}
-                    {this.state.showVideo ? <VideoViewer video={this.state.video} open={this.state.showVideo} hideVideo={() => {
-                        this.setState({
-                            showVideo: false
-                        })
-                    }}></VideoViewer> : null}
                 </ScrollView>
             </View>
         );

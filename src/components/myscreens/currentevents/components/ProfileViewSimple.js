@@ -19,14 +19,16 @@ import BeComponent from "../../../BeComponent";
 import FontAwesome  from 'react-native-vector-icons/FontAwesome';
 import emitter from "../../../../services/eventEmiter";
 import { sayTyping } from '../../eventChat/services';
+import { typing } from "../../../../meta/events";
+import { observer } from "mobx-react";
+import BePureComponent from '../../../BePureComponent';
 
-export default class ProfileSimple extends BeComponent {
+@observer class ProfileSimple extends BePureComponent {
   constructor(props) {
     super(props);
     this.state = {
       invite: false,
     };
-    this.url.uri = this.props.profile.profile
     this.showProfile = this.showProfile.bind(this);
     this.showInivte = this.showInivte.bind(this);
     this.closeProfileModal = this.closeProfileModal.bind(this);
@@ -45,11 +47,9 @@ export default class ProfileSimple extends BeComponent {
       this.setStatePure({ invite: true });
     });
   }
-  url = {
-    //uri: this.props.profile.profile,
-  };
+  
   componentMounting(){
-    emitter.on(`${this.props.profile.phone}_typing`,(typer) => {
+    emitter.on(typing(this.props.profile.phone),(typer) => {
       !this.sayTyping ? this.sayTyping = sayTyping.bind(this):null 
       this.sayTyping(typer)
     })
@@ -64,20 +64,22 @@ export default class ProfileSimple extends BeComponent {
   }
   showingProfile = false;
   render() {
+    let user = this.props.profile && { ...this.props.profile,
+      ...stores.TemporalUsersStore.Users[this.props.profile.phone]}
     return (
       <View style={styles.mainContainer}>
         {!this.props.hidePhoto && (
           <View style={styles.containerSub}>
-            {this.props.profile &&
-            this.props.profile.profile &&
-            testForURL(this.props.profile.profile) ? (
+            {user &&
+            user.profile &&
+            testForURL(user.profile) ? (
               <TouchableWithoutFeedback onPress={this.showProfile}>
                 <CacheImages
                   staySmall
                   small
                   thumbnails
                   {...this.props}
-                  source={this.url}
+                  source={{ uri:user.profile }}
                 />
               </TouchableWithoutFeedback>
             ) : (
@@ -95,7 +97,7 @@ export default class ProfileSimple extends BeComponent {
               searchWords={[this.props.searchString]}
               style={styles.normal}
               autoEscape={true}
-              textToHighlight={this.props.profile.nickname}
+              textToHighlight={user.nickname}
             ></Highlighter>
             {this.showTyper()}
           </View>
@@ -106,16 +108,16 @@ export default class ProfileSimple extends BeComponent {
               numberOfLines={1}
               style={styles.text}
             >
-              {this.props.profile &&
-              this.props.profile.phone === stores.LoginStore.user.phone
+              {user &&
+              user.phone === stores.LoginStore.user.phone
                 ? "You "
-                : this.props.profile && this.props.profile.nickname}
+                : user && user.nickname}
             </Text>
             {this.showTyper()}
           </TouchableOpacity>
         )}
 
-        {this.props.invite && !this.props.profile.found ? (
+        {this.props.invite && !user.found ? (
           <View style={styles.inviteContainer}>
             <TouchableWithoutFeedback onPress={this.showInvite}>
               <Text style={styles.invite}>invite</Text>
@@ -131,13 +133,15 @@ export default class ProfileSimple extends BeComponent {
             joined={this.props.joined}
             parent={this}
             onClosed={this.closeProfileModal}
-            profile={this.props.profile}
+            profile={user}
           ></ProfileModal>
         }
       </View>
     );
   }
 }
+
+export default ProfileSimple
 
 const styles = StyleSheet.create({
   mainContainer: {

@@ -8,6 +8,7 @@ import ColorList from "../../../colorList";
 import AnimatedComponent from '../../../AnimatedComponent';
 import Toaster from "../../../../services/Toaster";
 import AntDesign  from 'react-native-vector-icons/AntDesign';
+import Texts from '../../../../meta/text';
 
 export default class Like extends AnimatedComponent {
     state = {
@@ -104,7 +105,7 @@ export default class Like extends AnimatedComponent {
                     this.liking = false;
                     this.props.end;
                     Toaster({
-                        text: "unable to connect to the server !",
+                        text: Texts.unable_to_perform_request,
                         buttonText: "Okay",
                     });
                 });
@@ -127,7 +128,7 @@ export default class Like extends AnimatedComponent {
                     console.warn(error);
                     this.unliking = false;
                     Toaster({
-                        text: "unable to connect to the server ",
+                        text: Texts.unable_to_perform_request,
                         buttonText: "Okay",
                     });
                 });

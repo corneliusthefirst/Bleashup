@@ -626,7 +626,8 @@ export default class ChatKeyboard extends AnimatedComponent {
                 </PhotoPreview>
     }
     showSnapper(){
-        BeNavigator.pushTo("CameraScreen",{callback:(souce) => this.concludePicking(souce),directReturn:true})
+        this.openCamera()
+        //BeNavigator.pushTo("CameraScreen",{callback:(souce) => this.concludePicking(souce),directReturn:true})
     }
     showOptionsModal(){
         this.setStatePure({

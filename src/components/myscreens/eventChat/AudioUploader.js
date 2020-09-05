@@ -203,7 +203,8 @@ export default class AudioUploader extends BePureComponent {
         }
         return (
             <View>
-            <TouchableOpacity onLongPress={this.props.onLongPress} style={{ disply: 'flex', flexDirection: 'row', width: 300, }}>
+            <TouchableOpacity //onLongPress={this.props.onLongPress} 
+            style={{ disply: 'flex', flexDirection: 'row', width: 300, }}>
                 <View style={textStyle}>
                     <View><Slider value={this.state.currentPosition} onValueChange={(value) => {
                         this.player.setCurrentTime(value * this.props.message.duration)
@@ -249,7 +250,7 @@ export default class AudioUploader extends BePureComponent {
                     </AnimatedCircularProgress></View>
             </TouchableOpacity>
                 {this.props.message.text?<TextContent
-                    handleLongPress={this.props.onLongPress}
+                    //handleLongPress={this.props.onLongPress}
                     pressingIn={this.props.pressingIn} text={this.props.message.text} tags={this.props.message.tags}
                 >
                 </TextContent>:null}

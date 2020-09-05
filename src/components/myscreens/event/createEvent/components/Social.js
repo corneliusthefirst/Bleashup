@@ -6,8 +6,9 @@ import SocialTabModal from "./SocialTabModal";
 import ActionsMenu from "../../ActionsMenu";
 import PickersMenu from "./PickerMenu";
 import Comments from "./Comment";
+import BeComponent from '../../../../BeComponent';
 
-export default class Social extends Component {
+export default class Social extends BeComponent {
     constructor(props) {
         super(props);
         this.state = {
@@ -39,7 +40,7 @@ export default class Social extends Component {
                              size={25}
                              likedColor={ColorList.heartColor}
                                 setLikesCount={(count) => {
-                                    this.setState({
+                                    this.setStatePure({
                                         likesCount: count,
                                     });
                                 }}
@@ -112,7 +113,7 @@ export default class Social extends Component {
                 <TouchableOpacity
                     onPress={() =>
                         requestAnimationFrame(() =>
-                            this.setState({
+                            this.setStatePure({
                                 isSocialModalOpened: true,
                             })
                         )
@@ -129,7 +130,7 @@ export default class Social extends Component {
                     id={this.props.id}
                     isOpen={this.state.isSocialModalOpened}
                     closed={() => {
-                        this.setState({
+                        this.setStatePure({
                             isSocialModalOpened: false,
                         });
                     }}

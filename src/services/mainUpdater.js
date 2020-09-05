@@ -8,6 +8,7 @@ import {
 } from '../components/myscreens/settings/privacy/Requester';
 import Requester from "../components/myscreens/eventChat/Requester";
 import emitter from './eventEmiter';
+import { typing } from "../meta/events";
 class mainUpdater {
   addParticipants(eventID, participants, updater, updated, date) {
     return new Promise((resolve, reject) => {
@@ -228,7 +229,7 @@ class mainUpdater {
   }
   sayTyping(commiteeID, typer,dontEmit) {
     return new Promise((resolve, reject) => {
-      emitter.emit(`${commiteeID}_typing`,typer)
+      emitter.emit(typing(commiteeID),typer)
       resolve();
     });
   }

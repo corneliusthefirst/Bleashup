@@ -276,9 +276,9 @@ export default class AudioMessage extends BePureComponent {
                 }}
             >
                 <TouchableOpacity
-                    onLongPress={() =>
-                        this.props.handleLongPress ? this.props.handleLongPress() : null
-                    }
+                    //onLongPress={() =>
+                    //    this.props.handleLongPress ? this.props.handleLongPress() : null
+                   // }
                     onPressIn={() => this.props.pressingIn()}
                 >
                     <View
@@ -383,7 +383,7 @@ export default class AudioMessage extends BePureComponent {
                     <TextContent
                         text={this.props.message.text}
                         tags={this.props.message.tags}
-                        handleLongPress={this.props.handleLongPress}
+                        //handleLongPress={this.props.handleLongPress}
                         pressingIn={this.props.pressingIn}
                     ></TextContent>
                 </View> : null}

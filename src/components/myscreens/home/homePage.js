@@ -25,6 +25,7 @@ import bleashupHeaderStyle from "../../../services/bleashupHeaderStyle";
 import colorList from "../../colorList";
 import BeNavigator from "../../../services/navigationServices";
 import IDMaker from '../../../services/IdMaker';
+import { PrivacyRequester } from '../settings/privacy/Requester';
 
 let { height, width } = Dimensions.get("window");
 
@@ -192,12 +193,10 @@ class Home extends Component {
       this.state.appState.match(/inactive|background/) &&
       nextAppState === "active"
     ) {
-      firebase
-        .database()
-        .ref(`current_room/${stores.LoginStore.user.phone.replace("00", "+")}`)
-        .set(GState.currentRoom);
+      GState.currentRoom && PrivacyRequester.makeOnline()
       console.warn("App has come to the foreground!");
     } else {
+      PrivacyRequester.makeOffline()
     }
     this.setState({ appState: nextAppState });
   };

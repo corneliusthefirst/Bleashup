@@ -2,14 +2,13 @@ import React, { Component } from "react";
 import { View,TouchableOpacity,Image } from "react-native";
 import CacheImages from "../../../../CacheImages";
 import testForURL from "../../../../../services/testForURL";
-import PhotoViewer from "../../PhotoViewer";
-import VideoViewer from "../../../highlights_details/VideoModal";
 import buttoner from "../../../../../services/buttoner";
 import ColorList from '../../../../colorList';
 import BeComponent from '../../../../BeComponent';
 import  Ionicons  from 'react-native-vector-icons/Ionicons';
 import  MaterialIcons  from 'react-native-vector-icons/MaterialIcons';
 import EvilIcons  from 'react-native-vector-icons/EvilIcons';
+import BeNavigator from '../../../../../services/navigationServices';
 
 export default class MediaPreviewer extends BeComponent {
   constructor(props) {
@@ -19,13 +18,9 @@ export default class MediaPreviewer extends BeComponent {
   state = {};
   choseAction(url) {
     if (url.video) {
-      this.setStatePure({
-          showVideo:true
-      })
+      BeNavigator.openVideo(this.props.url.video)
     } else {
-      this.setStatePure({
-        enlargeImage: true,
-      });
+      BeNavigator.openPhoto(this.props.url.photo)
     }
   }
   render() {
@@ -135,29 +130,6 @@ export default class MediaPreviewer extends BeComponent {
           </View>
           </View>
         ) : null}
-
-        {this.state.enlargeImage && this.props.url && this.props.url.photo ? (
-          <PhotoViewer
-            open={this.state.enlargeImage}
-            hidePhoto={() =>
-              this.setStatePure({
-                enlargeImage: false,
-              })
-            }
-            photo={this.props.url.photo}
-          />
-        ) : null}
-        {this.state.showVideo && this.props.url && this.props.url.video && (
-          <VideoViewer
-            open={this.state.showVideo}
-            hideVideo={() => {
-              this.setStatePure({
-                showVideo: false,
-              });
-            }}
-            video={this.props.url.video}
-          ></VideoViewer>
-        )}
       </View>
     );
   }

@@ -156,7 +156,6 @@ export default class PhotoViewer extends BleashupModal {
               name={"forward"}
             ></Entypo>
           </View>}
-
           {!this.hideActions && <View style={styles.icon1}>
             <AntDesign
               onPress={this.downLoadImage}
@@ -173,7 +172,7 @@ export default class PhotoViewer extends BleashupModal {
       </View>
     );
   }
-  getParam = (param) => this.props.navigation && this.props.navigation.getParam("photo")
+  getParam = (param) => this.props.navigation && this.props.navigation.getParam(param)
   routePhoto = this.getParam("photo")
   hideActions = this.getParam("hideActions")
   dateRoute = this.getParam("date")

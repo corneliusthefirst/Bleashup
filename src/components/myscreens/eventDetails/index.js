@@ -310,7 +310,7 @@ action = () => [
                       height={colorList.containerHeight * .45}
                       phone={stores.LoginStore.user.phone}
                       activity_id={this.props.Event.id}
-                      
+                      mention={this.mention.bind(this)}
                       activity_name={this.props.Event.about.title}
                       delay={this.delay}
                       computedMaster={this.props.computedMaster}

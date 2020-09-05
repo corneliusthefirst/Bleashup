@@ -11,7 +11,8 @@ import MainUpdater from '../../../services/mainUpdater';
 import toTitleCase from '../../../services/toTitle';
 import Toaster from '../../../services/Toaster';
 import IDMaker from '../../../services/IdMaker';
-
+import Texts from '../../../meta/text';
+const no_data_with_such_key = "no data with such id not found"
 class Request {
     constructor() {
 
@@ -391,7 +392,7 @@ class Request {
                         })
                     }).catch((error) => {
                         console.warn(error)
-                        Toaster({text:'unable to perform request'})
+                        Toaster({ text: 'unable to perform request' })
                         resolve()
                     })
                 })
@@ -998,9 +999,9 @@ class Request {
                 higlightTitle.event_id = eventID
                 higlightTitle.h_id = highlightID
                 higlightTitle.new_data = newTitle
-                tcpRequest.updateHighlight(higlightTitle, highlightID+"_title").then(JSONData => {
-                    serverEventListener.sendRequest(JSONData, highlightID+"_title").then(response => {
-                        stores.Highlights.updateHighlightTitle(eventID , {
+                tcpRequest.updateHighlight(higlightTitle, highlightID + "_title").then(JSONData => {
+                    serverEventListener.sendRequest(JSONData, highlightID + "_title").then(response => {
+                        stores.Highlights.updateHighlightTitle(eventID, {
                             id: highlightID,
                             title: newTitle
                         }, false).then((HighlightJS) => {
@@ -1029,7 +1030,7 @@ class Request {
             } else {
                 resolve()
             }
-        }) 
+        })
     }
     updateHightlightPublicState(newPublicState, oldPublicState, highlightID, eventID) {
         return new Promise((resolve, reject) => {
@@ -1039,8 +1040,8 @@ class Request {
                 higlightTitle.event_id = eventID
                 higlightTitle.h_id = highlightID
                 higlightTitle.new_data = newPublicState
-                tcpRequest.updateHighlight(higlightTitle, highlightID+"_public_state").then(JSONData => {
-                    serverEventListener.sendRequest(JSONData, highlightID+"_public_state").then(response => {
+                tcpRequest.updateHighlight(higlightTitle, highlightID + "_public_state").then(JSONData => {
+                    serverEventListener.sendRequest(JSONData, highlightID + "_public_state").then(response => {
                         stores.Highlights.updateHighlightPublicState(eventID, {
                             highlight_id: higlightTitle.h_id,
                             public_state: higlightTitle.new_data
@@ -1078,8 +1079,8 @@ class Request {
                 higlightTitle.event_id = eventID
                 higlightTitle.h_id = highlightID
                 higlightTitle.new_data = newDescription
-                tcpRequest.updateHighlight(higlightTitle, highlightID+"_description").then(JSONData => {
-                    serverEventListener.sendRequest(JSONData, highlightID+"_description").then(response => {
+                tcpRequest.updateHighlight(higlightTitle, highlightID + "_description").then(JSONData => {
+                    serverEventListener.sendRequest(JSONData, highlightID + "_description").then(response => {
                         stores.Highlights.updateHighlightDescription(eventID, {
                             id: higlightTitle.h_id,
                             description: higlightTitle.new_data
@@ -1117,8 +1118,8 @@ class Request {
                 newHighlightURL.event_id = eventID
                 newHighlightURL.action = 'url'
                 newHighlightURL.new_data = newURL
-                tcpRequest.updateHighlight(newHighlightURL, highlightID+"_url").then(JSONData => {
-                    serverEventListener.sendRequest(JSONData, highlightID+"_url").then(response => {
+                tcpRequest.updateHighlight(newHighlightURL, highlightID + "_url").then(JSONData => {
+                    serverEventListener.sendRequest(JSONData, highlightID + "_url").then(response => {
                         stores.Highlights.updateHighlightUrl(eventID, {
                             id: newHighlightURL.h_id,
                             url: newHighlightURL.new_data
@@ -1151,7 +1152,7 @@ class Request {
     updateCount = 0
     updatedhighlight = null
     applyAllHighlightsUpdate(newHighlight, highlight) {
-        console.warn('here again 8',   JSON.parse(highlight).title );
+        console.warn('here again 8', JSON.parse(highlight).title);
         return new Promise((resolve, reject) => {
             this.updateHighlightTitle(newHighlight.title, JSON.parse(highlight).title,
                 newHighlight.id,
@@ -1187,8 +1188,8 @@ class Request {
             let HEID = request.HEID()
             HEID.event_id = eventID;
             HEID.h_id = highlightID
-            tcpRequest.deleteHighlight(HEID, highlightID).then(JSONData => {
-                serverEventListener.sendRequest(JSONData, highlightID).then(response => {
+            tcpRequest.deleteHighlight(HEID, highlightID + "_delete").then(JSONData => {
+                serverEventListener.sendRequest(JSONData, highlightID + "_delete").then(response => {
                     stores.Highlights.removeHighlight(eventID, highlightID).then((Highlight) => {
                         stores.Events.removeHighlight(eventID, highlightID).then(res => {
                             let Change = {
@@ -1208,8 +1209,12 @@ class Request {
                         })
                     })
                 }).catch((error) => {
-                    console.warn(error)
-                    Toaster({ text: "Unable To Perform Request" })
+                    if (error.data.data === no_data_with_such_key) {
+                        stores.Highlights.removeHighlight(eventID, highlightID).then((Highlight) => {
+                            stores.Events.removeHighlight(eventID, highlightID).then(res => { })
+                        })
+                    }
+                    Toaster({ text: Texts.unable_to_perform_request })
                     reject(error)
                 })
             })

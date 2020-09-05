@@ -84,9 +84,9 @@ export default class ReplyText extends BePureComponent {
   render() {
     return (
       <TouchableWithoutFeedback
-        onLongPress={() =>
-          this.props.handLongPress ? this.props.handLongPress() : null
-        }
+        //onLongPress={() =>
+        //  this.props.handLongPress ? this.props.handLongPress() : null
+       // }
         onPress={() => requestAnimationFrame(() => this.props.openReply(this.props.reply))}
       >
         <View

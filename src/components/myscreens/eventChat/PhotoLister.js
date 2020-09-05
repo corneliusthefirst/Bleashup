@@ -3,10 +3,10 @@ import shadower from '../../shadower';
 import { View, Dimensions, TouchableOpacity, TouchableWithoutFeedback } from "react-native"
 import CacheImages from '../../CacheImages';
 import BleashupFlatList from '../../BleashupFlatList';
-import PhotoViewer from '../event/PhotoViewer';
 import testForURL from '../../../services/testForURL';
 import moment from 'moment';
 import MediaSeparator from './MediaSeparator';
+import BeNavigator from '../../../services/navigationServices';
 
 let { height, width } = Dimensions.get('window');
 export default class Photo extends Component {
@@ -23,6 +23,9 @@ export default class Photo extends Component {
                 mounted: true
             })
         }, 100)
+    }
+    openPhoto(url,date){
+        BeNavigator.openPhoto(url,false,date)
     }
     state = {}
     shouldComponentUpdate(nextProps, nextState, nextContext) {
@@ -46,11 +49,7 @@ export default class Photo extends Component {
                         return item.type === 'date_separator' ? <MediaSeparator item={item} style={{ height: width / 3, width: width / 3, borderColor: "white", borderWidth: 1 }}>
                         </MediaSeparator> : <Button transparent style={{ height: width / 3, width: width / 3 }} onPress={() => {
                             console.warn("Pressing touchable")
-                            this.setState({
-                                showPhoto: true,
-                                created_at: item.created_at,
-                                photo: item.photo
-                            })
+                                this.openPhoto(item.photo, item.created_at)
                         }}><View style={{ ...shadower(), alignSelf: 'center', }}>
                                     {testForURL(item.photo) ? <CacheImages style={{ borderColor: "white", borderWidth: 1, height: width / 3, width: width / 3 }} source={{ uri: item.photo }} square thumbnails ></CacheImages> :
                                         <Thumbnail style={{ borderColor: "white", borderWidth: 1, height: width / 3, width: width / 3 }} source={{ uri: item.photo }} square ></Thumbnail>}
@@ -60,11 +59,6 @@ export default class Photo extends Component {
                     dataSource={this.props.photo}
                 ></BleashupFlatList>
             </View>
-            {this.state.showPhoto ? <PhotoViewer created_at={this.state.created_at} open={this.state.showPhoto} photo={this.state.photo} hidePhoto={() => {
-                this.setState({
-                    showPhoto: false
-                })
-            }}></PhotoViewer> : null}
         </View>
     }
 }

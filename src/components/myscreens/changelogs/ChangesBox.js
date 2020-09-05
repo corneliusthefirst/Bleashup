@@ -32,12 +32,12 @@ export default class ChangeBox extends AnimatedComponent {
         return this.state.newThing !== nextState.newThing
     }
    mention(changer){
-       this.props.mention({...this.props.change,changer})
+       this.props.mention({...this.props.change},changer)
    }
     containerStyle = { margin: '1%', borderRadius: 5, backgroundColor: colorList.bodyBackground, ...shadower(2), }
     render() {
-        return <Swipeout disabled onLongPress={() => this.props.onLongPress(this.state.changer)} swipeRight={() => {
-                this.mention(this.state.changer.nickname)
+        return <Swipeout disabled={false} onLongPress={() => this.props.onLongPress(this.state.changer)} swipeRight={() => {
+                this.mention(this.state.changer)
             }}>
                 <View onLayout={(e) => this.props.takeNewLayout(e.nativeEvent.layout)} style={this.containerStyle}>
                     {!this.props.change ? null : <View style={{ flexDirection: 'column', margin: '1%', }}>

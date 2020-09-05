@@ -36,7 +36,7 @@ export default class PhotoMessage extends BePureComponent {
             <View style={{ minHeight: 250, width: this.messageWidth, marginTop: '1%', }}>
                 <TouchableOpacity
                     onPressIn={this.props.pressingIn}
-                    onLongPress={() => this.props.handleLongPress ? this.props.handleLongPress() : null}
+                    //onLongPress={() => this.props.handleLongPress ? this.props.handleLongPress() : null}
                     onPress={() => this.props.showPhoto(this.props.message.photo)}>
                     <CacheImages hasJoin onOpen={() => { }}
                         source={{ uri: this.getPhotoSmall() }} square thumbnails style={{ alignSelf: 'flex-start', width: this.messageWidth, height: 248, }} borderRadius={5}>
@@ -44,7 +44,10 @@ export default class PhotoMessage extends BePureComponent {
                 </TouchableOpacity>
                 {this.props.message.text ?
                     <View style={{ alignSelf: 'flex-start', }}>
-                        <TextContent tags={this.props.message.tags} handleLongPress={() => this.props.handleLongPress ? this.props.handleLongPress() : null} pressingIn={() => this.props.pressingIn()} text={this.props.message.text}></TextContent>
+                        <TextContent 
+                        tags={this.props.message.tags} 
+                        //handleLongPress={() => this.props.handleLongPress ? this.props.handleLongPress() : null} 
+                        pressingIn={() => this.props.pressingIn()} text={this.props.message.text}></TextContent>
                     </View> : null}
 
             </View>

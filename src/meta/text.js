@@ -461,6 +461,22 @@ class TEXTS {
         en: "Long press to start recording",
         fr: "Apuiez Logntemp pour commencer a enregister"
     }[GState.lang]
+    start_a_conversation = {
+        en: "Start a relation",
+        fr: "Commencer une relation"
+    }[GState.lang]
+    write_to_disk_permission = {
+        en: "Write To Storage Permission",
+        fr: "Pemission D'utilisation de l'espace stockage"
+    }[GState.lang]
+    writ_to_disk_permission_message = {
+        en: "BeUp Wants to write to disk",
+        fr: "BeUp veut sauvegarder dans le stockage"
+    }[GState.lang]
+    loading_video = {
+        en: "Video Loading",
+        fr: "Chargement de la video"
+    }[GState.lang]
 }
 const Texts = new TEXTS()
 export default Texts

@@ -109,13 +109,15 @@ export default class ProfileView extends Component {
   uploadError = (e) => {
     this.setState({uploading: false});
   }
-
+  openPhoto(){
+    BeNavigator.openPhoto(this.state.userInfo.profile)
+  }
   renderPhoto = () => {
     return (
       this.state.uploading ? <Spinner/>:
         <View style={{height:300,width:"100%",justifyContent:"center",alignItems:"center"}}>
         <TouchableWithoutFeedback onPress={() => {
-            requestAnimationFrame(() => {this.setState({enlarge:true})});
+            requestAnimationFrame(() => {this.openPhoto()});
         }}>
           {this.state.userInfo.profile  && testForURL(this.state.userInfo.profile ) ? <CacheImages   {...this.props}
               source={{ uri: this.state.userInfo.profile }} style={{height:ColorList.containerHeight/3,width:ColorList.containerHeight/3,borderRadius:ColorList.containerHeight/6}} /> :
@@ -245,7 +247,6 @@ export default class ProfileView extends Component {
         {this.state.openBCamera &&  <BleashupCamera  isOpen={this.state.openBCamera} onClosed={()=>{this.setState({openBCamera:false});}} onCaptureFinish={(result)=>{this.photoTaken(result)}} 
         nomessage={false} novideo={true} messagePlaceHolder = {"say something for your status"} maxLength={30} multiline={false}
          directreturn={false} onCameraReady={()=>{console.log('camera is  ready');}}  onMountError = {(e)=>this.uploadError(e)} />}
-        {this.state.enlarge ? <PhotoViewer open={this.state.enlarge} hidePhoto={() => this.setState({ enlarge: false })} photo={this.state.userInfo.profile} /> : null}
       </Container>
     );
   }

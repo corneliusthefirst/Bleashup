@@ -21,7 +21,8 @@ export default class PhotoPreview extends BeComponent {
         this.props.image !== nextProp.image
     }
     showPhoto(){
-        BeNavigator.pushTo("PhotoViewer",{photo:this.props.image,hideActions:true})
+        BeNavigator.openPhoto(this.props.image,true)
+        //BeNavigator.pushTo("PhotoViewer",{photo:this.props.image,hideActions:true})
     }
     containerHeight= this.props.showVideo ? 200 : 100
     logOutZoomState = (event, gestureState, zoomableViewEventObject) => { };

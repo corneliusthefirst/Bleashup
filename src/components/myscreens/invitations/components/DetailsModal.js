@@ -24,6 +24,7 @@ import Toaster from "../../../../services/Toaster";
 import ColorList from '../../../colorList';
 import GState from "../../../../stores/globalState";
 import shadower from "../../../shadower";
+import BeNavigator from '../../../../services/navigationServices';
 export default class DetailsModal extends BleashupModal {
   state = {};
   initialize() {
@@ -128,9 +129,7 @@ export default class DetailsModal extends BleashupModal {
   }
   openPhoto() {
     requestAnimationFrame(() => {
-      this.setStatePure({
-        showPhoto: true,
-      });
+     BeNavigator.openPhoto(this.url.uri)
     });
   }
   initJoin() {
@@ -187,17 +186,6 @@ export default class DetailsModal extends BleashupModal {
             }
           </View>
         </View>
-        {this.state.showPhoto ? (
-          <PhotoViewer
-            open={this.state.showPhoto}
-            photo={this.state.event.background}
-            hidePhoto={() => {
-              this.setStatePure({
-                showPhoto: false,
-              });
-            }}
-          ></PhotoViewer>
-        ) : null}
         </View>
     );
   }

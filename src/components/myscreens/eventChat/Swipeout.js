@@ -11,10 +11,10 @@ export default class Swipeout extends PureComponent {
 
     render() {
         return <SwipeRow disableRightSwipe={this.props.disabled} disableLeftSwipe={this.props.disabled} swipeGestureEnded={(key, data) => {
-            if (data.translateX >= 50) {
+            if (data.translateX >= 3) {
                 this.props.swipeRight()
-            } else if (data.translateX <= -50) {
-               this.props.swipeLeft()
+            } else if (data.translateX <= -2) {
+               this.props.onLongPress()
             }
         }}
             leftOpenValue={0}
@@ -32,11 +32,9 @@ export default class Swipeout extends PureComponent {
                     width: "90%",
                 }}>
             </View>
-            <TouchableOpacity onPressIn={this.props.onPressIn} onLongPress={this.props.onLongPress}>
             <View>
             {this.props.children}
             </View>
-            </TouchableOpacity>
         </SwipeRow>
     }
 }

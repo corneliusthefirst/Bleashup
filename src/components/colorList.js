@@ -10,6 +10,7 @@ class colorlist {
   containerHeight = height;
   containerWidth = '100%';
   headerTextSize = 14;
+  greenColor = '#1FABAB'
   containerBackground = '#1FABAB';
   redIcon = 'red';
   photoPlaceHolderColor = "#C5C5C5"

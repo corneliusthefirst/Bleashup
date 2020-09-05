@@ -852,7 +852,7 @@ export default class events {
     return new Promise((resolve, rejectPromise) => {
       this.readFromStore().then(Events => {
         let index = findIndex(Events, { id: EventID });
-        console.warn(index, 'index1');
+        console.warn(index, 'index1',EventID);
         Events[index].highlights = dropWhile(
           Events[index].highlights,
           element => element == HighlightID

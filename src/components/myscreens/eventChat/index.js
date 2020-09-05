@@ -181,6 +181,8 @@ There are also Erlang plugins for other code editors Vim (vim-erlang) , Atom , E
       }}
       openMenu={this.props.openMenu}
       isComment={false}
+      oponent={this.props.oponent}
+      isRelation={this.props.isRelation}
       showLoader={this.props.showLoader}
       stopLoader={this.props.stopLoader}
       working={this.props.working}

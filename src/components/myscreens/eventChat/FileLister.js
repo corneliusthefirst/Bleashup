@@ -67,11 +67,6 @@ export default class File extends Component {
                 }}
                 dataSource={this.props.file}
             ></BleashupFlatList>
-            {this.state.showVideo ? <VideoViewer created_at={this.state.created_at} open={this.state.showVideo} video={this.state.video} hideVideo={() => {
-                this.setState({
-                    showVideo: false
-                })
-            }}></VideoViewer> : null}
         </View>
     }
 }

@@ -20,7 +20,6 @@ export default class highlights {
   currentSaveTime = moment().format();
   previousSaveTime = moment().format();
   initializeHighlights() {
-    console.warn("initializing highlights", this.highlights);
     storage
       .load(this.readKey)
       .then((data) => {
@@ -41,7 +40,6 @@ export default class highlights {
   extraVotes = {};
   saver() {
     if (Object.keys(this.highlights).length > 0) {
-      console.warn("persisiting highlights foolish", this.highlights);
       this.saveKey.data = this.highlights;
       storage.save(this.saveKey).then(() => {
         this.previousSaveTime = this.currentSaveTime;
@@ -50,7 +48,6 @@ export default class highlights {
   }
   setProperty(highlights) {
     this.highlights = highlights;
-    console.warn("here foolish", this.highlights);
     this.currentSaveTime = moment().format();
   }
   saveKey = {
@@ -67,10 +64,8 @@ export default class highlights {
   }
 
   @action addHighlights(EventID, NewHighlight) {
-    console.warn("new highlight is ", EventID, NewHighlight);
     return new Promise((resolve, Reject) => {
       this.readFromStore().then((Highlights) => {
-        console.warn("from readFrom store", Highlights);
         if (Highlights[EventID] && Highlights[EventID].length > 0) {
           if (Array.isArray(NewHighlight)) {
             if (NewHighlight.length === 1) {
@@ -95,7 +90,6 @@ export default class highlights {
             ? NewHighlight
             : [NewHighlight];
         }
-        console.warn("here is the highlight", Highlights);
         this.setProperty(Highlights);
         resolve();
       });
@@ -104,21 +98,18 @@ export default class highlights {
 
   updateHighlightPublicState(EventID, update) {
     return new Promise((resolve, reject) => {
-      console.warn("update public start");
       this.readFromStore().then((Highlights) => {
         let hIndex = findIndex(Highlights[EventID], {
           id: update.highlight_id,
         });
         Highlights[EventID][hIndex].public_state = update.public_state;
         this.setProperty(Highlights);
-        console.warn("update public ok", Highlights);
         resolve(Highlights[EventID][hIndex]);
       });
     });
   }
 
   @action removeHighlight(EventID, HighlightId) {
-    console.warn("removing Highlight", HighlightId);
     return new Promise((resolve, RejectPromise) => {
       this.readFromStore().then((Highlights) => {
         Highlights[EventID] = reject(Highlights[EventID], ["id", HighlightId]);
@@ -126,7 +117,6 @@ export default class highlights {
           ? Highlights[EventID].unshift(request.Highlight())
           : null;
         this.setProperty(Highlights);
-        console.warn("removed ok", Highlights[EventID]);
         resolve(Highlights[EventID]);
       });
     });
@@ -147,7 +137,7 @@ export default class highlights {
                   response.data === "empty" ||
                   response.data === "no_such_value"
                 ) {
-                  resolve(fresh ? JSON.stringify([]) : []);
+                  resolve([]);
                 } else {
                   this.addHighlights(EventID, response.data).then(() => {
                     resolve(response.data);
@@ -155,7 +145,7 @@ export default class highlights {
                 }
               })
               .catch(() => {
-                resolve(fresh ? JSON.stringify([]) : []);
+                resolve([]);
               });
           });
         
@@ -164,10 +154,8 @@ export default class highlights {
 
   @action fetchHighlights(EventID) {
     let sorter = (a, b) =>
-       moment(a.created_at).format("x") >
-       moment(b.created_at).format("x") ? 1 :
-       moment(a.created_at).format("x") < 
-       moment(b.created_at).format("x") ? -1 : 0;
+       moment(a.created_at).format("x") >=
+       moment(b.created_at).format("x") ? -1 :1;
     return new Promise((resolve, reject) => {
       if (this.highlights[EventID] && this.highlights[EventID].length > 1) {
           let result = this.highlights[EventID].sort(sorter);
@@ -175,7 +163,8 @@ export default class highlights {
       } else {
         this.fetchHighlightsFromRemote(EventID, true)
           .then((data) => {
-            resolve(data.sort(sorter));
+            let newData = data.sort(sorter)
+            resolve(newData);
           }).catch(() => {
         resolve([]);
       });
@@ -203,7 +192,6 @@ export default class highlights {
   }
 
   @action updateHighlightDescription(EventID, NewHighlight, inform) {
-    console.warn('here im checking', EventID,NewHighlight);
     return new Promise((resolve, Reject) => {
       this.readFromStore().then((Highlights) => {
         let RemindIndex = findIndex(Highlights[EventID], {

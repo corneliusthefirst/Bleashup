@@ -47,7 +47,7 @@ export default class InChatVideoPlayer extends BeComponent {
                 height: this.props.fullScreen
                     ? "100%"
                     : "40%",
-                margin: '3%',
+                margin: this.props.fullScreen?'1%':"3%",
                 alignSelf: 'center',
                 width: this.props.fullScreen ? "100%" : "98%",
                 position: "absolute",

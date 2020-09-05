@@ -13,6 +13,11 @@ export const frequencyType = [{
     value: 'Year(s)',
 }];
 
+/**
+ * Alamrs Possibilities
+ * Note: this is implemented as a function so that it should ensure time consistency 
+ * every time it's called
+ */
 export function AlarmPatterns() {
     return [{
         id: 1,
@@ -225,9 +230,16 @@ const intervaler = {
 }
 export const format = "dddd, MMMM Do YYYY, h:mm:ss a"
 
-// returnAllIntervals function is used to get all the possible date intervals in a given period
-// given the frequency:{weekly,daily,monthly.tearly} ,interval:1,2,3,4 etc and daysOfWeek if provided
 
+/**
+ * 
+ * @param {Object} period 
+ * @param {Number} interval 
+ * @param {String} frequency 
+ * @param {Array} daysOfWeek 
+ * gets all the possible date intervals in a given period
+ * given the frequency:{weekly,daily,monthly.tearly} ,interval:1,2,3,4 etc and daysOfWeek if provided
+ */
 export function returnAllIntervals(period, interval, frequency, daysOfWeek) {
     let i = 0
     period.end = moment(period.start, format).format('x') >
@@ -289,13 +301,26 @@ export function returnAllIntervals(period, interval, frequency, daysOfWeek) {
         i = i + interval
     } //while ();
     return dates
-}
-// This function is use to form the week's date intervals if withing a given period. 
+} 
+/**
+ * 
+ * @param {Array} daysOfWeek 
+ * @param {Object} period 
+ * @param {String} start
+ *  formWeeksIntervaler caller
+ */
 export function formWeekIntervals(daysOfWeek, period, start) {
     return formWeekIntervaler(daysOfWeek, period, start)
 }
 
-
+/**
+ * 
+ * @param {Array} daysOfWeek 
+ * @param {Object} period 
+ * @param {String} start
+ * generates {startdate,enddate} intervals for days in a week in an invertval 
+ * determined by the parameter period.
+ */
 function formWeekIntervaler(daysOfWeek, period, start) {
     let previousStart = JSON.stringify(start)
     let i = 0
@@ -313,6 +338,15 @@ function formWeekIntervaler(daysOfWeek, period, start) {
     })
     return intervals
 }
+/**
+ * 
+ * @param {Array} daysOfWeek 
+ * @param {Object} period 
+ * @param {String} start 
+ * Produces a filter(cleaned) version of days_of_weeks be filtering out out
+ * dates which are out of the period interval.
+ * It also do interval correction on first and last intervals
+ */
 export function filterWeekInervals(daysOfWeek, period, start) {
     let weeksIntervals = formWeekIntervaler(daysOfWeek, period, start);
     return weeksIntervals.filter(ele =>
@@ -320,10 +354,17 @@ export function filterWeekInervals(daysOfWeek, period, start) {
         moment(ele.end, format).format("x") <= moment(period.end, format).format("x")).
         map(ele => _.find(daysOfWeeksDefault, { day: ele.end.split(",")[0] }).code)
 }
-// This function is used to remove the error noticed that whenever there is a day in weeks_interval of 
-// a main interval, in the first array, this date is going  to be out of the main interval start and enddate, 
-// this function solves that problem by assigning the end date of that erronous entry the 
-// start date of  the next entry if any or the start date of it self.
+
+/**
+ * 
+ * @param {Object Array} datesInterval 
+ * @param {String} final 
+ * This function is used to remove the error noticed that whenever there is a day in weeks_interval of
+ * a main interval, in the first array, this date is going  to be out of the main interval start and enddate,
+ * this function solves that problem by assigning the end date of that erronous entry the
+ * start date of  the next entry if any or the start date of it self.
+
+ */
 export function cleanupResult(datesInterval, final) {
     let temp = ""
     if (datesInterval[0].weeks_interval && datesInterval[0].weeks_interval.length > 0) {
@@ -355,12 +396,21 @@ export function cleanupResult(datesInterval, final) {
     return datesInterval
 
 }
-// This function takes an array of object dates intervals 
-// which might contain a week_interval property which is also an array of days intervals .
-// this function returns a flatten version of the param datesInterval . a flaten version means
-// mixing the week_interval with the main datesInterval array to form one array .
-// The return data type is of the type {round_parent,round,start,end}
 
+/**
+ * 
+ * @param {Object} period 
+ * @param {Array} datesInterval 
+ * @param {Array} result 
+ * @param {Number} i 
+ * 
+ * This function takes an array of object dates intervals
+ * which might contain a week_interval property which is also an array of days intervals .
+ * this function returns a flatten version of the param datesInterval . a flaten version means
+ * mixing the week_interval with the main datesInterval array to form one array .
+ * The return data type is of the type {round_parent,round,start,end}.
+ * It uses the recursion approach to acheive the wanted result
+ */
 export function datesIntervalflaterner(period, datesInterval, result, i) {
     if (i === datesInterval.length) {
         !result[0] ? console.error(result, datesInterval, i) : null
@@ -398,6 +448,12 @@ export function datesIntervalflaterner(period, datesInterval, result, i) {
         return datesIntervalflaterner(period, datesInterval, result, i + 1)
     }
 
+    /**
+     * 
+     * @param {Array} data 
+     * @param {Object} newDate
+     * shifts a list of dates to relative to newDate 
+     */
     function convertDate(data, newDate) {
         newDate.start_date = parseInt(this.getUnixTimeStamp(newDate.start_date), 10)
         newDate.end_date = parseInt(this.getUnixTimeStamp(newDate.end_date), 10)

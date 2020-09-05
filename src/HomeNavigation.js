@@ -11,6 +11,7 @@ import CameraScreen from './components/mainComponents/BleashupCamera/index';
 import SwiperComponent from './components/SwiperComponent/index';
 import ProfileView from './components/myscreens/settings/profile';
 import PhotoViewer from './components/myscreens/event/PhotoViewer';
+import VideoViewer from './components/myscreens/highlights_details/VideoModal';
 
 enableScreens()
 const HomeNavigator = createStackNavigator({
@@ -23,6 +24,7 @@ const HomeNavigator = createStackNavigator({
     CameraScreen:{screen: CameraScreen},
     Profile: {screen:ProfileView},
     PhotoViewer: {screen: PhotoViewer},
+    Video: {screen:VideoViewer},
     Event: { screen: Event },
 }, {
     initialRouteName: "Home",

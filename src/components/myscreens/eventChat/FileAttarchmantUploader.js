@@ -111,7 +111,8 @@ export default class FileAttarchementUploader extends BePureComponent {
     render() {
         return (
             <View>
-                <TouchableOpacity onLongPress={this.props.onLongPress} style={{
+                <TouchableOpacity //onLongPress={this.props.onLongPress} 
+                style={{
                     marginTop: 2,
                     borderRadius: 5,
                     disply: 'flex',
@@ -158,7 +159,7 @@ export default class FileAttarchementUploader extends BePureComponent {
                                 <Text style={{ fontSize: 10 }} note>{"("}{this.toMB(this.state.received).toFixed(1)}{"/"}
                                     {this.toMB(this.state.total).toFixed(1)}{")Mb"}</Text>}</View></View>
                 </TouchableOpacity>
-                {this.props.message.text?<TextContent handleLongPress={this.props.onLongPress}
+                {this.props.message.text?<TextContent //handleLongPress={this.props.onLongPress}
                     pressingIn={this.props.pressingIn} text={this.props.message.text} 
                     tags={this.props.message.tags}></TextContent>:null}
             </View>
