@@ -65,7 +65,10 @@ export default class HighlightCard extends BePureComponent {
           onLayout={(e) => {
             this.props.onLayout(e.nativeEvent.layout)}
           }
-        style={this.container}
+          style={[this.container, {
+            opacity: this.props.isPointed ? .2 : 1,
+            backgroundColor: this.props.isPointed ? ColorList.post : ColorList.bodyBackground,
+          }]}
       >
         <View
           style={{

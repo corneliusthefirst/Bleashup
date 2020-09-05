@@ -1,6 +1,7 @@
 import React, { Component } from "react"
 import { FlatList, View, StyleSheet, Text } from "react-native";
 import Spinner from './Spinner';
+import BeComponent from './BeComponent';
 
 const ifCloseToTop = ({ layoutMeasurement, contentOffset, contentSize }) => {
     return contentOffset.y == 0;
@@ -15,7 +16,7 @@ const isTooCloseToBottom = ({ layoutMeasurement, contentOffset, contentSize }) =
     return layoutMeasurement.height + contentOffset.y >=
         ((contentSize.height - paddingToBottom) * (0.95));
 };
-export default class BleashupFlatList extends Component {
+export default class BleashupFlatList extends BeComponent {
     constructor(props) {
         super(props)
         this.state = {
@@ -43,28 +44,41 @@ export default class BleashupFlatList extends Component {
     continueScrollDown() {
         this.previousRendered = this.state.currentRender
         if (this.state.currentRender <= this.props.dataSource.length - 1) {
-            this.setState({
+            this.setStatePure({
                 currentRender: this.previousRendered + this.props.renderPerBatch
             })
         } else {
-            this.setState({
+            this.setStatePure({
                 endReached: true
             })
         }
     }
-    scrollToIndex(index) {
-        this.setState({
+    resetCurrentRender(){
+        this.setStatePure({
             currentRender: this.props.dataSource.length
         })
+    }
+    scrollToIndex(index) {
+        this.resetCurrentRender()
         setTimeout(() => {
            this.refs.bleashupFlatlist && this.refs.bleashupFlatlist.scrollToIndex({ animated: true, index: index })
         })
     }
-    scrollToEnd() {
-       this.refs.bleashupFlatlist && this.refs.bleashupFlatlist.scrollToOffset({ animated: true, offset: 0 })
+    scrollToEnd(duration) {
+       this.refs.bleashupFlatlist && this.refs.bleashupFlatlist.scrollToOffset({ animated: true, offset: 0,duration })
+    }
+    scrollToEndReal(duration){
+        this.resetCurrentRender()
+        setTimeout(() => {
+            this.refs.bleashupFlatlist && this.refs.bleashupFlatlist.scrollToEnd({ animated: true, duration })
+            setTimeout(() => {
+                this.refs.bleashupFlatlist && this.refs.bleashupFlatlist.scrollToEnd({ animated: true, duration })
+            },100)
+        },100)
+
     }
     resetItemNumbers() {
-        this.setState({
+        this.setStatePure({
             currentRender: this.props.initialRender,
             endReached: false
         })

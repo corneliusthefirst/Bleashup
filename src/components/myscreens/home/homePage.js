@@ -115,9 +115,10 @@ class Home extends Component {
         console.warn(notification);
       });
   }
-  navigateToEventDetails(id) {
+  navigateToEventDetails(id,remind_id) {
     let event = stores.Events.events.find((ele) => ele.id == id);
     if (event) {
+      remind_id?BeNavigator.gotoRemindsWithIndex(event,remind_id):
       BeNavigator.navigateToActivity("EventChat", event);
     }
   }
@@ -129,6 +130,9 @@ class Home extends Component {
     });
     DeepLinking.addRoute("/event/:id", (response) => {
       this.navigateToEventDetails(response.id);
+    });
+    DeepLinking.addRoute("/event/:id/reminds/:remind_id", (response) => {
+      this.navigateToEventDetails(response.id, response.remind_id);
     });
     Linking.getInitialURL()
       .then((url) => {
@@ -184,10 +188,7 @@ class Home extends Component {
   }
   _handleAppStateChange = (nextAppState) => {
     if (nextAppState !== "active") {
-      firebase
-        .database()
-        .ref(`current_room/${stores.LoginStore.user.phone.replace("00", "+")}`)
-        .set(null);
+     
     }
     if (
       this.state.appState.match(/inactive|background/) &&
@@ -198,7 +199,7 @@ class Home extends Component {
     } else {
       PrivacyRequester.makeOffline()
     }
-    this.setState({ appState: nextAppState });
+    //this.setState({ appState: nextAppState });
   };
   state = {
     scroll: true,

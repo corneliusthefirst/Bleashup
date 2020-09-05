@@ -1065,6 +1065,7 @@ class ChatRoom extends AnimatedComponent {
         replyer && this.replying(replyer);
     }
     handleReply(replyer) {
+        GState.toggleCurrentIndex(replyer.id)
         let index = findIndex(stores.Messages.messages[this.roomID], { id: replyer.id });
         index >= 0 && this.scrollToIndex(index);
     }
@@ -1117,6 +1118,7 @@ class ChatRoom extends AnimatedComponent {
                         this.delay >= 20 || (item && !item.sent) ? 0 : this.delay + 1;
                     return item ? (
                         <Message
+                            isPointed={item.id === GState.currentID}
                             isRelation={this.props.isRelation}
                             react={this.reactToMessage.bind(this)}
                             showReacters={this.showReacters.bind(this)}

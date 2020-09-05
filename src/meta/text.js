@@ -477,6 +477,14 @@ class TEXTS {
         en: "Video Loading",
         fr: "Chargement de la video"
     }[GState.lang]
+    star_messages_at = {
+        en: "Stars @",
+        fr: "Stars @"
+    }[GState.lang]
+    reminds_at = {
+        en: "Programs @ ",
+        fr: "Programmes @ "
+    }[GState.lang]
 }
 const Texts = new TEXTS()
 export default Texts

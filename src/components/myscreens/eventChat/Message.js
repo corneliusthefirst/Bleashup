@@ -30,10 +30,10 @@ import emitter from "../../../services/eventEmiter";
 import { SwipeRow } from 'react-native-swipe-list-view';
 import BeComponent from '../../BeComponent';
 import Vibrator from '../../../services/Vibrator';
-import  Ionicons  from 'react-native-vector-icons/Ionicons';
-import  EvilIcons  from 'react-native-vector-icons/EvilIcons';
-import  MaterialIconCommunity from 'react-native-vector-icons/MaterialCommunityIcons';
-import  AntDesign  from 'react-native-vector-icons/AntDesign';
+import Ionicons from 'react-native-vector-icons/Ionicons';
+import EvilIcons from 'react-native-vector-icons/EvilIcons';
+import MaterialIconCommunity from 'react-native-vector-icons/MaterialCommunityIcons';
+import AntDesign from 'react-native-vector-icons/AntDesign';
 import BleashupShapes from '../../mainComponents/BleashupShapes';
 
 export default class Message extends BeComponent {
@@ -323,10 +323,8 @@ export default class Message extends BeComponent {
             this.props.received !== nextProps.received ||
             this.props.isfirst !== nextProps.isfirst ||
             this.state.loaded !== nextState.loaded ||
-            /*(this.props.messagelayouts &&
-                this.props.messagelayouts[this.props.message.id] !==
-                nextProps.messagelayouts[nextProps.message.id]) ||*/
             this.state.refresh !== nextState.refresh ||
+            this.props.isPointed !== nextProps.isPointed ||
             this.state.isReacting !== nextState.isReacting
         );
     }
@@ -356,7 +354,7 @@ export default class Message extends BeComponent {
     handLongPress() {
         this.replying = false;
         let reply = this.props.choseReply(this.props.message)
-        this.props.showActions(this.props.message, reply,!this.state.sender);
+        this.props.showActions(this.props.message, reply, !this.state.sender);
         Vibrator.vibrateLong()
     }
     testForImoji(message) {
@@ -368,8 +366,8 @@ export default class Message extends BeComponent {
     isVote() {
         return this.props.message.type === "vote";
     }
-    handlePress(){
-        switch(this.props.message.type){
+    handlePress() {
+        switch (this.props.message.type) {
             case "video":
                 this.props.playVideo(this.props.message.source)
                 break;
@@ -377,7 +375,7 @@ export default class Message extends BeComponent {
                 this.props.showPhoto(this.props.message.photo)
                 break;
             default:
-             null //console.warn("message pressed")
+                null //console.warn("message pressed")
         }
     }
     startReactionShowTimer() {
@@ -398,18 +396,18 @@ export default class Message extends BeComponent {
             this.startReactionShowTimer();
         });
     }
-    handlePressIn(){
-        if(this.showReactionInterval) clearInterval(this.showReactionInterval)
+    handlePressIn() {
+        if (this.showReactionInterval) clearInterval(this.showReactionInterval)
         this.setStatePure({
-            refresh:!this.state.refresh,
-            showReacter:true
+            refresh: !this.state.refresh,
+            showReacter: true
         })
         this.showReactionInterval = setInterval(() => {
             this.setStatePure({
-                refresh:!this.state.refresh,
-                showReacter:false
+                refresh: !this.state.refresh,
+                showReacter: false
             })
-        },2000)
+        }, 2000)
     }
     placeholderStyle = this.props.message.dimensions
         ? this.props.message.dimensions
@@ -421,6 +419,7 @@ export default class Message extends BeComponent {
         let showName = this.state.sender && this.state.different
         let topMostStyle = {
             marginLeft: this.state.sender ? "1%" : 0,
+            opacity: this.props.isPointed ? .4 : 1,
             marginRight: !this.state.sender ? "1%" : 0,
             marginTop: this.state.different ? "4%" : "1.2%",
             marginBottom: this.props.index <= 0 ? "2%" : 0,
@@ -517,30 +516,30 @@ export default class Message extends BeComponent {
                                         {this.reactions(this.state.sender)}
                                     </View>
                                 ) : null}
-                                    <SwipeRow
-                                        swipeGestureEnded={(key, data) => {
-                                            if (data.translateX >= 50) {
-                                                this.handleReply()
-                                            } else if (data.translateX <= -50) {
-                                                Vibrator.vibrateLong()
-                                                this.handLongPress()
-                                            }
-                                        }}
-                                        leftOpenValue={0}
-                                        rightOpenValue={0}
-                                        swipeToClosePercent={50}
-                                        style={{ backgroundColor: "transparent", width: "100%" }}
-                                    >
+                                <SwipeRow
+                                    swipeGestureEnded={(key, data) => {
+                                        if (data.translateX >= 50) {
+                                            this.handleReply()
+                                        } else if (data.translateX <= -50) {
+                                            Vibrator.vibrateLong()
+                                            this.handLongPress()
+                                        }
+                                    }}
+                                    leftOpenValue={0}
+                                    rightOpenValue={0}
+                                    swipeToClosePercent={50}
+                                    style={{ backgroundColor: "transparent", width: "100%" }}
+                                >
                                     <View
-                                    style={{
-                                        marginTop: 'auto',
-                                        marginBottom: 'auto',
-                                        alignSelf: 'center',
-                                        flexDirection: 'row',
-                                        justifyContent: 'space-between',
-                                        width: "90%",
-                                    }}>
-                                </View>
+                                        style={{
+                                            marginTop: 'auto',
+                                            marginBottom: 'auto',
+                                            alignSelf: 'center',
+                                            flexDirection: 'row',
+                                            justifyContent: 'space-between',
+                                            width: "90%",
+                                        }}>
+                                    </View>
                                     <View
                                         style={{
                                             flexDirection: "row",
@@ -549,7 +548,7 @@ export default class Message extends BeComponent {
                                     >
                                         {this.state.time && !this.state.sender ? (
                                             <View style={{ margin: '1%', ...reactionContanerStyle, width: 30, marginBottom: null, }}>
-                                                    <Text style={{ fontSize: 8, fontStyle: 'italic', }}>{this.state.time}</Text>
+                                                <Text style={{ fontSize: 8, fontStyle: 'italic', }}>{this.state.time}</Text>
                                             </View>
                                         ) : null}
                                         <View
@@ -569,10 +568,10 @@ export default class Message extends BeComponent {
                                                         {"(forwarded)"}
                                                     </Text>
                                                 ) : null}
-                                                {this.state.different && 
-                                                    this.state.sender && !this.props.isRelation ? 
+                                                {this.state.different &&
+                                                    this.state.sender && !this.props.isRelation ?
                                                     <TouchableOpacity
-                                                    onPressIn={this.handlePressIn.bind(this)}
+                                                        onPressIn={this.handlePressIn.bind(this)}
                                                         ///onLongPress={this.handLongPress.bind(this)}
                                                         onPress={() =>
                                                             requestAnimationFrame(() => {
@@ -596,7 +595,7 @@ export default class Message extends BeComponent {
                                                             {`@${this.state.sender_name}`}
                                                         </Text>
                                                     </TouchableOpacity>
-                                                 : null}
+                                                    : null}
                                                 <View>
                                                     {this.props.message.reply ? (
                                                         <View
@@ -604,11 +603,11 @@ export default class Message extends BeComponent {
                                                                 alignItems: 'center',
                                                                 alignSelf: 'center',
                                                                 marginTop: ".4%",
-                                                                width: this.props.message && 
-                                                                (this.props.message.type == "photo" ||
-                                                                    this.props.message.type == "video" ||
-                                                                    this.props.message.type == "video_upload" ||
-                                                                    this.props.message.type == "photo_upload") ? 248 : "99%",
+                                                                width: this.props.message &&
+                                                                    (this.props.message.type == "photo" ||
+                                                                        this.props.message.type == "video" ||
+                                                                        this.props.message.type == "video_upload" ||
+                                                                        this.props.message.type == "photo_upload") ? 248 : "99%",
                                                             }}
                                                         >
                                                             <ReplyText
@@ -632,11 +631,11 @@ export default class Message extends BeComponent {
                                                         </View>
                                                     ) : null}
                                                     <TouchableWithoutFeedback
-                                                    onPressIn={this.handlePressIn.bind(this)}
+                                                        onPressIn={this.handlePressIn.bind(this)}
                                                     //onPress={this.handlePress.bind(this)}
-                                                        /*onLongPress={() => {
-                                                            this.handLongPress();
-                                                        }}*/
+                                                    /*onLongPress={() => {
+                                                        this.handLongPress();
+                                                    }}*/
                                                     >
                                                         <View
                                                             style={{
@@ -693,26 +692,26 @@ export default class Message extends BeComponent {
                                                 //onLongPress={this.handLongPress.bind(this)}
                                                 onPress={this.openReaction.bind(this)}
                                             >
-                                                    <View style={{
-                                                        ...reactionContanerStyle,
-                                                        ...rounder(17, ColorList.bodyBackground),
-                                                        marginLeft: 5,
-                                                    }}>
-                                                <AntDesign
-                                                    style={{
-                                                        fontSize: 15,
-                                                        color: "gray",
-                                                        alignSelf: "flex-end",
-                                                    }}
-                                                    type={"AntDesign"}
-                                                    name={"meh"}
-                                                />
+                                                <View style={{
+                                                    ...reactionContanerStyle,
+                                                    ...rounder(17, ColorList.bodyBackground),
+                                                    marginLeft: 5,
+                                                }}>
+                                                    <AntDesign
+                                                        style={{
+                                                            fontSize: 15,
+                                                            color: "gray",
+                                                            alignSelf: "flex-end",
+                                                        }}
+                                                        type={"AntDesign"}
+                                                        name={"meh"}
+                                                    />
                                                 </View>
                                             </TouchableOpacity>
                                         ) : null}
                                         {this.state.time && this.state.sender ? (
-                                            <View style={{ alignItems: 'flex-end', ...reactionContanerStyle, width:30, marginBottom: null, marginLeft: -10, }}>
-                                                <Text style={{fontSize: 8,fontStyle: 'italic',}}>{this.state.time}</Text>
+                                            <View style={{ alignItems: 'flex-end', ...reactionContanerStyle, width: 30, marginBottom: null, marginLeft: -10, }}>
+                                                <Text style={{ fontSize: 8, fontStyle: 'italic', }}>{this.state.time}</Text>
                                             </View>
                                         ) : null}
                                     </View>

@@ -104,6 +104,7 @@ export default class EventTasksCard extends BeComponent {
     this.props.animate()
     return this.state.mounted !== nextState.mounted ||
       !isEqual(this.previousItem, nextProps.item) ||
+      this.props.isPointed !== nextProps.isPointed ||
       this.previousItem.period !== nextProps.item.period ||
       this.state.newing !== nextState.newing
   }
@@ -212,7 +213,8 @@ export default class EventTasksCard extends BeComponent {
           this.returnActualDatesIntervals().period)
       }} disabled={false} swipeRight={() => {
         this.props.mention({ ...this.props.item, current_date: this.returnActualDatesIntervals().period, })
-      }}><View onLayout={(e) => this.props.onLayout(e.nativeEvent.layout)} style={this.container}>
+      }}><View onLayout={(e) => this.props.onLayout(e.nativeEvent.layout)} style={[this.container,{opacity:this.props.isPointed?.2:1,
+        backgroundColor: this.props.isPointed?ColorList.reminds:ColorList.bodyBackground,}]}>
           <View>
             <View style={{
               justifyContent: 'space-between',

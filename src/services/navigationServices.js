@@ -43,6 +43,14 @@ class NavigatorClass {
             date
         })
     }
+    gotoRemindsWithIndex(event,id) {
+        GState.toggleCurrentIndex(id, 5000)
+        this.pushActivity(event, "Reminds", { id })
+    }
+    gotoStarWithIndex(event,id) {
+        GState.toggleCurrentIndex(id, 2000)
+        BeNavigator.pushActivity(event, "EventDetails", { id })
+    }
     openPhoto(url,hideActions,date){
         this.pushRoute('PhotoViewer', { 
             photo: url,

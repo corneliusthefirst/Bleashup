@@ -888,7 +888,7 @@ import BeNavigator from '../../../services/navigationServices';
                       fontSize: colorList.headerFontSize,
                     }}
                   >
-                    {"Reminds"}
+                    {Texts.reminds_at + " "+ this.props.event.about.title}
                   </Text>
                 </View>
 
@@ -927,6 +927,7 @@ import BeNavigator from '../../../services/navigationServices';
                 this.delay = index >= 5 ? 0 : this.delay + 1;
                 return (item.id == request.Remind().id ? null:
                     <TasksCard
+                    isPointed={item.id === GState.currentID}
                     onLayout={(layout) => GState.itemDebounce(item,() => {
                       stores.Reminds.persistDimenssion(index,item.event_id,layout)
                     },500)}

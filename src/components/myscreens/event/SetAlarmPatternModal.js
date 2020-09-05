@@ -55,6 +55,7 @@ export default class SetAlarmPatternModal extends BleashupModal {
     modalWidth = 280
     onClosedModal() {
         this.props.closed();
+        this.refs.flatlist && this.refs.flatlist.resetItemNumbers()
     }
     onOpenModal(){
         let alarms = this.props.pattern ?
@@ -64,6 +65,7 @@ export default class SetAlarmPatternModal extends BleashupModal {
              selected: alarms
         //date: moment().format()
         })
+        this.refs.flatlist && this.refs.flatlist.scrollToEndReal()
     }
     borderRadius = 10
     _keyExtractor = (item, index) => { return item ? item.id : null; };
@@ -86,7 +88,8 @@ export default class SetAlarmPatternModal extends BleashupModal {
                 <View style={{ margin: '3%', height: "80%", }}>
                     <View style={{ flex: 1 }}>
                         <BleashupFlatList
-                            listKey={"contacts"}
+                            ref="flatlist"
+                            fit
                             keyExtractor={this._keyExtractor}
                             dataSource={(this.props.pattern ? this.props.pattern : this.patterns).sort((a,b) => a.offset < b.offset ? 1 : -1)}
                             firstIndex={0}

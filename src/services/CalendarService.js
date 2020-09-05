@@ -5,6 +5,7 @@ import { findIndex } from 'lodash'
 import stores from '../stores';
 import GState from '../stores/globalState';
 import { daysOfWeeksDefault, AlarmPatterns, callculateAlarmOffset } from './recurrenceConfigs';
+import ColorList from '../components/colorList';
 
 const BleashupCalendarID = "Bleashup-2018-bleashurs"
 const UTCFormat = "YYYY-MM-DDTHH:mm:ss.SSS[Z]"
@@ -47,7 +48,7 @@ class CalendarService {
 
             //isPrimary: false,
             //allowsModifications: false,
-            color: "#1FABAB",
+            color: ColorList.indicatorColor,
         }
         RNCalendarEvents.saveCalendar(Bcalendar).then((id) => {
             console.warn(id)
@@ -142,7 +143,7 @@ class CalendarService {
             }),
             location: Bevent.location,
             notes: Bevent.description,
-            description: GState.DeepLinkURL + "event/" + Bevent.event_id
+            description: GState.DeepLinkURL + "event/" + Bevent.event_id + "/reminds/" + Bevent.id
         } : {
                 id: Bevent.calendar_id ? Bevent.calendar_id : undefined,
                 //calendarID: this.calendarID,

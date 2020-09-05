@@ -269,7 +269,10 @@ action = () => [
             </TouchableOpacity>
 
             <View style={{ width: '69%', paddingLeft: '9%', justifyContent: "center" }}>
-              <Text style={{ color: colorList.headerText, fontWeight: 'bold', alignSelf: 'flex-start', fontSize: colorList.headerFontSize }}>{"Star Messages"}</Text>
+              <Text style={{ color: colorList.headerText, fontWeight: 'bold', 
+              alignSelf: 'flex-start', 
+              fontSize: colorList.headerFontSize }}>
+              {Texts.star_messages_at+" " + this.props.Event.about.title}</Text>
             </View>
           </View>
         </View>
@@ -301,6 +304,7 @@ action = () => [
                   this.delay = index >= 5 ? 0 : this.delay + 1
                   return (item.id === request.Highlight().id ? null:
                     <HighlightCard
+                      isPointed={item.id === GState.currentID}
                       onLayout={(layout) => {
                         GState.itemDebounce(item,() => {
                           stores.Highlights.persistDimenssion(index,this.props.event_id,layout)

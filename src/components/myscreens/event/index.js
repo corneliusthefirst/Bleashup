@@ -146,12 +146,15 @@ export default class Event extends BeComponent {
   }
   currentWidth = 0.5;
   isOpen = false;
+  
+  
   handleReplyExtern =
     (reply) => {
       if (reply.type_extern.toLowerCase().includes("reminds")) {
-        reply.id ? BeNavigator.pushActivity(this.event, "Reminds", { id: reply.id }) : null;
+
+        reply.id ? BeNavigator.gotoRemindsWithIndex(this.event,reply.id) : null;
       } else if (reply.type_extern.toLowerCase().includes("posts")) {
-        reply.id ? BeNavigator.pushActivity(this.event, "EventDetails", { id: reply.id }) : null;
+        reply.id ? BeNavigator.gotoStarWithIndex(this.event,reply.id) : null;
       } else {
         reply.id ? this.showChanges(reply) : null;
       }

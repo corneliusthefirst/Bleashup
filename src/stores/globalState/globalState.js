@@ -10,6 +10,7 @@ export default class globalState {
   @observable isScrolling = true;
   @observable loading = false;
   showingProfile = false
+  @observable currentID = null
   @observable searchableMembers = []
   editingCommiteeName = false
   @observable error = false;
@@ -232,6 +233,13 @@ export default class globalState {
         callback()
       }, delay||500)
     }
+  }
+  toogleWait = 5000
+  toggleCurrentIndex(id,delay){
+    this.currentID = id
+    setTimeout(() => {
+      this.currentID = ""
+    },delay||2000)
   }
 
 }

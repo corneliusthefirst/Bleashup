@@ -51,7 +51,7 @@ export default class VideoViewer extends BleashupModal {
     entry = "top"
     position = "top"
     onClosedModal() {
-        this.props.hideVideo()
+        //this.props.hideVideo()
         //StatusBar.setHidden(false, false)
         this.setStatePure({
             message: null,
