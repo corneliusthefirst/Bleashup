@@ -22,6 +22,7 @@ import { sayTyping } from '../../eventChat/services';
 import { typing } from "../../../../meta/events";
 import { observer } from "mobx-react";
 import BePureComponent from '../../../BePureComponent';
+import Texts from '../../../../meta/text';
 
 @observer class ProfileSimple extends BePureComponent {
   constructor(props) {
@@ -57,7 +58,7 @@ import BePureComponent from '../../../BePureComponent';
   showTyper(){
     return this.state.typing && <Text style={[GState.defaultTextStyle,
       {color:ColorList.indicatorColor,fontSize: 12,
-      }]}>{`typing ...`}</Text>
+      }]}>{Texts.typing}</Text>
   }
   closeProfileModal() {
     this.setStatePure({ isModalOpened: false });

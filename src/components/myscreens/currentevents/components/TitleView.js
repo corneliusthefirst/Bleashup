@@ -9,6 +9,7 @@ import BePureComponent from '../../../BePureComponent';
 import emitter from "../../../../services/eventEmiter";
 import { sayTyping } from '../../eventChat/services';
 import GState from '../../../../stores/globalState/index';
+import Texts from '../../../../meta/text';
 export default class TitleView extends BePureComponent {
   constructor(props) {
     super(props);
@@ -80,7 +81,7 @@ export default class TitleView extends BePureComponent {
             )}
           </View>
           {this.state.typing && <Text style={[GState.defaultTextStyle,{fontSize: 12,
-            color:ColorList.indicatorColor}]}>{`${this.state.typer} is typing ...`}</Text>}
+            color:ColorList.indicatorColor}]}>{`${this.state.typer} is ${Texts.typing}`}</Text>}
         </TouchableOpacity>
       </View>
     );

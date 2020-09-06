@@ -45,14 +45,14 @@ export default class Members extends Component {
   }
   apply() {
     this.props.bandMembers(this.state.selected);
-    emitter.once("parti_removed", () => {
+    /*emitter.once("parti_removed", () => {
       this.setState({
         contacts: reject(
           this.state.contacts,
           (ele) => findIndex(this.state.selected, { phone: ele.phone }) >= 0
         ),
       });
-    });
+    });*/
   }
   addMember(member) {
     this.setState({

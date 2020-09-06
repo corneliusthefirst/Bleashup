@@ -64,7 +64,7 @@ import rounder from '../../../../services/rounder';
     return this.state.typing && <Text style={[GState.defaultTextStyle,
     {
       color: ColorList.indicatorColor, fontSize: 12,fontStyle: 'italic',
-    }]}>{`typing ...`}</Text>
+    }]}>{Texts.typing}</Text>
   }
   swipeToClose = true
   modalHeight = "70%"

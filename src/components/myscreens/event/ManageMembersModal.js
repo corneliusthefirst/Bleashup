@@ -31,14 +31,14 @@ export default class ManageMembersModal extends BleashupModal {
     }
     apply() {
         this.props.bandMembers(this.state.selected);
-        emitter.once("parti_removed", () => {
+        /*emitter.once("parti_removed", () => {
             this.setStatePure({
                 contacts: reject(
                     this.state.contacts,
                     (ele) => findIndex(this.state.selected, { phone: ele.phone }) >= 0
                 ),
             });
-        });
+        });*/
     }
     addMember(member) {
         this.setStatePure({

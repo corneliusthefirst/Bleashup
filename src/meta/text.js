@@ -485,6 +485,70 @@ class TEXTS {
         en: "Programs @ ",
         fr: "Programmes @ "
     }[GState.lang]
+    typing = {
+        en: "typing ...",
+        fr:"ecrit ..."
+    }[GState.lang]
+    successfull_restoration = {
+        en: "restoration was successful",
+        fr: "restoration effectuer avec success"
+    }[GState.lang]
+    restored_already = {
+        en: "restored already",
+        fr: "deja restoree"
+    }[GState.lang]
+    add_participant = {
+        en: "Add Participant To this Commitee",
+        fr: "Ajouter des participant a ce comitee"
+    }[GState.lang]
+    select_members_to_remove = {
+        en: "Select Members To Remove",
+        fr: "Selectioner les members a enlever"
+    }[GState.lang]
+    no_member_selected = {
+        en: "no members selected",
+        fr: "pas de membres selectionee"
+    }[GState.lang]
+    are_you_sure_you_want_to_leave = {
+        en: "Are you sure you want to leave this activity ?",
+        fr: "Etes vous sur de vouloir quiter cette activitee"
+    }[GState.lang]
+    leave_activity = {
+        en: "Leave activity",
+        fr: "Quiter L'Activitee"
+    }[GState.lang]
+    not_member_anymore = {
+        en: "You are not a  member anymore !",
+        fr: "Vous n'etes plus un member de cette activitee"
+    }[GState.lang]
+    remove_photo = {
+        en: "Remove Photo",
+        fr: "Enlever la photo"
+    }[GState.lang]
+    are_you_sure_to_remove_photo = {
+        en: "Are You Sure You Want To Remove This Photo",
+        fr: "Etes vous sur de vouloir enlever cette photo"
+    }[GState.lang]
+    remove = {
+        en: "Remove",
+        fr: "Retirer"
+    }[GState.lang]
+    are_you_sure_to_close = {
+        en: "Are You Sure You Want To Close This Activiy ?",
+        fr: "Etes vous sur de vouloir fermer cette activitee"
+    }[GState.lang]
+    close_activity = {
+        en: "Close Activity",
+        fr: "Fermer L'Activitee"
+    }[GState.lang]
+    close = {
+        en: "Close",
+        fr: "Fermer"
+    }[GState.lang]
+    select_members = {
+        en: "Select Members",
+        fr: "Selectioner les membres"
+    }[GState.lang]
 }
 const Texts = new TEXTS()
 export default Texts

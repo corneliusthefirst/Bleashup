@@ -336,7 +336,6 @@ export default class Event extends BeComponent {
   }
   showProfile(pro) {
     stores.TemporalUsersStore.getUser(pro).then((profile) => {
-      console.warn(profile)
       this.setStatePure({
         isProfileModalOpened: true,
         profile: profile,
@@ -473,13 +472,13 @@ export default class Event extends BeComponent {
       Requester.bandMembers(members, this.event.id)
         .then((mem) => {
           this.initializeMaster();
-          emitter.emit("parti_removed");
+          //emitter.emit("parti_removed");
         })
         .catch((e) => {
           this.setStatePure({
             working: false,
           });
-          Toaster({ text: "Unable to process request !" });
+          Toaster({ text: Texts.unable_to_perform_request });
         });
     }
   }
@@ -498,13 +497,13 @@ export default class Event extends BeComponent {
             isManagementModalOpened: false,
             working: false,
           });
-          Toaster({ text: "unable to perform this action" });
+          Toaster({ text: Texts.unable_to_perform_request });
         });
     } else {
       this.setStatePure({
         isManagementModalOpened: false,
       });
-      Toaster({ text: "App Busy !" });
+      Toaster({ text: Texts.app_busy });
     }
   }
   refreshePage() {
@@ -556,7 +555,6 @@ export default class Event extends BeComponent {
         change.changed.toLowerCase().includes("remind")) ||
       change.title.toLowerCase().includes("remind")
     ) {
-      console.warn("includes reminds");
       emitter.emit("remind-updated");
     }
     if (
@@ -633,14 +631,14 @@ export default class Event extends BeComponent {
         Requester.restoreHighlight(data.new_value.new_value)
           .then(() => {
             this.stopLoader();
-            Toaster({ text: "restoration was successful", type: "success" });
+            Toaster({ text: Texts.successfull_restoration, type: "success" });
           })
           .catch(() => {
             this.stopLoader();
           });
       } else {
         this.stopLoader();
-        Toaster({ text: "restored already" });
+        Toaster({ text: Texts.restored_already });
       }
     });
   }
@@ -655,7 +653,7 @@ export default class Event extends BeComponent {
           break;
       }
     } else {
-      Toaster({ text: "App is Busy " });
+      Toaster({ text: Texts.app_busy });
     }
   }
   master = false;
@@ -725,7 +723,7 @@ export default class Event extends BeComponent {
           });
         });
     } else {
-      Toaster({ text: "App is Busy" });
+      Toaster({ text: Texts.app_busy });
     }
   }
   updateActivityDescription(newDesciption) {
@@ -743,7 +741,7 @@ export default class Event extends BeComponent {
           });
         });
     } else {
-      Toaster({ text: "App is busy" });
+      Toaster({ text: Texts.app_busy });
     }
   }
   isChat(currentPage) {
@@ -774,7 +772,7 @@ export default class Event extends BeComponent {
     this.setStatePure({
       isSelectableListOpened: true,
       isCommiteeModalOpened: false,
-      title: "Select Members",
+      title: Texts.select_members,
       members: this.event.participant,
       notcheckall: !data.publicState,
       tempCommiteeName: data.commiteeName,
@@ -833,7 +831,7 @@ export default class Event extends BeComponent {
         });
       //console.warn(data)
     } else {
-      Toaster({ text: "App is busy" });
+      Toaster({ text: Texts.app_busy });
     }
   }
   editName(newName, id) {
@@ -857,7 +855,7 @@ export default class Event extends BeComponent {
           emitter.emit("edit-failed", error);
         });
     } else {
-      Toaster({ text: "App is busy" });
+      Toaster({ text: Texts.app_busy });
     }
   }
   publishCommitee(id, state) {
@@ -880,13 +878,13 @@ export default class Event extends BeComponent {
           });
         });
     } else {
-      Toaster({ text: "App is busy" });
+      Toaster({ text: Texts.app_busy });
     }
   }
   addCommiteeMembers(id, currentMembers) {
     this.setStatePure({
       isSelectableListOpened: true,
-      title: "Add Participant To this Commitee",
+      title: Texts.add_participant,
       members: this.event.participant.filter(
         (ele) => findIndex(currentMembers, { phone: ele.phone }) < 0
       ),
@@ -897,7 +895,7 @@ export default class Event extends BeComponent {
   removeMembers(id, members) {
     this.setStatePure({
       isSelectableListOpened: true,
-      title: "Select Members To Remove",
+      title: Texts.select_members_to_remove,
       members: members,
       notcheckall: true,
       commitee_id: id,
@@ -945,7 +943,7 @@ export default class Event extends BeComponent {
           adding: false,
           working: false,
         });
-        Toaster({ text: "App is busy" });
+        Toaster({ text: Texts.app_busy });
       }
     } else {
       this.setStatePure({
@@ -955,7 +953,7 @@ export default class Event extends BeComponent {
         adding: false,
         working: false,
       });
-      Toaster({ text: "no members selected" });
+      Toaster({ text: Texts.no_member_selected });
     }
   }
   swapChats(commitee) {
@@ -999,7 +997,7 @@ export default class Event extends BeComponent {
             this.setStatePure({
               working: false,
             });
-            Toaster({ message: "unable to connect to the server" });
+            Toaster({ text: Texts.unable_to_perform_request });
           });
       } else {
         Requester.invite(members, this.event.id)
@@ -1010,11 +1008,11 @@ export default class Event extends BeComponent {
             this.setStatePure({
               working: false,
             });
-            Toaster({ message: "unable to connect to the server" });
+            Toaster({ message: Texts.unable_to_perform_request });
           });
       }
     } else {
-      Toaster({ message: "App is busy !" });
+      Toaster({ message: Texts.app_busy });
     }
   }
   refreshCommitees() {
@@ -1068,7 +1066,7 @@ export default class Event extends BeComponent {
           notcheckall: false,
           working: false,
         });
-        Toaster({ text: "App is busy" });
+        Toaster({ text: Texts.app_busy });
       }
     } else {
       this.setStatePure({
@@ -1079,7 +1077,7 @@ export default class Event extends BeComponent {
         notcheckall: false,
         working: false,
       });
-      Toaster({ text: "no members selected" });
+      Toaster({ text: Texts.no_member_selected });
     }
   }
   joinCommitee(id) {
@@ -1105,7 +1103,7 @@ export default class Event extends BeComponent {
           });
         });
     } else {
-      Toaster({ text: "no members selected" });
+      Toaster({ text: Texts.no_member_selected });
     }
   }
   resetSelectedCommitee() {
@@ -1142,7 +1140,7 @@ export default class Event extends BeComponent {
           });
         });
     } else {
-      Toaster({ text: "App is busy" });
+      Toaster({ text: Texts.app_busy });
     }
   }
   openCommitee(id) {
@@ -1166,7 +1164,7 @@ export default class Event extends BeComponent {
           });
         });
     } else {
-      Toaster({ text: "App is busy" });
+      Toaster({ text: Texts.app_busy });
     }
   }
   closeCommitee(id) {
@@ -1190,7 +1188,7 @@ export default class Event extends BeComponent {
           console.warn(error);
         });
     } else {
-      Toaster({ text: "no members selected" });
+      Toaster({ text: Texts.no_member_selected });
     }
   }
   inviteContacts(adding) {
@@ -1286,12 +1284,12 @@ export default class Event extends BeComponent {
           this.initializeMaster();
         })
         .catch((erorr) => {
-          Toaster({ text: "could not perform the request" });
+          Toaster({ text: Texts.unable_to_perform_request });
           this.initializeMaster();
         });
     } else {
       this.initializeMaster();
-      Toaster({ text: "App Busy" });
+      Toaster({ text: Texts.app_busy });
     }
   }
   markAsConfigured() {
@@ -1310,10 +1308,10 @@ export default class Event extends BeComponent {
           this.initializeMaster();
         })
         .catch(() => {
-          Toaster({ text: "Unable To process the request" });
+          Toaster({ text: Texts.unable_to_perform_request });
         });
     } else {
-      Toaster({ text: "App is Busy" });
+      Toaster({ text: Texts.app_busy });
     }
   }
   removeActivityPhoto() {
@@ -1343,7 +1341,7 @@ export default class Event extends BeComponent {
         this.setStatePure({
           working: false,
         });
-        Toaster({ text: "Sorry, the action could not be performed" });
+        Toaster({ text: Texts.unable_to_perform_request });
         this.initializeMaster();
       });
   }
@@ -1370,18 +1368,18 @@ export default class Event extends BeComponent {
     this.member
       ? this.setStatePure({
         isAreYouSureModalOpened: true,
-        warnDescription: "Are you sure you want to leave this activity ?",
-        warnTitle: "Leave activity",
+        warnDescription: Texts.are_you_sure_you_want_to_leave,
+        warnTitle: Texts.leave_activity,
         callback: this.leaveActivity.bind(this),
       })
-      : Toaster({ text: "You are not a  member anymore !" });
+      : Toaster({ text: Texts.not_member_anymore });
   }
   startInvitation(adding) {
     this.computedMaster || this.event.public
       ? this.inviteContacts(adding)
       : Toaster({
         text:
-          "You don't have enough priviledges to invite your contacts to this activity ",
+          Texts.unable_to_perform_request,
         duration: 4000,
       });
   }
@@ -1587,10 +1585,10 @@ export default class Event extends BeComponent {
         removePhoto={() => {
           this.setStatePure({
             isAreYouSureModalOpened: true,
-            warnTitle: "Remove Photo",
-            warnDescription: "Are You Sure You Want To Remove This Photo",
+            warnTitle: Texts.remove_photo,
+            warnDescription: Texts.are_you_sure_to_remove_photo,
             callback: this.removeActivityPhoto.bind(this),
-            okButtonText: "Remove",
+            okButtonText: Texts.remove,
           });
         }}
         photo={this.event.background}
@@ -1676,10 +1674,9 @@ export default class Event extends BeComponent {
             : this.setStatePure({
               isAreYouSureModalOpened: true,
               callback: () => this.closeActivity(),
-              warnDescription:
-                "Are You Sure You Want To Close This Activiy ?",
-              warnTitle: "Close Activity",
-              okButtonText: "Close",
+              warnDescription: Texts.are_you_sure_to_close,
+              warnTitle: Texts.close_activity,
+              okButtonText: Texts.close,
             });
         }}
         creator={this.event.creator_phone === this.user.phone}
@@ -1693,7 +1690,6 @@ export default class Event extends BeComponent {
           this.setStatePure({
             isSettingsModalOpened: false,
           });
-          console.warn("closing settings modal");
           this.markAsConfigured();
         }}
       ></SettingsTabModal>
@@ -1791,7 +1787,7 @@ export default class Event extends BeComponent {
               editName={(newName, id, currentName) =>
                 this.computedMaster
                   ? this.editName(newName, id)
-                  : Toaster({ text: "Connot Update This Commitee" })
+                  : Toaster({ text: Texts.unable_to_perform_request })
               }
               swapChats={(room) => this.swapChats(room)}
               phone={stores.LoginStore.user.phone}
@@ -1803,8 +1799,7 @@ export default class Event extends BeComponent {
                   });
                 } else {
                   Toaster({
-                    text:
-                      "You don't have enough priviledges to add a commitee ",
+                    text:Texts.unable_to_perform_request,
                     duration: 4000,
                   });
                 }

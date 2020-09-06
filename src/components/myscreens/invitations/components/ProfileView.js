@@ -17,6 +17,7 @@ import { sayTyping } from '../../eventChat/services';
 import { typing } from "../../../../meta/events";
 import { observer } from "mobx-react";
 import BePureComponent from '../../../BePureComponent';
+import Texts from '../../../../meta/text';
 
 @observer class ProfileView extends BePureComponent {
     constructor(props) {
@@ -78,8 +79,9 @@ import BePureComponent from '../../../BePureComponent';
         return this.state.typing && <Text style={[GState.defaultTextStyle,
         {
             color: ColorList.indicatorColor, fontSize: 12,
-        }]}>{`typing ...`}</Text>
+        }]}>{Texts.typing}</Text>
     }
+    color = ColorList.colorArray[Math.floor(Math.random() * 14)]
     render() {
         return !this.state.hide ? (
             <View style={{ flexDirection: "row" }}>
@@ -111,7 +113,7 @@ import BePureComponent from '../../../BePureComponent';
                             ) : (
                                 <FontAwesome type={"FontAwesome"} style={{
                                     fontSize: ColorList.profilePlaceHolderHeight,
-                                    color: ColorList.colorArray[Math.floor(Math.random() * 14)]
+                                    color: this.color
                                 }} name={"user-circle-o"}/>
                             )}
                     </View>}
