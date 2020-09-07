@@ -179,6 +179,7 @@ There are also Erlang plugins for other code editors Vim (vim-erlang) , Atom , E
       handleReplyExtern={(reply) => {
         this.props.handleReplyExtern(reply)
       }}
+      id={this.props.id}
       openMenu={this.props.openMenu}
       isComment={false}
       oponent={this.props.oponent}

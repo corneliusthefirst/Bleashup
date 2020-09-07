@@ -245,6 +245,7 @@ export default class Event extends BeComponent {
         return (
           <EventChat
             oponent={this.oponent.phone}
+            id={this.id}
             isRelation={this.isRelation}
             startThis={this.startThis.bind(this)}
             remindThis={this.remindThis.bind(this)}
@@ -593,7 +594,8 @@ export default class Event extends BeComponent {
       this.member = member ? true : false;
       this.setStatePure({
         working: false,
-        roomMembers: GState.currentCommitee === this.event.id ? this.event.participant : this.state.roomMembers
+        roomMembers: GState.currentCommitee === this.event.id ? 
+        this.event.participant : this.state.roomMembers
       });
     });
   }

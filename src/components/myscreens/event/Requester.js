@@ -12,10 +12,12 @@ import toTitleCase from '../../../services/toTitle';
 import Toaster from '../../../services/Toaster';
 import IDMaker from '../../../services/IdMaker';
 import Texts from '../../../meta/text';
+import notification_channels from '../eventChat/notifications_channels';
+import { observer } from 'mobx-react';
 const no_data_with_such_key = "no data with such id not found"
 class Request {
     constructor() {
-
+       
     }
 
     addCommitee(commitee, activityName) {
@@ -956,13 +958,16 @@ class Request {
         })
     }
     createHighlight(newHighlight, activityName) {
+        this.yourName = toTitleCase(stores.LoginStore.user.nickname)
+        this.shortName = this.yourName.split(" ")[0]
         return new Promise((resolve, reject) => {
             let notif = request.Notification()
-            notif.notification.body = toTitleCase(stores.LoginStore.user.nickname) + 'Add a new Post'
-            notif.notification.title = 'New Post @ ' + activityName
+            notif.notification.body = activityName? this.shortName + 'Add a Star Message': this.yourName + 'Added a star message'
+            notif.notification.title = 'New Star Message @ ' + activityName
             notif.notification.image = newHighlight.url && newHighlight.url.photo
+            notif.notification.android_channel_id = notification_channels.stars
             notif.data.activity_id = newHighlight.event_id
-            notif.data.id = newHighlight.id
+            notif.data.post_id = newHighlight.id
             newHighlight.notif = notif
             tcpRequest.addHighlight(newHighlight, newHighlight.id).then(JSONData => {
                 serverEventListener.sendRequest(JSONData, newHighlight.id).then(response => {

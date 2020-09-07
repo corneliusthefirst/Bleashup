@@ -268,13 +268,22 @@ class ChatRoom extends AnimatedComponent {
         return acreated < bcreated ? -1 : bcreated < acreated ? 1 : 0;
     }
     componentDidMount() {
-        this.saveNotificationToken();
         GState.currentRoom = this.props.firebaseRoom;
-        if (this.props.isComment) {
-            this.loadComments();
-        } else {
-            this.initializeNewMessageForRoom().then(() => {
-            });
+        this.saveNotificationToken();
+        this.initializeNewMessageForRoom()
+        this.scrollToMessage()
+    }
+    scrollToMessage() {
+        if (this.props.id) {
+            return new Promise(() => {
+                let index = findIndex(stores.Messages.messages[this.props.firebaseRoom], 
+                    { id: this.props.id })
+                if (index >= 0) {
+                    setTimeout(() => {
+                        this.scrollToIndex(index)
+                    },1000)
+                }
+            })
         }
     }
     adjutRoomDisplay(dontToggle) {
@@ -453,7 +462,8 @@ class ChatRoom extends AnimatedComponent {
             Requester.sendMessage(
                 message,
                 message.from_committee,
-                message.from_activity, true).
+                message.from_activity, true,
+                this.props.isRelation ? false : this.props.activity_name).
                 then((response) => {
                     resolve;
                 });
@@ -468,7 +478,7 @@ class ChatRoom extends AnimatedComponent {
                     messager,
                     this.roomID,
                     this.props.activity_id
-                ).then((response) => {
+                ,false,this.props.isRelation ? false: this.props.activity_name).then((response) => {
                     setTimeout(() => {
                         resolve(messager);
                     }, 100)
@@ -502,7 +512,7 @@ class ChatRoom extends AnimatedComponent {
         this.refs.keyboard.blur()
         setTimeout(() => {
             this.navigateToFullView(item);
-        },200)
+        }, 200)
     }
     captionMessages = [];
     sendingCaptionMessages = false;
@@ -737,11 +747,11 @@ class ChatRoom extends AnimatedComponent {
                     {
                         // **********************Header************************ //
                         canShowHeder ? (
-                            <View style={{ height:  '7.5%' }}>{this.header()}</View>
+                            <View style={{ height: '7.5%' }}>{this.header()}</View>
                         ) : null
                     }
 
-                    <View style={{ height:canShowHeder ? '92.5%' : '100%' }}>
+                    <View style={{ height: canShowHeder ? '92.5%' : '100%' }}>
                         <View style={{ height: '100%', justifyContent: 'flex-end' }}>
                             {!this.state.loaded ? (
                                 <Waiter />
@@ -981,7 +991,9 @@ class ChatRoom extends AnimatedComponent {
             messageID,
             this.roomID,
             reaction,
-            this.props.activity_id
+            this.props.activity_id,
+            this.props.isRelation?false: 
+            this.props.activity_name
         ).then(() => { });
     }
     openVoteCreation() {

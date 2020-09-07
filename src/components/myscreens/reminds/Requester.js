@@ -11,7 +11,11 @@ import toTitleCase from '../../../services/toTitle';
 import Toaster from '../../../services/Toaster';
 import IDMaker from '../../../services/IdMaker';
 import Texts from '../../../meta/text';
+import notification_channels from '../eventChat/notifications_channels';
 class Requester {
+    constructor(){
+        this.notif_channel = notification_channels.reminds
+    }
     saveToCanlendar(eventID, remind, alarms, newRemindName) {
         return new Promise((resolve,reject) => {
             if (findIndex(remind.members, { phone: stores.LoginStore.user.phone }) >= 0) {
@@ -26,10 +30,11 @@ class Requester {
     CreateRemind(Remind, activityName) {
         return new Promise((resolve, reject) => {
             let notif = request.Notification()
-            notif.notification.body = toTitleCase(stores.LoginStore.user.nickname) + " @ " + activityName + ' Added a new Remind'
+            notif.notification.body =  + " @ " + activityName + ' Added a new Remind'
             notif.notification.title = Remind.title
+            notif.notification.android_channel_id = this.notif_channel
             notif.data.activity_id = Remind.event_id
-            notif.data.id = Remind.id
+            notif.data.remind_id = Remind.id
             Remind.notif = notif
             tcpRequest.addRemind(Remind,
                 Remind.event_id + '_currence').then(JSONData => {
@@ -351,7 +356,6 @@ class Requester {
         })
     }
     updateRemindAlarms(newExtra, oldExtra, remindID, eventID) {
-        console.warn("applying update for reminds")
         return new Promise((resolve, reject) => {
             if (newExtra &&
                 oldExtra && (differenceWith(newExtra.alarms, oldExtra.alarms, isEqual).length !==
@@ -428,13 +432,23 @@ class Requester {
             }
         })
     }
-    addMembers(remind, alarms) {
+    addMembers(remind, alarms,activity_name) {
+        this.yourName = toTitleCase(stores.LoginStore.user.nickname)
+        this.shortName = this.yourName.split(" ")[0]
         return new Promise((resolve, reject) => {
             let newRemindName = request.RemindUdate()
+            let notif = request.Notification()
+            notif.notification.body = activity_name?`${this.shortName} @ ${activity_name} added members to the Program`:
+            `${this.yourName} added member(s)`
+            notif.notification.android_channel_id = this.notif_channel
+            notif.notification.title = `New member(s) in ${remind.title} Progam`
+            notif.data.activity_id = remind.event_id 
+            notif.data.remind_id = remind.id
             newRemindName.action = 'add_members'
             newRemindName.data = remind.members
             newRemindName.event_id = remind.event_id
             newRemindName.remind_id = remind.id
+            newRemindName.notif = notif
             tcpRequest.updateRemind(newRemindName, remind.id + '_add_members').then(JSONData => {
                 EventListener.sendRequest(JSONData, remind.id + '_add_members').then(response => {
                     stores.Reminds.addMembers(remind.event_id, {
@@ -564,13 +578,23 @@ class Requester {
         })
 
     }
-    markAsDone(member, remind, alams, calendar_id) {
+    markAsDone(member, remind, alams, calendar_id,activity_name) {
+        this.yourName = toTitleCase(stores.LoginStore.user.nickname)
+        this.shortName = this.yourName.split(" ")[0]
         return new Promise((resolve, reject) => {
             let newRemindName = request.RemindUdate()
+            let notif = request.Notification()
+            notif.notification.title = `${remind.title} Program Completed`,
+            notif.notification.body = activity_name? `${this.shortName} @ ${activity_name} has completed the program`:
+            `${this.yourName} has completed the program`
+            notif.notification.android_channel_id = this.notif_channel
+            notif.data.activity_id = remind.event_id 
+            notif.data.remind_id = remind.id
             newRemindName.action = 'mark_as_done'
             newRemindName.data = member
             newRemindName.event_id = remind.event_id
             newRemindName.remind_id = remind.id
+            newRemindName.notif = notif
             tcpRequest.updateRemind(newRemindName, remind.id + '_mark_as_done').then(JSONData => {
                 EventListener.sendRequest(JSONData, remind.id + '_mark_as_done').then(response => {
                     stores.Reminds.makeAsDone(remind.event_id, {

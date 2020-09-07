@@ -35,6 +35,7 @@ import EvilIcons from 'react-native-vector-icons/EvilIcons';
 import MaterialIconCommunity from 'react-native-vector-icons/MaterialCommunityIcons';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import BleashupShapes from '../../mainComponents/BleashupShapes';
+import message_types from './message_types';
 
 export default class Message extends BeComponent {
     constructor(props) {
@@ -98,7 +99,7 @@ export default class Message extends BeComponent {
     };
     chooseComponent(data, index, sender) {
         switch (data.type) {
-            case "text":
+            case message_types.text:
                 return (
                     <TextMessage
                         //handleLongPress={() => this.handLongPress()}
@@ -114,7 +115,7 @@ export default class Message extends BeComponent {
                         message={data}
                     ></TextMessage>
                 );
-            case "text_sender":
+            case message_types.text_sender:
                 return (
                     <TextMessageSnder
                         //onLongPress={this.handLongPress.bind(this)}
@@ -127,7 +128,7 @@ export default class Message extends BeComponent {
                         message={data}
                     ></TextMessageSnder>
                 );
-            case "photo":
+            case message_types.photo:
                 return (
                     <PhotoMessage
                         room={this.props.room}
@@ -145,7 +146,7 @@ export default class Message extends BeComponent {
                         message={data}
                     ></PhotoMessage>
                 );
-            case "audio":
+            case message_types.audio:
                 return (
                     <AudioMessage
                         //handleLongPress={() => this.handLongPress()}
@@ -159,7 +160,7 @@ export default class Message extends BeComponent {
                         message={data}
                     ></AudioMessage>
                 );
-            case "video":
+            case message_types.video:
                 return (
                     <VideoMessage
                         //handleLongPress={() => this.handLongPress()}
@@ -176,7 +177,7 @@ export default class Message extends BeComponent {
                         message={data}
                     ></VideoMessage>
                 );
-            case "attachement":
+            case message_types.file:
                 return (
                     <FileAttarchementMessaege
                         pressingIn={() => {
@@ -189,7 +190,7 @@ export default class Message extends BeComponent {
                         message={data}
                     ></FileAttarchementMessaege>
                 );
-            case "photo_upload":
+            case message_types.photo_sender:
                 return (
                     <PhotoUploader
                         room={this.props.room}
@@ -201,7 +202,7 @@ export default class Message extends BeComponent {
                         message={data}
                     ></PhotoUploader>
                 );
-            case "video_upload":
+            case message_types.video_sender:
                 return (
                     <VideoUploader
                         //onLongPress={this.handLongPress.bind(this)}
@@ -213,7 +214,7 @@ export default class Message extends BeComponent {
                         sender={false}
                     ></VideoUploader>
                 );
-            case "attachement_upload":
+            case message_types.filesender:
                 return (
                     <FileAttarchementUploader
                         room={this.props.room}
@@ -223,7 +224,7 @@ export default class Message extends BeComponent {
                         replaceMessage={(data) => this.props.replaceMessageFile(data)}
                     ></FileAttarchementUploader>
                 );
-            case "audio_uploader":
+            case message_types.audio_sender:
                 return (
                     <AudioUploader
                         //onLongPress={this.handLongPress.bind(this)}
@@ -345,7 +346,7 @@ export default class Message extends BeComponent {
     }
     iconStyles = {
         fontSize: 12,
-        color: "#1FABAB",
+        color: ColorList.indicatorColor,
         marginLeft: 5,
         paddingTop: 1,
         //marginTop: "-2%",
@@ -368,10 +369,10 @@ export default class Message extends BeComponent {
     }
     handlePress() {
         switch (this.props.message.type) {
-            case "video":
+            case message_types.video:
                 this.props.playVideo(this.props.message.source)
                 break;
-            case "photo":
+            case message_types.photo:
                 this.props.showPhoto(this.props.message.photo)
                 break;
             default:
@@ -490,11 +491,11 @@ export default class Message extends BeComponent {
             });
             this.props.setCurrentLayout &&
                 this.props.setCurrentLayout(e.nativeEvent.layout);
-        }}>{this.props.message.type == "date_separator" ? (
+        }}>{this.props.message.type == message_types.date_separator ? (
             <View style={{ marginTop: "2%", marginBottom: "2%" }}>
                 <DateView date={this.props.message.id}></DateView>
             </View>
-        ) : this.props.message.type == "new_separator" ? (
+        ) : this.props.message.type == message_types.new_separator ? (
             <View
                 style={{
                     marginTop: "2%",
@@ -604,10 +605,10 @@ export default class Message extends BeComponent {
                                                                 alignSelf: 'center',
                                                                 marginTop: ".4%",
                                                                 width: this.props.message &&
-                                                                    (this.props.message.type == "photo" ||
-                                                                        this.props.message.type == "video" ||
-                                                                        this.props.message.type == "video_upload" ||
-                                                                        this.props.message.type == "photo_upload") ? 248 : "99%",
+                                                                    (this.props.message.type == message_types.photo ||
+                                                                        this.props.message.type == message_types.video ||
+                                                                        this.props.message.type == message_types.video_sender ||
+                                                                        this.props.message.type == message_types.photo_sender) ? 248 : "99%",
                                                             }}
                                                         >
                                                             <ReplyText

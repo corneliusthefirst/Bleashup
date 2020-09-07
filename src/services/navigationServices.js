@@ -49,7 +49,11 @@ class NavigatorClass {
     }
     gotoStarWithIndex(event,id) {
         GState.toggleCurrentIndex(id, 2000)
-        BeNavigator.pushActivity(event, "EventDetails", { id })
+        this.pushActivity(event, "EventDetails", { id })
+    }
+    goToChatWithIndex(event,id){
+        GState.toggleCurrentIndex(id,5000)
+        this.pushActivity(event,"EventChat",{id})
     }
     openPhoto(url,hideActions,date){
         this.pushRoute('PhotoViewer', { 

@@ -38,7 +38,8 @@ export default class SearchContent extends BeComponent {
                     this.props.message,
                     relation.id,
                     relation.id,
-                    true
+                    true,
+                    false
                 )
                     .then((response) => {
                         this.setStatePure({
@@ -56,7 +57,7 @@ export default class SearchContent extends BeComponent {
     sendToActivity(item) {
         if (!this.sending) {
             this.sending = true;
-            Requester.sendMessage(this.props.message, item.id, item.id, true)
+            Requester.sendMessage(this.props.message, item.id, item.id, true,item.about.title)
                 .then((response) => {
                     this.setStatePure({
                         activity: reject(this.state.activity, { id: item.id }),

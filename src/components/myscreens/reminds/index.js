@@ -90,7 +90,8 @@ import BeNavigator from '../../../services/navigationServices';
         RemindRequest.addMembers({
           ...this.state.currentTask,
           members: newMembers,
-        })
+        },null,
+        this.props.isRelation? false : this.props.event.about.title,)
           .then(() => {
             this.props.stopLoader();
             this.refreshReminds();
@@ -282,7 +283,8 @@ import BeNavigator from '../../../services/navigationServices';
             },
           ],
           item,
-          null
+          null,
+          this.props.isRelation?false:this.props.event.about.title
         )
           .then((res) => {
             this.props.stopLoader();

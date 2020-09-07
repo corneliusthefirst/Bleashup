@@ -70,20 +70,15 @@ class Home extends Component {
     this.handleNotif(data);
   }
   handleNotif(data) {
-    switch (data.type) {
-      case "new_message_activity": {
-        stores.Events.loadCurrentEvent(data.activity_id).then((event) => {
-          BeNavigator.navigateToActivity("EventChat", event);
-        });
-        break;
-      }
-      case "relation": {
-        break;
-      }
-      //break;
-      default:
-        console.warn("defaulting.=------");
-        break;
+    let activity = stores.Events.events.find(ele =>  ele.id === data.activity_id)
+    if (data.message_id) {
+      BeNavigator.goToChatWithIndex(activity, data.message_id)
+    } else if (data.remind_id) {
+      BeNavigator.gotoRemindsWithIndex(activity, data.remind_id)
+    } else if (data.post_id) {
+      BeNavigator.gotoStarWithIndex(activity, data.post_id)
+    } else {
+      BeNavigator.pushActivity(activity)
     }
   }
   handleNotifications(data) {
@@ -100,8 +95,6 @@ class Home extends Component {
       .notifications()
       .onNotification((notification) => {
         console.warn(notification._data);
-        GState.currentCommitee !== notification._data.room_key &&
-          emitter.emit(notification._data.activity_id + "_refresh-commitee");
         emitter.emit("notify", {
           body: notification._body,
           title: notification._title,
@@ -115,11 +108,11 @@ class Home extends Component {
         console.warn(notification);
       });
   }
-  navigateToEventDetails(id,remind_id) {
+  navigateToEventDetails(id, remind_id) {
     let event = stores.Events.events.find((ele) => ele.id == id);
     if (event) {
-      remind_id?BeNavigator.gotoRemindsWithIndex(event,remind_id):
-      BeNavigator.navigateToActivity("EventChat", event);
+      remind_id ? BeNavigator.gotoRemindsWithIndex(event, remind_id) :
+        BeNavigator.navigateToActivity("EventChat", event);
     }
   }
   componentWillMount() {
@@ -156,25 +149,6 @@ class Home extends Component {
           onPress: () => this.handleNotifications(event.data),
         });
       }
-      stores.LoginStore.getUser().then((user) => {
-        firebase
-          .messaging()
-          .requestPermission()
-          .then((staus) => {
-            firebase
-              .messaging()
-              .getToken()
-              .then((token) => {
-                firebase
-                  .database()
-                  .ref(`notifications_tokens/${user.phone.replace("00", "+")}`)
-                  .set(token);
-              })
-              .catch((error) => {
-                console.warn(error);
-              });
-          });
-      });
     });
   }
   exiting = false;
@@ -188,7 +162,7 @@ class Home extends Component {
   }
   _handleAppStateChange = (nextAppState) => {
     if (nextAppState !== "active") {
-     
+
     }
     if (
       this.state.appState.match(/inactive|background/) &&
@@ -225,7 +199,7 @@ class Home extends Component {
       !user.status ? user.status = "" : null;
       BeNavigator.navigateTo("Profile",{userInfo:user});
     });*/
- }
+  }
 
   handleURL = ({ url }) => {
     console.warn("responding to links");

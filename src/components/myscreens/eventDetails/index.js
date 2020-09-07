@@ -335,6 +335,7 @@ action = () => [
         </ScrollView>
 
         <EventHighlights
+        isRelation={this.props.isRelation}
           closeTeporary={() => {
             this.setStatePure({
               EventHighlightState: false,
