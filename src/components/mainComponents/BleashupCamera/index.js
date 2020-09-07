@@ -62,15 +62,18 @@ export default class CameraScreen extends BleashupModal {
   modalHeight = "100%";
   modalWidth = "100%";
   height='100%'
-
+ 
   getParam = (route) => this.props.navigation && this.props.navigation.getParam(route)
   callback = this.getParam("callback")
+  openGalleryRoute = this.getParam('openGallery')
   directreturn = this.getParam("directReturn")
 
   onClosedModal() {
-    this.callback ? this.props.navigation.goBack() : this.props.onClosed();
+    this.callback ? this.goback() : this.props.onClosed();
 }
-
+goback(){
+  this.props.navigation.goBack()
+}
   takePicture = async () => {
     if (this.camera) {
       const options = { quality: 0.5, base64: false };
@@ -196,38 +199,43 @@ export default class CameraScreen extends BleashupModal {
 
 
  openGallery = (option) => {
-  Pickers.SnapPhoto(option).then((data)=>{
-    //console.warn("from picker is",data);
-    let type = data.content_type.slice(0,5);
-    if(type == "video"){
-      this.state.data.video = data.source;
-      this.setStatePure({data:this.state.data,dataToreturn:data});
+   if(this.openGalleryRoute){
+     this.goback()
+     this.openGalleryRoute()
+   }else{
+     Pickers.SnapPhoto(option).then((data) => {
+       //console.warn("from picker is",data);
+       let type = data.content_type.slice(0, 5);
+       if (type == "video") {
+         this.state.data.video = data.source;
+         this.setStatePure({ data: this.state.data, dataToreturn: data });
 
-      if(this.directreturn || this.props.directreturn){
-      this.callback? this.callback(this.state.dataToreturn) : this.props.onCaptureFinish(this.state.dataToreturn);
-       this.onClosedModal()
-      }
-      else{
-        this.setStatePure({picked:true});
-      }
+         if (this.directreturn || this.props.directreturn) {
+           this.callback ? this.callback(this.state.dataToreturn) : this.props.onCaptureFinish(this.state.dataToreturn);
+           this.onClosedModal()
+         }
+         else {
+           this.setStatePure({ picked: true });
+         }
 
-    }
-    else{
+       }
+       else {
 
-     this.state.data.photo =  data.source;
-     this.setStatePure({data:this.state.data,dataToreturn:data});
+         this.state.data.photo = data.source;
+         this.setStatePure({ data: this.state.data, dataToreturn: data });
 
-      if (this.directreturn || this.props.directreturn){
-       this.callback ? this.callback(this.state.dataToreturn) :  this.props.onCaptureFinish(this.state.dataToreturn);
-       this.onClosedModal();
-      }
-      else{
-        this.setStatePure({picked:true});
-      }
+         if (this.directreturn || this.props.directreturn) {
+           this.callback ? this.callback(this.state.dataToreturn) : this.props.onCaptureFinish(this.state.dataToreturn);
+           this.onClosedModal();
+         }
+         else {
+           this.setStatePure({ picked: true });
+         }
 
-    }
-  });
+       }
+     });
 
+   }
  }
 
 

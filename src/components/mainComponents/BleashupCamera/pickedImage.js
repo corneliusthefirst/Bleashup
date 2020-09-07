@@ -16,7 +16,7 @@ import VideoView from '../../myscreens/Viewer/components/videoView';
 import CreateTextInput from '../../myscreens/event/createEvent/components/CreateTextInput';
 import AntDesign  from 'react-native-vector-icons/AntDesign';
 import  Ionicons  from 'react-native-vector-icons/Ionicons';
-import { Feather } from 'react-native-vector-icons/Feather';
+import  Feather  from 'react-native-vector-icons/Feather';
 
 const screenHeight  =  Dimensions.get('window').height;
 const screenWidth  =  Dimensions.get('window').width;

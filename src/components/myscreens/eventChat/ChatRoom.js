@@ -74,6 +74,7 @@ import Texts from '../../../meta/text';
 import { sayTyping } from './services';
 import { typing } from '../../../meta/events';
 import { reply_me } from '../../../meta/events';
+import message_types from './message_types';
 
 const screenWidth = Math.round(Dimensions.get('window').width);
 const screenheight = Math.round(Dimensions.get('window').height);
@@ -290,7 +291,7 @@ class ChatRoom extends AnimatedComponent {
         this.adjustDisplayTimeout = setTimeout(() => {
             GState.reply && !this.alreadyFocussed && this.fucussTextInput();
             this.alreadyFocussed = true;
-            this.refs && this.refs.scrollViewRef && this.refs.scrollViewRef.scrollToEnd({ animated: true, duration: 200 });
+            //this.refs && this.refs.scrollViewRef && this.refs.scrollViewRef.scrollToEnd({ animated: true, duration: 200 });
             this.temp ? (GState.reply = JSON.parse(this.temp)) : null;
             clearTimeout(this.adjustDisplayTimeout)
         }, 30);
@@ -457,18 +458,6 @@ class ChatRoom extends AnimatedComponent {
     _resetCaptionInput() { }
 
     received = [{ phone: this.props.user.phone, date: moment().format() }];
-    sendToOtherActivity(message) {
-        return new Promise((resolve, reject) => {
-            Requester.sendMessage(
-                message,
-                message.from_committee,
-                message.from_activity, true,
-                this.props.isRelation ? false : this.props.activity_name).
-                then((response) => {
-                    resolve;
-                });
-        });
-    }
     sendMessage(messager) {
         return new Promise((resolve, reject) => {
             if (messager) {
@@ -500,19 +489,14 @@ class ChatRoom extends AnimatedComponent {
             });
         }
     }
-
+   
     user = this.props.user;
     creator = 1;
     showPhoto(photo, item) {
-        /*this.setStatePure({
-            playingMessage: item,
-            showVideo: false,
-        })*/
-        Keyboard.dismiss();
-        this.refs.keyboard.blur()
+        Keyboard.dismiss()
         setTimeout(() => {
             this.navigateToFullView(item);
-        }, 200)
+        },this.timeToDissmissKeyboard)
     }
     captionMessages = [];
     sendingCaptionMessages = false;
@@ -761,18 +745,12 @@ class ChatRoom extends AnimatedComponent {
                                         height: '100%',
 
                                     }}>
-                                        <ScrollView
-                                            onScroll={() => {
-                                                this.adjutRoomDisplay();
-                                            }}
-                                            scrollEnabled={false}
-                                            inverted={true}
-                                            keyboardShouldPersistTaps={'always'}
-                                            showsVerticalScrollIndicator={false}
-                                            ref="scrollViewRef"
-                                        //style={{ height: screenheight }}
-                                        >
-                                            <View style={{ height: this.state.messageListHeight, flexDirection: 'column', justifyContent: 'flex-end', marginHorizontal: 2, }}>
+                                            <View style={{ height: this.state.messageListHeight, 
+                                            flexDirection: 'column', 
+                                            justifyContent: 'flex-end', 
+                                            marginHorizontal: 2,
+                                            flex: 1, 
+                                        }}>
                                                 <TouchableWithoutFeedback
                                                     onPressIn={() => {
                                                         this.scrolling = false;
@@ -799,19 +777,6 @@ class ChatRoom extends AnimatedComponent {
                                                     //offsetY={20}
                                                     />}
                                                 </TouchableWithoutFeedback>
-                                                {
-                                                    this.state.showOptions && <Options
-                                                        openAudioPicker={this.openAudioPicker.bind(this)}
-                                                        openFilePicker={this.openFilePicker.bind(this)}
-                                                        addRemind={this.props.addRemind}
-                                                        openPhotoSelector={this.openPhotoSelector.bind(this)}
-                                                        onClosed={() => {
-                                                            this.setStatePure({
-                                                                showOptions: false
-                                                            })
-                                                            Keyboard.dismiss()
-                                                        }}></Options>
-                                                }
                                             </View>
                                             <View style={{
                                                 //height:"3%",
@@ -839,10 +804,9 @@ class ChatRoom extends AnimatedComponent {
                                                 ) : (
                                                         // ***************** KeyBoard Displayer *****************************
 
-                                                        <View style={{ justifyContent: 'flex-end' }}>{this.keyboardView()}</View>
+                                                        !this.state.dontShowKeyboad && <View style={{ justifyContent: 'flex-end' }}>{this.keyboardView()}</View>
                                                     )}
                                             </View>
-                                        </ScrollView>
                                     </KeyboardAvoidingView>
                                 )}
                             {/*<VerificationModal
@@ -850,6 +814,19 @@ class ChatRoom extends AnimatedComponent {
                                 verifyCode={(code) => this.verifyNumber(code)}
                                 phone={this.props.user.phone}
                             />*/}
+                            {
+                                this.state.showOptions && <Options
+                                    openAudioPicker={this.openAudioPicker.bind(this)}
+                                    openFilePicker={this.openFilePicker.bind(this)}
+                                    addRemind={this.props.addRemind}
+                                    openPhotoSelector={this.openPhotoSelector.bind(this)}
+                                    onClosed={() => {
+                                        this.setStatePure({
+                                            showOptions: false
+                                        })
+                                        Keyboard.dismiss()
+                                    }}></Options>
+                            }
                             <ShareWithYourContacts
                                 activity_id={this.props.activity_id}
                                 sender={this.sender}
@@ -1032,30 +1009,30 @@ class ChatRoom extends AnimatedComponent {
         let nickname = message.sender && message.sender.nickname;
         let tempMessage = { ...message, change_date: message.created_at }
         switch (message.type) {
-            case 'text':
+            case message_types.text:
                 tempMessage.replyer_name = nickname;
                 return tempMessage;
-            case 'audio':
+            case message_types.audio:
                 tempMessage.audio = true;
                 tempMessage.replyer_name = nickname;
                 return tempMessage;
-            case 'video':
+            case message_types.video:
                 tempMessage.video = true;
                 tempMessage.sourcer = message.thumbnailSource;
                 tempMessage.replyer_name = nickname;
                 return tempMessage;
-            case 'attachement':
+            case message_types.file:
                 tempMessage.replyer_name = nickname;
                 tempMessage.file = true;
                 let temp = message.file_name.split('.');
                 let temper = tempMessage;
                 temper.typer = temp[temp.length - 1];
                 return temper;
-            case 'photo':
+            case message_types.photo:
                 tempMessage.replyer_name = nickname;
                 tempMessage.sourcer = message.source;
                 return tempMessage;
-            case 'image':
+            case message_types.image:
                 tempMessage.replyer_name = nickname;
                 tempMessage.sourcer = message.source;
                 return tempMessage;
@@ -1212,12 +1189,13 @@ class ChatRoom extends AnimatedComponent {
             Keyboard.dismiss()
             setTimeout(() => {
                 this.props.handleReplyExtern(replyer);
-            }, 300)
+            },this.timeToDissmissKeyboard )
         }
     }
-    openOptions() {
+    timeToDissmissKeyboard = 600
+    openOptions(shouldClose) {
         this.setStatePure({
-            showOptions: !this.state.showOptions
+            showOptions: shouldClose ? false : !this.state.showOptions
         })
     }
     toggleAudio() {
@@ -1228,6 +1206,7 @@ class ChatRoom extends AnimatedComponent {
     keyboardView() {
         return (
             <ChatKeyboard
+                timeToDissmissKeyboard={this.timeToDissmissKeyboard}
                 toggleAudio={this.toggleAudio.bind(this)}
                 showAudioRecorder={this.state.showAudioRecorder}
                 showImoji={this.showImoji.bind(this)}

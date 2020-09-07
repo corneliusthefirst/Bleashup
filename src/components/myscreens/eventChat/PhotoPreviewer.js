@@ -1,5 +1,5 @@
 import React, { Component } from "react"
-import { View, Image, TouchableOpacity } from 'react-native';
+import { View, Image, TouchableOpacity, Keyboard } from 'react-native';
 import ReactNativeZoomableView from "@dudigital/react-native-zoomable-view/src/ReactNativeZoomableView";
 import VideoController from "./VideoController";
 import ColorList from '../../colorList';
@@ -21,7 +21,10 @@ export default class PhotoPreview extends BeComponent {
         this.props.image !== nextProp.image
     }
     showPhoto(){
-        BeNavigator.openPhoto(this.props.image,true)
+        Keyboard.dismiss()
+        setTimeout(() => {
+            BeNavigator.openPhoto(this.props.image, true)
+        }, this.props.timeToDissmissKeyboard)
         //BeNavigator.pushTo("PhotoViewer",{photo:this.props.image,hideActions:true})
     }
     containerHeight= this.props.showVideo ? 200 : 100

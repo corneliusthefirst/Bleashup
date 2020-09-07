@@ -13,13 +13,13 @@ import BleashupModal from '../../mainComponents/BleashupModal';
 import BeNavigator from '../../../services/navigationServices';
 import AnimatedComponent from '../../AnimatedComponent';
 import shadower from '../../shadower';
-import  Entypo  from 'react-native-vector-icons/Entypo';
-import  AntDesign  from 'react-native-vector-icons/AntDesign';
-import  Ionicons from 'react-native-vector-icons/Ionicons';
-import  MaterialCommunityIcons  from 'react-native-vector-icons/MaterialCommunityIcons';
-import  SimpleLineIcons  from 'react-native-vector-icons/SimpleLineIcons';
-import  Feather from 'react-native-vector-icons/Feather';
-import MaterialIcons  from 'react-native-vector-icons/MaterialIcons';
+import Entypo from 'react-native-vector-icons/Entypo';
+import AntDesign from 'react-native-vector-icons/AntDesign';
+import Ionicons from 'react-native-vector-icons/Ionicons';
+import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
+import SimpleLineIcons from 'react-native-vector-icons/SimpleLineIcons';
+import Feather from 'react-native-vector-icons/Feather';
+import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import Texts from '../../../meta/text';
 
 export default class Options extends AnimatedComponent {
@@ -59,24 +59,8 @@ export default class Options extends AnimatedComponent {
     }
 
 
-    onClickContact = () => {
-        setTimeout(() => { this.props.onClosed(); }, 100);
-        BeNavigator.navigateTo("Contacts");
-    }
-    navigateToQRScanner = () => {
-        setTimeout(() => { this.props.onClosed(); }, 100);
-        BeNavigator.navigateTo("QR");
-    }
 
-    onClickNewEvent = () => {
-        setTimeout(() => { this.props.onClosed(); }, 100);
-        BeNavigator.navigateTo("CreateEventView");
-    }
 
-    onClickAllRemind = () => {
-        setTimeout(() => { this.props.onClosed(); }, 100);
-        BeNavigator.navigateTo("MyTasksView");
-    }
 
     viewStyle = {
         width: 40,
@@ -84,24 +68,33 @@ export default class Options extends AnimatedComponent {
         padding: "1%",
         justifyContent: 'center', alignItems: 'center'
     }
-    mainContainerStyles = { height: '98%', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', width: "20%" }
-    buttonSize=30
+    mainContainerStyles = {
+        height: '20%',
+        flexDirection: 'column',
+        justifyContent: 'center',
+        alignItems: 'center',
+        width: "98%"
+    }
+    buttonSize = 30
     render() {
         return (
             <View style={{
                 position: "absolute",
-                backgroundColor: ColorList.bodyBackground,
-                borderRadius: 10,
-                flexDirection: 'column',
+                flexDirection: 'row',
+                height: 300,
+                justifyContent: 'center',
+                marginBottom: "2%",
+                alignSelf: 'flex-end',
+                width: 50,
 
-                height: "20%",
-                alignSelf: 'center',
-                width: "90%",
-                ...shadower(2),
             }}>
-                <View style={{ height: "100%", flexDirection: 'column', borderRadius: 10, justifyContent: 'space-between' }}>
+                <View style={{
+                    height: "100%", backgroundColor: ColorList.bodyBackground,
+                    alignItems: 'center',
+                    borderRadius: 10, width: 45, ...shadower(2),
+                }}>
 
-                    <View style={{ height: "45%", width: '100%', flexDirection: 'row', borderRadius: 10, justifyContent: 'space-between', padding: 5 }}>
+                    <View style={{ height: "100%", flexDirection: "column", alignItems: 'center', justifyContent: 'space-between', padding: 5 }}>
 
                         <View style={this.mainContainerStyles}>
                             <TouchableOpacity
@@ -124,7 +117,7 @@ export default class Options extends AnimatedComponent {
                                 </View>
                             </TouchableOpacity>
 
-                            <Text ellipsizeMode={"tail"} numberOfLines={1} style={styles.textStyle} >{Texts.remind_message}</Text>
+                            <Text ellipsizeMode={"tail"} numberOfLines={1} style={styles.textStyle} >{Texts.reminder}</Text>
                         </View>
 
 
@@ -150,10 +143,10 @@ export default class Options extends AnimatedComponent {
                                 </View>
                             </TouchableOpacity>
 
-                            <Text 
-                            ellipsizeMode={"tail"} 
-                            numberOfLines={1} 
-                            style={styles.textStyle} >{Texts.files}</Text>
+                            <Text
+                                ellipsizeMode={"tail"}
+                                numberOfLines={1}
+                                style={styles.textStyle} >{Texts.files}</Text>
                         </View>
 
                         <View style={this.mainContainerStyles}>
@@ -178,10 +171,10 @@ export default class Options extends AnimatedComponent {
                                 </View>
                             </TouchableOpacity>
 
-                            <Text 
-                            ellipsizeMode={"tail"} 
-                            numberOfLines={1}
-                             style={styles.textStyle}  >{Texts.add_photos}</Text>
+                            <Text
+                                ellipsizeMode={"tail"}
+                                numberOfLines={1}
+                                style={styles.textStyle}  >{Texts.add_photos}</Text>
                         </View>
 
                         <View style={this.mainContainerStyles}>
@@ -209,138 +202,24 @@ export default class Options extends AnimatedComponent {
 
                                 </View>
                             </TouchableOpacity>
-
                             <Text ellipsizeMode={"tail"}
-                                numberOfLines={1} 
+                                numberOfLines={1}
                                 style={styles.textStyle}  >Audio</Text>
                         </View>
-
-
                     </View>
+                </View>
+                <View style={{
+                    position: "absolute",
+                    height: '100%',
+                    width: "100%",
+                    //alignItems: 'flex-start',
+                    flexDirection: 'column',
+                    justifyContent: 'flex-end',
 
-
-
-                    <View style={{ height: "45%", width: '100%', flexDirection: 'row', borderRadius: 10, justifyContent: 'space-between', padding: 10 }}>
-
-                        <View style={this.mainContainerStyles}>
-                            <TouchableOpacity
-                                onPress={() => requestAnimationFrame(() => this.navigateToQRScanner())}
-                                style={this.viewStyle} >
-
-
-                                <View
-                                    style={{
-                                        alignItems: "center",
-                                        ...rounder(this.buttonSize, '#cd5c5c'),
-                                    }}
-                                >
-                                    <MaterialCommunityIcons
-                                        style={{
-                                            color: 'white',
-                                            fontSize: 22,
-                                        }}
-                                        type={"MaterialCommunityIcons"}
-                                        name={"qrcode-scan"}
-                                    />
-                                </View>
-                            </TouchableOpacity>
-
-                            <Text ellipsizeMode={"tail"}
-                                numberOfLines={1}
-                                 style={styles.textStyle} >{Texts.qr_scanner}</Text>
-                        </View>
-
-
-                        <View style={this.mainContainerStyles}>
-                            <TouchableOpacity
-                                onPress={() => requestAnimationFrame(() => { this.onClickAllRemind(); })}
-                                style={this.viewStyle}
-                            >
-                                <View
-                                    style={{
-                                        alignItems: "center",
-                                        ...rounder(this.buttonSize, '#66cdaa'),
-                                    }}
-                                >
-                                    <SimpleLineIcons
-                                        style={{
-                                            color: ColorList.bodyBackground,
-                                            fontSize: 22,
-                                        }}
-                                        type={"SimpleLineIcons"}
-                                        name={"list"}
-                                    />
-                                </View>
-                            </TouchableOpacity>
-
-                            <Text 
-                            ellipsizeMode={"tail"}
-                            numberOfLines={1}
-                            style={styles.textStyle} >{Texts.reminds}</Text>
-                        </View>
-
-
-                        <View style={this.mainContainerStyles}>
-                            <TouchableOpacity
-                                onPress={() => requestAnimationFrame(() => this.onClickContact())}
-                                style={this.viewStyle}
-                            >
-                                <View
-                                    style={{
-                                        alignItems: "center",
-                                        ...rounder(this.buttonSize, '#48d1cc'),
-                                    }}
-                                >
-                                    <Feather
-                                        style={{
-                                            color: ColorList.bodyBackground,
-                                            fontSize: 25,
-                                        }}
-                                        type={"Feather"}
-                                        name={"user"}
-                                    />
-                                </View>
-                            </TouchableOpacity>
-
-                            <Text ellipsizeMode={"tail"}
-                                numberOfLines={1}
-                                 style={styles.textStyle}  >Contacts</Text>
-                        </View>
-
-                        <View style={this.mainContainerStyles}>
-                            <TouchableOpacity
-                                onPress={() => requestAnimationFrame(() => this.onClickNewEvent())}
-                                style={this.viewStyle}
-                            >
-
-                                <View
-                                    style={{
-                                        alignItems: "center",
-                                        ...rounder(this.buttonSize, '#663399'),
-                                    }}
-                                >
-                                    <MaterialIcons
-                                        style={{
-                                            color: ColorList.bodyBackground,
-                                            fontSize: 25,
-                                        }}
-                                        type={"MaterialIcons"}
-                                        name={"group-add"}
-                                    />
-
-                                </View>
-
-
-                            </TouchableOpacity>
-
-                            <Text style={styles.textStyle}  >{Texts.new_activity}</Text>
-                        </View>
-
-                    </View>
+                }}>
+                    <View style={styles.TriangleShapeView}></View>
 
                 </View>
-
-                <View style={styles.TriangleShapeView} />
             </View>
         );
     }
@@ -361,10 +240,13 @@ const styles = StyleSheet.create({
         borderTopWidth: 15,
         alignSelf: 'flex-end',
         borderStyle: 'solid',
+        transform: [{ rotate: '90deg' }],
         backgroundColor: 'transparent',
         borderLeftColor: 'transparent',
         borderRightColor: 'transparent',
         borderTopColor: ColorList.bodyBackground,
-        marginRight: '9%',
+        marginRight: '80%',
+        marginBottom: "27%",
+
     },
 });

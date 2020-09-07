@@ -34,7 +34,7 @@ class TEXTS {
         fr:"Fichier"
     }[GState.lang]
     add_photos = {
-        en:"Add Photos",
+        en:"Photos",
         fr:"Photos"
     }[GState.lang]
     qr_scanner = {

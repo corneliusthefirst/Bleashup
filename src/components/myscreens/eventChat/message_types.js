@@ -2,6 +2,7 @@
 class types {
     audio = "audio"
     photo = "photo"
+    image = 'image'
     video = "video"
     text = "text"
     file = "attachement"

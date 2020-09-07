@@ -129,6 +129,7 @@ export default class ChatKeyboard extends AnimatedComponent {
         });
     }
     _onChange(event) {
+        this.props.openOptions(true)
         let text = event.nativeEvent.text;
         this.setStatePure({ textValue: text || "" });
         if (text.split("@").length > 1) {
@@ -306,6 +307,7 @@ export default class ChatKeyboard extends AnimatedComponent {
         this._textInput.blur();
     }
     replying(replyer, color) {
+        this.props.openOptions(true)
         this.setStatePure({
             loaded: true,
             replying: true,
@@ -322,6 +324,7 @@ export default class ChatKeyboard extends AnimatedComponent {
         });
     }
     concludePicking(snap){
+        this.props.openOptions(true)
         let isVideo = snap.content_type.includes("video") ? true : false;
         this.setStatePure({
             video: snap.source,
@@ -382,6 +385,7 @@ export default class ChatKeyboard extends AnimatedComponent {
         this.animateLayout();
     }
     toggleAudioRecorder() {
+        this.props.openOptions(true)
        this.props.toggleAudio()
        this.toggleAudioTimeout = setTimeout(() => {
             if (!this.props.showAudioRecorder) {
@@ -450,6 +454,7 @@ export default class ChatKeyboard extends AnimatedComponent {
         );
     }
     toggleEmojiKeyboard() {
+        this.props.openOptions(true)
         offset = this.state.replying ? 0.1 : 0;
         this.temp = GState.reply ? JSON.stringify(GState.reply) : null;
         GState.reply = null;
@@ -620,14 +625,22 @@ export default class ChatKeyboard extends AnimatedComponent {
             </View>
         ) : <PhotoPreview
             image={this.state.image}
+            timeToDissmissKeyboard={this.props.timeToDissmissKeyboard}
             showVideo={this.state.showVideo}
             video={this.state.video}
             hideCaption={this.hideCaption.bind(this)}>
                 </PhotoPreview>
     }
     showSnapper(){
-        this.openCamera()
-        //BeNavigator.pushTo("CameraScreen",{callback:(souce) => this.concludePicking(souce),directReturn:true})
+        Keyboard.dismiss()
+        setTimeout(() => {
+            BeNavigator.pushTo("CameraScreen", {
+                callback: (souce) => setTimeout( () => this.concludePicking(souce),
+                this.props.timeToDissmissKeyboard),
+                directReturn: false,
+                openGallery: () => setTimeout(() => this.openCamera(), 100)
+            })
+        },this.props.timeToDissmissKeyboard)
     }
     showOptionsModal(){
         this.setStatePure({
