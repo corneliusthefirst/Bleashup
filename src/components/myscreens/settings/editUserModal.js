@@ -12,10 +12,14 @@ import {
 import {  map, } from "lodash";
 import ColorList from '.././../colorList';
 import CreateTextInput from '../event/createEvent/components/CreateTextInput';
+import Toaster from "../../../services/Toaster";
+import Texts from '../../../meta/text';
+import GState from '../../../stores/globalState/index';
+import BeComponent from '../../BeComponent';
 
 let { height, width } = Dimensions.get('window');
 
-export default class EditUserModal extends Component {
+export default class EditUserModal extends BeComponent {
   constructor(props) {
     super(props);
     this.state = {
@@ -26,20 +30,20 @@ export default class EditUserModal extends Component {
       textLength: 0,
     };
   }
-
+  
   init() {
     //console.warn("here is init")
     setTimeout(() => {
       if (this.props.type == 'nickname') {
-        this.setState({ value: this.props.userInfo.nickname });
+        this.setStatePure({ value: this.props.userInfo.nickname });
       } else if (this.props.type == 'actu') {
-        this.setState({ value: this.props.userInfo.status });
+        this.setStatePure({ value: this.props.userInfo.status });
       }
-      this.setState({
+      this.setStatePure({
         userInfo: this.props.userInfo,
-        previousLength: this.state.value.length,
+        previousLength: this.state.value && this.state.value.length,
       });
-      this.setState({
+      this.setStatePure({
         textLength: this.props.maxLength - this.state.previousLength,
         isMount: true,
       });
@@ -52,31 +56,31 @@ export default class EditUserModal extends Component {
 
   textChanged = (value) => {
     if (value.length > this.state.previousLength) {
-      this.setState({ previousLength: this.state.previousLength + 1 });
-      this.setState({
+      this.setStatePure({ previousLength: this.state.previousLength + 1 });
+      this.setStatePure({
         textLength: this.props.maxLength - this.state.previousLength,
       });
     } else {
-      this.setState({ previousLength: this.state.previousLength - 1 });
-      this.setState({
+      this.setStatePure({ previousLength: this.state.previousLength - 1 });
+      this.setStatePure({
         textLength: this.props.maxLength - this.state.previousLength,
       });
     }
 
     if (this.props.type === 'nickname') {
       this.state.userInfo.nickname = value;
-      this.setState({ value: value });
+      this.setStatePure({ value: value });
     } else if (this.props.type === "actu") {
       this.state.userInfo.status = value;
-      this.setState({ value: value });
+      this.setStatePure({ value: value });
     }
   };
 
   save = () => {
     if (this.props.type === 'nickname') {
-      stores.LoginStore.updateName(this.state.value).then(() => {
+      this.state.value? stores.LoginStore.updateName(this.state.value).then(() => {
         this.props.onClosed();
-      });
+      }):Toaster({text:Texts.not_empty_name});
     } else if (this.props.type === 'actu') {
       map(this.props.data, (o) => {
         o.state = false;
@@ -91,7 +95,7 @@ export default class EditUserModal extends Component {
   };
 
   cancel = () => {
-    this.setState({ value: '' });
+    //this.setStatePure({ value: '' });
     this.props.onClosed();
   };
 
@@ -111,11 +115,11 @@ export default class EditUserModal extends Component {
         }}
         position={this.props.position}
         coverScreen={this.props.coverscreen}
-        backdropPressToClose={false}
+        backdropPressToClose={true}
       >
         {this.state.isMount ? (
           <View style={{ flexDirection: 'column', width: '90%', margin: '5%' }}>
-            <Text style={{ alignSelf: 'flex-start',fontWeight: 'bold', }}>
+            <Text style={{ ...GState.defaultTextStyle, alignSelf: 'flex-start',fontWeight: 'bold', }}>
               {this.props.title}
             </Text>
 
@@ -127,10 +131,11 @@ export default class EditUserModal extends Component {
               }}
             >
               <CreateTextInput
+                maxLength={this.props.maxLength}
                 height={height / 12}
                 value={this.state.value}
                 onChange={this.textChanged}
-                placeholder={"enter new status"}
+                placeholder={Texts.enter_new_value}
               />
             </View>
             <View
@@ -143,10 +148,12 @@ export default class EditUserModal extends Component {
               }}
             >
               <TouchableWithoutFeedback style={{ height: height / 20 }}>
-                <Text onPress={this.cancel}>cancel</Text>
+                <Text style={{...GState.defaultTextStyle}} 
+                onPress={this.cancel.bind(this)}>{Texts.cancel}</Text>
               </TouchableWithoutFeedback>
               <TouchableWithoutFeedback style={{ height: height / 20 }}>
-                <Text onPress={this.save}>save</Text>
+                <Text style={{...GState.defaultTextStyle }} 
+                onPress={this.save.bind(this)}>{Texts.apply}</Text>
               </TouchableWithoutFeedback>
             </View>
           </View>

@@ -10,7 +10,7 @@ import ProfileSimple from '../../currentevents/components/ProfileViewSimple';
 import bleashupHeaderStyle from '../../../../services/bleashupHeaderStyle';
 import ColorList from '../../../colorList';
 import { TouchableOpacity } from 'react-native-gesture-handler';
-import { MaterialIcons } from 'react-native-vector-icons/MaterialIcons';
+import  MaterialIcons  from 'react-native-vector-icons/MaterialIcons';
 import GState from '../../../../stores/globalState';
 
 let { height, width } = Dimensions.get('window');

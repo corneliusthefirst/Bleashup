@@ -11,6 +11,11 @@ import SearchImage from "./SearchImage";
 import rnFetchBlob from "rn-fetch-blob";
 import BeComponent from '../../../../BeComponent';
 import EvilIcons  from 'react-native-vector-icons/EvilIcons';
+import BeNavigator from '../../../../../services/navigationServices';
+import { TouchableOpacity } from "react-native-gesture-handler";
+import rounder from "../../../../../services/rounder";
+import BleashupAlert from "./BleashupAlert";
+import Texts from '../../../../../meta/text';
 
 export default class PickersUpload extends BeComponent {
   constructor(props) {
@@ -112,25 +117,34 @@ export default class PickersUpload extends BeComponent {
     );
     this.exchanger.upload();
   }
+  openCamera(){
+    BeNavigator.pushTo("CameraScreen", {
+      callback: (souce) => setTimeout(() => this.concludePicking(souce)),
+      directReturn: false,
+      noVideo:true
+    })
+  }
+  concludePicking(snaper){
+    console.warn(snaper, "oooo")
+    this.setStatePure({
+      newing: !this.state.newing,
+      uploading: true,
+    });
+    this.clear(true);
+    this.cancelUploadError();
+    //Pickers.CompressVideo(snaper).then(snap => {
+    let isVideo = snaper.content_type.includes("video");
+    if (!isVideo) {
+      Pickers.resizePhoto(snaper.source).then(source => {
+        this.upload({ ...snaper, source }, isVideo)
+      })
+    } else {
+      this.upload(snaper, isVideo)
+    }
+  }
   TakePhotoFromLibrary(vid) {
     Pickers.SnapPhoto(!vid).then((snaper) => {
-      console.warn(snaper,"oooo")
-      this.setStatePure({
-        newing: !this.state.newing,
-        uploading: true,
-      });
-      this.clear(true);
-      this.cancelUploadError();
-      //Pickers.CompressVideo(snaper).then(snap => {
-      let isVideo = snaper.content_type.includes("video");
-      if(!isVideo){
-        Pickers.resizePhoto(snaper.source).then(source => {
-          this.upload({...snaper,source},isVideo)
-        })
-      }else{
-        this.upload(snaper,isVideo)
-      }
-      
+      this.concludePicking(snaper)
     });
   }
   clearAudio() {
@@ -227,15 +241,43 @@ export default class PickersUpload extends BeComponent {
     marginTop: "auto",
     marginBottom: "auto",
   }
+  hideAlert(){
+    this.setStatePure({
+      showAlert:false
+    })
+  }
+  showAlert(){
+    this.setStatePure({
+      alert:{
+        title: "Remove Photo",
+        message: "Are you sure want to remove this photo"
+      },
+      showAlert:true
+    })
+  }
   render() {
     return (
 
-      <View style={{ flexDirection: 'row', alignSelf: 'flex-start' }}>
+      <View style={{ 
+        flexDirection: 'row', 
+        alignSelf: 'flex-start',
+        alignItems: 'center',
+        ...this.props.withTrash || this.state.uploading ? {
+          justifyContent: 'space-between',
+          width: '100%'}:null 
+      }}>
 
 
         <View style={{ width: 35,...this.center }}>
           <PickersMenu
+            color={this.props.color}
+            fontSize={this.props.fontSize}
             menu={[
+              {
+                title:'Camera',
+                condition:true,
+                callback:() => this.openCamera()
+              },
               {
                 title: "Gallery",
                 condition: true,
@@ -249,7 +291,7 @@ export default class PickersUpload extends BeComponent {
           ></PickersMenu>
         </View>
 
-        <View style={{ width: 35,...this.center }}>
+        {!this.props.onlyPhotos && <View style={{ width: 35,...this.center }}>
           <PickersMenu
             menu={[
               {
@@ -276,10 +318,10 @@ export default class PickersUpload extends BeComponent {
               type: "Octicons",
             }}
           ></PickersMenu>
-        </View>
+        </View>}
 
         {!this.state.uploading ? null: (
-          <View style={{marginLeft: "auto", alignItems: "flex-end", paddingRight: 5 }}>
+          <View style={{ }}>
             <AnimatedCircularProgress
               size={26}
               width={2}
@@ -303,8 +345,14 @@ export default class PickersUpload extends BeComponent {
             </AnimatedCircularProgress>
           </View>
         )}
+        {this.props.withTrash && <TouchableOpacity 
+          onPress={this.showAlert.bind(this)}
+          style={{...rounder((this.props.fontSize||30)+5),justifyContent: 'center',}} >
+          <EvilIcons style={{ color: 'red', fontSize: this.props.fontSize|| 30 }}
+            name="trash" transparent type="EvilIcons" />
+          </TouchableOpacity>}
 
-        <SearchImage
+        {this.state.searchImageState && <SearchImage
           openPicker={() => {
             this.TakePhotoFromLibrary();
           }}
@@ -315,7 +363,25 @@ export default class PickersUpload extends BeComponent {
               searchImageState: false,
             });
           }}
-        />
+        />}
+        {
+          this.state.showAlert && <BleashupAlert isOpen={this.state.showAlert}
+          title={this.state.alert.title}
+          message={this.state.alert.message}
+          refuse={Texts.cancel}
+          deleteFunction={() => {
+            this.props.saveMedia({
+              photo:"",
+              video:"",
+              audio:""
+            })
+            this.hideAlert()
+          }}
+          accept={Texts.remove}
+          onClosed={this.hideAlert.bind(this)}
+          >
+          </BleashupAlert>
+        }
       </View>
 
     );

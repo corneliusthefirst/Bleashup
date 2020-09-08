@@ -31,6 +31,8 @@ export default class globalState {
   @observable passwordError = false;
   @observable newPasswordError = false;
   @observable nav = {}
+  waitToReply = 100
+  nameMaxLength=40
   @observable nameError = false;
   defaultIconSize = {fontSize: 30,color:ColorList.bodyIcon}
   defaultTextStyle = {fontSize: 13,color:ColorList.bodyText}

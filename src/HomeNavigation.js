@@ -12,6 +12,7 @@ import SwiperComponent from './components/SwiperComponent/index';
 import ProfileView from './components/myscreens/settings/profile';
 import PhotoViewer from './components/myscreens/event/PhotoViewer';
 import VideoViewer from './components/myscreens/highlights_details/VideoModal';
+import ActuView from './components/myscreens/settings/editActu';
 
 enableScreens()
 const HomeNavigator = createStackNavigator({
@@ -23,6 +24,7 @@ const HomeNavigator = createStackNavigator({
     SwiperComponent:{screen:SwiperComponent},
     CameraScreen:{screen: CameraScreen},
     Profile: {screen:ProfileView},
+    Actu: {screen:ActuView},
     PhotoViewer: {screen: PhotoViewer},
     Video: {screen:VideoViewer},
     Event: { screen: Event },

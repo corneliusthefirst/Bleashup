@@ -166,7 +166,7 @@ class MessageRequest {
       messageData.event_id = eventID;
       messageData.data = { message_id: messageID, player };
       tcpRequest.messaging(messageData, messageID + played).then((JSONdata) => {
-        EventListener.sendMessage(JSONdata, messageID + played).then(
+        EventListener.sendRequest(JSONdata, messageID + played).then(
           (response) => {
             console.warn(response);
             MainUpdater.playedMessage(

@@ -37,6 +37,7 @@ import FontAwesome5  from 'react-native-vector-icons/FontAwesome5';
 import IDMaker from '../../../services/IdMaker';
 import AnimatedComponent from '../../AnimatedComponent';
 import Texts from '../../../meta/text';
+import request from "../../../services/requestObjects";
 
 export default class ChatKeyboard extends AnimatedComponent {
     constructor(props) {
@@ -60,6 +61,7 @@ export default class ChatKeyboard extends AnimatedComponent {
         } else if (this.state.textValue !== "" && message !== "") {
             this.props.initialzeFlatList();
             let messager = {
+                ...request.Message(),
                 id: IDMaker.make(),
                 type: "text_sender",
                 tags: this.tags,
@@ -93,6 +95,7 @@ export default class ChatKeyboard extends AnimatedComponent {
         if (!dontsend) {
             this.props.scrollToEnd();
             let message = {
+                ...request.Message(),
                 id: IDMaker.make(),
                 source: "file://" + (filename || this.filename),
                 duration: duration || this.duration,
@@ -357,6 +360,7 @@ export default class ChatKeyboard extends AnimatedComponent {
     sendMedia() {
         this.props.scrollToEnd();
         let message = {
+            ...request.Message(),
             id: IDMaker.make(),
             type: (this.state.imageSelected ? "photo" : "video") + "_upload",
             source: this.state.imageSelected ? this.state.image : this.state.video,
@@ -414,6 +418,7 @@ export default class ChatKeyboard extends AnimatedComponent {
             .then((response) => {
               this.sendAllPhoto(response.map((res) => {
                    return {
+                        ...request.Message(),
                         id: IDMaker.make(),
                         type: "photo" + "_upload",
                         source: res.source,
@@ -517,7 +522,6 @@ export default class ChatKeyboard extends AnimatedComponent {
     async pickFile() {
         this.blur();
         const res = await Pickers.TakeFile();
-        console.warn(res)
         this.setStatePure({
             showCaption: true,
             file: true,
@@ -532,6 +536,7 @@ export default class ChatKeyboard extends AnimatedComponent {
     sendFileMessage() {
         this.props.scrollToEnd();
         message = {
+            ...request.Message(),
             id: IDMaker.make(),
             source: this.state.source,
             file_name: this.state.filename,
@@ -539,6 +544,7 @@ export default class ChatKeyboard extends AnimatedComponent {
             sender: this.props.sender,
             content_type: this.state.type,
             text: this.state.textValue,
+            commitee_id : this.props.roomID,
             type: "attachement_upload",
             received: 0,
             total: this.state.size,
@@ -690,7 +696,7 @@ export default class ChatKeyboard extends AnimatedComponent {
                                 flexDirection: "row",
                                 marginBottom: 3,
                                 justifyContent: "space-between",
-                                borderColor: "#1FABAB",
+                                borderColor: ColorList.indicatorColor,
                                 borderWidth: 0,
                                 borderRadius: 10,
                             }}

@@ -39,7 +39,7 @@ export default class DetailsModal extends BleashupModal {
       id: undefined,
       loaded: false,
     };
-    this.url = {uri:this.props.event && this.props.event.background}
+    this.url = { uri: this.props.event && this.props.event.background }
     this.openPhoto = this.openPhoto.bind(this);
     this.initJoin = this.initJoin.bind(this);
   }
@@ -92,45 +92,53 @@ export default class DetailsModal extends BleashupModal {
           this.setStatePure({
             isJoining: false,
           });
+          this.goToAcitivity()
           this.props.onClosed();
         })
-        .catch((error) => {
+        /*.catch((error) => {
           console.warn(error, " error which occured while joining ");
           this.setStatePure({ isJoining: false });
           Toaster({
-            text: "unable to perform this action",
+            text: Texts.unable_to_perform_request,
             buttonText: "Okay",
             position: "top",
             duration: 4000,
           });
-        });
+        });*/
     } else {
-      this.props.goToActivity();
+      this.goToAcitivity()
       this.props.onClosed();
     }
+  }
+  goToAcitivity(){
+    BeNavigator.pushActivityWithIndex(this.state.event, this.props.data)
   }
   backdropOpacity = 0.3;
   onClosedModal() {
     this.props.onClosed();
   }
+  setEvent(event) {
+    this.setStatePure({
+      event: event,
+      //details: details,
+      //creator: creator,
+      loaded: true,
+      location: event.location,
+    })
+  }
   onOpenModal() {
-      this.url.uri = this.props.event.background
-    this.openModalTimeout = setTimeout(
-      () =>
-            this.setStatePure({
-              event: this.props.event,
-              //details: details,
-              //creator: creator,
-              loaded: true,
-              location: this.props.event.location,
-        }),
-      100
-    );
+    this.url.uri = this.props.event.background
+    this.openModalTimeout = setTimeout(() => this.setEvent(this.props.event), 20);
+    stores.Events.loadCurrentEventFromRemote(this.props.event.id).then(e => {
+      this.setEvent(e)
+    })
   }
   openPhoto() {
     requestAnimationFrame(() => {
-     BeNavigator.openPhoto(this.url.uri)
+      BeNavigator.openPhoto(this.url.uri, false, null,
+        () => this.props.openModal && this.props.openModal())
     });
+
   }
   initJoin() {
     this.props.join ? this.props.join() : this.join();
@@ -149,7 +157,7 @@ export default class DetailsModal extends BleashupModal {
                 style={styles.photoContainer}
                 onPress={this.openPhoto}
               >
-                <CacheImages thumbnails source={this.url}></CacheImages>
+                <CacheImages thumbnails source={{ uri: this.state.event.background }}></CacheImages>
               </TouchableOpacity>
               <View style={styles.titleMainContainer}>
                 <TitleView Event={this.state.event}></TitleView>
@@ -158,21 +166,21 @@ export default class DetailsModal extends BleashupModal {
           </View>
           <ScrollView style={styles.descriptionContainer} showsVerticalScrollIndicator={false}>
             <Text style={styles.description}>
-            {this.props.event.about.description||"No Description Provided"}</Text>
+              {this.state.event.about.description || "No Description Provided"}</Text>
           </ScrollView>
           <View style={styles.cardItem}>
             <View style={styles.left}>
               {this.props.isToBeJoint && this.state.event.public ? (
                 <View>
-                    {this.state.isJoining ? null : (
-                      <TouchableOpacity
-                        onPress={this.props.join}
-                        style={styles.joinButtonContainer}
-                        onPress={this.initJoin}
-                      >
-                        <Text style={styles.joinButtom}>{Texts.join}</Text>
-                      </TouchableOpacity>
-                    )}
+                  {this.state.isJoining ? null : (
+                    <TouchableOpacity
+                      onPress={this.join.bind(this)}
+                      style={styles.joinButtonContainer}
+                    //onPress={this.initJoin}
+                    >
+                      <Text style={styles.joinButtom}>{Texts.join}</Text>
+                    </TouchableOpacity>
+                  )}
                 </View>
               ) : null}
             </View>
@@ -186,21 +194,21 @@ export default class DetailsModal extends BleashupModal {
             }
           </View>
         </View>
-        </View>
+      </View>
     );
   }
 }
 
 const styles = StyleSheet.create({
   headerContainer: { height: 65 },
-  descriptionContainer:{
-    height:200
+  descriptionContainer: {
+    height: 200
   },
-  description:{
+  description: {
     ...GState.defaultTextStyle,
-      fontSize: 14,
-      margin: "3%",
-      justifyContent: 'flex-start',
+    fontSize: 14,
+    margin: "3%",
+    justifyContent: 'flex-start',
   },
   mainContainer: { height: "98%" },
   right: {
@@ -220,32 +228,32 @@ const styles = StyleSheet.create({
   },
   joinButtonContainer: {
     flexDirection: "row",
-    height:40,
+    height: 40,
     marginLeft: "auto",
     alignSelf: 'flex-end',
-    width:60,
+    width: 60,
     ...shadower(2),
     backgroundColor: ColorList.indicatorColor,
     borderRadius: 3,
   },
-  titleMainContainer:{
+  titleMainContainer: {
     width: "80%",
     marginLeft: 10,
     marginTop: "5%",
   },
-  titleContainer: { 
-   
+  titleContainer: {
+
   },
   joinButtom: {
     fontSize: 18,
-    marginLeft:'auto',
+    marginLeft: 'auto',
     marginRight: 'auto',
     marginBottom: "auto",
     marginTop: "auto",
-    color:ColorList.bodyBackground,
+    color: ColorList.bodyBackground,
     fontWeight: "500",
   },
-  photoContainer: { width: "15%",marginBottom: "2%", },
+  photoContainer: { width: "15%", marginBottom: "2%", },
   joinButton: {
     alignItems: "center",
     backgroundColor: ColorList.indicatorColor,

@@ -26,22 +26,27 @@ import colorList from "../../colorList";
 import BeNavigator from "../../../services/navigationServices";
 import IDMaker from '../../../services/IdMaker';
 import { PrivacyRequester } from '../settings/privacy/Requester';
+import BeComponent from '../../BeComponent';
+import DetailsModal from "../invitations/components/DetailsModal";
 
 let { height, width } = Dimensions.get("window");
 
-class Home extends Component {
+class Home extends BeComponent {
   constructor(props) {
     super(props);
     this.state = {
       appState: "active",
       isTabModalOpened: false,
       currentTab: 0,
+      showDetailModal:false,
       setting: false,
       openBCamera: false,
     };
     this.permisssionListener();
   }
-  state = {};
+  state = {
+    showDetailModal:false
+  };
   //initialise menu
   _menu = null;
 
@@ -69,17 +74,29 @@ class Home extends Component {
   navigateToChat(data) {
     this.handleNotif(data);
   }
+  isMember = (event) => event && event.participant &&
+  event.participant.findIndex(ele => ele.phone === stores.LoginStore.user.phone) >= 0 
   handleNotif(data) {
-    let activity = stores.Events.events.find(ele =>  ele.id === data.activity_id)
-    if (data.message_id) {
-      BeNavigator.goToChatWithIndex(activity, data.message_id)
-    } else if (data.remind_id) {
-      BeNavigator.gotoRemindsWithIndex(activity, data.remind_id)
-    } else if (data.post_id) {
-      BeNavigator.gotoStarWithIndex(activity, data.post_id)
-    } else {
-      BeNavigator.pushActivity(activity)
-    }
+    stores.Events.loadCurrentEvent(data.activity_id).then(activity => {
+      if(this.isMember(activity)){
+       BeNavigator.pushActivityWithIndex(activity,data)
+      }else{
+       this.showDetailModal(activity,data)
+      }
+    })
+  }
+  showDetailModal(event,data){
+    console.warn("setting event")
+    this.setStatePure({
+      showDetailModal: true,
+      data: data || this.state.data,
+      event: event || this.state.event
+    })
+  }
+  hideDetailModal(){
+    this.setStatePure({
+      showDetailModal:false
+    })
   }
   handleNotifications(data) {
     this.handleNotif(data);
@@ -109,13 +126,12 @@ class Home extends Component {
       });
   }
   navigateToEventDetails(id, remind_id) {
-    let event = stores.Events.events.find((ele) => ele.id == id);
-    if (event) {
-      remind_id ? BeNavigator.gotoRemindsWithIndex(event, remind_id) :
-        BeNavigator.navigateToActivity("EventChat", event);
+    data = {
+      activity_id:id,remind_id
     }
+    this.handleNotifications(data)
   }
-  componentWillMount() {
+  componentMounting() {
     Linking.addEventListener("url", this.handleURL);
     DeepLinking.addScheme(GState.DeepLinkURL);
     DeepLinking.addRoute("/tester", (response) => {
@@ -153,7 +169,7 @@ class Home extends Component {
   }
   exiting = false;
   timeout = null;
-  componentWillUnmount() {
+  unmountingComponent() {
     this.removeNotificationDisplayedListener();
     Linking.removeEventListener("url", this.handleUrl);
     this.removeNotificationListener();
@@ -193,12 +209,9 @@ class Home extends Component {
 
   settings = () => {
     //BeNavigator.pushTo('SwiperComponent',{dataArray: media,mapFunction:this.mapFunction,currentIndex: 0});
-    BeNavigator.pushTo('PaginationView');
+    //BeNavigator.pushTo('Pagin');
     //this.setState({ openBCamera: true });
-    /*stores.LoginStore.getUser().then(user => {
-      !user.status ? user.status = "" : null;
-      BeNavigator.navigateTo("Profile",{userInfo:user});
-    });*/
+      BeNavigator.navigateTo("Profile");
   }
 
   handleURL = ({ url }) => {
@@ -244,6 +257,15 @@ class Home extends Component {
         </View>
         <View style={styles.content}>
           <CurrentEventView {...this.props} />
+          <DetailsModal
+            isToBeJoint
+            data={this.state.data}
+            isOpen={this.state.showDetailModal}
+            event={this.state.event}
+            openModal={this.showDetailModal.bind(this)}
+            onClosed={() => this.hideDetailModal()}
+          >
+          </DetailsModal>
         </View>
       </View>
     );

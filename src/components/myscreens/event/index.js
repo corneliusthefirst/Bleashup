@@ -613,7 +613,12 @@ export default class Event extends BeComponent {
   mention(data) {
     GState.reply = data;
     Vibration.vibrate(this.duration);
-    emitter.emit(reply_me, GState.reply);
+    let reply = this.getParam("reply")
+    if(reply){
+      reply()
+    }else{
+      emitter.emit(reply_me, GState.reply);
+    }
     this.goback()
   }
   startLoader() {

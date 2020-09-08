@@ -21,6 +21,7 @@ import SimpleLineIcons from 'react-native-vector-icons/SimpleLineIcons';
 import Feather from 'react-native-vector-icons/Feather';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import Texts from '../../../meta/text';
+import { Keyboard } from 'react-native';
 
 export default class Options extends AnimatedComponent {
 
@@ -37,25 +38,28 @@ export default class Options extends AnimatedComponent {
 
     style = { bottom: 60 }
     coverScreen = true;
-
+    
+    waitAndAct(func){
+        Keyboard.dismiss()
+        this.props.onClosed()
+        setTimeout(() => {
+            func()
+        }, this.props.timeToDissmissKeyboard) 
+    }
     addRemind = () => {
-        setTimeout(() => { this.props.onClosed(); }, 100);
-        this.props.addRemind();
+        this.waitAndAct(this.props.addRemind)
     }
 
     openFilePicker = () => {
-        setTimeout(() => { this.props.onClosed(); }, 100);
-        this.props.openFilePicker();
+        this.waitAndAct(this.props.openAudioPicker)
     }
 
     openPhotoSelector = () => {
-        setTimeout(() => { this.props.onClosed(); }, 100);
-        this.props.openPhotoSelector();
+        this.waitAndAct(this.props.openPhotoSelector)
     }
 
     openAudioPicker = () => {
-        setTimeout(() => { this.props.onClosed(); }, 100);
-        this.props.openAudioPicker();
+        this.waitAndAct(this.props.openAudioPicker)
     }
 
 

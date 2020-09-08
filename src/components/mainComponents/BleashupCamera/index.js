@@ -273,7 +273,7 @@ resetStopwatch = () => {
 getFormattedTime(time) {
     this.currentTime = time;
 };
-
+novideo= this.getParam("noVideo") || this.props.novideo
 //close picked
 
 closepicked = (data) => {
@@ -431,7 +431,7 @@ render(){
 
             </TouchableOpacity> :
             <TouchableOpacity
-                 onPress={() => {this.props.novideo ? this.openGallery('photo') : this.openGallery('all')}}
+                 onPress={() => {this.novideo ? this.openGallery('photo') : this.openGallery('all')}}
                  style={{
                    height:'100%',
                    alignSelf: 'center',
@@ -450,7 +450,7 @@ render(){
                   <MaterialIcons
                     name="photo-library"
                     style={{color:'white', fontSize:35 , marginLeft:15}}
-                    onPress={() => {this.props.novideo ? this.openGallery('photo') : this.openGallery('all')}}
+                    onPress={() => {this.novideo ? this.openGallery('photo') : this.openGallery('all')}}
                   />
 
              </View>
@@ -480,7 +480,7 @@ render(){
                    :
                     <TouchableOpacity
                               onPress={this.takePicture}
-                              onLongPress={()=>{ !this.props.novideo ? this.activateVideo() : null; }}
+                              onLongPress={()=>{ !this.novideo ? this.activateVideo() : null; }}
                               delayLongPress={500}
                               style={{
                                 height:'100%',

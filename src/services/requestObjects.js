@@ -667,7 +667,9 @@ class Request {
             video:"",
             created_at:moment().format(),
             updated_at: moment().format(),
-            received:[{phone:stores.LoginStore.user.phone,date:moment().format()}],
+            receive:[{phone:stores.LoginStore.user.phone,date:moment().format()}],
+            seen :[{ phone: stores.LoginStore.user.phone, date: moment().format() }],
+            played :[{ phone: stores.LoginStore.user.phone, date: moment().format() }],
             committee_id:""
         }
     }

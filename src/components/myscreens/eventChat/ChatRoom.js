@@ -75,6 +75,7 @@ import { sayTyping } from './services';
 import { typing } from '../../../meta/events';
 import { reply_me } from '../../../meta/events';
 import message_types from './message_types';
+import Vibrator from '../../../services/Vibrator';
 
 const screenWidth = Math.round(Dimensions.get('window').width);
 const screenheight = Math.round(Dimensions.get('window').height);
@@ -220,6 +221,11 @@ class ChatRoom extends AnimatedComponent {
             });
         });
     }
+    checkForReply(){
+        setTimeout(() => {
+            GState.reply && this.replying(GState.reply, null)
+        },GState.waitToReply)
+    }
     showMessage = [];
     initializeNewMessageForRoom() {
         return new Promise((resolve, reject) => {
@@ -242,11 +248,10 @@ class ChatRoom extends AnimatedComponent {
                         ]
                         : [];
                 this.initTimeout = setTimeout(() => {
-                    GState.reply
-                        ? this.replying(GState.reply, null)
-                        : this.setStatePure({
-                            loaded: true,
-                        });
+                    this.setStatePure({
+                        loaded: true,
+                    });
+                    this.checkForReply()
                     this.adjutRoomDisplay();
                     clearTimeout(this.initTimeout)
                 }, 100);
@@ -605,8 +610,8 @@ class ChatRoom extends AnimatedComponent {
         this.deleteMessage(this.state.currentMessage.id);
     }
     showReceived() {
-        this.state.currentMessage.received ? this.props.showContacts(
-            this.state.currentMessage.received.map((ele) =>
+        this.state.currentMessage.receive ? this.props.showContacts(
+            this.state.currentMessage.receive.map((ele) =>
                 ele.phone.replace('+', '00')
             ),
             Texts.seen_by
@@ -614,8 +619,8 @@ class ChatRoom extends AnimatedComponent {
     }
     copyMessage() {
         Clipboard.setString(this.state.currentMessage.text);
-        Vibration.vibrate(10);
-        Toaster({ text: 'copied !', type: 'success' });
+        Vibrator.vibrateShort();
+        Toaster({ text: Texts.copied, type: 'success' });
     }
     showMessageAction(message, reply, sender) {
         this.tempReply = reply
@@ -650,7 +655,6 @@ class ChatRoom extends AnimatedComponent {
         });
     }
     scrollToIndex(index) {
-        console.warn(index);
         this.refs.bleashupSectionListOut &&
             this.refs.bleashupSectionListOut.scrollToIndex(index);
         this.scrollToTimeout = setTimeout(() => {
@@ -766,7 +770,15 @@ class ChatRoom extends AnimatedComponent {
                                                         position={"right"}
                                                         //text={"D"}
                                                         renderIcon={() => {
-                                                            return <TouchableOpacity onPress={() => requestAnimationFrame(() => { this.scrollToEnd() })} style={{ backgroundColor: ColorList.bodyBackground, height: 40, width: 40, borderRadius: 30, justifyContent: "center", alignItems: "center", ...shadower(4) }}>
+                                                            return <TouchableOpacity onPress={() => requestAnimationFrame(() => { this.scrollToEnd() })} 
+                                                            style={{ 
+                                                                backgroundColor: ColorList.bodyBackground, 
+                                                                height: 40, 
+                                                                width: 40, 
+                                                                borderRadius: 30, 
+                                                                justifyContent: "center", 
+                                                                alignItems: "center", 
+                                                                ...shadower(4) }}>
                                                                 <SimpleLineIcons name="arrow-down" type="SimpleLineIcons" style={{ color: ColorList.bodyIcon, fontSize: 22 }} />
                                                             </TouchableOpacity>
                                                         }}
@@ -816,6 +828,7 @@ class ChatRoom extends AnimatedComponent {
                             />*/}
                             {
                                 this.state.showOptions && <Options
+                                    timeToDissmissKeyboard={this.timeToDissmissKeyboard}
                                     openAudioPicker={this.openAudioPicker.bind(this)}
                                     openFilePicker={this.openFilePicker.bind(this)}
                                     addRemind={this.props.addRemind}
@@ -1107,6 +1120,7 @@ class ChatRoom extends AnimatedComponent {
                         this.delay >= 20 || (item && !item.sent) ? 0 : this.delay + 1;
                     return item ? (
                         <Message
+                            key={item.id}
                             isPointed={item.id === GState.currentID}
                             isRelation={this.props.isRelation}
                             react={this.reactToMessage.bind(this)}
@@ -1140,9 +1154,12 @@ class ChatRoom extends AnimatedComponent {
                             firebaseRoom={this.props.firebaseRoom}
                             roomName={this.props.roomName}
                             sendMessage={(message) => this.sendTextMessage(message)}
+                            allplayed = {item.type == message_types.audio 
+                                && item.played && item.played.length == 
+                                this.props.members.length}
                             received={
-                                item.received && this.props.members
-                                    ? item.received.length >= this.props.members.length
+                                item.receive && this.props.members
+                                    ? item.receive.length >= this.props.members.length
                                     : false
                             }
                             replaceMessageVideo={(data) => this.replaceMessageVideo(data)}

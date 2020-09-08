@@ -1,5 +1,7 @@
 import * as RootNav from "../RootNave"
 import GState from '../stores/globalState/index';
+import emitter from './eventEmiter';
+import { close_all_modals } from '../meta/events';
 
 class NavigatorClass {
     constructor() {
@@ -23,6 +25,21 @@ class NavigatorClass {
     waitAfterPush(){
         this.pushTimeoutRef = setTimeout(() => this.resetPushingState(), this.pushWaite)
     }
+    pushActivityWithIndex(activity,data){
+        if(data){
+            if (data.message_id) {
+                this.goToChatWithIndex(activity, data.message_id)
+            } else if (data.remind_id) {
+                this.gotoRemindsWithIndex(activity, data.remind_id, true)
+            } else if (data.post_id) {
+                this.gotoStarWithIndex(activity, data.post_id, true)
+            } else {
+                this.pushActivity(activity)
+            } 
+        }else{
+            this.pushActivity(activity)
+        }
+    }
     push(route,params){
         GState.nav.push(route, params)
     }
@@ -38,28 +55,41 @@ class NavigatorClass {
         }
     }
     openVideo(url,date){
+        //this.sayCloseAllModals()
         this.pushRoute("Video",{
             video:url,
             date
         })
     }
-    gotoRemindsWithIndex(event,id) {
-        GState.toggleCurrentIndex(id, 5000)
-        this.pushActivity(event, "Reminds", { id })
+    handleReply(event){
+        setTimeout(() => this.pushActivity(event, "EventChat"), GState.waitToReply)
     }
-    gotoStarWithIndex(event,id) {
+    gotoRemindsWithIndex(event,id,withReply) {
+        GState.toggleCurrentIndex(id, 5000)
+        this.pushActivity(event, "Reminds", { id, 
+            reply: withReply ? () => this.handleReply(event) :null })
+    }
+    gotoStarWithIndex(event, id, withReply) {
         GState.toggleCurrentIndex(id, 2000)
-        this.pushActivity(event, "EventDetails", { id })
+        this.pushActivity(event, "EventDetails", {
+            id, reply: withReply ? () => this.handleReply(event): null })
     }
     goToChatWithIndex(event,id){
         GState.toggleCurrentIndex(id,5000)
         this.pushActivity(event,"EventChat",{id})
     }
-    openPhoto(url,hideActions,date){
+    sayCloseAllModals(){
+        setTimeout(() => {
+            emitter.emit(close_all_modals)
+        })
+    }
+    openPhoto(url,hideActions,date,callback){
+        //this.sayCloseAllModals()
         this.pushRoute('PhotoViewer', { 
             photo: url,
             date,
-            hideActions: hideActions||false
+            hideActions: hideActions||false,
+            callback
         })
     }
     pushTo(page, param){

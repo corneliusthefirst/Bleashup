@@ -8,7 +8,7 @@ class UserInfoDispach {
         return stores.Contacts.removeContact(phone)
     }
     updateContactUserInfo(phone,info){
-        stores.TemporalUsersStore.updateUserInfo(phone,Object.keys(info)[0],Object.values(info)[0])
+        return stores.TemporalUsersStore.updateUserInfo(phone,Object.keys(info)[0],Object.values(info)[0])
     }
 }
 const UserInfoDispatcher = new UserInfoDispach()

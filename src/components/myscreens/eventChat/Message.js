@@ -150,11 +150,13 @@ export default class Message extends BeComponent {
                 return (
                     <AudioMessage
                         //handleLongPress={() => this.handLongPress()}
+                        allplayed={this.props.allplayed}
                         room={this.props.room}
                         pressingIn={() => {
                             this.replying = true;
                             this.handlePressIn()
                         }}
+                        activity_id={this.props.activity_id}
                         index={index}
                         sender={sender}
                         message={data}
@@ -319,15 +321,16 @@ export default class Message extends BeComponent {
     }
     prevVote = null;
     shouldComponentUpdate(nextProps, nextState, nextContext) {
-        return (
-            this.props.message.sent !== nextProps.message.sent ||
+        let shoulUpdate = this.props.message.sent !== nextProps.message.sent ||
             this.props.received !== nextProps.received ||
             this.props.isfirst !== nextProps.isfirst ||
             this.state.loaded !== nextState.loaded ||
+            this.props.allplayed !== nextProps.allplayed ||
             this.state.refresh !== nextState.refresh ||
             this.props.isPointed !== nextProps.isPointed ||
-            this.state.isReacting !== nextState.isReacting
-        );
+            this.state.isReacting !== nextState.isReacting? true : false
+        console.warn("updating message component: ",shoulUpdate)
+        return shoulUpdate
     }
     refresh() {
         this.setStatePure({

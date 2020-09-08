@@ -52,7 +52,7 @@ export default class TemporalUsersStore {
     addUser(user) {
         return new Promise((resolve, reject) => {
             this.readFromStore().then(users => {
-                users[user.phone] = [user]
+                users[user.phone] = user
                 this.saveKey.data = users;
                 this.setPropterties(users)
             })

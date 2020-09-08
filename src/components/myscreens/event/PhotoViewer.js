@@ -112,6 +112,8 @@ export default class PhotoViewer extends BleashupModal {
     });
   }
   goback(){
+    let callback = this.getParam('callback')
+    callback && callback()
     return this.props.navigation && this.props.navigation.goBack()
   }
   date = moment(this.dateRoute || this.props.created_at).calendar();

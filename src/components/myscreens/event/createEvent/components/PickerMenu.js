@@ -26,7 +26,7 @@ export default class PickersMenu extends Component {
     }
   }
   iconStyle = {
-    color: ColorList.bodyIcon,
+    color: this.props.color || ColorList.bodyIcon,
     fontSize: this.props.fontSize ? this.props.fontSize : 30,
   }
   hideMenu = () => {

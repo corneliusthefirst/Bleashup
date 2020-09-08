@@ -549,6 +549,66 @@ class TEXTS {
         en: "Select Members",
         fr: "Selectioner les membres"
     }[GState.lang]
+    enter_your_name= {
+        en: "Enter your name",
+        fr: "Entree Votre nom"
+    }[GState.lang]
+    apply = {
+        en:"Aply",
+        fr: "Apliquer"
+    }[GState.lang]
+    enter_new_value = {
+        en: "Enter new value",
+        fr: "Entree les nouvelles valeurs"
+    }[GState.lang]
+    chose_status = {
+        en: "Choose a status",
+        fr: "Choisisez un status"
+    }[GState.lang]
+    no_status_available = {
+        en: "@No status update here",
+        fr: "@RAS"
+    }[GState.lang]
+    available = {
+        en: "Available",
+        fr: "Disponible"
+    }[GState.lang]
+    busy = {
+        en:"Busy",
+        fr:"Occupee"
+    }[GState.lang]
+    at_school = {
+        en: "At school",
+        fr: "A l'ecole"
+    }[GState.lang]
+    at_work = {
+        en: "At work",
+        fr: "Au travail"
+    }[GState.lang]
+    at_cinema = {
+        en: "At cinema",
+        fr: "Au Cinema"
+    }[GState.lang]
+    at_meeting = {
+        en: "At metting",
+        fr: "En reunion"
+    }[GState.lang]
+    sleeping = {
+        en: "Sleeping",
+        fr:"Endormis"
+    }[GState.lang]
+    urgent_call_only={
+        en: "Urgent calls only",
+        fr: "Appel urgents uniquement"
+    }[GState.lang]
+    very_low_battery = {
+        en: "Battery very low",
+        fr:"Batterie tres faible"
+    }[GState.lang]
+    copied={
+        en: 'copied !',
+        fr:'copiee'
+    }[GState.lang]
 }
 const Texts = new TEXTS()
 export default Texts

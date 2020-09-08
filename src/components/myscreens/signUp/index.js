@@ -162,7 +162,7 @@ export default class SignUpView extends BeComponent {
               color: ColorList.indicatorColor 
             }} />
             <Input
-            maxLength={25}
+            maxLength={GState.nameMaxLength}
             style={{
               width:"70%"
             }}

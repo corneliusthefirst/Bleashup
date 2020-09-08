@@ -4,6 +4,7 @@ import moment from "moment";
 import { observable, action } from "mobx";
 import emitter from '../services/eventEmiter';
 import request from '../services/requestObjects';
+import message_types from '../components/myscreens/eventChat/message_types';
 
 class ChatStore {
     constructor() {
@@ -89,7 +90,8 @@ class ChatStore {
         return new promise((resolve, reject) => {
             this.readFromStore().then((messages) => {
                 let index = findIndex(messages[roomID], { id: messageID });
-                messages[roomID][index].recieved.unshift(receiver);
+                messages[roomID][index].receive? messages[roomID][index].recieve.unshift(receiver):
+                    messages[roomID][index].receive = [receiver];
                 this.addToStore(messages);
                 resolve();
             });
@@ -133,6 +135,7 @@ class ChatStore {
                 messages[roomID][index].seer
                     ? messages[roomID][index].seer.unshift(seer)
                     : (messages[roomID][index].seer = [seer]);
+                messages[roomID][index] = this.add_updated_at(messages[roomID][index])
                 this.addToStore(messages);
                 resolve();
             })
@@ -186,7 +189,7 @@ class ChatStore {
                     if (index >= 0) {
                         data[roomID][index] = {
                             ...data[roomID][index],
-                            received: newMessage.received,
+                            receive: newMessage.receive,
                             key: newMessage.key,
                             sent: newMessage.sent,
                             type: newMessage.type,
@@ -220,13 +223,19 @@ class ChatStore {
         return new Promise((resolve, reje) => {
             this.readFromStore().then((data) => {
                 let index = findIndex(data[roomID], { id: messageID });
-                if (index <= 0 && data[roomID][index + 1].type === "date_separator") {
+                if (index <= 0 && data[roomID][index + 1].type === message_types.date_separator) {
                     let otherID = data[roomID][index + 1].id;
                     data[roomID] = reject(data[roomID], { id: messageID });
                     data[roomID] = reject(data[roomID], { id: otherID });
                     this.addToStore(data);
                     resolve(data);
-                } else {
+                } else if (data[roomID][index + 1].type === message_types.date_separator && 
+                    data[roomID][index + -1] && 
+                    data[roomID][index - 1].type === message_types.date_separator){
+                    let otherID = data[roomID][index - 1].id;
+                    data[roomID] = reject(data[roomID], { id: messageID });
+                    data[roomID] = reject(data[roomID], { id: otherID });
+                    } else {
                     data[roomID] = reject(data[roomID], { id: messageID });
                     this.addToStore(data);
                     resolve();
@@ -387,6 +396,7 @@ class ChatStore {
                 let index = findIndex(data[roomID], { id: id });
                 if (data[roomID][index]) {
                     data[roomID][index].source = url;
+                    data[roomID][index] = this.add_updated_at(data[roomID][index])
                     this.addToStore(data);
                     this.setProperties(data);
                     resolve("ok");
@@ -395,6 +405,9 @@ class ChatStore {
                 }
             });
         });
+    }
+    add_updated_at(data){
+        return {...data,updated_at:moment().format()}
     }
 }
 

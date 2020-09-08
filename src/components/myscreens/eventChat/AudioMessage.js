@@ -25,6 +25,7 @@ import emitter from '../../../services/eventEmiter';
 import BePureComponent from '../../BePureComponent';
 import  EvilIcons from 'react-native-vector-icons/EvilIcons';
 import  FontAwesome5  from 'react-native-vector-icons/FontAwesome5';
+import Requester from './Requester';
 export default class AudioMessage extends BePureComponent {
     constructor(props) {
         super(props);
@@ -45,7 +46,7 @@ export default class AudioMessage extends BePureComponent {
         //console.warn(this.props.message.source);
         this.setStatePure({
             duration: null,
-            currentPosition: 0,
+            currentPosition: this.haveIPLayed() ? 1 : 0,
             playing: false,
             received: this.props.message.received,
             total: this.props.message.total,
@@ -210,6 +211,9 @@ export default class AudioMessage extends BePureComponent {
            this.initialisePlayer(this.props.message.source,true)
            emitter.on(this.playingEvent, this.handlePLaying.bind(this))
        }
+       if(!this.haveIPLayed()){
+           Requester.playedMessage(this.props.message.id,this.props.room,this.props.activity_id)
+       }
     }
     handlePLaying(){
         this.pause()
@@ -225,7 +229,7 @@ export default class AudioMessage extends BePureComponent {
                     playing:false,
                     currentTime: seconds,
                 });
-                stores.Messages.addDuration(this.props.room, seconds).then(
+                stores.Messages.addDuration(this.props.room, seconds,this.props.message.id).then(
                     (status) => {
                         
                     }
@@ -245,6 +249,10 @@ export default class AudioMessage extends BePureComponent {
             }, 5000);
         }
     }
+    haveIPLayed(){
+        return this.props.message && this.props.message.played && 
+        this.props.message.played.findIndex(ele => ele.phone == stores.LoginStore.user.phone) >= 0
+    }
     cancelDownLoad(url) {
         if (this.exchanger.task !== null) {
             this.exchanger.task.cancel((err, taskID) => { });
@@ -262,6 +270,7 @@ export default class AudioMessage extends BePureComponent {
         marginBottom: "auto",
     };
     render() {
+        let trackColor = this.props.allplayed ? ColorList.reminds : ColorList.indicatorColor
         textStyle = {
             width: "85%",
             flexDirection: "column",
@@ -299,6 +308,7 @@ export default class AudioMessage extends BePureComponent {
                             <View style={textStyle}>
                                 <View>
                                     <Slider
+                                        minimumTrackTintColor={trackColor}
                                         value={this.state.currentPosition}
                                         onValueChange={(value) => {
                                           this.plays()
