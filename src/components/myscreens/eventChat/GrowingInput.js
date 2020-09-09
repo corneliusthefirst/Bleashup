@@ -2,12 +2,13 @@ import React,{PureComponent} from "react"
 import { View, TextInput } from 'react-native';
 import ColorList from '../../colorList';
 import BePureComponent from '../../BePureComponent';
+import shadower from "../../shadower";
 
 export default class GrowingInput extends BePureComponent{
     constructor(props){
         super(props)
         this.state = {
-            height: 15
+            height: 20
         }
     }
     updateSize = (heigh) => {
@@ -47,10 +48,8 @@ export default class GrowingInput extends BePureComponent{
                     maxHeight: 100,
                     left: 0,
                     right: 0,
-                    minHeight: 15,
                     width: "90%",
                     height: this.state.height,
-                    borderRadius: 15,
                     //marginLeft: "3%",
                 }}
                 placeholderTextColor="#66737C"

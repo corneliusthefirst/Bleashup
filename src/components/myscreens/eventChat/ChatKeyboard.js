@@ -736,7 +736,9 @@ export default class ChatKeyboard extends AnimatedComponent {
                                     "88%" //: "88%"
                                     ,
                                     flexDirection: "column",
-                                    borderRadius: 25,
+                                    borderRadius: 35,
+                                    ...shadower(2),
+                                    minHeight: 20,
                                     maxHeight: 500,
                                     backgroundColor: ColorList.bodyBackground,
                                     borderTopLeftRadius:
@@ -745,14 +747,14 @@ export default class ChatKeyboard extends AnimatedComponent {
                                             this.props.showAudioRecorder ||
                                             this.state.showCaption
                                             ? 5
-                                            : 25,
+                                            : 35,
                                     borderTopRightRadius:
                                         this.state.replying ||
                                             this.state.tagging ||
                                             this.props.showAudioRecorder ||
                                             this.state.showCaption
                                             ? 5
-                                            : 25,
+                                            : 35,
                                 }}
                             >
                                 <TouchableOpacity
@@ -762,19 +764,20 @@ export default class ChatKeyboard extends AnimatedComponent {
                                         {...this.keyBoardActionContainer,
                                             right:null,
                                             width:25,
+                                            bottom:9,
                                             height:25,
                                             paddingTop: 3,
                                             alignItems: 'center',
                                             justifyContent: 'center',
                                             flexDirection: 'row',
-                                            left:2
+                                            left:7
                                         }}
                                 >
                                     <Entypo
                                         style={{
                                             color: ColorList.likeActive,
                                             alignSelf: "flex-end",
-                                            fontSize: 20,
+                                            fontSize: 22,
                                         }}
                                         type="Entypo"
                                         name="emoji-flirt"

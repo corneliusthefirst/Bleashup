@@ -95,7 +95,7 @@ export default class Options extends AnimatedComponent {
                 <View style={{
                     height: "100%", backgroundColor: ColorList.bodyBackground,
                     alignItems: 'center',
-                    borderRadius: 10, width: 45, ...shadower(2),
+                    borderRadius: 35, width: 45, ...shadower(2),
                 }}>
 
                     <View style={{ height: "100%", flexDirection: "column", alignItems: 'center', justifyContent: 'space-between', padding: 5 }}>
@@ -107,6 +107,7 @@ export default class Options extends AnimatedComponent {
                                 <View
                                     style={{
                                         alignItems: "center",
+                                        ...shadower(3),
                                         ...rounder(this.buttonSize, '#1e90ff'),
                                     }}
                                 >
@@ -249,7 +250,7 @@ const styles = StyleSheet.create({
         borderLeftColor: 'transparent',
         borderRightColor: 'transparent',
         borderTopColor: ColorList.bodyBackground,
-        marginRight: '80%',
+        marginRight: '70%',
         marginBottom: "27%",
 
     },
