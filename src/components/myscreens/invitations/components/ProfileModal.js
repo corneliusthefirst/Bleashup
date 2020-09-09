@@ -19,6 +19,7 @@ import { observer } from "mobx-react";
 import stores from "../../../../stores";
 import onlinePart from "../../eventChat/parts/onlineParts";
 import rounder from '../../../../services/rounder';
+import PhotoViewer from "../../event/PhotoViewer";
 
 @observer class ProfileModal extends BleashupModal {
   initialize(props) {
@@ -33,7 +34,9 @@ import rounder from '../../../../services/rounder';
   transparent = "rgba(52, 52, 52, 0.3)";
   enlargeImage(url) {
     requestAnimationFrame(() => {
-      BeNavigator.openPhoto(url)
+      this.setStatePure({
+        showPhoto:true
+      })
     });
   }
   onOpenModal() {
@@ -145,6 +148,16 @@ import rounder from '../../../../services/rounder';
             </TouchableOpacity>
           </View>
         </View>
+        {this.state.showPhoto? <PhotoViewer
+          open={this.state.showPhoto}
+          photo={user.profile}
+          hidePhoto={() =>{
+            this.setStatePure({
+              showPhoto:false
+            })
+          }}
+          >
+        </PhotoViewer>:null}
       </View>
     ) : null;
   }

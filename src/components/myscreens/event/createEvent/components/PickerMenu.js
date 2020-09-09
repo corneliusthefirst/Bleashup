@@ -8,6 +8,7 @@ import EvilIcons from 'react-native-vector-icons/EvilIcons';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import GState from "../../../../../stores/globalState";
+import rounder from "../../../../../services/rounder";
 export default class PickersMenu extends Component {
   constructor(props) {
     super(props);
@@ -68,7 +69,8 @@ export default class PickersMenu extends Component {
           ref={this.setMenuRef}
           button={
             <TouchableOpacity
-              onPress={() => requestAnimationFrame(this.showMenu.bind(this))}
+             style={{...rounder((this.props.fontSize||30)+5,ColorList.bodyBackground),
+              justifyContent: 'center',}} onPress={() => requestAnimationFrame(this.showMenu.bind(this))}
             >
               {this.icons(this.props.icon.type)}
             </TouchableOpacity>

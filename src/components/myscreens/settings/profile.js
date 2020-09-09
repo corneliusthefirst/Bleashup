@@ -95,13 +95,13 @@ let { height, width } = Dimensions.get('window');
     return (
       this.state.uploading ? <Spinner /> :
         <View style={{ height: 300, width: "100%", justifyContent: "center", alignItems: "center" }}>
-          <TouchableWithoutFeedback onPress={() => {
+          <TouchableOpacity onPress={() => {
             requestAnimationFrame(() => { this.openPhoto() });
           }}>
             {stores.LoginStore.user.profile && testForURL(stores.LoginStore.user.profile) ? <CacheImages   {...this.props}
               source={{ uri: stores.LoginStore.user.profile }} style={{ height: ColorList.containerHeight / 3, width: ColorList.containerHeight / 3, borderRadius: ColorList.containerHeight / 6 }} /> :
               <Image source={require("../../../../Images/images.jpeg")} style={{ height: ColorList.containerHeight / 3, width: ColorList.containerHeight / 3, borderRadius: ColorList.containerHeight / 6 }} ></Image>}
-          </TouchableWithoutFeedback>
+          </TouchableOpacity>
 
           <TouchableWithoutFeedback>
             <View style={{

@@ -2,7 +2,7 @@ import React, { Component } from "react";
 import PickersMenu from "./PickerMenu";
 import FileExachange from "../../../../../services/FileExchange";
 import { RNFFmpeg, RNFFprobe} from "react-native-ffmpeg";
-import { View } from "react-native";
+import { View, TouchableOpacity } from "react-native";
 import Pickers from "../../../../../services/Picker";
 import { AnimatedCircularProgress } from "react-native-circular-progress";
 import shadower from "../../../../shadower";
@@ -12,7 +12,6 @@ import rnFetchBlob from "rn-fetch-blob";
 import BeComponent from '../../../../BeComponent';
 import EvilIcons  from 'react-native-vector-icons/EvilIcons';
 import BeNavigator from '../../../../../services/navigationServices';
-import { TouchableOpacity } from "react-native-gesture-handler";
 import rounder from "../../../../../services/rounder";
 import BleashupAlert from "./BleashupAlert";
 import Texts from '../../../../../meta/text';
@@ -321,9 +320,9 @@ export default class PickersUpload extends BeComponent {
         </View>}
 
         {!this.state.uploading ? null: (
-          <View style={{ }}>
+          <View style={{ ...rounder((this.props.fontSize||26)||5,ColorList.bodyBackground) }}>
             <AnimatedCircularProgress
-              size={26}
+              size={this.props.fontSize|| 26}
               width={2}
               backgroundColor={ColorList.indicatorInverted}
               tintColor={
@@ -345,14 +344,14 @@ export default class PickersUpload extends BeComponent {
             </AnimatedCircularProgress>
           </View>
         )}
-        {this.props.withTrash && <TouchableOpacity 
+        {this.props.withTrash ? <TouchableOpacity 
           onPress={this.showAlert.bind(this)}
           style={{...rounder((this.props.fontSize||30)+5),justifyContent: 'center',}} >
           <EvilIcons style={{ color: 'red', fontSize: this.props.fontSize|| 30 }}
             name="trash" transparent type="EvilIcons" />
-          </TouchableOpacity>}
+          </TouchableOpacity>:null}
 
-        {this.state.searchImageState && <SearchImage
+        {this.state.searchImageState ? <SearchImage
           openPicker={() => {
             this.TakePhotoFromLibrary();
           }}
@@ -363,9 +362,9 @@ export default class PickersUpload extends BeComponent {
               searchImageState: false,
             });
           }}
-        />}
+        />:null}
         {
-          this.state.showAlert && <BleashupAlert isOpen={this.state.showAlert}
+          this.state.showAlert ? <BleashupAlert isOpen={this.state.showAlert}
           title={this.state.alert.title}
           message={this.state.alert.message}
           refuse={Texts.cancel}
@@ -380,7 +379,7 @@ export default class PickersUpload extends BeComponent {
           accept={Texts.remove}
           onClosed={this.hideAlert.bind(this)}
           >
-          </BleashupAlert>
+          </BleashupAlert>:null
         }
       </View>
 

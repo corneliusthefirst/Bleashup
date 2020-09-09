@@ -1321,21 +1321,6 @@ export default class Event extends BeComponent {
       Toaster({ text: Texts.app_busy });
     }
   }
-  removeActivityPhoto() {
-    this.setStatePure({
-      working: true,
-      isAreYouSureModalOpened: false,
-    });
-    Requester.changeBackground(this.event.id, "")
-      .then((res) => {
-        this.initializeMaster();
-      })
-      .catch(() => {
-        this.setStatePure({
-          working: false,
-        });
-      });
-  }
   saveBackground(path) {
     this.setStatePure({
       working: true,
@@ -1589,15 +1574,6 @@ export default class Event extends BeComponent {
       <PhotoInputModal
         isRelation={!this.computedMaster || this.isRelation}
         saveBackground={(url) => this.saveBackground(url)}
-        removePhoto={() => {
-          this.setStatePure({
-            isAreYouSureModalOpened: true,
-            warnTitle: Texts.remove_photo,
-            warnDescription: Texts.are_you_sure_to_remove_photo,
-            callback: this.removeActivityPhoto.bind(this),
-            okButtonText: Texts.remove,
-          });
-        }}
         photo={this.event.background}
         showActivityPhoto={() => {
           this.event.background && this.showPhoto(this.event.background);

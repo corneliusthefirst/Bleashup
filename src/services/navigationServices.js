@@ -55,7 +55,7 @@ class NavigatorClass {
         }
     }
     openVideo(url,date){
-        //this.sayCloseAllModals()
+        this.sayCloseAllModals()
         this.pushRoute("Video",{
             video:url,
             date
@@ -79,12 +79,11 @@ class NavigatorClass {
         this.pushActivity(event,"EventChat",{id})
     }
     sayCloseAllModals(){
-        setTimeout(() => {
-            emitter.emit(close_all_modals)
-        })
+        emitter.emit(close_all_modals)
+        
     }
     openPhoto(url,hideActions,date,callback){
-        //this.sayCloseAllModals()
+        this.sayCloseAllModals()
         this.pushRoute('PhotoViewer', { 
             photo: url,
             date,
