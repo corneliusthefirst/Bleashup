@@ -47,19 +47,21 @@ export default class contacts {
             EventListener.sendRequest(JSONData, newCon.phone + 'new-contact').then((response) => {
               console.warn(response);
               Contacts.contacts = Contacts && Contacts.contacts ?
-                uniqBy(Contacts.contacts.push(NewContact), 'phone') :
+                uniqBy([NewContact].concat(Contacts.contacts), 'phone') :
                 [NewContact];
               this.setProperties(Contacts);
               resolve();
             });
           });
         } else {
-          resolve();
+          resolve(already_a_contact);
         }
       });
     });
   }
-
+isAContact(phone){
+  return findIndex(this.contacts.contacts,{phone:phone})>=0
+}
   @action removeContact(phone) {
     return new Promise((resolve, reject) => {
       this.readFromStore().then((Contacts) => {
@@ -238,3 +240,4 @@ export default class contacts {
     });
   }
 }
+export const already_a_contact = "already_contact"

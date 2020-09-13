@@ -139,6 +139,9 @@ export default class SignInView extends Component {
         </View>
         <View style={{
           alignSelf: 'center',
+          flexDirection: 'column',
+          alignItems: 'center',
+          justifyContent: 'center',
           margin: '2%',
         }}>
           <Text style={{...GState.defaultTextStyle,fontWeight: 'bold',}}>{this.loginStore.user.name}</Text>

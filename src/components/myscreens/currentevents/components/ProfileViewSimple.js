@@ -13,25 +13,26 @@ import stores from "../../../../stores";
 import ProfileModal from "../../invitations/components/ProfileModal";
 import testForURL from "../../../../services/testForURL";
 import GState from "../../../../stores/globalState/index";
-import Highlighter from "react-native-highlight-words";
 import ColorList from "../../../colorList";
 import BeComponent from "../../../BeComponent";
-import FontAwesome  from 'react-native-vector-icons/FontAwesome';
+import FontAwesome from "react-native-vector-icons/FontAwesome";
 import emitter from "../../../../services/eventEmiter";
-import { sayTyping } from '../../eventChat/services';
+import { sayTyping } from "../../eventChat/services";
 import { typing } from "../../../../meta/events";
 import { observer } from "mobx-react";
-import BePureComponent from '../../../BePureComponent';
-import Texts from '../../../../meta/text';
+import BePureComponent from "../../../BePureComponent";
+import Texts from "../../../../meta/text";
+import TextContent from "../../eventChat/TextContent";
 
-@observer class ProfileSimple extends BePureComponent {
+@observer
+class ProfileSimple extends BePureComponent {
   constructor(props) {
     super(props);
     this.state = {
       invite: false,
     };
     this.showProfile = this.showProfile.bind(this);
-    this.showInivte = this.showInivte.bind(this);
+    this.showInvite = this.showInvite.bind(this);
     this.closeProfileModal = this.closeProfileModal.bind(this);
   }
   showProfile() {
@@ -43,89 +44,87 @@ import Texts from '../../../../meta/text';
       }, 50);
     });
   }
-  showInivte() {
-    requestAnimationFrame(() => {
-      this.setStatePure({ invite: true });
-    });
+  showInvite() {
+    this.props.showInvite && this.props.showInvite(this.props.profile);
   }
-  
-  componentMounting(){
-    emitter.on(typing(this.props.profile.phone),(typer) => {
-      !this.sayTyping ? this.sayTyping = sayTyping.bind(this):null 
-      this.sayTyping(typer)
-    })
+  componentMounting() {
+    this.props.profile &&
+      emitter.on(typing(this.props.profile.phone), (typer) => {
+        !this.sayTyping ? (this.sayTyping = sayTyping.bind(this)) : null;
+        this.sayTyping(typer);
+      });
   }
-  showTyper(){
-    return this.state.typing && <Text style={[GState.defaultTextStyle,
-      {color:ColorList.indicatorColor,fontSize: 12,
-      }]}>{Texts.typing}</Text>
+  showTyper() {
+    return (
+      this.state.typing && (
+        <Text
+          style={[
+            GState.defaultTextStyle,
+            {
+              color: ColorList.indicatorColor,
+              fontSize: 12,
+            },
+          ]}
+        >
+          {Texts.typing}
+        </Text>
+      )
+    );
   }
   closeProfileModal() {
     this.setStatePure({ isModalOpened: false });
   }
   showingProfile = false;
   render() {
-    let user = this.props.profile && { ...this.props.profile,
-      ...stores.TemporalUsersStore.Users[this.props.profile.phone]}
+    let user = this.props.profile && {
+      ...this.props.profile,
+      ...stores.TemporalUsersStore.Users[this.props.profile.phone],
+    };
+    let userName =
+      user && user.phone === stores.LoginStore.user.phone
+        ? "You "
+        : user && user.nickname;
     return (
       <View style={styles.mainContainer}>
         {!this.props.hidePhoto && (
           <View style={styles.containerSub}>
-            {user &&
-            user.profile &&
-            testForURL(user.profile) ? (
+            {user && user.profile && testForURL(user.profile) ? (
               <TouchableWithoutFeedback onPress={this.showProfile}>
                 <CacheImages
                   staySmall
                   small
                   thumbnails
                   {...this.props}
-                  source={{ uri:user.profile }}
+                  source={{ uri: user.profile }}
                 />
               </TouchableWithoutFeedback>
             ) : (
-              <FontAwesome style={styles.iconPlaceHolder} name={"user-circle"}></FontAwesome>
+              <FontAwesome
+                style={styles.iconPlaceHolder}
+                name={"user-circle"}
+              ></FontAwesome>
             )}
           </View>
         )}
-
-        {this.props.searching ? (
-          <View style={styles.textStyles}>
-            <Highlighter
-              numberOfLines={1}
-              ellipsizeMode="tail"
-              highlightStyle={styles.light}
-              searchWords={[this.props.searchString]}
-              style={styles.normal}
-              autoEscape={true}
-              textToHighlight={user.nickname}
-            ></Highlighter>
-            {this.showTyper()}
-          </View>
-        ) : (
-          <TouchableOpacity onPress={this.showProfile} style={styles.textStyles}>
-            <Text
-              ellipsizeMode={"tail"}
-              numberOfLines={1}
-              style={styles.text}
-            >
-              {user &&
-              user.phone === stores.LoginStore.user.phone
-                ? "You "
-                : user && user.nickname}
-            </Text>
-            {this.showTyper()}
-          </TouchableOpacity>
-        )}
-
+        <TouchableOpacity onPress={this.showProfile} style={styles.textStyles}>
+          <TextContent
+            onPress={this.showProfile}
+            ellipsizeMode={"tail"}
+            numberOfLines={1}
+            style={styles.text}
+            searchString={this.props.searchString}
+          >
+            {userName}
+          </TextContent>
+          {this.showTyper()}
+        </TouchableOpacity>
         {this.props.invite && !user.found ? (
           <View style={styles.inviteContainer}>
             <TouchableWithoutFeedback onPress={this.showInvite}>
-              <Text style={styles.invite}>invite</Text>
+              <Text style={styles.invite}>{Texts.invite}</Text>
             </TouchableWithoutFeedback>
           </View>
         ) : null}
-
         {
           <ProfileModal
             isOpen={this.state.isModalOpened}
@@ -142,7 +141,7 @@ import Texts from '../../../../meta/text';
   }
 }
 
-export default ProfileSimple
+export default ProfileSimple;
 
 const styles = StyleSheet.create({
   mainContainer: {

@@ -5,6 +5,7 @@ import { observable, action } from "mobx";
 import emitter from '../services/eventEmiter';
 import request from '../services/requestObjects';
 import message_types from '../components/myscreens/eventChat/message_types';
+import stores from ".";
 
 class ChatStore {
     constructor() {
@@ -92,6 +93,8 @@ class ChatStore {
                 let index = findIndex(messages[roomID], { id: messageID });
                 messages[roomID][index].receive? messages[roomID][index].recieve.unshift(receiver):
                     messages[roomID][index].receive = [receiver];
+                messages[roomID][index].receive = uniqBy(messages[roomID][index].receive, "phone")
+                messages[roomID][index] = this.add_updated_at(messages[roomID][index])
                 this.addToStore(messages);
                 resolve();
             });
@@ -123,6 +126,8 @@ class ChatStore {
                 messages[roomID][index].played
                     ? messages[roomID][index].played.unshift(player)
                     : (messages[roomID][index].played = [player]);
+                messages[roomID][index].played = uniqBy(messages[roomID][index].played, "phone")
+                messages[roomID][index] = this.add_updated_at(messages[roomID][index])
                 this.addToStore(messages);
                 resolve();
             });
@@ -132,14 +137,20 @@ class ChatStore {
         return new Promise((resolve, reject) => {
             this.readFromStore().then(messages => {
                 let index = findIndex(messages[roomID], { id: messageID });
-                messages[roomID][index].seer
-                    ? messages[roomID][index].seer.unshift(seer)
-                    : (messages[roomID][index].seer = [seer]);
+                messages[roomID][index].seen
+                    ? messages[roomID][index].seen.unshift(seer)
+                    : (messages[roomID][index].seen = [seer]);
+                messages[roomID][index].seen = uniqBy(messages[roomID][index].seen, "phone")
                 messages[roomID][index] = this.add_updated_at(messages[roomID][index])
                 this.addToStore(messages);
                 resolve();
             })
         });
+    }
+    haveIseen(message,phone){
+        return message.seen && 
+        message.seen.findIndex(ele => ele.phone === phone)>= 0?
+        true:false
     }
     @action reactToMessage(roomID, messageID, reaction) {
         return new Promise((resolve, reject) => {

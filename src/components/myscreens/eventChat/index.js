@@ -8,6 +8,8 @@ import moment from 'moment';
 import Waiter from '../loginhome/Waiter';
 import BeComponent from '../../BeComponent';
 import Spinner from '../../Spinner';
+import Toaster from '../../../services/Toaster';
+import Texts from '../../../meta/text';
 
 
  export default class EventChat extends BeComponent {
@@ -169,9 +171,18 @@ There are also Erlang plugins for other code editors Vim (vim-erlang) , Atom , E
     duration: Math.floor(0),
     created_at: moment().format(),
   }]
+  initReply(reply){
+    if(this.refs.room){
+      this.refs.room.fucussTextInput()
+      this.refs.room && this.refs.room.replying(reply) 
+    }else{
+      Toaster({text:Texts.unable_to_reply})
+    }
+  }
   render() {
     return (this.state.loaded ? <View style={{ backgroundColor: "white", }}><ChatRoom
       roomName={this.props.roomName}
+      closeMenu={this.props.closeMenu}
       user={{
         ...this.state.user,
         phone: this.state.user.phone.replace("00", "+")
@@ -179,6 +190,7 @@ There are also Erlang plugins for other code editors Vim (vim-erlang) , Atom , E
       handleReplyExtern={(reply) => {
         this.props.handleReplyExtern(reply)
       }}
+      ref={"room"}
       id={this.props.id}
       openMenu={this.props.openMenu}
       isComment={false}

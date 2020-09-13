@@ -365,6 +365,10 @@ class TEXTS {
         en: "Seen by",
         fr:"Vue par",
     }[GState.lang]
+    message_report = {
+        en:"Message report",
+        fr:"Raport du message"
+    }[GState.lang]
     not_available_video = {
         en: "This video is not more available",
         fr:"Cette video n'est plus accessible"
@@ -462,8 +466,8 @@ class TEXTS {
         fr: "Apuiez Logntemp pour commencer a enregister"
     }[GState.lang]
     start_a_conversation = {
-        en: "Start a relation",
-        fr: "Commencer une relation"
+        en: "Relate",
+        fr: "Discuter"
     }[GState.lang]
     write_to_disk_permission = {
         en: "Write To Storage Permission",
@@ -608,6 +612,90 @@ class TEXTS {
     copied={
         en: 'copied !',
         fr:'copiee'
+    }[GState.lang]
+    your_text = {
+        en: "Your Message",
+        fr: "Votre Message"
+    }[GState.lang]
+    enter_your_search = {
+        en: "Enter your search",
+        fr: "Entree votre recherche"
+    }[GState.lang]
+    a_bleashup_user = {
+        en: "a BeUp user",
+        fr: "un utilisateur de BeUp"
+    }[GState.lang]
+    start_a_relation_or_invite_a_contact = {
+        en: "Start a relation or Invite a contact to join BeUp",
+        fr: "Commencer une relation ou Inviter un contact a rejoindre BeUp"
+    }[GState.lang]
+    refresh_your_conctacts = {
+        en: "Refresh your contacts",
+        fr: "Actualiser vos contacts"
+    }[GState.lang]
+    invite = {
+        en: "Invite",
+        fr: "Iviter"
+    }[GState.lang]
+    beup_wants_to_access_your_contacts = {
+        en: 'Bleashup would like to view your contacts.',
+        fr: "Bleashup veut acceder a vos contact"
+    }[GState.lang]
+    accept = {
+        en: "Accept",
+        fr:"Accepter"
+    }[GState.lang]
+    unknow_user_consider_inviting = {
+        en: "unnknown user please consider inviting this contact",
+        fr: "Utilisateur inconnu SVP inviter ce contact"
+    }[GState.lang]
+    already_a_contact = {
+        en: "Already exists as contacts",
+        fr: "Exist Deja comme contact"
+    }[GState.lang]
+    activity_description = {
+        en: "Activity description",
+        fr: "Description de l'activitee"
+    }[GState.lang]
+    activity_description_placeholder = {
+        en:"Activity Desciption goes here; no description currently provided.",
+        fr: "La description de l'activitee vien ici; aucune description donnee pour le moment"
+    }[GState.lang]
+    no_description = {
+        en: "No Description Provided",
+        fr: "Pas de Description Donnee"
+    }[GState.lang]
+    select_new_members={
+        en: "Select New Members",
+        fr:"Selectionez les nouveaux membres"
+    }[GState.lang]
+    members_and = {
+        en: " members and ",
+        fr:" membres et"
+    }[GState.lang]
+    masters = {
+        en: " masters",
+        fr: "masters"
+    }[GState.lang]
+    activity_photo = {
+        en: "Activity Photo",
+        fr: "Photo de Lactivitee"
+    }[GState.lang]
+    unable_to_reply = {
+        en: "unable to reply",
+        fr: "impossible de repondre"
+    }[GState.lang]
+    b_up_default_status = {
+        en: "Hey, let's schedule that",
+        fr: "programmons ca"
+    }[GState]
+    last_seen = {
+        en:"last seen: ",
+        fr: "dernier fois: "
+    }[GState.lang]
+    history = {
+        en: "History",
+        fr: "Historique"
     }[GState.lang]
 }
 const Texts = new TEXTS()

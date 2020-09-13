@@ -50,7 +50,7 @@ class UpdatesDispatcher {
   }
   UpdatePossibilities = {
     user_info_changed:update => UserInfoDispatcher.updateContactUserInfo(update.updater,update.new_value),
-    added_as_contact:(update) => UserInfoDispatcher.saveNewContact({phone:update.addedphone,host:""}),
+    added_as_contact:(update) => UserInfoDispatcher.saveNewContact({phone:update.addedphone,host:update.new_value}),
     removed_as_contact: update => UserInfoDispatcher.removeContact(update.addedphone),
     typing_message: update => MainUpdater.sayTyping(update.new_value.committee_id,update.new_value.data),
     message_reaction: update => MainUpdater.reactToMessage(update.new_value.data.message_id,

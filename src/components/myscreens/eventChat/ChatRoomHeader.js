@@ -14,12 +14,13 @@ import Ionicons from 'react-native-vector-icons/Ionicons';
 import BePureComponent from '../../BePureComponent';
 import onlinePart from './parts/onlineParts';
 import { checkUserOnlineStatus } from './services';
+import Searcher from '../Contacts/Searcher';
 
 export default class ChatRoomHeader extends BePureComponent {
     constructor(props) {
         super(props);
         this.state = {
-            last_see:"..."
+            last_see: "..."
         };
         this.props.isRelation ? this.onlinePart = onlinePart.bind(this) : null
     }
@@ -47,65 +48,73 @@ export default class ChatRoomHeader extends BePureComponent {
                     width: '100%',
                     height: ColorList.headerHeight,
                     backgroundColor: ColorList.headerBackground,
+                    alignItems: 'center',
+                    justifyContent: 'space-between',
                     flexDirection: 'row',
                 }}
             >
-                <View
-                    style={{
-                        flex: 1,
-                        height: ColorList.headerHeight,
-                        flexDirection: 'row',
-                        alignSelf: 'flex-start',
-                        alignItems: 'center',
-                    }}
-                >
-                    <TouchableOpacity style={{
-                        width: '20%',
-                        alignItems: 'center',
-                    }} onPress={() => requestAnimationFrame(() => this.props.goback())} >
-                        <MaterialIcons
+                <TouchableOpacity style={{
+                    width: '10%',
+                    alignItems: 'center',
+                }} onPress={() => requestAnimationFrame(() => this.props.goback())} >
+                    <MaterialIcons
+                        style={{
+                            ...GState.defaultIconSize,
+                            color: ColorList.headerIcon,
+                            //marginLeft: '5%',
+                        }}
+                        type={'MaterialIcons'}
+                        name={'arrow-back'}
+                    />
+                </TouchableOpacity>
+                {this.props.searching ? null : <View style={{
+                    flexDirection: 'column',
+                    width: "60%",
+                    alignItems: 'flex-start',
+                }}>
+                    <View>
+                        <Text
                             style={{
-                                ...GState.defaultIconSize,
-                                color: ColorList.headerIcon,
-                                //marginLeft: '5%',
+                                alignSelf: 'center',
+                                color: ColorList.headerText,
+                                fontSize: ColorList.headerFontSize,
+                                fontWeight: ColorList.headerFontweight,
                             }}
-                            type={'MaterialIcons'}
-                            name={'arrow-back'}
-                        />
-                    </TouchableOpacity>
-                    <View style={{
-                        flexDirection: 'column',
-                        alignItems: 'flex-start',
-                    }}>
-                        <View>
-                            <Text
-                                style={{
-                                    alignSelf: 'center',
-                                    color: ColorList.headerText,
-                                    fontSize: ColorList.headerFontSize,
-                                    fontWeight: ColorList.headerFontweight,
-                                }}
-                            >
-                                {this.props.roomID === this.props.activity_id ? this.props.activity_name : this.props.roomName}
-                            </Text>
-                            <View style={{ height: 10, position: 'absolute' }}>
-                                {this.props.typing ? <TypingIndicator /> : null}
-                            </View>
-                        </View>
-                        <View>
-                            {this.onlinePart && this.onlinePart()}
+                        >
+                            {this.props.roomID === this.props.activity_id ? this.props.activity_name : this.props.roomName}
+                        </Text>
+                        <View style={{ height: 10, position: 'absolute' }}>
+                            {this.props.typing ? <TypingIndicator /> : null}
                         </View>
                     </View>
+                    <View>
+                        {this.onlinePart && this.onlinePart()}
+                    </View>
+                </View>}
+                <View style={{
+                    marginHorizontal: '1%',
+                    width: this.props.searching ? "75%" : 35,
+                    height: 35,
+                    justifyContent: 'center',
+                    alignSelf: 'center',
+                }}>
+                    <Searcher
+                        startSearching={this.props.startSearching}
+                        cancelSearch={this.props.cancelSearch}
+                        searchString={this.props.searchString}
+                        search={this.props.search}
+                        searching={this.props.searching}
+                    >
+                    </Searcher>
                 </View>
-
                 <View
                     style={{
-                        width: 90,
-                        paddingRight: 15,
+                        width: 55,
                         alignSelf: 'flex-end',
                         alignItems: 'center',
                         flexDirection: 'row',
-                        justifyContent: 'space-between',
+                        paddingRight: '2%',
+                        justifyContent: 'flex-end',
                         height: 50,
                     }}
                 >
@@ -114,22 +123,7 @@ export default class ChatRoomHeader extends BePureComponent {
                             requestAnimationFrame(() => this.props.openMenu());
                         }}
                         style={{
-                            height: ColorList.headerHeight,
-                            justifyContent: 'center',
-                        }}
-                    >
-                        <Entypo
-                            style={{ color: ColorList.likeActive, fontSize: 25 }}
-                            type={'Entypo'}
-                            name={'phone'}
-                        />
-                    </TouchableOpacity>
-
-                    <TouchableOpacity
-                        onPress={() => {
-                            requestAnimationFrame(() => this.props.openMenu());
-                        }}
-                        style={{
+                            alignSelf: 'flex-end',
                             height: ColorList.headerHeight,
                             justifyContent: 'center',
                         }}

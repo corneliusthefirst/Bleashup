@@ -8,6 +8,7 @@ import rounder from "../../../../services/rounder";
 import BePureComponent from '../../../BePureComponent';
 import  AntDesign  from 'react-native-vector-icons/AntDesign';
 import BeComponent from '../../../BeComponent';
+import testForURL from '../../../../services/testForURL';
 export default class ActivityProfile extends BeComponent {
     constructor(props) {
         super(props);
@@ -38,7 +39,7 @@ export default class ActivityProfile extends BeComponent {
                             paddingTop: "2%",
                         }}
                     >
-                        {this.props.Event.background ? (
+                        {testForURL(this.props.Event.background) ? (
                             <CacheImages
                                 staySmall
                                 dim={this.props.dim}

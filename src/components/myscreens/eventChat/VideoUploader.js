@@ -158,6 +158,7 @@ export default class VideoUploader extends BePureComponent {
                 </View>
                 <View>
                     {this.props.message.text ? <TextContent 
+                        searchString={this.props.searchString}
                         //handleLongPress={this.props.onLongPress} 
                         tags={this.props.message.tags} 
                         style={{ margin: '2%', }} 

@@ -53,19 +53,14 @@ export default class LoginHomeView extends AnimatedComponent {
     this.requestReadAndWritePermission();
     routeName = initialRoute.routeName;
       initialRoute.initialRoute().then((route) => {
+        BeNavigator.navigateTo(route);
         if (route !== 'Login') {
           connection
             .init()
             .then((socket) => {
-              BeNavigator.navigateTo(route);
             })
             .catch((error) => {
-              GState.connected = false;
-              console.warn('error while connecting socket', error);
             });
-          setTimeout(() => BeNavigator.navigateTo(route), 500);
-        } else {
-          BeNavigator.navigateTo(route);
         }
       });
     return (

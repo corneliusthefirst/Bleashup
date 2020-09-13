@@ -126,7 +126,7 @@ export default class Social extends BeComponent {
                             //, ${this.state.commentCount} comment(s), ${this.state.supportCount} supports`
                         }</Text>
                 </TouchableOpacity>
-                {/*<SocialTabModal
+                <SocialTabModal
                     id={this.props.id}
                     isOpen={this.state.isSocialModalOpened}
                     closed={() => {
@@ -134,7 +134,7 @@ export default class Social extends BeComponent {
                             isSocialModalOpened: false,
                         });
                     }}
-                ></SocialTabModal>*/}
+                ></SocialTabModal>
             </View>
         );
     }

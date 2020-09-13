@@ -5,6 +5,7 @@ import { navigationRef, isMountedRef } from './RootNave';
 import ColorList from './components/colorList';
 import LoginHomeRouter from "./LoginHomeRouter";
 import GState from './stores/globalState/index';
+import stores from "./stores";
 
 const AppNavigator = createStackNavigator(
   {
@@ -19,11 +20,6 @@ const AppNavigator = createStackNavigator(
 const AppContainer = createAppContainer(AppNavigator);
 
 export default () => {
-  React.useEffect(() => {
-    isMountedRef.current = true;
-
-    return () => (isMountedRef.current = false);
-  }, []);
   return (
     <InAppNotificationProvider
       closeInterval={4000}

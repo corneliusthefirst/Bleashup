@@ -2,6 +2,8 @@ import { observable, action, extendObservable, autorun, computed } from "mobx";
 import ColorList from '../../components/colorList';
 import replies from '../../components/myscreens/eventChat/reply_extern';
 import stores from "..";
+import Toaster from "../../services/Toaster";
+import Texts from '../../meta/text';
 
 export default class globalState {
   @observable scrollOuter = true;
@@ -22,6 +24,7 @@ export default class globalState {
   @observable lang = "en"
   profilePlaceHolder = require("../../../Images/images.jpeg")
   bleashupImage = require('../../../assets/bleashuptitle1.png')
+  activity_place_holder = require("../../../assets/default_event_image.jpeg")
   @observable reply = null
   @observable success = false;
   @observable previousCommitee = null;
@@ -33,6 +36,7 @@ export default class globalState {
   @observable nav = {}
   waitToReply = 100
   nameMaxLength=40
+  animationsDeclared=false
   @observable nameError = false;
   defaultIconSize = {fontSize: 30,color:ColorList.bodyIcon}
   defaultTextStyle = {fontSize: 13,color:ColorList.bodyText}
@@ -179,6 +183,9 @@ export default class globalState {
       type_extern: replies.posts,
     }
   }
+  considerIvite() {
+    Toaster({ text: Texts.unknow_user_consider_inviting })
+  }
   prepareRemindsForMetion(itemer){
     return {
       id: itemer.id,
@@ -205,6 +212,27 @@ export default class globalState {
       change_date:itemer.current_date
     }
   }
+  prepareDescriptionForMention(description,activity_id,creator){
+    return {
+      id:activity_id,
+      type_extern: replies.description,
+      title: Texts.activity_description + ': \n' + (description || Texts.no_description),
+      replyer_phone: creator
+    }
+  }
+  prepareActivityPhotoForMention(photo,activity_id,creator){
+    return {
+      id:activity_id,
+      type_extern: replies.activity_photo,
+      photo:true,
+      sent:true,
+      title: Texts.activity_photo + ': \n',
+      sourcer: photo,
+    }
+  }
+  isUndefined(data){
+    return !data || data == "undefined" || data == "null"
+  }
   getItemLayout(item, index,dataArray,defaultVal,newOffset) {
     let def = defaultVal||70
     let offset = dataArray
@@ -225,16 +253,12 @@ export default class globalState {
     };
   }
   itemDebounce(item, callback, delay){
-    if (this.layoutsTimeout[item.id]) {
-      clearTimeout(this.layoutsTimeout[item.id])
+    if (this.layoutsTimeout[item.id]) clearTimeout(this.layoutsTimeout[item.id])
       this.layoutsTimeout[item.id] = setTimeout(() => {
         callback()
-      }, delay)
-    } else {
-      this.layoutsTimeout[item.id] = setTimeout(() => {
-        callback()
+        this.layoutsTimeout[item.id] = null
       }, delay||500)
-    }
+    
   }
   toogleWait = 5000
   toggleCurrentIndex(id,delay){

@@ -113,7 +113,7 @@ export default class BleashupFlatList extends BeComponent {
             this.props.empty ? this.props.empty() : null
         }
         this.data = //this.props.dataSource 
-        this.extractData()
+             this.extractData()
         return (
             <View style={[styles.container,this.extraStyles,{...this.props.styles}]}>
                 {this.props.marginTop ? <View style={styles.padder}></View> : null}

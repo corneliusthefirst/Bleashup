@@ -18,6 +18,7 @@ import MessageActions from "./myscreens/eventChat/MessageActons";
 import Vibrator from "../services/Vibrator";
 import testForURL from "../services/testForURL";
 import GState from "../stores/globalState/index";
+import TextContent from './myscreens/eventChat/TextContent';
 
 const defaultCircleSize = 16;
 const defaultCircleColor = "#007AFF";
@@ -339,14 +340,16 @@ export default class BleashupTimeLine extends PureComponent {
   _renderDetail(rowData, index, delay) {
     let title = (
       <View>
-        <Text
+        <TextContent
           numberOfLines={2}
+          searchString={this.props.searchString}
           ellipsizeMode={"tail"}
           style={[GState.defaultTextStyle, styles.title, this.props.titleStyle]}
         >
           {rowData.title}
-        </Text>
+        </TextContent>
         <ChangeBox
+        searchString={this.props.searchString}
           onLongPress={(changer) => {
             this.selectItem(rowData, changer);
           }}

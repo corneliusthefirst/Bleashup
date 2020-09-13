@@ -160,14 +160,8 @@ import BeNavigator from '../../../services/navigationServices';
       RemindCreationState: this.props.currentMembers || this.props.remind ? true : false,
     });
     if(this.props.id) this.waitToScroll = setTimeout(() => {
-      console.warn("scrolling to index")
-      //this.scrolling = setInterval(() => {
        this.refs.RemindsList && this.refs.RemindsList.scrollToIndex(
-         findIndex(stores.Reminds.Reminds[this.props.event_id],
-          { id: this.props.id }))
-      //  this.scrolled = this.scrolled + 1
-       // if(this.scrolled > 5) clearInterval(this.scrolling)
-      //},200)
+         findIndex(this.getRemindData(),{ id: this.props.id }))
       clearTimeout(this.waitToScroll)
     }, 100)
   }
@@ -527,9 +521,9 @@ import BeNavigator from '../../../services/navigationServices';
   }
 
   getRemindData = () => {
-    let RemindData = stores.Reminds.Reminds
+    let RemindData = (stores.Reminds.Reminds
       ? stores.Reminds.Reminds[this.props.event_id]
-      : [];
+      : []).filter(ele => globalFunctions.filterReminds(ele,this.state.searchString||""));
     return RemindData;
   };
   onChangedStatus(newStatus) {
@@ -927,7 +921,7 @@ import BeNavigator from '../../../services/navigationServices';
               dataSource={data}
               renderItem={(item, index) => {
                 this.delay = index >= 5 ? 0 : this.delay + 1;
-                return (item.id == request.Remind().id ? null:
+                return (
                     <TasksCard
                     isPointed={item.id === GState.currentID}
                     onLayout={(layout) => GState.itemDebounce(item,() => {

@@ -2,6 +2,7 @@
 import React,{Component} from "react"
 import { Platform, LayoutAnimation, UIManager } from 'react-native';
 import BeComponent from './BeComponent';
+import GState from '../stores/globalState/index';
 
 export default class AnimatedComponent extends BeComponent {
     constructor(props){
@@ -14,6 +15,8 @@ export default class AnimatedComponent extends BeComponent {
     initialize(){
 
     }
+    defaultAnimationDuration = 250
+    animationDuration = 250
     animateUI(){
         //if(this.animationTimeout) clearTimeout(this.animationTimeout)
         //this.animationTimeout = setTimeout(() => {

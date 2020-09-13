@@ -188,7 +188,9 @@ export default class VideoMessage extends BePureComponent {
                                             {this.toMB(this.state.total).toFixed(1)}{")Mb"}</Text></View></View>}</View>
                         </View>
                         {this.props.message.text ? <View style={{ marginTop: "-5%", padding: "2%", alignSelf: "flex-start" }}>
-                            <TextContent tags={this.props.message.tags} 
+                            <TextContent
+                            searchString={this.props.searchString}
+                            tags={this.props.message.tags} 
                             pressingIn={this.props.pressingIn} 
                             //handleLongPress={() => this.props.handleLongPress ? this.props.handleLongPress() : null} 
                             pressingIn={() => this.props.pressingIn()} 

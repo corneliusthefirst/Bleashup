@@ -1,4 +1,5 @@
 import * as configs from "../config/bleashup-server-config.json"
+import Texts from '../meta/text';
 class UserHttpServices {
     constructor(host, domainType, port) {
         this.domain = domainType;
@@ -50,7 +51,7 @@ class UserHttpServices {
     //and "This is account is already taken if there account already exists"
     register(phone, password,name,birthDate) {
         return new Promise((resolve, reject) => {
-            fetch(`${this.domainame()}auth/register?phone=${phone}&password=${password}&name=${name}&birth_date=${birthDate}`, {
+            fetch(`${this.domainame()}auth/register?phone=${phone}&password=${password}&name=${name}&birth_date=${birthDate}&status=${Texts.b_up_default_status}`, {
                 method: "POST"
             }).then(result => {
                 result.json().then(data => {

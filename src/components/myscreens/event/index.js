@@ -53,6 +53,8 @@ import SetAlarmPatternModal from "./SetAlarmPatternModal";
 import BeComponent from '../../BeComponent';
 import Texts from '../../../meta/text';
 import { close_all_modals, reply_me } from '../../../meta/events';
+import EventDescription from './createEvent/components/EventDescription';
+import DescriptionModal from "../eventDetails/descriptionModal";
 
 const screenWidth = Math.round(Dimensions.get("window").width);
 
@@ -129,11 +131,18 @@ export default class Event extends BeComponent {
   addRemindForCommittee(members) {
     BeNavigator.pushActivity(this.event, "Reminds", { currentRemindMembers: members })
   }
-  openMenu() {
-    this.isOpen = !this.isOpen;
+  applystate(){
     this.setStatePure({
       mounted: true,
     });
+  }
+  openMenu() {
+    this.isOpen = !this.isOpen;
+    this.applystate()
+  }
+  closeMenu(){
+    this.isOpen = false 
+    this.applystate()
   }
   editCommiteeName() {
 
@@ -146,20 +155,26 @@ export default class Event extends BeComponent {
   }
   currentWidth = 0.5;
   isOpen = false;
-  
-  
+
+
   handleReplyExtern =
     (reply) => {
-      if (reply.type_extern.toLowerCase().includes("reminds")) {
+      if (reply.type_extern == replies.activity_photo) {
+        this.openPhotoSelectorModal()
+      } else if (reply.type_extern.includes(replies.description)) {
+        this.showDescription()
+      } else if (reply.type_extern.toLowerCase().includes("reminds")) {
 
-        reply.id ? BeNavigator.gotoRemindsWithIndex(this.event,reply.id) : null;
+        reply.id ? BeNavigator.gotoRemindsWithIndex(this.event, reply.id) : null;
       } else if (reply.type_extern.toLowerCase().includes("posts")) {
-        reply.id ? BeNavigator.gotoStarWithIndex(this.event,reply.id) : null;
+        reply.id ? BeNavigator.gotoStarWithIndex(this.event, reply.id) : null;
       } else {
         reply.id ? this.showChanges(reply) : null;
       }
     }
-
+  showDescription() {
+    this.setStatePure({ viewdetail: true })
+  }
   renderMenu(NewMessages) {
     ///console.error(this.state.currentPage)
     switch (this.state.currentPage) {
@@ -187,9 +202,7 @@ export default class Event extends BeComponent {
             }}
             mention={(data) => this.mentionPost(data)}
             updateLocation={(loc) => this.updateActivityLocation(loc)}
-            updateDesc={(newDes) => {
-              this.updateActivityDescription(newDes);
-            }}
+            showDescription={() => this.showDescription()}
             master={this.master}
             computedMaster={this.computedMaster}
             stopLoader={() => {
@@ -244,6 +257,7 @@ export default class Event extends BeComponent {
       case "EventChat":
         return (
           <EventChat
+            ref="EventChat"
             oponent={this.oponent.phone}
             id={this.id}
             isRelation={this.isRelation}
@@ -256,6 +270,7 @@ export default class Event extends BeComponent {
             room_type={"activity"} //!! 'relation' if it's a relation
             //activity_name={this.event.about.title}
             openMenu={() => this.openMenu()}
+            closeMenu={() => this.closeMenu()}
             showLoader={() => this.startLoader()}
             working={this.state.working}
             addRemind={(members) => this.addRemindForCommittee(this.state.roomMembers)}
@@ -324,9 +339,9 @@ export default class Event extends BeComponent {
             openMenu={() => this.openMenu()}
             openPhoto={(url) => this.openPhoto(url)}
             master={this.master}
-            isM={this.state.isMe}
-            activeMember={this.state.activeMember}
-            forMember={this.state.forMember}
+            isM={this.getParam("isMe")||this.state.isMe}
+            activeMember={this.getParam("activeMember")||this.state.activeMember}
+            forMember={this.getParam("forMember")||this.state.forMember}
             event_id={this.event.id}
             navigatePage={(page) => {
               BeNavigator.navigateTo(page);
@@ -594,8 +609,8 @@ export default class Event extends BeComponent {
       this.member = member ? true : false;
       this.setStatePure({
         working: false,
-        roomMembers: GState.currentCommitee === this.event.id ? 
-        this.event.participant : this.state.roomMembers
+        roomMembers: GState.currentCommitee === this.event.id ?
+          this.event.participant : this.state.roomMembers
       });
     });
   }
@@ -614,9 +629,9 @@ export default class Event extends BeComponent {
     GState.reply = data;
     Vibration.vibrate(this.duration);
     let reply = this.getParam("reply")
-    if(reply){
+    if (reply) {
       reply()
-    }else{
+    } else {
       emitter.emit(reply_me, GState.reply);
     }
     this.goback()
@@ -683,7 +698,7 @@ export default class Event extends BeComponent {
     }
   }
   returnRealEvent(event) {
-    let oponent = this.getOponent(event.participant)
+    let oponent = this.getOponent(event.participant) || {}
     this.oponent = oponent
     this.isRelation = event.type === "relation"
     return {
@@ -1205,18 +1220,16 @@ export default class Event extends BeComponent {
       adding: adding,
     });
   }
+  hideDescription() {
+    this.setStatePure({ viewdetail: false })
+  }
   checkActivity(member) {
-    this.isOpen = false;
-    this.resetSelectedCommitee();
-    this.setStatePure({
-      currentPage: "ChangeLogs",
+    this.closeSettingModal()
+    BeNavigator.gotoChangeLogs(this.event, { 
       isMe: member.phone === stores.LoginStore.user.phone ? true : false,
-      isChat: false,
-      isSettingsModalOpened: false,
-      activeMember: member.phone,
-      forMember: member.nickname,
-    });
-    this.refreshePage();
+      activeMember:member.phone,
+      forMember:member.nickname
+    })
   }
   openSettingsModal() {
     this.isOpen = false;
@@ -1224,11 +1237,10 @@ export default class Event extends BeComponent {
       isSettingsModalOpened: true,
     });
   }
-  openPhotoSelectorModal(photo) {
+  openPhotoSelectorModal() {
     this.isOpen = false;
     this.setStatePure({
       isSelectPhotoInputMethodModal: true,
-      photo: photo,
     });
   }
   leaveActivity() {
@@ -1256,7 +1268,7 @@ export default class Event extends BeComponent {
           });
         });
     } else {
-      Toaster({ text: Texts.app_busy});
+      Toaster({ text: Texts.app_busy });
     }
   }
   /*publish() {
@@ -1365,6 +1377,42 @@ export default class Event extends BeComponent {
         callback: this.leaveActivity.bind(this),
       })
       : Toaster({ text: Texts.not_member_anymore });
+  }
+  hideEditDescription() {
+    this.setStatePure({ EventDescriptionState: false })
+  }
+  showEditDescription() {
+    this.setStatePure({ EventDescriptionState: true })
+  }
+  replyDescription() {
+    this.hideDescription()
+    setTimeout(() => {
+      this.mention(GState.prepareDescriptionForMention(
+        this.event.about.description, 
+        this.event.id, 
+        this.event.creator_phone))
+    },200)
+  }
+  hidePhotoIput() {
+    this.setStatePure({
+      isSelectPhotoInputMethodModal: false,
+    })
+  }
+  replyToPhoto() {
+    this.hidePhotoIput()
+    let reply = GState.prepareActivityPhotoForMention(this.event.background,
+      this.event.id, this.event.creator_phone)
+    if (this.refs.EventChat) {
+      this.refs.EventChat && this.refs.EventChat.initReply(reply)
+    } else {
+      this.mention(reply)
+    }
+  }
+  closeSettingModal(){
+    this.setStatePure({
+      isSettingsModalOpened: false,
+    });
+    this.markAsConfigured();
   }
   startInvitation(adding) {
     this.computedMaster || this.event.public
@@ -1518,6 +1566,27 @@ export default class Event extends BeComponent {
           });
         }}
       ></ContactListModal>
+      <DescriptionModal
+        Event={this.event}
+        isOpen={this.state.viewdetail}
+        onClosed={this.hideDescription.bind(this)}
+        computedMaster={this.computedMaster}
+        replyDescription={this.replyDescription.bind(this)}
+        showEditDescription={this.showEditDescription.bind(this)}
+      >
+      </DescriptionModal>
+
+      <EventDescription
+        updateDesc={(newDesc) => {
+          this.updateActivityDescription(newDesc)
+        }}
+        event={this.event || {}}
+        isOpen={this.state.EventDescriptionState}
+        onClosed={this.hideEditDescription.bind(this)}
+        ref={"description_ref"}
+        eventId={this.event.id} />
+
+
       <ContentModal
         content={this.state.textContent}
         isOpen={this.state.isContentModalOpened}
@@ -1572,6 +1641,7 @@ export default class Event extends BeComponent {
         }}
       ></ManageMembersModal>
       <PhotoInputModal
+        replyToPhoto={this.replyToPhoto.bind(this)}
         isRelation={!this.computedMaster || this.isRelation}
         saveBackground={(url) => this.saveBackground(url)}
         photo={this.event.background}
@@ -1579,11 +1649,7 @@ export default class Event extends BeComponent {
           this.event.background && this.showPhoto(this.event.background);
         }}
         isOpen={this.state.isSelectPhotoInputMethodModal}
-        closed={() =>
-          this.setStatePure({
-            isSelectPhotoInputMethodModal: false,
-          })
-        }
+        closed={this.hidePhotoIput.bind(this)}
       ></PhotoInputModal>
       <HighlightCardDetail
         mention={(item) => {
@@ -1669,12 +1735,7 @@ export default class Event extends BeComponent {
         saveSettings={(original, newSettings) => {
           this.saveSettings(original, newSettings);
         }}
-        closed={() => {
-          this.setStatePure({
-            isSettingsModalOpened: false,
-          });
-          this.markAsConfigured();
-        }}
+        closed={this.closeSettingModal.bind(this)}
       ></SettingsTabModal>
     </View>
   }
@@ -1759,7 +1820,7 @@ export default class Event extends BeComponent {
               computedMaster={this.computedMaster}
               ref="swipperView"
               //publish={() => this.publish()}
-              showActivityPhotoAction={() => this.openPhotoSelectorModal(this.event.background)}
+              showActivityPhotoAction={() => this.openPhotoSelectorModal()}
               openSettingsModal={() => this.openSettingsModal()}
               addMembers={(id, currentMembers) =>
                 this.addCommiteeMembers(id, currentMembers)
@@ -1782,7 +1843,7 @@ export default class Event extends BeComponent {
                   });
                 } else {
                   Toaster({
-                    text:Texts.unable_to_perform_request,
+                    text: Texts.unable_to_perform_request,
                     duration: 4000,
                   });
                 }

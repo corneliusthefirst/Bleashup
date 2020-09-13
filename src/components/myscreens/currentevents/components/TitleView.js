@@ -2,7 +2,6 @@ import React, { Component } from "react";
 import { View, TouchableOpacity, Text, StyleSheet } from "react-native";
 import stores from "../../../../stores";
 import { find } from "lodash";
-import Highlighter from "react-native-highlight-words";
 import BeNavigator from "../../../../services/navigationServices";
 import ColorList from "../../../colorList";
 import BePureComponent from '../../../BePureComponent';
@@ -10,6 +9,7 @@ import emitter from "../../../../services/eventEmiter";
 import { sayTyping } from '../../eventChat/services';
 import GState from '../../../../stores/globalState/index';
 import Texts from '../../../../meta/text';
+import TextContent from "../../eventChat/TextContent";
 export default class TitleView extends BePureComponent {
   constructor(props) {
     super(props);
@@ -60,25 +60,15 @@ export default class TitleView extends BePureComponent {
           onPress={this.goToEventDetails}
         >
           <View style={styles.titleContainer}>
-            {this.props.searching ? (
-              <Highlighter
-                numberOfLines={1}
-                ellipsizeMode="tail"
-                searchWords={[this.props.searchString]}
-                autoEscape={true}
-                textToHighlight={this.props.Event.about.title}
-                highlightStyle={styles.highlightStyle}
-              ></Highlighter>
-            ) : (
-              <Text
-                adjustsFontSizeToFit={true}
-                ellipsizeMode={"tail"}
-                numberOfLines={1}
-                style={styles.titleTextStyles}
-              >
-                {this.props.Event.about.title}
-              </Text>
-            )}
+            <TextContent
+            onPress={this.goToEventDetails}
+            numberOfLines={1}
+              adjustsFontSizeToFit={true}
+              searchString={this.props.searchString}
+              style={styles.titleTextStyles}
+              ellipsizeMode="tail">
+              {this.props.Event.about.title}
+            </TextContent>
           </View>
           {this.state.typing && <Text style={[GState.defaultTextStyle,{fontSize: 12,
             color:ColorList.indicatorColor}]}>{`${this.state.typer} is ${Texts.typing}`}</Text>}

@@ -56,7 +56,7 @@ export default class ReactionModal extends BleashupModal {
                 style={{
                     ...rounder(40),
                     marginHorizontal: 'auto',
-                    backgroundColor: ColorList.bodyBackground,
+                    backgroundColor: ColorList.bodyDarkWhite,
                 }}
             >
                 <Text style={{ ...this.reactionStyle }}>{ele}</Text>

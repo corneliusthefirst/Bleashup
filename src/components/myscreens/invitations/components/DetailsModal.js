@@ -21,10 +21,12 @@ import Creator from "../../reminds/Creator";
 import BleashupModal from "../../../mainComponents/BleashupModal";
 import Texts from "../../../../meta/text";
 import Toaster from "../../../../services/Toaster";
-import ColorList from '../../../colorList';
+import ColorList from "../../../colorList";
 import GState from "../../../../stores/globalState";
 import shadower from "../../../shadower";
-import BeNavigator from '../../../../services/navigationServices';
+import BeNavigator from "../../../../services/navigationServices";
+import testForURL from "../../../../services/testForURL";
+import rounder from "../../../../services/rounder";
 export default class DetailsModal extends BleashupModal {
   state = {};
   initialize() {
@@ -39,7 +41,7 @@ export default class DetailsModal extends BleashupModal {
       id: undefined,
       loaded: false,
     };
-    this.url = { uri: this.props.event && this.props.event.background }
+    this.url = { uri: this.props.event && this.props.event.background };
     this.openPhoto = this.openPhoto.bind(this);
     this.initJoin = this.initJoin.bind(this);
   }
@@ -87,31 +89,32 @@ export default class DetailsModal extends BleashupModal {
       this.setStatePure({
         isJoining: true,
       });
-      Request.join(this.state.event.id, this.state.event.event_host)
-        .then((status) => {
+      Request.join(this.state.event.id, this.state.event.event_host).then(
+        (status) => {
           this.setStatePure({
             isJoining: false,
           });
-          this.goToAcitivity()
+          this.goToAcitivity();
           this.props.onClosed();
-        })
-        /*.catch((error) => {
-          console.warn(error, " error which occured while joining ");
-          this.setStatePure({ isJoining: false });
-          Toaster({
-            text: Texts.unable_to_perform_request,
-            buttonText: "Okay",
-            position: "top",
-            duration: 4000,
-          });
-        });*/
+        }
+      );
+      /*.catch((error) => {
+        console.warn(error, " error which occured while joining ");
+        this.setStatePure({ isJoining: false });
+        Toaster({
+          text: Texts.unable_to_perform_request,
+          buttonText: "Okay",
+          position: "top",
+          duration: 4000,
+        });
+      });*/
     } else {
-      this.goToAcitivity()
+      this.goToAcitivity();
       this.props.onClosed();
     }
   }
-  goToAcitivity(){
-    BeNavigator.pushActivityWithIndex(this.state.event, this.props.data)
+  goToAcitivity() {
+    BeNavigator.pushActivityWithIndex(this.state.event, this.props.data);
   }
   backdropOpacity = 0.3;
   onClosedModal() {
@@ -124,21 +127,27 @@ export default class DetailsModal extends BleashupModal {
       //creator: creator,
       loaded: true,
       location: event.location,
-    })
+    });
   }
   onOpenModal() {
-    this.url.uri = this.props.event.background
-    this.openModalTimeout = setTimeout(() => this.setEvent(this.props.event), 20);
-    stores.Events.loadCurrentEventFromRemote(this.props.event.id).then(e => {
-      this.setEvent(e)
-    })
+    this.url.uri = this.props.event.background;
+    this.openModalTimeout = setTimeout(
+      () => this.setEvent(this.props.event),
+      20
+    );
+    stores.Events.loadCurrentEventFromRemote(this.props.event.id).then((e) => {
+      this.setEvent(e);
+    });
   }
   openPhoto() {
     requestAnimationFrame(() => {
-      BeNavigator.openPhoto(this.url.uri, false, null,
-        () => this.props.openModal && this.props.openModal())
+      BeNavigator.openPhoto(
+        this.url.uri,
+        false,
+        null,
+        () => this.props.openModal && this.props.openModal()
+      );
     });
-
   }
   initJoin() {
     this.props.join ? this.props.join() : this.join();
@@ -157,16 +166,33 @@ export default class DetailsModal extends BleashupModal {
                 style={styles.photoContainer}
                 onPress={this.openPhoto}
               >
-                <CacheImages thumbnails source={{ uri: this.state.event.background }}></CacheImages>
+                {testForURL(this.state.event.background) ? (
+                  <CacheImages
+                    thumbnails
+                    source={{ uri: this.state.event.background }}
+                  ></CacheImages>
+                ) : (
+                  <Image
+                    resizeMode={"cover"}
+                    style={{
+                      ...rounder(60, ColorList.indicatorColor),
+                    }}
+                    source={GState.activity_place_holder}
+                  ></Image>
+                )}
               </TouchableOpacity>
               <View style={styles.titleMainContainer}>
                 <TitleView Event={this.state.event}></TitleView>
               </View>
             </View>
           </View>
-          <ScrollView style={styles.descriptionContainer} showsVerticalScrollIndicator={false}>
+          <ScrollView
+            style={styles.descriptionContainer}
+            showsVerticalScrollIndicator={false}
+          >
             <Text style={styles.description}>
-              {this.state.event.about.description || "No Description Provided"}</Text>
+              {this.state.event.about.description || Texts.no_description}
+            </Text>
           </ScrollView>
           <View style={styles.cardItem}>
             <View style={styles.left}>
@@ -176,7 +202,7 @@ export default class DetailsModal extends BleashupModal {
                     <TouchableOpacity
                       onPress={this.join.bind(this)}
                       style={styles.joinButtonContainer}
-                    //onPress={this.initJoin}
+                      //onPress={this.initJoin}
                     >
                       <Text style={styles.joinButtom}>{Texts.join}</Text>
                     </TouchableOpacity>
@@ -202,13 +228,13 @@ export default class DetailsModal extends BleashupModal {
 const styles = StyleSheet.create({
   headerContainer: { height: 65 },
   descriptionContainer: {
-    height: 200
+    height: 200,
   },
   description: {
     ...GState.defaultTextStyle,
     fontSize: 14,
     margin: "3%",
-    justifyContent: 'flex-start',
+    justifyContent: "flex-start",
   },
   mainContainer: { height: "98%" },
   right: {
@@ -219,7 +245,7 @@ const styles = StyleSheet.create({
   },
   header: {
     ...bleashupHeaderStyle,
-    alignItems: 'center',
+    alignItems: "center",
     padding: "1%",
     flexDirection: "row",
   },
@@ -230,7 +256,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     height: 40,
     marginLeft: "auto",
-    alignSelf: 'flex-end',
+    alignSelf: "flex-end",
     width: 60,
     ...shadower(2),
     backgroundColor: ColorList.indicatorColor,
@@ -241,23 +267,21 @@ const styles = StyleSheet.create({
     marginLeft: 10,
     marginTop: "5%",
   },
-  titleContainer: {
-
-  },
+  titleContainer: {},
   joinButtom: {
     fontSize: 18,
-    marginLeft: 'auto',
-    marginRight: 'auto',
+    marginLeft: "auto",
+    marginRight: "auto",
     marginBottom: "auto",
     marginTop: "auto",
     color: ColorList.bodyBackground,
     fontWeight: "500",
   },
-  photoContainer: { width: "15%", marginBottom: "2%", },
+  photoContainer: { width: "15%", marginBottom: "2%" },
   joinButton: {
     alignItems: "center",
     backgroundColor: ColorList.indicatorColor,
-    alignSelf: 'flex-end',
+    alignSelf: "flex-end",
     width: 100,
     marginTop: 4,
     marginBottom: 10,

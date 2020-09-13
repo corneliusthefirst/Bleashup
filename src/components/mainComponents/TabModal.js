@@ -22,7 +22,15 @@ export default class TabModal extends BleashupModal {
     
   }
   componentDidUpdate(){
-    this.initRoutes()
+    if(this.shouldUpdateTabs && this.returnTabs){
+      this.tabs = this.returnTabs()
+      setTimeout(() => {
+        this.initRoutes()
+
+      })
+    }else{
+      this.initRoutes()
+    } 
   }
   initRoutes(){
     this.AppNavigator = createMaterialTopTabNavigator(
@@ -51,6 +59,7 @@ export default class TabModal extends BleashupModal {
   onClosedModal() {
     this.props.closed();
   }
+  shouldUpdateTabs=false
   isCurrentTab(index) {
     return this.state.currentTab === index;
   }

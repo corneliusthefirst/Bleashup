@@ -20,6 +20,11 @@ import stores from "../../../../stores";
 import onlinePart from "../../eventChat/parts/onlineParts";
 import rounder from '../../../../services/rounder';
 import PhotoViewer from "../../event/PhotoViewer";
+import AntDesign from 'react-native-vector-icons/AntDesign';
+import { already_a_contact } from "../../../../stores/contacts";
+import Toaster from "../../../../services/Toaster";
+import  Entypo  from 'react-native-vector-icons/Entypo';
+import TextContent from '../../eventChat/TextContent';
 
 @observer class ProfileModal extends BleashupModal {
   initialize(props) {
@@ -30,24 +35,25 @@ import PhotoViewer from "../../event/PhotoViewer";
     };
     !this.onlinePart ? this.onlinePart = onlinePart.bind(this) : null
   }
- 
+
   transparent = "rgba(52, 52, 52, 0.3)";
   enlargeImage(url) {
     requestAnimationFrame(() => {
       this.setStatePure({
-        showPhoto:true
+        showPhoto: true
       })
     });
   }
   onOpenModal() {
-    emitter.on(typing(this.props.profile.phone), (typer) => () => {
-      !this.sayTyping ? this.sayTyping = sayTyping.bind(this) : null
-    })
-   !this.checkUserOnlineStatus ? this.checkUserOnlineStatus = checkUserOnlineStatus.bind(this) : null
-    this.checkUserOnlineStatus(this.props.profile.phone, this.checkRef, (checkRef) => {
-      console.warn("setIntervalRef", checkRef)
-      this.checkRef = checkRef
-    })
+    if (this.props.profile) {
+      emitter.on(typing(this.props.profile.phone), (typer) => () => {
+        !this.sayTyping ? this.sayTyping = sayTyping.bind(this) : null
+      })
+      !this.checkUserOnlineStatus ? this.checkUserOnlineStatus = checkUserOnlineStatus.bind(this) : null
+      this.checkUserOnlineStatus(this.props.profile.phone, this.checkRef, (checkRef) => {
+        this.checkRef = checkRef
+      })
+    }
   }
   onClosedModal() {
     clearInterval(this.checkRef)
@@ -55,31 +61,48 @@ import PhotoViewer from "../../event/PhotoViewer";
     this.props.onClosed()
     this.checkRef = null
   }
-  goToRelation() {
+  goToRelation(rems) {
     this.onClosedModal()
-    getRelation(this.props.profile).then(relation => {
+    this.props.profile ? getRelation(this.props.profile).then(relation => {
       Vibrator.vibrateShort()
-      BeNavigator.pushActivity(relation, "EventChat")
-    })
+      if(rems){
+        BeNavigator.goToRemind(relation,true)
+      }else{
+        BeNavigator.pushActivity(relation, "EventChat")
+      }
+    }) : GState.considerIvite()
     emitter.emit(close_all_modals)
   }
   showTyper() {
-    return this.state.typing && <Text style={[GState.defaultTextStyle,
+    return this.state.typing && <TextContent style={[GState.defaultTextStyle,
     {
-      color: ColorList.indicatorColor, fontSize: 12,fontStyle: 'italic',
-    }]}>{Texts.typing}</Text>
+      color: ColorList.indicatorColor, fontSize: 12, fontStyle: 'italic',
+    }]}>{Texts.typing}</TextContent>
   }
   swipeToClose = true
   modalHeight = "70%"
   modalWidth = "97%"
   placeHolder = GState.profilePlaceHolder;
+  addAsContact() {
+    this.props.profile &&
+      stores.Contacts.addContact({ phone: this.user.phone, host: this.user.current_host }).then(res => {
+        if (res == already_a_contact) {
+          Toaster({ text: Texts.already_a_contact })
+        }else{
+          BeNavigator.navigateToContacts()
+        }
+      })
+  }
   modalBody() {
-    let user = this.props.profile && stores.TemporalUsersStore.Users[this.props.profile.phone]
-    return user ? (
+    this.user = {
+      ...this.props.profile,
+      ...this.props.profile && stores.TemporalUsersStore.Users[this.props.profile.phone]
+    }
+    return this.user ? (
       <View>
         <View style={styles.child1}>
           <View style={styles.child1Sub}>
-            <TouchableOpacity onPress={this.props.onClosed} transparent>
+            <TouchableOpacity style={{...rounder(40),justifyContent: 'center',}} onPress={this.props.onClosed} transparent>
               <EvilIcons
                 style={styles.Child1SubIconStyle}
                 name="close"
@@ -88,21 +111,61 @@ import PhotoViewer from "../../event/PhotoViewer";
           </View>
 
           <View style={styles.child2}>
-            <Text style={[GState.defaultTextStyle, styles.child2Text]}>
-              {user.nickname}
-            </Text>
-            {this.showTyper()}
-            {this.onlinePart && this.onlinePart()}
+            <View style={{
+              flexDirection: 'row',
+              alignItems: 'center',
+              width: "95%",
+              justifyContent: 'space-between',
+              margin: '2%',
+            }}>
+              <View style={{
+                Width: "80%",
+              }}>
+                <TextContent 
+                ellipsizeMode={"tail"}
+                numberOfLines={1} 
+                 style={[GState.defaultTextStyle, styles.child2Text]}>
+                  {this.user.nickname}
+                </TextContent>
+                {this.showTyper()}
+                {this.onlinePart && this.onlinePart()}
+              </View>
+              <TouchableOpacity style={{
+                flexDirection: 'column',
+                ...rounder(40, ColorList.bodyDarkWhite),
+                ...shadower(2),
+                alignItems: 'center',
+                justifyContent: 'center',
+              }} onPress={() => this.goToRelation()}>
+                <MaterialIcons style={{
+                  ...GState.defaultIconSize,
+                  color: ColorList.indicatorColor
+                }} name="chat-bubble">
+                </MaterialIcons>
+              </TouchableOpacity>
+              <TouchableOpacity style={{
+                flexDirection: 'column',
+                ...rounder(40, ColorList.bodyDarkWhite),
+                ...shadower(2),
+                alignItems: 'center',
+                justifyContent: 'center',
+              }} onPress={() => this.goToRelation(true)}>
+                <Entypo style={{
+                  ...GState.defaultIconSize,
+                  color: ColorList.indicatorColor
+                }} name="bell">
+                </Entypo>
+              </TouchableOpacity>
+            </View>
           </View>
-
           <View style={styles.child3}>
-            <TouchableOpacity onPress={() => this.enlargeImage(user.profile)}>
-              {user.profile &&
-                testForURL(user.profile) ? (
+            <TouchableOpacity onPress={() => this.enlargeImage(this.user.profile)}>
+              {this.user.profile &&
+                testForURL(this.user.profile) ? (
                   <CacheImages
                     thumbnails
                     source={{
-                      uri: user && user.profile,
+                      uri: this.user && this.user.profile,
                     }}
                     style={styles.child3cacheImages}
                   />
@@ -116,48 +179,42 @@ import PhotoViewer from "../../event/PhotoViewer";
             </TouchableOpacity>
           </View>
           <View style={styles.child4}>
-          <View style={{width:"70%"}}>
-            {this.props.profile.status &&
-              this.props.profile.status !== "undefined" ? (
-                  <Text
+            <View style={{ width: "70%" }}>
+              {!GState.isUndefined(this.user.status) ? (
+                  <TextContent
                     ellipsizeMode={"tail"}
                     numberOfLines={2}
                     style={styles.child4text}>
-                    {user.status}
-                  </Text>
-              ) : null}
+                    {this.user.status}
+                  </TextContent>
+                ) : null}
             </View>
-            <TouchableOpacity style={{
+            {this.user ? !stores.Contacts.isAContact(this.user.phone) ? <TouchableOpacity style={{
               flexDirection: 'column',
-              borderRadius: 8,
+              ...rounder(40),
               backgroundColor: ColorList.bodyDarkWhite,
               ...shadower(2),
               alignItems: 'center',
               justifyContent: 'center',
-              padding: "1%",}} onPress={this.goToRelation.bind(this)}>
-              <MaterialIcons style={{
+            }} onPress={this.addAsContact.bind(this)}>
+              <AntDesign style={{
                 ...GState.defaultIconSize,
                 color: ColorList.indicatorColor
-              }} name="chat-bubble">
-              </MaterialIcons>
-              <Text style={{
-                ...GState.defaultTextStyle,
-                fontWeight: 'bold',
-
-              }}>{Texts.start_a_conversation}</Text>
-            </TouchableOpacity>
+              }} name="adduser">
+              </AntDesign>
+            </TouchableOpacity> : null : null}
           </View>
         </View>
-        {this.state.showPhoto? <PhotoViewer
+        {this.state.showPhoto ? <PhotoViewer
           open={this.state.showPhoto}
-          photo={user.profile}
-          hidePhoto={() =>{
+          photo={this.user.profile}
+          hidePhoto={() => {
             this.setStatePure({
-              showPhoto:false
+              showPhoto: false
             })
           }}
-          >
-        </PhotoViewer>:null}
+        >
+        </PhotoViewer> : null}
       </View>
     ) : null;
   }
@@ -205,7 +262,7 @@ const styles = StyleSheet.create({
     margin: 'auto',
     alignItems: 'center',
     justifyContent: 'center',
-    ...rounder(300,ColorList.bodyDarkWhite),
+    ...rounder(300, ColorList.bodyDarkWhite),
     backgroundColor: ColorList.bodyBackground,
   },
   child3placeHolder: {
@@ -219,11 +276,11 @@ const styles = StyleSheet.create({
     ...shadower(2),
     ...rounder(250, ColorList.bodyBackground),
     backgroundColor: ColorList.bodyBackground,
-    
+
   },
-  
+
   child4: {
-    width: "90%",
+    width: "95%",
     flexDirection: 'row',
     alignItems: 'center',
     alignSelf: 'flex-start',

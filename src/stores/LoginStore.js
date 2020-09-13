@@ -51,7 +51,7 @@ export default class LoginStore {
       if (this.user.phone == "" || this.user.password == "") {
         storage.load({
           key: "loginStore",
-          autoSync: true
+          //autoSync: true
         })
           .then(data => {
             this.user = data /*{

@@ -32,28 +32,14 @@ export default class EventDescription extends BleashupModal {
   componentDidMount() {
     this.init()
   }
-  /*componentWillMount() {
-    this.keyboardDidShowSub = Keyboard.addListener('keyboardDidShow', this.handleKeyboardDidShow.bind(this));
-    this.keyboardDidHideSub = Keyboard.addListener('keyboardDidHide', this.handleKeyboardDidHide.bind(this));
-  }*/
-  /*handleKeyboardDidShow() {
-    this.keyboardDissmissed = false
-  }
-  handleKeyboardDidHide() {
-    console.warn("hidding keyboard !!")
-    this.keyboardDissmissed = true
-  }*/
+  
   componentDidUpdate(prevProps, prevState) {
     if (this.props.event.about.description !== prevProps.event.about.description) {
       this.init()
     }
   }
-  /*componentWillUnmount() {
-    this.keyboardDidHideSub.remove();
-    this.keyboardDidShowSub.remove()
-  }*/
-  onChangedEventDescription(value) {
 
+  onChangedEventDescription(value) {
     this.setStatePure({ description: value });
     if (!this.state.update) {
       stores.Events.updateDescription(this.state.event_id, value, false).then(() => { });
@@ -61,13 +47,8 @@ export default class EventDescription extends BleashupModal {
   }
   keyboardDissmissed = false
   updateDescription() {
-    /*if (!this.keyboardDissmissed) {
-      this.keyboardDissmissed = true
-      Keyboard.dismiss()
-    } else {*/
       this.state.description !== this.props.event.about.description ? this.props.updateDesc(this.state.description) : null
       this.props.onClosed();
-  //  }
   }
 
   position = "center"
@@ -75,7 +56,7 @@ export default class EventDescription extends BleashupModal {
   borderRadius = 25
   borderTopLeftRadius = 25
   borderTopRightRadius = 25
-  modalHeight = 290
+  modalHeight = 310
   swipeToClose = false
   modalWidth = "82%"
   borderWidth = 1

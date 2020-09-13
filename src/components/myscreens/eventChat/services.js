@@ -13,6 +13,7 @@ export function sayTyping(typer){
             typer: user.nickname
         });
         clearTimeout(this.typingTimeout)
+        this.typingTimeout = null
     }, 1000);
 }
 

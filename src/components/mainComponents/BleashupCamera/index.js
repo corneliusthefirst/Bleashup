@@ -15,12 +15,10 @@ import {
 } from 'react-native';
 import { RNCamera as Camera } from 'react-native-camera';
 import propTypes from 'prop-types';
-//import ColorList from '../../colorList';
 import BleashupModal from '../BleashupModal';
 import PickedImage from './pickedImage';
 import ZoomView from './zoomView';
 import  Stopwatch from './timer/stopwatch';
-//import ImagePicker from 'react-native-image-crop-picker';
 import Pickers from '../../../services/Picker';
 import GState from '../../../stores/globalState/index';
 import AntDesign from 'react-native-vector-icons/AntDesign';

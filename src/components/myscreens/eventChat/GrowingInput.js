@@ -3,6 +3,7 @@ import { View, TextInput } from 'react-native';
 import ColorList from '../../colorList';
 import BePureComponent from '../../BePureComponent';
 import shadower from "../../shadower";
+import Texts from '../../../meta/text';
 
 export default class GrowingInput extends BePureComponent{
     constructor(props){
@@ -40,7 +41,7 @@ export default class GrowingInput extends BePureComponent{
                     this.state.mounted && this.props.animateLayout()
                     this.props._onChange(event)
                 }}
-                placeholder={"Your Message"}
+                placeholder={Texts.your_text}
                 onFocus={this.props.onFocus}
                 style={{
                     alignSelf: "flex-start",

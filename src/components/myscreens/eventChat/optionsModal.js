@@ -28,6 +28,9 @@ export default class Options extends AnimatedComponent {
     onClosedModal() {
         this.props.onClosed();
     }
+    state = {
+        full: false
+    }
     backdropOpacity = 0.01
     borderRadius = 10
     modalBackground = "rgba(255,255,255,255)";
@@ -38,20 +41,30 @@ export default class Options extends AnimatedComponent {
 
     style = { bottom: 60 }
     coverScreen = true;
-    
-    waitAndAct(func){
+
+    componentDidMount() {
+        this.animationDuration = 900
+        setTimeout(() => {
+            this.setStatePure({
+                full: true
+            })
+            this.animationDuration = this.defaultAnimationDuration
+        }, 300)
+    }
+
+    waitAndAct(func) {
         Keyboard.dismiss()
         this.props.onClosed()
         setTimeout(() => {
             func()
-        }, this.props.timeToDissmissKeyboard) 
+        }, this.props.timeToDissmissKeyboard)
     }
     addRemind = () => {
         this.waitAndAct(this.props.addRemind)
     }
 
     openFilePicker = () => {
-        this.waitAndAct(this.props.openAudioPicker)
+        this.waitAndAct(this.props.openFilePicker)
     }
 
     openPhotoSelector = () => {
@@ -73,7 +86,7 @@ export default class Options extends AnimatedComponent {
         justifyContent: 'center', alignItems: 'center'
     }
     mainContainerStyles = {
-        height: '20%',
+        height: 75,
         flexDirection: 'column',
         justifyContent: 'center',
         alignItems: 'center',
@@ -85,7 +98,7 @@ export default class Options extends AnimatedComponent {
             <View style={{
                 position: "absolute",
                 flexDirection: 'row',
-                height: 300,
+                height: this.state.full ? 300 : 50,
                 justifyContent: 'center',
                 marginBottom: "2%",
                 alignSelf: 'flex-end',

@@ -3,6 +3,8 @@ import { View, Text } from "react-native";
 import ColorList from "../../../colorList";
 import shadower from "../../../shadower";
 import GState from "../../../../stores/globalState";
+import TextContent from '../TextContent';
+import Texts from '../../../../meta/text';
 
 export default function onlinePart() {
   let isOnline = this.state.online;
@@ -10,10 +12,7 @@ export default function onlinePart() {
     <View
       style={{
         minWidth: 150,
-        height: 20,
-        borderRadius: 5,
-        backgroundColor: ColorList.bodyDarkWhite,
-        ...shadower(1),
+        height: 20,       
         flexDirection: "row",
         alignItems: "center",
         textAlign: "flex-start",
@@ -21,7 +20,7 @@ export default function onlinePart() {
         justifyContent: "flex-start",
       }}
     >
-      <Text
+      <TextContent
         style={{
             ...GState.defaultTextStyle,
           fontSize: 12,
@@ -29,9 +28,9 @@ export default function onlinePart() {
           fontStyle: "italic",
         }}
       >
-        {"last seen: "}
-      </Text>
-      <Text
+        {Texts.last_seen}
+      </TextContent>
+      <TextContent
         style={{
           ...GState.defaultTextStyle,
           color: isOnline ? ColorList.greenColor : ColorList.indicatorColor,
@@ -40,7 +39,7 @@ export default function onlinePart() {
         }}
       >
         {this.state.last_seen}
-      </Text>
+      </TextContent>
     </View>
   );
 }

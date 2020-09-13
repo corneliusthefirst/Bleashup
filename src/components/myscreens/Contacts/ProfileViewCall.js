@@ -2,8 +2,9 @@ import React, { Component } from 'react';
 import { View, TouchableOpacity } from 'react-native';
 import ProfileView from '../invitations/components/ProfileView';
 import ProfileSimple from "../currentevents/components/ProfileViewSimple";
+import BeComponent from '../../BeComponent';
 
-export default class ProfileViewCall extends Component {
+export default class ProfileViewCall extends BeComponent {
   constructor(props) {
     super(props);
     this.state = {
@@ -12,7 +13,7 @@ export default class ProfileViewCall extends Component {
   }
 
   hide = (hidestate) => {
-    this.setState({ hide: hidestate });
+    this.setStatePure({ hide: hidestate });
   };
 
   render() {
@@ -26,6 +27,9 @@ export default class ProfileViewCall extends Component {
       >
         <ProfileView
           contact
+          full
+          searching={this.props.searching}
+          searchString={this.props.searchString}
           phoneInfo={this.props.phoneInfo}
           delay={this.props.delay}
           phone={this.props.phone}
@@ -36,7 +40,11 @@ export default class ProfileViewCall extends Component {
         />
       </TouchableOpacity>
     ) : (
-      <ProfileSimple profile={this.props.phoneInfo} invite />
+      <ProfileSimple 
+      showInvite={this.props.showInvite}
+       searching={this.props.searching} 
+       searchString={this.props.searchString} 
+       profile={this.props.phoneInfo} invite />
     );
   }
 }

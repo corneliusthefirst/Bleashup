@@ -6,6 +6,9 @@ import Icon2 from "react-native-vector-icons/FontAwesome"
 import ActionButton from 'react-native-action-button';
 import ColorList from '../../../colorList';
 import shadower from "../../../shadower";
+import  Feather  from 'react-native-vector-icons/Feather';
+import GState from '../../../../stores/globalState/index';
+import BeNavigator from '../../../../services/navigationServices';
 
 export default class CreateEvent extends Component {
   constructor(props) {
@@ -18,18 +21,18 @@ export default class CreateEvent extends Component {
   }
 
   onClickNewEvent() {
-    this.props.navigation.navigate("CreateEventView");
+    BeNavigator.navigateToCreateEvent();
   };
 
   onClickNewRemind(){
-    this.props.navigation.navigate("MyTasksView");
+    BeNavigator.navigateTo("MyTasksView");
   };
 
   onClickNewContact() {
-    this.props.navigation.navigate("Contacts");
+    BeNavigator.navigateToContacts();
   }
   navigateToQRScanner() {
-    this.props.navigation.navigate("QR");
+    BeNavigator.navigateToQR();
   }
   renderIcon(){
   return (
@@ -56,7 +59,7 @@ export default class CreateEvent extends Component {
       >
         <ActionButton.Item
           buttonColor="#3D90E3"
-          /*title="New Relation"*/ onPress={this.onClickNewContact}
+          title="Relation" onPress={this.onClickNewContact}
           size={75}
         >
         
@@ -71,37 +74,24 @@ export default class CreateEvent extends Component {
 
         <ActionButton.Item
           buttonColor="#663399"
-          /*title=" New Activity  "*/
+          title=" New Activity  "
           onPress={this.onClickNewEvent}
           size={65}
         >
-          <Icon1
-            name={'group-add'}
+          <Feather
+            name={'activity'}
             style={styles.actionButtonIcon}
           />
         </ActionButton.Item>
 
         <ActionButton.Item
           buttonColor="#cd5c5c"
-          /*title="Join Activity"*/ onPress={this.navigateToQRScanner}
+          title="Join activity through QR" onPress={this.navigateToQRScanner}
           size={55}
         >
           <Icon
             name="barcode-scan"
             active={true}
-            style={styles.actionButtonIcon}
-          />
-        </ActionButton.Item>
-
-        <ActionButton.Item
-          buttonColor="#1abc9c"
-          /*title="All Reminds"*/
-          onPress={this.onClickNewRemind}
-          size={45}
-        >
-          <Icon2
-            name="tasks"
-            type="FontAwesome"
             style={styles.actionButtonIcon}
           />
         </ActionButton.Item>

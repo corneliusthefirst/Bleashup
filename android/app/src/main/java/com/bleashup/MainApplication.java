@@ -4,7 +4,6 @@ import android.app.Application;
 import com.facebook.react.ReactApplication;
 import com.swmansion.rnscreens.RNScreensPackage;
 import com.dylanvann.fastimage.FastImageViewPackage;
-import com.bolan9999.SpringScrollViewPackage;
 import com.reactnativecommunity.rnpermissions.RNPermissionsPackage;
 import org.reactnative.camera.RNCameraPackage;
 import com.horcrux.svg.SvgPackage;
@@ -51,7 +50,6 @@ public class MainApplication extends Application implements ReactApplication {
             new MainReactPackage(),
             new RNScreensPackage(),
             new FastImageViewPackage(),
-            new SpringScrollViewPackage(),
             new RNPermissionsPackage(),
             new RNCameraPackage(),
             new SvgPackage(),

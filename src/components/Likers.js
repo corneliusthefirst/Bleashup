@@ -63,12 +63,6 @@ import ColorList from './colorList';
                         <View style={{ display: 'flex', flexDirection: 'row', width: "100%" }}>
                             <View style={{ margin: '2%', width: "70%" }}><ProfileView delay={this.delay} phone={item}></ProfileView>
                             </View>
-                            <TouchableOpacity style={{ flexDirection: 'column',alignSelf: 'center', }} onPress={() => this.navigateToChat()} transparent>
-                                <MaterialIcons style={{color:ColorList.headerIcon}}
-                                name="chat-bubble">
-                                </MaterialIcons>
-                                <Text style={{color:ColorList.headerIcon}}>Chat</Text>
-                                </TouchableOpacity>
                         </View>
                         <MenuDivider color={ColorList.headerIcon} />
                     </View>)

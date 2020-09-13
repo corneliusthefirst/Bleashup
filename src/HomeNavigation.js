@@ -13,6 +13,7 @@ import ProfileView from './components/myscreens/settings/profile';
 import PhotoViewer from './components/myscreens/event/PhotoViewer';
 import VideoViewer from './components/myscreens/highlights_details/VideoModal';
 import ActuView from './components/myscreens/settings/editActu';
+import SearchUser from './components/myscreens/Contacts/searchUser';
 
 enableScreens()
 const HomeNavigator = createStackNavigator({
@@ -23,6 +24,7 @@ const HomeNavigator = createStackNavigator({
     CreateEventView:{screen:CreateEventView},
     SwiperComponent:{screen:SwiperComponent},
     CameraScreen:{screen: CameraScreen},
+    SearchUser: {screen:SearchUser},
     Profile: {screen:ProfileView},
     Actu: {screen:ActuView},
     PhotoViewer: {screen: PhotoViewer},

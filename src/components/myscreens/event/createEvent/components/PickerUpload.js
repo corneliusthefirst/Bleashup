@@ -294,7 +294,7 @@ export default class PickersUpload extends BeComponent {
           <PickersMenu
             menu={[
               {
-                title: "Download Photo",
+                title: "Take Photo from the Internet",
                 condition: true,
                 callback: () =>
                   this.setStatePure({

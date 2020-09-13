@@ -4,6 +4,8 @@ import ProfileView from '../invitations/components/ProfileView';
 import Menu, { MenuItem, MenuDivider } from 'react-native-material-menu';
 import MaterialIcons  from 'react-native-vector-icons/MaterialIcons';
 import GState from '../../../stores/globalState';
+import ColorList from '../../colorList';
+import Texts from '../../../meta/text';
 
 export default class SelectableContactsMaster extends Component {
     constructor(props) {
@@ -63,16 +65,19 @@ export default class SelectableContactsMaster extends Component {
                     </View>
                 </TouchableOpacity>
                 <View>
-                    <View style={{ alignItems: 'flex-end', marginLeft: "60%", }}>
+                    <View style={{ width:"100%",flexDirection: 'row',justifyContent: 'flex-end', }}>
                         <TouchableOpacity onPress={() => requestAnimationFrame(() => this.setMaster())} transparent>
                             <View>
-                                <View style={{ width: "90%", alignSelf: 'flex-end', flexDirection: 'row', }}>
-                                    <MaterialIcons style={{ ...GState.defaultIconSize }} name={this.props.masterchecked ? "radio-button-checked" :
+                                <View style={{  alignSelf: 'flex-end', 
+                                flexDirection: 'column',
+                                alignItems: 'center',
+                                justifyContent: 'center', }}>
+                                    <MaterialIcons style={{ ...GState.defaultIconSize,color:ColorList.indicatorColor }} name={this.props.masterchecked ? "radio-button-checked" :
                                         "radio-button-unchecked"} type="MaterialIcons"/>
                                     <Text style={{
                                         fontStyle: 'italic',
-                                        fontWeight: 'bold', color: "#0A4E52", marginTop: "3%"
-                                    }}>master</Text>
+                                        fontWeight: 'bold', color: ColorList.indicatorColor, marginTop: "3%"
+                                    }}>{Texts.masters}</Text>
                                 </View>
                             </View>
                         </TouchableOpacity>

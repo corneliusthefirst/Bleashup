@@ -18,12 +18,14 @@ import TextContent from "./TextContent";
 import replies from "./reply_extern";
 import rounder from '../../../services/rounder';
 import BePureComponent from '../../BePureComponent';
-import  AntDesign  from 'react-native-vector-icons/AntDesign';
-import Entypo  from 'react-native-vector-icons/Entypo';
-import  FontAwesome5  from 'react-native-vector-icons/FontAwesome5';
-import  MaterialIcons  from 'react-native-vector-icons/MaterialIcons';
-import MaterialCommunityIcons  from 'react-native-vector-icons/MaterialCommunityIcons';
+import AntDesign from 'react-native-vector-icons/AntDesign';
+import Entypo from 'react-native-vector-icons/Entypo';
+import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
+import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
+import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import GState from "../../../stores/globalState";
+import Feather from 'react-native-vector-icons/Feather';
+import EvilIcons from 'react-native-vector-icons/EvilIcons';
 export default class ReplyText extends BePureComponent {
   constructor(props) {
     super(props);
@@ -38,7 +40,7 @@ export default class ReplyText extends BePureComponent {
   }
   reply_font = 10;
   renderReplyIcon(type) {
-  return type ? (
+    return type ? (
       type === replies.posts ? (
         <AntDesign
           name={"star"}
@@ -66,27 +68,37 @@ export default class ReplyText extends BePureComponent {
             color: ColorList.vote,
           }}
         />
-      ) : (
-              <MaterialIcons
-                name={"history"}
-                type={"MaterialIcons"}
-                style={{
-                  fontSize: this.reply_font,
-                  color: ColorList.darkGrayText,
-                }}
-              />
-            )
+      ) : type === replies.description ? <Feather name={"file-text"} style={{
+        fontSize: this.reply_font,
+        color: ColorList.iconActive
+      }}></Feather> : type == replies.activity_photo ? <EvilIcons
+        name={"camera"}
+        style={{
+          fontSize: 17,
+          color: ColorList.indicatorColor
+        }}
+      >
+      </EvilIcons> : (
+                  <MaterialIcons
+                    name={"history"}
+                    type={"MaterialIcons"}
+                    style={{
+                      fontSize: this.reply_font,
+                      color: ColorList.darkGrayText,
+                    }}
+                  />
+                )
     ) : null
   }
-  handleReply(){
-     this.props.openReply(this.props.reply);
+  handleReply() {
+    this.props.openReply(this.props.reply);
   }
   render() {
     return (
       <TouchableWithoutFeedback
         //onLongPress={() =>
         //  this.props.handLongPress ? this.props.handLongPress() : null
-       // }
+        // }
         onPress={() => requestAnimationFrame(() => this.props.openReply(this.props.reply))}
       >
         <View
@@ -97,7 +109,7 @@ export default class ReplyText extends BePureComponent {
             backgroundColor: ColorList.replyBackground,
             padding: 2, //margin: '1%',
             minHeight: 50,
-            maxWidth:"100%",
+            maxWidth: "100%",
             maxHeight: 150,
             minWidth: 100,
             borderTopLeftRadius: 5,
@@ -109,50 +121,55 @@ export default class ReplyText extends BePureComponent {
               /* width: "90%",*/ width: this.props.compose ? "100%" : null,
             }}
           >
-            <View style={{ margin: "1%",minWidth: 100, }}>
-                <View style={{ flexDirection: "column" }}>
-                  {this.props.reply.forwarded ? (
-                    <Text style={{ fontSize: 10, fontStyle: "italic" }} note>
-                      {"(forwarded)"}
-                    </Text>
-                  ) : null}
-                  <View style={{ flexDirection: "row" }}>
+            <View style={{ margin: "1%", minWidth: 100, }}>
+              <View style={{ flexDirection: "column" }}>
+                {this.props.reply.forwarded ? (
+                  <Text style={{ fontSize: 10, fontStyle: "italic" }} note>
+                    {"(forwarded)"}
+                  </Text>
+                ) : null}
+                <View style={{ flexDirection: "row" }}>
                   <View style={{
-                    width: !this.props.reply.type_extern ? 0 : 13,justifyContent: 'flex-start',flexDirection: 'row',
+                    width: !this.props.reply.type_extern ? 0 : 13, justifyContent: 'flex-start', flexDirection: 'row',
                     marginBottom: 'auto',
-                    marginTop: 'auto',}}>
+                    marginTop: 'auto',
+                  }}>
                     {this.renderReplyIcon(this.props.reply.type_extern)}</View>
-                  <View style={{ width: !this.props.reply.type_extern ? "100%" : "93%"}}>
-                      <Text
-                        note
-                        ellipsizeMode={"tail"}
-                        numberOfLines={1}
-                        style={{
-                          ...GState.defaultTextStyle,
-                          fontWeight: "bold",
-                          color: ColorList.indicatorColor,
-                          maxWidth: "100%",
-                        }}
-                      >
-                        {`${
-                          this.props.reply.replyer_name
-                            ? this.props.reply.replyer_name
-                        : this.props.reply.title.split(": \n")[0]
-                          }`}
-                      </Text>
-                    </View>
+                  <View style={{ width: !this.props.reply.type_extern ? "100%" : "93%" }}>
+                    <Text
+                      note
+                      ellipsizeMode={"tail"}
+                      numberOfLines={1}
+                      style={{
+                        ...GState.defaultTextStyle,
+                        fontWeight: "bold",
+                        color: ColorList.indicatorColor,
+                        maxWidth: "100%",
+                      }}
+                    >
+                      {`${
+                        this.props.reply.replyer_name
+                          ? this.props.reply.replyer_name
+                          : this.props.reply.title.split(": \n")[0]
+                        }`}
+                    </Text>
                   </View>
                 </View>
+              </View>
               <View></View>
               {this.props.reply.audio || this.props.reply.file ? (
                 <View style={{ display: "flex", flexDirection: "row" }}>
-                  {this.props.reply.audio ? <MaterialIcons style={{ ...GState.defaultIconSize, 
-                    width: "14%", color: ColorList.indicatorColor}} name={"audiotrack"}></MaterialIcons>:
-                  <MaterialCommunityIcons
-                    name={"file-document-box"}
-                    style={{ ...GState.defaultIconSize,
-                       width: "14%", color: ColorList.indicatorColor }}
-                  ></MaterialCommunityIcons>}
+                  {this.props.reply.audio ? <MaterialIcons style={{
+                    ...GState.defaultIconSize,
+                    width: "14%", color: ColorList.indicatorColor
+                  }} name={"audiotrack"}></MaterialIcons> :
+                    <MaterialCommunityIcons
+                      name={"file-document-box"}
+                      style={{
+                        ...GState.defaultIconSize,
+                        width: "14%", color: ColorList.indicatorColor
+                      }}
+                    ></MaterialCommunityIcons>}
                   {this.props.reply.type_extern && this.props.reply.audio ? (
                     <Text
                       ellipsizeMode={"tail"}
@@ -191,7 +208,7 @@ export default class ReplyText extends BePureComponent {
                             <Text
                               ellipsizeMode={"tail"}
                               numberOfLines={1}
-                              style={{...GState.defaultTextStyle, fontSize: 30 }}
+                              style={{ ...GState.defaultTextStyle, fontSize: 30 }}
                             >
                               {"."}
                               {this.props.reply.typer.toUpperCase()}
@@ -204,35 +221,35 @@ export default class ReplyText extends BePureComponent {
                   <View>
                     <View style={{ display: "flex", flexDirection: "row" }}>
                       {this.props.reply.sourcer ? (
-                      <View
-                        style={{
+                        <View
+                          style={{
                         /*width: this.props.reply.sourcer ? "20%" : "0%",*/ marginRight:
-                            "1%",
+                              "1%",
                             marginTop: 3,
-                        }}
-                      >
+                          }}
+                        >
                           <View>
-                              <CacheImages
-                                staySmall
-                                thumbnails
-                                square
-                                style={{
-                                  width: 70,
-                                  minHeight:
-                                    this.state.currentHeight > 30
-                                      ? this.state.currentHeight
-                                      : 40,
-                                  maxHeight:
-                                    this.state.currentHeight > 30
-                                      ? this.state.currentHeight
-                                      : 40,
-                                  borderBottomRightRadius: 5,
-                                  borderTopRightRadius: 5,
-                                }}
-                                source={{ uri: this.props.reply.sourcer }}
-                              ></CacheImages>
+                            <CacheImages
+                              staySmall
+                              thumbnails
+                              square
+                              style={{
+                                width: 70,
+                                minHeight:
+                                  this.state.currentHeight > 30
+                                    ? this.state.currentHeight
+                                    : 40,
+                                maxHeight:
+                                  this.state.currentHeight > 30
+                                    ? this.state.currentHeight
+                                    : 40,
+                                borderBottomRightRadius: 5,
+                                borderTopRightRadius: 5,
+                              }}
+                              source={{ uri: this.props.reply.sourcer }}
+                            ></CacheImages>
                           </View>
-                      </View>
+                        </View>
                       ) : null}
                       <View
                         onLayout={(e) => {
@@ -241,13 +258,14 @@ export default class ReplyText extends BePureComponent {
                           });
                         }}
                         style={{
-                          alignSelf:"flex-end",
+                          alignSelf: "flex-end",
                           marginLeft: this.props.reply.sourcer ? ".5%" : null,
                           width: this.props.reply.sourcer ? "74%" : "100%",
                         }}
                       >
                         {this.props.reply.title ? (
                           <TextContent
+                            notScallEmoji
                             onPress={() => this.props.openReply(this.props.reply)}
                             handleLongPress={this.props.handLongPress}
                             pressingIn={() => this.props.pressingIn()}
@@ -269,6 +287,7 @@ export default class ReplyText extends BePureComponent {
                           ></TextContent>
                         ) : this.props.reply.text ? (
                           <TextContent
+                            notScallEmoji
                             onPress={() => this.props.openReply(this.props.reply)}
                             handleLongPress={this.props.handLongPress}
                             pressingIn={() => this.props.pressingIn()}
@@ -291,7 +310,7 @@ export default class ReplyText extends BePureComponent {
                 )}
             </View>
             {this.props.reply.change_date ? (
-              <Text style={{fontSize: 12,color:ColorList.bodySubtext,fontStyle: 'italic',}}>{`${moment(
+              <Text style={{ fontSize: 12, color: ColorList.bodySubtext, fontStyle: 'italic', }}>{`${moment(
                 this.props.reply.change_date
               ).calendar()}`}</Text>
             ) : null}

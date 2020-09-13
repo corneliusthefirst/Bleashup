@@ -143,7 +143,9 @@ export default class PhotoUploader extends BePureComponent {
                                     {this.toMB(this.state.total).toFixed(1)}{")Mb"}</Text></View></View>}</View>
                 </View>
                 <View>
-                    {this.props.message.text ? <TextContent //handleLongPress={this.props.onLongPress} 
+                    {this.props.message.text ? <TextContent
+                        searchString={this.props.searchString}
+                        //handleLongPress={this.props.onLongPress} 
                     text={this.props.message.text} 
                     tags={this.props.message.tags} ></TextContent> : null}
                 </View>

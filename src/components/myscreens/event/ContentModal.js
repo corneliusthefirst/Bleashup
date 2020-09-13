@@ -8,6 +8,7 @@ import MediaPreviewer from './createEvent/components/MediaPeviewer';
 import ColorList from '../../colorList';
 import  EvilIcons from 'react-native-vector-icons/EvilIcons';
 import GState from '../../../stores/globalState';
+import TextContent from '../eventChat/TextContent';
 
 export default class ContentModal extends PureComponent {
     constructor(props) {
@@ -18,7 +19,7 @@ export default class ContentModal extends PureComponent {
     }
     state = {}
     renderContentItems(content) {
-        return content.map(ele => <Text>ele</Text>)
+        return content.map(ele => <Text style={{...GState.defaultTextStyle}}>ele</Text>)
     }
     renderObject(content) {
         return map(content, (value, key) => 
@@ -66,7 +67,7 @@ export default class ContentModal extends PureComponent {
                         typeof this.state.content === 'object' ?
                             this.renderObject(this.state.content) : Array.isArray(this.state.content) ?
                                 this.renderContentItems(this.state.content) :
-                                <Text style={{...GState.defaultTextStyle,}}>{this.state.content}</Text>}
+                                <TextContent style={{...GState.defaultTextStyle,}}>{this.state.content}</TextContent>}
                     {this.props.votable ? <TouchableOpacity onPress={this.props.vote} style={styles.voteButton}><Text style={{marginBottom: 'auto',color:ColorList.bodyBackground}}>Vote</Text>
                     </TouchableOpacity> :
                     this.props.trashable?<EvilIcons

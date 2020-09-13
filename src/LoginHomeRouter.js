@@ -11,6 +11,7 @@ import { enableScreens } from 'react-native-screens';
 import SignInView from './components/myscreens/signIn';
 import SignUpView from './components/myscreens/signUp/index';
 import EmailVerificationView from './components/myscreens/signUp/EmailVerification';
+import stores from './stores';
 
 enableScreens();
 const HomeNavigator = createStackNavigator(
@@ -30,5 +31,8 @@ const HomeNavigator = createStackNavigator(
 const HomeContainer = createAppContainer(HomeNavigator);
 
 export default () => {
+  stores.LoginStore.getUser().then(() => {
+
+  })
   return <HomeContainer id={1} />;
 };

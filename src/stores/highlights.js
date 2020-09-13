@@ -289,8 +289,10 @@ export default class highlights {
     });
   }
   persistDimenssion(index,eventID,layout){
-   this.highlights[eventID] && this.highlights[eventID][index] ? this.highlights[eventID][index].dimensions = layout:null
-    this.setProperty(this.highlights)
+    if (this.highlights[eventID] && this.highlights[eventID][index]){
+      this.highlights[eventID][index].dimensions = layout
+      this.setProperty(this.highlights)
+    }
   }
 
   readFromStore() {

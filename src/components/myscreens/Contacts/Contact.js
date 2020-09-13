@@ -42,28 +42,33 @@ import EvilIcons from 'react-native-vector-icons/EvilIcons';
 import  AntDesign  from 'react-native-vector-icons/AntDesign';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import Spinner from '../../Spinner';
+import Searcher from './Searcher';
+import BeComponent from '../../BeComponent';
+import globalFunctions from '../../globalFunctions';
+import Texts from '../../../meta/text';
+import Toaster from '../../../services/Toaster';
 
 
 let { height, width } = Dimensions.get('window');
-export default class ContactView extends Component {
+export default class ContactView extends BeComponent {
   constructor(props) {
     super(props);
     this.state = {
       isMount: false,
       contacts: [],
+      searchString:"",
       user: null,
       invite: false,
       alreadyCreated: false,
-      searchArray: [],
       creating: false,
     };
   }
-  searchArray = [];
   codeObj = find(countries, { id: stores.LoginStore.user.country_code });
 
   phoneContacts = [];
   init = () => {
-    if (stores.Contacts.contacts.phoneContacts && stores.Contacts.contacts.phoneContacts.length > 0){
+    if (stores.Contacts.contacts.phoneContacts && 
+      stores.Contacts.contacts.phoneContacts.length > 0){
 
       stores.Contacts.contacts &&
       stores.Contacts.contacts.contacts &&
@@ -80,31 +85,34 @@ export default class ContactView extends Component {
         }
       });
        this.phoneContacts = concat(this.phoneContacts,stores.Contacts.contacts.phoneContacts);
+       this.phoneContacts = uniqBy(this.phoneContacts,"phone")
+       this.setStatePure({ isMount: true });
 
-       this.setState({ contacts: this.phoneContacts , searchArray: this.phoneContacts });
+       this.setStatePure({ contacts: this.phoneContacts  });
 
-       this.setState({ isMount: true });
+       this.setStatePure({ isMount: true });
 
-    } else {
-       this.updatePhoneContacts(false);
-   }
+    } 
+    setTimeout(() => {
+      this.updatePhoneContacts(true);
+    },1000)   
   };
 
 
 updatePhoneContacts = (bool) => {
-  this.setState({creating: bool});
+  this.setStatePure({creating: bool});
   setTimeout(() => {
     PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.READ_CONTACTS, {
       title: 'Contacts',
-      message: 'Bleashup would like to view your contacts.',
-      buttonPositive: 'Please accept bare mortal',
+      message: Texts.beup_wants_to_access_your_contacts,
+      buttonPositive: Texts.accept,
     }).then(() => {
         Contacts.getAll((err, contacts) => {
           if (err === 'denied') {
             // error
           } else {
             this.getValidUsers(contacts);
-            this.setState({ isMount: true , creating:false});
+            this.setStatePure({ isMount: true , creating:false});
           }
         });
 
@@ -120,7 +128,6 @@ updatePhoneContacts = (bool) => {
   array = [];
   getValidUsers(contacts) {
 
-     //then push those from the phone
       contacts.forEach((contact) => {
           var phoneUser = {
             nickname: contact.displayName,
@@ -144,28 +151,28 @@ updatePhoneContacts = (bool) => {
     });
 
     //first push contacts from contacts store
-    stores.Contacts.contacts &&
+    let newContacts =  stores.Contacts.contacts &&
       stores.Contacts.contacts.contacts &&
-      stores.Contacts.contacts.contacts.forEach((contact) => {
-        if (contact.phone) {
-          let phoneUser = {
-            nickname: '',
-            phone: contact.phone,
-            profile: '',
-            status: '',
-            found: true,
-          };
-          console.warn("here", phoneUser);
-          this.array = [phoneUser].concat(this.array);
+      stores.Contacts.contacts.contacts.map((contact) => {
+        return {
+          nickname: '',
+          phone: contact.phone,
+          profile: '',
+          status: '',
+          found: true,
         }
       });
-    let cons = uniqBy(this.array, 'phone');
-    this.setState({ contacts: cons });
-    this.setState({ searchArray: cons });
+    let cons = uniqBy(newContacts ? newContacts.concat(this.array): this.array,"phone")
+    this.setStatePure({ contacts: cons });
   }
 
   invite = () => {};
-
+  showInvite(profile){
+    this.setStatePure({
+      invite:true,
+      currentIvitee :profile
+    })
+  }
   findIn = (arrayOfObjects, object) => {
     arrayOfObjects.forEach((element) => {
       if (element.phone === object.phone) {
@@ -176,33 +183,34 @@ updatePhoneContacts = (bool) => {
   };
 
   createRelation = (user) => {
-    getRelation(user)
-      .then((relation) => {
-        BeNavigator.navigateToActivity('EventChat', relation);
-      })
-      .catch((err) => { 
-        console.warn(err);
-      });
+      getRelation(user)
+        .then((relation) => {
+          BeNavigator.navigateToActivity('EventChat', relation);
+        })
+        .catch((err) => {
+          console.warn(err);
+        });
   };
 
-  updateContact = (user) => {
-    let index = findIndex(this.state.searchArray, { phone: user.phone });
-    if (index >= 0) {
-      this.state.searchArray[index].nickname = user.nickname;
-      this.state.searchArray[index].profile = user.profile;
-      this.state.searchArray[index].status = user.status;
-    } else {
-      this.state.searchArray.push(user);
-    }
-  };
-
-  searchUser = () => {
-    this.props.navigation.navigate('SearchUser', {
-      userdata: this.state.searchArray,
-    });
-  };
-
+  startSearching(){
+    this.setStatePure({
+      searching:true,
+    })
+  }
+  search(str){
+    this.setStatePure({
+      searchString:str
+    })
+  }
+  stopSearching(){
+    this.setStatePure({
+      searching:false,
+      searchString:""
+    })
+  }
   render() {
+    let data = this.state.contacts
+    data = data.filter(ele => ele.phone && globalFunctions.filterForRelation(ele,this.state.searchString))
     return (
       <View
         style={{
@@ -212,7 +220,7 @@ updatePhoneContacts = (bool) => {
           width: '100%',
         }}
       >
-        <View style={{ height: '8%' }}>
+        <View style={{ height: ColorList.headerHeight }}>
           <View
             style={{
               height: ColorList.headerHeight,
@@ -222,7 +230,7 @@ updatePhoneContacts = (bool) => {
               ...bleashupHeaderStyle,
             }}
           >
-            <View
+            {!this.state.searching ?  <View
               style={{
                 flex:1,
                 paddingLeft: '4%',
@@ -245,98 +253,32 @@ updatePhoneContacts = (bool) => {
                   paddingLeft: '7%',
                 }}
               >
-                Contacts
+                Relations
               </Text>
-            </View>
+            </View>:null
+            }
 
-            <View style={{ width:45 }}>
-              <TouchableOpacity>
-                <EvilIcons
-                  name="search"
-                  type="EvilIcons"
-                  style={{...GState.defaultIconSize,
-                    color: ColorList.headerIcon }}
-                  onPress={this.searchUser}
-                />
-              </TouchableOpacity>
+            <View style={{ 
+              width:this.state.searching ? "90%": 35,
+              height:35,
+              marginLeft: "auto", 
+              marginRight: "1%", 
+            }}>
+              <Searcher
+              search={this.search.bind(this)}
+              searching={this.state.searching}
+              searchString={this.state.searchString}
+              startSearching={this.startSearching.bind(this)}
+              cancelSearch={this.stopSearching.bind(this)}
+              >
+              </Searcher>
             </View>
           </View>
         </View>
-
-        <TouchableOpacity
-          style={{ height: '9%' }}
-          onPress={() => this.props.navigation.navigate('NewContact')}
-        >
-          <View
-            style={{
-              flex: 1,
-              width: '100%',
-              paddingLeft: '2%',
-              flexDirection: 'row',
-              alignItems: 'center',
-            }}
-          >
-            <View
-              style={{
-                width: 45,
-                height: 45,
-                alignItems: 'center',
-                justifyContent: 'center',
-                //marginLeft: '2%',
-              }}
-            >
-              <AntDesign
-                name="adduser"
-                active={true}
-                type="AntDesign"
-                style={{...GState.defaultIconSize, 
-                  color: ColorList.bodyIcon, paddingRight: 6 }}
-              />
-            </View>
-            <View style={{ ...GState.defaultTextStyle, marginLeft: '4%' }}>
-              <Text>New Contact</Text>
-            </View>
-          </View>
-        </TouchableOpacity>
-
-        <TouchableOpacity style={{ height: '8%' }} onPress={this.invite}>
-          <View
-            style={{
-              flex: 1,
-              width: '100%',
-              paddingLeft: '2%',
-              flexDirection: 'row',
-              alignItems: 'center',
-            }}
-          >
-            <View
-              style={{
-                width: width / 8,
-                height: height / 16,
-                borderRadius: 32,
-                alignItems: 'center',
-                justifyContent: 'center',
-                //marginLeft: '2%',
-              }}
-            >
-              <AntDesign
-                name="sharealt"
-                active={true}
-                type="AntDesign"
-                style={{ 
-                  ...GState.defaultIconSize,
-                  color: ColorList.bodyIcon, 
-                  paddingRight: 6 
-                }}
-              />
-            </View>
-            <View style={{ ...GState.defaultTextStyle, marginLeft: '4%' }}>
-              <Text>Invite Friends</Text>
-            </View>
-          </View>
-        </TouchableOpacity>
-
-
+        <View style={{
+          margin: '2%',
+          marginLeft: "3%",
+        }}><Text style={{...GState.defaultTextStyle,color:ColorList.darkGrayText,fontStyle: 'italic',}}>{Texts.start_a_relation_or_invite_a_contact}</Text></View>
         <View
           style={{
             flexDirection:'row',
@@ -352,8 +294,8 @@ updatePhoneContacts = (bool) => {
            {this.state.creating ? <Spinner style={{height:30}} /> : null}
         </View>
 
-         <TouchableOpacity style={{flex:1,width:55,position:'absolute',right:0}}>
-
+         <TouchableOpacity style={{flex:1,width:200,position:'absolute',flexDirection: 'row',right:0}}>
+            <Text style={{marginTop: "4%",}}>{Texts.refresh_your_conctacts}</Text>
                <Ionicons
                 name="ios-refresh"
                 type="Ionicons"
@@ -366,28 +308,30 @@ updatePhoneContacts = (bool) => {
         </View>
 
         {this.state.isMount ? (
-          <View style={{ height: '70%', paddingLeft: '2%' }}>
+          <View style={{ height: '80%', paddingLeft: '2%' }}>
             <BleashupFlatList
+              //notOptimized={this.state.searching && this.state.searchString}
               initialRender={15}
               renderPerBatch={15}
               style={{ backgroundColor: ColorList.bodyBackground }}
               firstIndex={0}
-              extraData={this.state}
-              keyExtractor={(item, index) => index}
-              dataSource={this.state.contacts}
+              numberOfItems={data.length}
+              keyExtractor={(item, index) => item.phone}
+              dataSource={data}
               noSpinner={true}
               renderItem={(item, index) => {
                 this.delay = this.delay >= 15 ? 0 : this.delay + 1;
 
-                return (
-                  <View
+                return (<View
                     style={{ height: 60, width: 250, paddingLeft: '1.3%' }}
                   >
                     <ProfileViewCall
+                      showInvite={this.showInvite.bind(this)}
                       phoneInfo={item}
+                      searching={this.state.searching && this.state.searchString}
+                      searchString={this.state.searchString}
                       delay={this.delay}
                       phone={item.phone}
-                      updateContact={this.updateContact}
                       createRelation={() => {
                         this.createRelation(item);
                       }}
@@ -399,7 +343,7 @@ updatePhoneContacts = (bool) => {
             <Invite
               isOpen={this.state.invite}
               onClosed={() => {
-                this.setState({ invite: false });
+                this.setStatePure({ invite: false });
               }}
             />
           </View>

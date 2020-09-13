@@ -10,6 +10,7 @@ import  MaterialIcons  from 'react-native-vector-icons/MaterialIcons';
 import Entypo  from 'react-native-vector-icons/Entypo';
 import EvilIcons  from 'react-native-vector-icons/EvilIcons';
 import GState from "../../../stores/globalState";
+import Texts from '../../../meta/text';
 export default class InviteParticipantModal extends BleashupModal {
   initialize() {
     this.state = {
@@ -100,11 +101,12 @@ export default class InviteParticipantModal extends BleashupModal {
             <View style={{ flexDirection: "column" }}>
               <Text
                 style={{
+                  ...GState.defaultTextStyle,
                   fontWeight: "bold",
                   fontSize: 18,
                 }}
               >
-                {"Select New Members"}
+                {Texts.select_members}
               </Text>
               <Text
                 note
@@ -114,12 +116,12 @@ export default class InviteParticipantModal extends BleashupModal {
                 }}
               >
                 {this.state.selected.length}
-                {" members and "}
+                {Texts.members_and}
                 {
                   this.state.selected.filter((ele) => ele.master == true)
                     .length
                 }
-                {" master"}
+                {Texts.masters}
               </Text>
             </View>
             {this.state.selected.length > 0 && <View>

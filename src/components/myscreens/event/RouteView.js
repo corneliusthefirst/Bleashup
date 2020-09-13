@@ -82,11 +82,11 @@ export default class RouteView extends Component {
                 })
                 }>
                     <View style={{ width: "100%", marginTop: '10%', }}>
-                        <View style={{}}><FontAwesome type="FontAwesome" style={{
+                        <View style={{}}><MaterialIcons type="FontAwesome" style={{
                             alignSelf: 'center',
                             fontSize: this.fontSize,
                             color: ColorList.bodyIcon
-                        }} name="comments-o"/>
+                        }} name="chat-bubble"/>
                             {/*<Text style={{ padding: "1%", color: this.props.currentPage == "EventChat" ? "#0A4E52" : "gray", width: "100%" }}>Discusion</Text>*/}</View>
                         {GState.generalNewMessages.length > 0 ? <View style={styles.badge}
                             primary><Text style={{ marginTop: "30%", }}>{GState.generalNewMessages.length}</Text></View> : <View></View>}

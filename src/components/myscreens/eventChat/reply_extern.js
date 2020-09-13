@@ -5,6 +5,8 @@ class reply_extern {
     reminds = "Reminds"
     votes = 'Votes'
     vote = 'Vote'
+    description = 'description'
+    activity_photo="activity-photo"
     changes = 'Updates'
     committees = 'Commitees'
     committee  = "Committee"

@@ -2,10 +2,10 @@
 import React, { Component, useState } from "react";
 import { ScrollView, View, Dimensions, TouchableOpacity, Text } from "react-native";
 import BleashupAccordion from "../../MyTasks/BleashupAccordion";
-import Hyperlink from "react-native-hyperlink";
 import  Entypo from 'react-native-vector-icons/Entypo';
 import  FontAwesome  from 'react-native-vector-icons/FontAwesome';
 import GState from "../../../../stores/globalState";
+import TextContent from "../../eventChat/TextContent";
 
 let { height, width } = Dimensions.get("window");
 
@@ -132,9 +132,9 @@ const SwipeAccordion = (props) => {
             height: item.message.length > 0 ? height / 4 : 0,
           }}
         >
-          <Hyperlink linkDefault={true} linkStyle={{ color: '#2980b9' }}>
-            <Text style={{ ...GState.defaultTextStyle, padding: 8, color: 'white' }}>{item.message}</Text>
-          </Hyperlink>
+          <TextContent style={{ ...GState.defaultTextStyle, padding: 8, color: 'white' }}>
+            {item.message}
+        </TextContent>
         </ScrollView>
       </View>
     ) : null;

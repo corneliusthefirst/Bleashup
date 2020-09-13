@@ -5,18 +5,38 @@ import ProfileSimple from "../components/myscreens/currentevents/components/Prof
 import stores from "../stores/index";
 import BeNavigator from "../services/navigationServices";
 import BeComponent from "./BeComponent";
+import Toaster from "../services/Toaster";
+import Texts from '../meta/text';
+import GState from '../stores/globalState/index';
 
 export default class RelationProfile extends BeComponent {
   constructor(props) {
     super(props);
     this.navigateToRelation = this.navigateToRelation.bind(this);
   }
-  navigateToRelation() {
+  gotoRelation(){
     requestAnimationFrame(() =>
       BeNavigator.navigateToActivity("EventChat", this.props.Event)
     );
   }
+  
+  navigateToRelation() {
+    if(this.user){
+     this.gotoRelation()
+    }else{
+      stores.TemporalUsersStore.getUser(this.oponent).then((user) => {
+        
+       user && !user.response ? this.gotoRelation():GState.considerIvite()
+      }).catch(() => {
+        GState.considerIvite()
+      })
+    }
+  }
   render() {
+    this.oponent = this.props.Event.participant.find(
+      (ele) => ele.phone !== stores.LoginStore.user.phone
+    ).phone
+    this.user = stores.TemporalUsersStore.Users[this.oponent]
     return (
       <View style={styles.mainContainer}>
         <View style={styles.subContainer}>
@@ -27,13 +47,7 @@ export default class RelationProfile extends BeComponent {
             >
               <ProfileSimple
                 showPhoto={this.props.showPhoto}
-                profile={
-                  stores.TemporalUsersStore.Users[
-                    this.props.Event.participant.find(
-                      (ele) => ele.phone !== stores.LoginStore.user.phone
-                    ).phone
-                  ]
-                }
+                profile={this.user}
                 relation
                 style={styles.profile}
               />

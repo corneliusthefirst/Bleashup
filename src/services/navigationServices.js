@@ -13,17 +13,17 @@ class NavigatorClass {
     navigateTo(page, param) {
         GState.nav.navigate(page, param)
     }
-    resetPushingState(){
-        this.pushing = false
+    resetPushingState(key){
+        delete this.pushing[key]
     }
-    sayPushing(){
-        this.pushing = true
+    sayPushing(key){
+        this.pushing[key] = true
     }
     pushWaite = 2000
-    pushing = false
-    pushTimeoutRef = null 
-    waitAfterPush(){
-        this.pushTimeoutRef = setTimeout(() => this.resetPushingState(), this.pushWaite)
+    pushing = {}
+    pushTimeoutRef = {}
+    waitAfterPush(key){
+        this.pushTimeoutRef[key] = setTimeout(() => this.resetPushingState(key), this.pushWaite)
     }
     pushActivityWithIndex(activity,data){
         if(data){
@@ -43,19 +43,19 @@ class NavigatorClass {
     push(route,params){
         GState.nav.push(route, params)
     }
-    pushRoute(route,params){
-        if(this.pushing){
-            clearTimeout(this.pushTimeoutRef)
-            this.waitAfterPush()
+    pushRoute(route,params,key){
+        if(this.pushing[key]){
+            clearTimeout(this.pushTimeoutRef[key])
+            this.waitAfterPush(key)
             
         }else{
-            this.sayPushing()
+            this.sayPushing(key)
             this.push(route,params)
-            this.waitAfterPush()
+            this.waitAfterPush(key)
         }
     }
     openVideo(url,date){
-        this.sayCloseAllModals()
+        //this.sayCloseAllModals()
         this.pushRoute("Video",{
             video:url,
             date
@@ -64,10 +64,18 @@ class NavigatorClass {
     handleReply(event){
         setTimeout(() => this.pushActivity(event, "EventChat"), GState.waitToReply)
     }
+    gotoChangeLogs(event,options){
+        this.pushActivity(event,"ChangeLogs",options)
+    }
     gotoRemindsWithIndex(event,id,withReply) {
         GState.toggleCurrentIndex(id, 5000)
         this.pushActivity(event, "Reminds", { id, 
             reply: withReply ? () => this.handleReply(event) :null })
+    }
+    goToRemind(event,withReply){
+        this.pushActivity(event, "Reminds", {
+            reply: withReply ? () => this.handleReply(event) : null
+        })
     }
     gotoStarWithIndex(event, id, withReply) {
         GState.toggleCurrentIndex(id, 2000)
@@ -83,7 +91,7 @@ class NavigatorClass {
         
     }
     openPhoto(url,hideActions,date,callback){
-        this.sayCloseAllModals()
+       // this.sayCloseAllModals()
         this.pushRoute('PhotoViewer', { 
             photo: url,
             date,
@@ -92,10 +100,20 @@ class NavigatorClass {
         })
     }
     pushTo(page, param){
-        this.pushRoute(page,param)
+        this.pushRoute(page,param,page)
     }
     pushActivity(event, page,options) {
-        this.pushRoute('Event', { Event: event, tab: page || 'EventDetails', ...options })
+        page = page || 'EventDetails'
+        this.pushRoute('Event', { Event: event, tab: page, ...options },`Event/${page}`)
+    }
+    navigateToContacts(){
+        this.navigateTo("Contacts")
+    }
+    navigateToQR(){
+        this.navigateTo("QR")
+    }
+    navigateToCreateEvent(){
+        this.navigateTo("CreateEventView")
     }
     goBack() {
         GState.nav.goBack()

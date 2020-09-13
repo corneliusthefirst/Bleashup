@@ -101,7 +101,7 @@ export default class ContactList extends Component {
                                         </View>
                                     </View>
                                 </View>
-                                <MenuDivider color="#1FABAB" />
+                                <MenuDivider color={ColorList.indicatorColor} />
                             </View>
                         }
                         }

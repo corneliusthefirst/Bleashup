@@ -31,6 +31,9 @@ import BeNavigator from "../../../services/navigationServices";
 import BeComponent from "../../BeComponent";
 import Toaster from "../../../services/Toaster";
 import EvilIcons  from 'react-native-vector-icons/EvilIcons';
+import { Image } from 'react-native';
+import GState from '../../../stores/globalState/index';
+import testForURL from '../../../services/testForURL';
 
 const screenWidth = Math.round(Dimensions.get("window").width);
 const screenheight = Math.round(Dimensions.get("window").height);
@@ -42,6 +45,7 @@ export default class SWView extends BeComponent {
       action: false,
     };
   }
+
   width = "9%";
   padding = "9%";
   indicatorMargin = {
@@ -50,60 +54,6 @@ export default class SWView extends BeComponent {
     position: "absolute",
   };
 
-  navigateToEventChat() {
-    stores.Events.isParticipant(
-      this.props.Event.id,
-      stores.Session.SessionStore.phone
-    ).then((status) => {
-      if (status) {
-        this.props.navigation.navigate("Event", {
-          Event: this.props.Event,
-          tab: "EventChat",
-        });
-      } else {
-        Toaster({
-          text: "please join the event to see the updates about !",
-          buttonText: "ok",
-        });
-      }
-      this.props.seen();
-    });
-  }
- navigateToLogs() {
-    stores.Events.isParticipant(
-      this.props.Event.id,
-      stores.Session.SessionStore.phone
-    ).then((status) => {
-      if (status) {
-        this.props.navigation.navigate("ChangeLogs", { ...this.props });
-      } else {
-        this.setStatePure({ isDetailsModalOpened: true });
-      }
-      this.props.seen();
-    });
-  }
-  invite() {
-    this.setStatePure({
-      openInviteModal: true,
-    });
-  }
-   navigateToEventDetails() {
-    stores.Events.isParticipant(
-      this.props.Event.id,
-      stores.Session.SessionStore.phone
-    ).then((status) => {
-      if (status) {
-        this.props.navigation.navigate("Event", {
-          Event: this.props.Event,
-          tab: "EventDetails",
-        });
-      } else {
-        this.setStatePure({ isDetailsModalOpened: true });
-      }
-      this.props.seen();
-    });
-  }
-  actionColor = "#1FABAB";
   fontSize = 18;
   textSize = 14;
   actionHeight = "14.5%";
@@ -182,16 +132,17 @@ export default class SWView extends BeComponent {
                   )
                 }
               >
-                {this.props.event.background ? (
+                {testForURL(this.props.event.background) ? (
                   <CacheImages
                     thumbnails
                     source={{ uri: this.props.event.background }}
                   ></CacheImages>
                 ) : (
-                  <CacheImages
-                    thumbnails
-                    source={require("../../../../assets/default_event_image.jpeg")}
-                  ></CacheImages>
+                  <Image
+                    resizeMode={"cover"}
+                    style={{...rounder(60)}}
+                      source={this.props.isRelation ? GState.profilePlaceHolder : GState.activity_place_holder}
+                  ></Image>
                 )}
               </TouchableOpacity>
             </View>
