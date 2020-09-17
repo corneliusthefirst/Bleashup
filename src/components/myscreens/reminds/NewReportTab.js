@@ -1,5 +1,5 @@
 import React, { PureComponent } from "react";
-import { View, Dimensions,TouchableOpacity} from "react-native";
+import { View, Dimensions, TouchableOpacity } from "react-native";
 import { map } from "lodash";
 import Modal from "react-native-modalbox";
 import shadower from "../../shadower";
@@ -8,11 +8,14 @@ import DonnersList from "./DonnersList";
 import TabModal from "../../mainComponents/TabModal";
 import CreationHeader from "../event/createEvent/components/CreationHeader";
 import ColorList from '../../colorList';
-import  MaterialIcons  from 'react-native-vector-icons/MaterialIcons';
-import Ionicons  from 'react-native-vector-icons/Ionicons';
-import MaterialIconCommunity  from 'react-native-vector-icons/MaterialCommunityIcons';
+import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
+import Ionicons from 'react-native-vector-icons/Ionicons';
+import MaterialIconCommunity from 'react-native-vector-icons/MaterialCommunityIcons';
 import GState from "../../../stores/globalState";
 import rounder from "../../../services/rounder";
+import replies from '../eventChat/reply_extern';
+import { format } from "../../../services/recurrenceConfigs";
+import  moment  from 'moment';
 const screenheight = Math.round(Dimensions.get("window").height);
 export default class ReportTabModal extends TabModal {
   initialize() {
@@ -29,13 +32,14 @@ export default class ReportTabModal extends TabModal {
       content: null,
     });
   }
+  backdropPressToClose=false
   shouldComponentUpdate(prevprops, prevState) {
     return (prevState.mounted !== this.state.mounted ||
       this.props.isOpen !== prevprops.isOpen ||
-      (this.props.concernees && 
+      (this.props.concernees &&
         prevprops.concernees &&
-         this.props.concernees.length !== prevprops.concernees.length))
-         ?true:false
+        this.props.concernees.length !== prevprops.concernees.length))
+      ? true : false
   }
   onOpenModal() {
     /*setTimeout(() => {
@@ -46,29 +50,48 @@ export default class ReportTabModal extends TabModal {
       this.props.stopLoader();
     }, 20);*/
   }
-  inialPage="Members"
+  mapInitialRoute(type) {
+    switch (type) {
+      case replies.done:
+        return "Donners"
+      case replies.confirmed:
+        return "Confirmed"
+      default:
+        return "Members"
+    }
+  }
+  inialPage = this.mapInitialRoute(this.props.type)
   tabs = {
     Members: {
-      navigationOptions:{
-        tabBarIcon: ({ tintColor, focused }) => 
-        <Ionicons 
-        style={{ ...GState.defaultIconSize }} 
-        name={"ios-people"} 
-        type="Ionicons" />
+      navigationOptions: {
+        gesturesEnabled: false,
+        swipeEnabled: false,
+        tabBarIcon: ({ tintColor, focused }) =>
+          <Ionicons
+            style={{ ...GState.defaultIconSize }}
+            name={"ios-people"}
+            type="Ionicons"
+          />
       },
       screen: () => (
         <View style={{ height: "100%" }}>
-            <ConcerneeList
-              contacts={this.props.concernees}
-              complexReport={false}
-              must_report={this.props.must_report}
-              actualInterval={this.props.actualInterval}
-            ></ConcerneeList>
+          <ConcerneeList
+            initDate={this.props.actualInterval ? this.props.actualInterval.start:moment().format(format)}
+            reply={this.props.reply}
+            type={replies.member}
+            currentRemindUser={this.props.currentRemindUser}
+            contacts={this.props.concernees}
+            complexReport={false}
+            must_report={this.props.must_report}
+            actualInterval={this.props.actualInterval}
+          ></ConcerneeList>
         </View>
       ),
     },
     Donners: {
-      navigationOptions:{
+      navigationOptions: {
+        gesturesEnabled: false,
+        swipeEnabled: false,
         tabBarIcon: ({ tintColor, focused }) => <Ionicons name={"md-checkmark"} type={"Ionicons"} style={{
           ...GState.defaultIconSize,
           color: ColorList.indicatorColor
@@ -78,6 +101,9 @@ export default class ReportTabModal extends TabModal {
       screen: () => (
         <View style={{ height: "100%" }}>
           <DonnersList
+            currentRemindUser={this.props.currentRemindUser}
+            type={replies.done}
+            reply={this.props.reply}
             intervals={this.props.intervals}
             donners={this.props.donners}
             master={this.props.master}
@@ -89,7 +115,9 @@ export default class ReportTabModal extends TabModal {
       ),
     },
     Confirmed: {
-      navigationOptions:{
+      navigationOptions: {
+        swipeEnabled: false,
+        gesturesEnabled: false,
         tabBarIcon: ({ tintColor, focused }) => <MaterialIconCommunity name="check-all" style={{
           ...GState.defaultIconSize,
           color: ColorList.likeActive
@@ -99,6 +127,9 @@ export default class ReportTabModal extends TabModal {
       screen: () => (
         <View style={{ height: "100%" }}>
           <DonnersList
+            currentRemindUser={this.props.currentRemindUser}
+            type={replies.confirmed}
+            reply={this.props.reply}
             cannotReport
             intervals={this.props.intervals}
             master={this.props.master}
@@ -111,9 +142,10 @@ export default class ReportTabModal extends TabModal {
     },
     Back: {
       navigationOptions: {
-        tabBarIcon: () => <TouchableOpacity 
-        style={{
-          ...rounder(40,ColorList.bodyDarkWhite)}}>
+        tabBarIcon: () => <TouchableOpacity
+          style={{
+            ...rounder(40, ColorList.bodyDarkWhite)
+          }}>
           <MaterialIcons
             name="close"
             style={{ ...GState.defaultIconSize, color: ColorList.headerIcon }}
@@ -121,7 +153,7 @@ export default class ReportTabModal extends TabModal {
       },
       screen: () => {
         this.onClosedModal()
-       return <View></View>
+        return <View></View>
       }
     },
   };

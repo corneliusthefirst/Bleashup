@@ -160,7 +160,9 @@ export default class FileAttarchementUploader extends BePureComponent {
                                     {this.toMB(this.state.total).toFixed(1)}{")Mb"}</Text>}</View></View>
                 </TouchableOpacity>
                 {this.props.message.text?<TextContent
+                    animate={this.props.animate}
                     searchString={this.props.searchString}
+                    foundString={this.props.foundString}
                     //handleLongPress={this.props.onLongPress}
                     pressingIn={this.props.pressingIn} text={this.props.message.text} 
                     tags={this.props.message.tags}></TextContent>:null}

@@ -16,7 +16,7 @@ import actFilterFunc from './activityFilterFunc';
 
   render() {
     return (
-        <CurrentEvents data={stores.Events.events.filter(actFilterFunc)} {...this.props}></CurrentEvents>
+        <CurrentEvents searchString={this.props.searchString} data={stores.Events.events.filter(actFilterFunc)} {...this.props}></CurrentEvents>
     );
   }
 }

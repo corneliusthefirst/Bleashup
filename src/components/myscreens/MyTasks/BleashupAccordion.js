@@ -28,7 +28,7 @@ export default class AccordionModuleNative extends Component {
     }
   }
   renderItem(dataArray,key, index) {
-    return <View>
+    return <View key={key}>
       <View
         style={{
           flexDirection: 'row',
@@ -65,14 +65,18 @@ export default class AccordionModuleNative extends Component {
   expanded(item) {
     return this.props.keyExtractor && this.state.expanded === this.props.keyExtractor(item);
   }
-
+  scrollToIndex(index){
+    this.refs.accordion && this.refs.accordion.scrollToIndex(index)
+  }
   render() {
     return <BleashupScrollView
+      ref="accordion"
       firstIndex={0}
       renderPerBatch={7}
       initialRender={15}
       numberOfItems={this.props.dataSource.length}
       keyExtractor={this.props.keyExtractor}
+      getItemLayout={this.props.getItemLayout}
       dataSource={this.props.dataSource}
       backgroundColor={this.props.backgroundColor}
       renderItem={(item, key,index) => this.renderItem(item,key,index)}

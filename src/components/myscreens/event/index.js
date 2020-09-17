@@ -95,6 +95,7 @@ export default class Event extends BeComponent {
     currentPage: "EventDetails",
     enabled: false,
     members: [],
+    newing:false,
     isOpen: false,
   };
   textStyle = {
@@ -131,7 +132,7 @@ export default class Event extends BeComponent {
   addRemindForCommittee(members) {
     BeNavigator.pushActivity(this.event, "Reminds", { currentRemindMembers: members })
   }
-  applystate(){
+  applystate() {
     this.setStatePure({
       mounted: true,
     });
@@ -140,8 +141,8 @@ export default class Event extends BeComponent {
     this.isOpen = !this.isOpen;
     this.applystate()
   }
-  closeMenu(){
-    this.isOpen = false 
+  closeMenu() {
+    this.isOpen = false
     this.applystate()
   }
   editCommiteeName() {
@@ -156,17 +157,21 @@ export default class Event extends BeComponent {
   currentWidth = 0.5;
   isOpen = false;
 
-
+  type = this.getParam("type")
+  currentRemindUser = this.type && this.getParam(this.type)
   handleReplyExtern =
     (reply) => {
       if (reply.type_extern == replies.activity_photo) {
         this.openPhotoSelectorModal()
       } else if (reply.type_extern.includes(replies.description)) {
         this.showDescription()
-      } else if (reply.type_extern.toLowerCase().includes("reminds")) {
-
-        reply.id ? BeNavigator.gotoRemindsWithIndex(this.event, reply.id) : null;
-      } else if (reply.type_extern.toLowerCase().includes("posts")) {
+      } else if (reply.type_extern.toLowerCase().includes("remind")) {
+        reply.id ? BeNavigator.gotoRemindsWithIndex(this.event, reply.id, null,
+          {
+            [reply.type_extern]: reply[reply.type_extern],
+            type: reply.type_extern
+          }) : null;
+      } else if (reply.type_extern.toLowerCase().includes("post")) {
         reply.id ? BeNavigator.gotoStarWithIndex(this.event, reply.id) : null;
       } else {
         reply.id ? this.showChanges(reply) : null;
@@ -174,6 +179,13 @@ export default class Event extends BeComponent {
     }
   showDescription() {
     this.setStatePure({ viewdetail: true })
+  }
+  clearIndexedRemind(){
+    /*this.type = null
+    this.currentRemindUser = null 
+    this.setStatePure({
+      newing:!this.state.newing
+    })*/
   }
   renderMenu(NewMessages) {
     ///console.error(this.state.currentPage)
@@ -220,6 +232,9 @@ export default class Event extends BeComponent {
         return (
           <Remind
             //shared={false}
+            type={this.type}
+            clearIndexedRemind={this.clearIndexedRemind.bind(this)}
+            currentRemindUser={this.currentRemindUser}
             isRelation={this.isRelation}
             id={this.id}
             share={{
@@ -339,9 +354,9 @@ export default class Event extends BeComponent {
             openMenu={() => this.openMenu()}
             openPhoto={(url) => this.openPhoto(url)}
             master={this.master}
-            isM={this.getParam("isMe")||this.state.isMe}
-            activeMember={this.getParam("activeMember")||this.state.activeMember}
-            forMember={this.getParam("forMember")||this.state.forMember}
+            isM={this.getParam("isMe") || this.state.isMe}
+            activeMember={this.getParam("activeMember") || this.state.activeMember}
+            forMember={this.getParam("forMember") || this.state.forMember}
             event_id={this.event.id}
             navigatePage={(page) => {
               BeNavigator.navigateTo(page);
@@ -629,12 +644,15 @@ export default class Event extends BeComponent {
     GState.reply = data;
     Vibration.vibrate(this.duration);
     let reply = this.getParam("reply")
-    if (reply) {
+    if (this.refs.EventChat) {
+      this.directReply(data)
+    } else if (reply) {
       reply()
+      this.goback()
     } else {
-      emitter.emit(reply_me, GState.reply);
+      emitter.emit(reply_me + this.event.id, GState.reply);
+      this.goback()
     }
-    this.goback()
   }
   startLoader() {
     this.setStatePure({
@@ -1225,10 +1243,10 @@ export default class Event extends BeComponent {
   }
   checkActivity(member) {
     this.closeSettingModal()
-    BeNavigator.gotoChangeLogs(this.event, { 
+    BeNavigator.gotoChangeLogs(this.event, {
       isMe: member.phone === stores.LoginStore.user.phone ? true : false,
-      activeMember:member.phone,
-      forMember:member.nickname
+      activeMember: member.phone,
+      forMember: member.nickname
     })
   }
   openSettingsModal() {
@@ -1388,31 +1406,30 @@ export default class Event extends BeComponent {
     this.hideDescription()
     setTimeout(() => {
       this.mention(GState.prepareDescriptionForMention(
-        this.event.about.description, 
-        this.event.id, 
+        this.event.about.description,
+        this.event.id,
         this.event.creator_phone))
-    },200)
+    }, 200)
   }
   hidePhotoIput() {
     this.setStatePure({
       isSelectPhotoInputMethodModal: false,
     })
   }
+  directReply(reply) {
+    this.refs.EventChat && this.refs.EventChat.initReply(reply)
+  }
   replyToPhoto() {
     this.hidePhotoIput()
     let reply = GState.prepareActivityPhotoForMention(this.event.background,
       this.event.id, this.event.creator_phone)
-    if (this.refs.EventChat) {
-      this.refs.EventChat && this.refs.EventChat.initReply(reply)
-    } else {
-      this.mention(reply)
-    }
+    this.mention(reply)
   }
-  closeSettingModal(){
+  closeSettingModal() {
     this.setStatePure({
       isSettingsModalOpened: false,
     });
-    this.markAsConfigured();
+    //this.markAsConfigured();
   }
   startInvitation(adding) {
     this.computedMaster || this.event.public

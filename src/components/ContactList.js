@@ -13,6 +13,7 @@ import ColorList from './colorList';
 import rounder from "../services/rounder";
 import Spinner from './Spinner';
 import GState from "../stores/globalState";
+import Texts from '../meta/text';
 export default class ContactList extends Component {
 
     constructor(props) {
@@ -59,7 +60,7 @@ export default class ContactList extends Component {
     _keyExtractor = (item, index) => item.phone
     render() {
         StatusBar.setBarStyle('dark-content', true)
-        return <View style={{}}>
+        return <View >
             {!this.props.reaction ? <CreationHeader
                 back={this.props.back}
                 title={"Shared By "}
@@ -76,7 +77,7 @@ export default class ContactList extends Component {
                     {this.state.isEmpty ? <Text style={{
                         ...GState.defaultTextStyle,
                         margin: '10%',
-                    }} note>{"sory! there's no connction to the server"}</Text> : <BleashupFlatList
+                    }} note>{Texts.no_connection_to_server}</Text> : <BleashupFlatList
                         firstIndex={0}
                         renderPerBatch={7}
                         initialRender={15}
@@ -87,13 +88,19 @@ export default class ContactList extends Component {
                             this.delay = this.delay >= 15 ? 0 : this.delay + 1
                             return <View style={{ margin: 10 }}>
                                 <View>
-                                    <View style={{ display: 'flex', flexDirection: 'row', height: 50 }} >
-                                        <View style={{ width: "50%" }}>
+                                    <View style={{ 
+                                        display: 'flex',
+                                        width:"100%", 
+                                    flexDirection: 'row', 
+                                    height: 50,
+                                    justifyContent: 'space-between',
+                                    alignItems: 'center', }} >
+                                        <View style={{ width: "60%" }}>
                                             <ProfileView delay={this.delay} phone={item.phone}></ProfileView>
                                         </View>
                                         <View style={{
-                                            width: "45%",
-                                            justifyContent: 'center',
+                                            width: "30%",
+                                            justifyContent: 'flex-end',
                                         }}>
                                             <Text style={{
                                                 ...GState.defaultTextStyle

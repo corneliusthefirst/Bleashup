@@ -28,6 +28,8 @@ import IDMaker from '../../../services/IdMaker';
 import { PrivacyRequester } from '../settings/privacy/Requester';
 import BeComponent from '../../BeComponent';
 import DetailsModal from "../invitations/components/DetailsModal";
+import Searcher from "../Contacts/Searcher";
+import { justSearch, cancelSearch, startSearching } from '../eventChat/searchServices';
 
 let { height, width } = Dimensions.get("window");
 
@@ -38,14 +40,17 @@ class Home extends BeComponent {
       appState: "active",
       isTabModalOpened: false,
       currentTab: 0,
-      showDetailModal:false,
+      showDetailModal: false,
       setting: false,
       openBCamera: false,
     };
     this.permisssionListener();
+    this.search = justSearch.bind(this)
+    this.cancelSearching = cancelSearch.bind(this)
+    this.startSearching = startSearching.bind(this)
   }
   state = {
-    showDetailModal:false
+    showDetailModal: false
   };
   //initialise menu
   _menu = null;
@@ -75,17 +80,17 @@ class Home extends BeComponent {
     this.handleNotif(data);
   }
   isMember = (event) => event && event.participant &&
-  event.participant.findIndex(ele => ele.phone === stores.LoginStore.user.phone) >= 0 
+    event.participant.findIndex(ele => ele.phone === stores.LoginStore.user.phone) >= 0
   handleNotif(data) {
     stores.Events.loadCurrentEvent(data.activity_id).then(activity => {
-      if(this.isMember(activity)){
-       BeNavigator.pushActivityWithIndex(activity,data)
-      }else{
-       this.showDetailModal(activity,data)
+      if (this.isMember(activity)) {
+        BeNavigator.pushActivityWithIndex(activity, data)
+      } else {
+        this.showDetailModal(activity, data)
       }
     })
   }
-  showDetailModal(event,data){
+  showDetailModal(event, data) {
     console.warn("setting event")
     this.setStatePure({
       showDetailModal: true,
@@ -93,9 +98,9 @@ class Home extends BeComponent {
       event: event || this.state.event
     })
   }
-  hideDetailModal(){
+  hideDetailModal() {
     this.setStatePure({
-      showDetailModal:false
+      showDetailModal: false
     })
   }
   handleNotifications(data) {
@@ -127,7 +132,7 @@ class Home extends BeComponent {
   }
   navigateToEventDetails(id, remind_id) {
     data = {
-      activity_id:id,remind_id
+      activity_id: id, remind_id
     }
     this.handleNotifications(data)
   }
@@ -211,7 +216,7 @@ class Home extends BeComponent {
     //BeNavigator.pushTo('SwiperComponent',{dataArray: media,mapFunction:this.mapFunction,currentIndex: 0});
     //BeNavigator.pushTo('Pagin');
     //this.setState({ openBCamera: true });
-      BeNavigator.navigateTo("Profile");
+    BeNavigator.navigateTo("Profile");
   }
 
   handleURL = ({ url }) => {
@@ -235,13 +240,26 @@ class Home extends BeComponent {
         <View style={styles.subContainer}>
           <View style={styles.headerContainer}>
             <View style={styles.headerImageContainer}>
-              <Image
+              {this.state.searching ? null : <Image
                 resizeMode={"cover"}
                 source={GState.bleashupImage}
                 style={styles.headerImage}
-              />
+              />}
             </View>
             <View style={styles.settingsIconStyleContainer}>
+              <View style={{
+                height: 35,
+                ...this.state.searching ? { width: "80%" } : { width: 35 }
+              }}>
+                <Searcher
+                  searching={this.state.searching}
+                  search={this.search}
+                  startSearching={this.startSearching}
+                  cancelSearch={this.cancelSearching}
+                  searchString={this.state.searchString}
+                >
+                </Searcher>
+              </View>
               <TouchableOpacity
                 style={styles.settingsIconStyleContainerSub}
                 onPress={this.settings}
@@ -256,7 +274,7 @@ class Home extends BeComponent {
           </View>
         </View>
         <View style={styles.content}>
-          <CurrentEventView {...this.props} />
+          <CurrentEventView searchString={this.state.searchString} {...this.props} />
           <DetailsModal
             isToBeJoint
             data={this.state.data}

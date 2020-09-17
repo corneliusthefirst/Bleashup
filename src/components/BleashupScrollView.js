@@ -1,6 +1,7 @@
 import React, { Component } from "react"
 import { FlatList, View, ScrollView, Text } from "react-native";
 import Spinner from './Spinner';
+import BeComponent from './BeComponent';
 
 
 const ifCloseToTop = ({ layoutMeasurement, contentOffset, contentSize }) => {
@@ -11,7 +12,7 @@ const isCloseToBottom = ({ layoutMeasurement, contentOffset, contentSize }) => {
     return layoutMeasurement.height + contentOffset.y >=
         ((contentSize.height - paddingToBottom) * (0.70));
 };
-export default class BleashupScrollView extends Component {
+export default class BleashupScrollView extends BeComponent {
     constructor(props) {
         super(props)
         this.state = {
@@ -19,22 +20,42 @@ export default class BleashupScrollView extends Component {
             endReached: false
         }
     }
+    scrollToIndex(index){
+        this.scrollTo(index,50)
+        setTimeout(() => {
+            this.scrollTo(index,100)
+        },100)
+    }
+    scrollTo(index,delay) {
+        this.setStatePure({
+            currentRender: this.props.dataSource.length-1,
+            endReached: true
+        })
+        setTimeout(() => {
+            if (this.refs.scrollViewRef) {
+                this.refs.scrollViewRef.scrollTo({
+                    y:
+                        this.props.getItemLayout(index).offset, animated: true
+                })
+            }
+        }, delay)
+    }
     initialRender = 3
     renderPerBatch = 3
     previousRendered = 0
     _renderItems(array) {
-        return array.map((element,index) => {
-            return this.props.renderItem(element, this.props.keyExtractor(element, 1),index)
+        return array.map((element, index) => {
+            return this.props.renderItem(element, this.props.keyExtractor(element, 1), index)
         })
     }
     continueScrollDown() {
         this.previousRendered = this.state.currentRender
         if (this.state.currentRender <= this.props.dataSource.length - 1) {
-            this.setState({
+            this.setStatePure({
                 currentRender: this.previousRendered + this.props.renderPerBatch
             })
         } else {
-            this.setState({
+            this.setStatePure({
                 endReached: true
             })
         }
@@ -47,6 +68,8 @@ export default class BleashupScrollView extends Component {
                 ...this.props.style
             }}>
                 <ScrollView
+                    ref={"scrollViewRef"}
+                    alwaysBounceVertical
                     nestedScrollEnabled={true}
                     onScrollEndDrag={({ nativeEvent }) => {
                         if (isCloseToBottom(nativeEvent)) {
@@ -55,7 +78,6 @@ export default class BleashupScrollView extends Component {
                     }
                     }
                     centerContent={true}
-                    ref="bleashupFlatlist"
                     //canCancelContentTouches={true}
                     removeClippedSubviews={true}
                     //updateCellsBatchingPeriod={10}

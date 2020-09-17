@@ -15,13 +15,18 @@ import BePureComponent from '../../BePureComponent';
 import onlinePart from './parts/onlineParts';
 import { checkUserOnlineStatus } from './services';
 import Searcher from '../Contacts/Searcher';
+import rounder from '../../../services/rounder';
+import searchToolsParts from './searchToolsPart';
 
 export default class ChatRoomHeader extends BePureComponent {
     constructor(props) {
         super(props);
         this.state = {
-            last_see: "..."
+            last_seen: "..."
         };
+        this.searchToolsParts = searchToolsParts.bind(this)
+        this.pushUp = this.props.pushUp
+        this.pushDown = this.props.pushDown
         this.props.isRelation ? this.onlinePart = onlinePart.bind(this) : null
     }
     componentMounting() {
@@ -93,7 +98,7 @@ export default class ChatRoomHeader extends BePureComponent {
                 </View>}
                 <View style={{
                     marginHorizontal: '1%',
-                    width: this.props.searching ? "75%" : 35,
+                    width: this.props.searching ? "67%" : 35,
                     height: 35,
                     justifyContent: 'center',
                     alignSelf: 'center',
@@ -107,35 +112,36 @@ export default class ChatRoomHeader extends BePureComponent {
                     >
                     </Searcher>
                 </View>
-                <View
-                    style={{
-                        width: 55,
-                        alignSelf: 'flex-end',
-                        alignItems: 'center',
-                        flexDirection: 'row',
-                        paddingRight: '2%',
-                        justifyContent: 'flex-end',
-                        height: 50,
-                    }}
-                >
-                    <TouchableOpacity
-                        onPress={() => {
-                            requestAnimationFrame(() => this.props.openMenu());
-                        }}
+                {this.props.searching && this.props.searchResult && this.props.searchResult.length > 0 ?
+                  this.searchToolsParts():
+                    <View
                         style={{
+                            width: 55,
                             alignSelf: 'flex-end',
-                            height: ColorList.headerHeight,
-                            justifyContent: 'center',
+                            alignItems: 'center',
+                            flexDirection: 'row',
+                            paddingRight: '2%',
+                            justifyContent: 'flex-end',
+                            height: 50,
                         }}
                     >
-                        <Ionicons
-                            style={{ color: ColorList.headerIcon, fontSize: 30 }}
-                            type={'Ionicons'}
-                            name={'ios-menu'}
-                        />
-                    </TouchableOpacity>
-
-                </View>
+                        <TouchableOpacity
+                            onPress={() => {
+                                requestAnimationFrame(() => this.props.openMenu());
+                            }}
+                            style={{
+                                alignSelf: 'flex-end',
+                                height: ColorList.headerHeight,
+                                justifyContent: 'center',
+                            }}
+                        >
+                            <Ionicons
+                                style={{ color: ColorList.headerIcon, fontSize: 30 }}
+                                type={'Ionicons'}
+                                name={'ios-menu'}
+                            />
+                        </TouchableOpacity>
+                    </View>}
 
             </View>
         </View>;

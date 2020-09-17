@@ -74,9 +74,8 @@ export default class HighlightCard extends BePureComponent {
           style={[
             this.container,
             {
-              opacity: this.props.isPointed ? 0.2 : 1,
               backgroundColor: this.props.isPointed
-                ? ColorList.post
+                ? ColorList.postTransparent
                 : ColorList.bodyBackground,
             },
           ]}
@@ -91,6 +90,7 @@ export default class HighlightCard extends BePureComponent {
             }}
           >
             <TextContent
+              animate={this.props.animate}
               searchString={this.props.searchString}
               style={{
                 ...GState.defaultTextStyle,
@@ -119,6 +119,7 @@ export default class HighlightCard extends BePureComponent {
             }}
           >
             <TextContent
+            animate={this.props.animate}
               searchString={this.props.searchString}
               text={
                 this.props.item.description ? this.props.item.description : ""

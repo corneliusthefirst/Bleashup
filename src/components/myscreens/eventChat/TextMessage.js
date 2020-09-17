@@ -24,7 +24,10 @@ export default class TextMessage extends PureComponent {
     render() {
         return (
             <View style={{alignSelf: "flex-start",}}>
-                <TextContent searchString={this.props.searchString} tags={this.props.message.tags} 
+                <TextContent
+                animate={this.props.animate} 
+                searchString={this.props.searchString} 
+                foundString={this.props.foundString} tags={this.props.message.tags} 
                 //handleLongPress={() => this.props.handleLongPress ? this.props.handleLongPress() : null} 
                 pressingIn={() => this.props.pressingIn()} 
                 text={this.props.message.text}></TextContent>

@@ -14,7 +14,7 @@ import AnimatedComponent from '../../AnimatedComponent';
 @observer class Searcher extends AnimatedComponent {
     initialize() {
         this.state = {
-            searchString:""
+            searchString:this.props.searchString||""
         }
     }
     animationDuration = 250

@@ -665,6 +665,10 @@ class Request {
             text:"",
             photo: "",
             video:"",
+            sender:{
+                phone:stores.LoginStore.user.phone,
+                nickame:stores.LoginStore.user.nickname
+            },
             created_at:moment().format(),
             updated_at: moment().format(),
             receive:[{phone:stores.LoginStore.user.phone,date:moment().format()}],
@@ -679,6 +683,15 @@ class Request {
             data : "",
             committee_id:"",
             event_id:""
+        }
+    }
+    Change(){
+        return {
+            id: "",
+            updater: stores.LoginStore.user.phone,
+            changed:"",
+            new_value: {},
+            date:moment().format()
         }
     }
 }

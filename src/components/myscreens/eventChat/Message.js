@@ -38,6 +38,7 @@ import BleashupShapes from "../../mainComponents/BleashupShapes";
 import message_types from "./message_types";
 import Requester from "./Requester";
 import GState from "../../../stores/globalState";
+import ChatUser from './ChatUser';
 
 export default class Message extends BeComponent {
     constructor(props) {
@@ -52,10 +53,12 @@ export default class Message extends BeComponent {
                 this.props.message.sender &&
                 this.props.message.sender.nickname,
             sender: !(
-                this.props.message.sender &&
+                this.props.message && this.props.message.sender &&
                 this.props.message.sender.phone == this.props.user
             ),
             different:
+                this.props.PreviousMessage.sender && 
+                this.props.message.sender && 
                 this.props.PreviousMessage.sender.phone !==
                 this.props.message.sender.phone,
             time: /*!isDiff &&
@@ -107,7 +110,9 @@ export default class Message extends BeComponent {
                 return (
                     <TextMessage
                         //handleLongPress={() => this.handLongPress()}
+                        animate={this.props.animate}
                         searchString={this.props.searchString}
+                        foundString={this.props.foundString}
                         pressingIn={() => {
                             this.handlePressIn();
                             this.replying = true;
@@ -123,7 +128,9 @@ export default class Message extends BeComponent {
             case message_types.text_sender:
                 return (
                     <TextMessageSnder
+                        animate={this.props.animate}
                         searchString={this.props.searchString}
+                        foundString={this.props.foundString}
                         //onLongPress={this.handLongPress.bind(this)}
                         sendMessage={(message) => this.props.sendMessage(message)}
                         firebaseRoom={this.props.firebaseRoom}
@@ -137,8 +144,10 @@ export default class Message extends BeComponent {
             case message_types.photo:
                 return (
                     <PhotoMessage
+                        animate={this.props.animate}
                         room={this.props.room}
                         searchString={this.props.searchString}
+                        foundString={this.props.foundString}
                         //handleLongPress={() => this.handLongPress()}
                         pressingIn={() => {
                             this.replying = true;
@@ -156,7 +165,9 @@ export default class Message extends BeComponent {
             case message_types.audio:
                 return (
                     <AudioMessage
+                        animate={this.props.animate}
                         searchString={this.props.searchString}
+                        foundString={this.props.foundString}
                         //handleLongPress={() => this.handLongPress()}
                         allplayed={this.props.allplayed}
                         room={this.props.room}
@@ -173,7 +184,9 @@ export default class Message extends BeComponent {
             case message_types.video:
                 return (
                     <VideoMessage
+                        animate={this.props.animate}
                         searchString={this.props.searchString}
+                        foundString={this.props.foundString}
                         //handleLongPress={() => this.handLongPress()}
                         pressingIn={() => {
                             this.replying = true;
@@ -191,7 +204,9 @@ export default class Message extends BeComponent {
             case message_types.file:
                 return (
                     <FileAttarchementMessaege
+                        animate={this.props.animate}
                         searchString={this.props.searchString}
+                        foundString={this.props.foundString}
                         pressingIn={() => {
                             this.handlePressIn();
                         }}
@@ -205,7 +220,9 @@ export default class Message extends BeComponent {
             case message_types.photo_sender:
                 return (
                     <PhotoUploader
+                        animate={this.props.animate}
                         searchString={this.props.searchString}
+                        foundString={this.props.foundString}
                         room={this.props.room}
                         //onLongPress={this.handLongPress.bind(this)}
                         showPhoto={(photo) => this.props.showPhoto(photo)}
@@ -218,7 +235,9 @@ export default class Message extends BeComponent {
             case message_types.video_sender:
                 return (
                     <VideoUploader
+                        animate={this.props.animate}
                         searchString={this.props.searchString}
+                        foundString={this.props.foundString}
                         //onLongPress={this.handLongPress.bind(this)}
                         playVideo={(video) => this.props.playVideo(video)}
                         replaceMessage={(data) => this.props.replaceMessageVideo(data)}
@@ -231,7 +250,9 @@ export default class Message extends BeComponent {
             case message_types.filesender:
                 return (
                     <FileAttarchementUploader
+                        animate={this.props.animate}
                         searchString={this.props.searchString}
+                        foundString={this.props.foundString}
                         room={this.props.room}
                         index={index}
                         //onLongPress={this.handLongPress.bind(this)}
@@ -242,7 +263,9 @@ export default class Message extends BeComponent {
             case message_types.audio_sender:
                 return (
                     <AudioUploader
+                        animate={this.props.animate}
                         searchString={this.props.searchString}
+                        foundString={this.props.foundString}
                         //onLongPress={this.handLongPress.bind(this)}
                         room={this.props.room}
                         message={data}
@@ -438,10 +461,7 @@ export default class Message extends BeComponent {
     }
     placeholderStyle = this.props.message.dimensions
         ? this.props.message.dimensions
-        : this.props.messagelayouts &&
-            this.props.messagelayouts[this.props.message.id]
-            ? this.props.messagelayouts[this.props.message.id]
-            : this.placeHolder[this.props.message.type];
+        : {height:100,width:80};
     render() {
         let showName = this.state.sender && this.state.different;
         let topMostStyle = {
@@ -503,7 +523,7 @@ export default class Message extends BeComponent {
         let reactionContanerStyle = {
             marginTop: "auto",
             marginBottom: "auto",
-            width: 20,
+            width: 30,
             justifyContent: "center",
         };
         let nameTextStyle = {
@@ -511,14 +531,26 @@ export default class Message extends BeComponent {
             fontWeight: "bold",
             color: ColorList.bodyText,
         };
+        let timeContainerStyle = {
+            marginRight: "1%",
+            padding: 2,
+            ...reactionContanerStyle,
+            borderRadius: 20,
+            backgroundColor: color,
+            ...shadower(1),
+            alignItems: 'center',
+            marginBottom: null,
+        }
+        let timestyle = {
+            ...GState.defaultTextStyle,
+            fontSize: 9, fontStyle: "italic", fontWeight: '500',
+        }
         return (
             <View
                 onLayout={(e) => {
                     this.setStatePure({
                         containerDims: e.nativeEvent.layout,
                     });
-                    this.props.setCurrentLayout &&
-                        this.props.setCurrentLayout(e.nativeEvent.layout);
                 }}
             >
                 {this.props.message.type == message_types.date_separator ? (
@@ -579,14 +611,9 @@ export default class Message extends BeComponent {
                                             >
                                                 {this.state.time && !this.state.sender ? (
                                                     <View
-                                                        style={{
-                                                            marginRight: "1%",
-                                                            ...reactionContanerStyle,
-                                                            alignItems: 'center',
-                                                            marginBottom: null,
-                                                        }}
+                                                        style={timeContainerStyle}
                                                     >
-                                                        <Text style={{ ...GState.defaultTextStyle, fontSize: 8, fontStyle: "italic" }}>
+                                                        <Text style={timestyle}>
                                                             {this.state.time}
                                                         </Text>
                                                     </View>
@@ -631,11 +658,14 @@ export default class Message extends BeComponent {
                                                                             />
                                                                         )
                                                                 ) : (
-                                                                        <EvilIcons
+                                                                       <View style={{
+                                                                           ...rounder(14,color),justifyContent: 'center',}} 
+                                                                           ><EvilIcons
                                                                             style={this.iconStyles}
                                                                             type={"EvilIcons"}
                                                                             name="check"
                                                                         />
+                                                                        </View>
                                                                     )
                                                             ) : (
                                                                     <MaterialIconCommunity
@@ -667,31 +697,20 @@ export default class Message extends BeComponent {
                                                         {this.state.different &&
                                                             this.state.sender &&
                                                             !this.props.isRelation ? (
-                                                                <TouchableOpacity
+                                                                <ChatUser 
+                                                                searchString={this.props.searchString}
+                                                                foundString={this.props.foundString}
+                                                                phone={this.props.message && this.props.message.sender &&
+                                                                    this.props.message.sender.phone}
                                                                     onPressIn={this.handlePressIn.bind(this)}
-                                                                    ///onLongPress={this.handLongPress.bind(this)}
-                                                                    onPress={() =>
+                                                                    showProfile={() =>
                                                                         requestAnimationFrame(() => {
                                                                             this.props.showProfile(
                                                                                 this.props.message.sender.phone
                                                                             );
                                                                         })
                                                                     }
-                                                                >
-                                                                    <Text
-                                                                        style={{
-                                                                            marginLeft: "2%",
-                                                                            color: ColorList.iconActive,
-                                                                            maxWidth: 150,
-                                                                            fontWeight: "bold",
-                                                                            fontSize: 10,
-                                                                        }}
-                                                                        ellipsizeMode="tail"
-                                                                        numberOfLines={1}
-                                                                    >
-                                                                        {`@${this.state.sender_name}`}
-                                                                    </Text>
-                                                                </TouchableOpacity>
+                                                                />     
                                                             ) : null}
                                                         <View>
                                                             {this.props.message.reply ? (
@@ -770,14 +789,14 @@ export default class Message extends BeComponent {
                                                         <View
                                                             style={{
                                                                 ...reactionContanerStyle,
-                                                                ...rounder(17, ColorList.bodyBackground),
+                                                                ...rounder(17, color),
                                                                 marginLeft: 5,
                                                             }}
                                                         >
                                                             <AntDesign
                                                                 style={{
                                                                     fontSize: 15,
-                                                                    color: "gray",
+                                                                    color: ColorList.indicatorColor,
                                                                     alignSelf: "flex-end",
                                                                 }}
                                                                 type={"AntDesign"}
@@ -790,13 +809,11 @@ export default class Message extends BeComponent {
                                                     <View
                                                         style={{
                                                             alignItems: "flex-end",
-                                                            ...reactionContanerStyle,
-                                                            width: 30,
-                                                            marginBottom: null,
-                                                            marginLeft: -10,
+                                                            marginLeft: 5,
+                                                            ...timeContainerStyle
                                                         }}
                                                     >
-                                                        <Text style={{ fontSize: 8, fontStyle: "italic" }}>
+                                                        <Text style={timestyle}>
                                                             {this.state.time}
                                                         </Text>
                                                     </View>

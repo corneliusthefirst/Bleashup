@@ -2,9 +2,10 @@ import React, { Component } from "react";
 import stores from "../stores";
 import message_types from "./myscreens/eventChat/message_types";
 import request from '../services/requestObjects';
+import active_types from './myscreens/eventChat/activity_types';
 
 class Functions {
-  constructor() {}
+  constructor() { }
   bleashupSearch = (fieldArray, text) => {
     return new Promise((resolve, reject) => {
       const newData = fieldArray.filter(function (item) {
@@ -49,7 +50,24 @@ class Functions {
       return itemData.indexOf(textData) > -1;
     });
   }
-
+  returnOponent(event) {
+    return event && event.participant && event.participant.
+      find(ele => ele.phone !== stores.LoginStore.user.phone).phone
+  }
+  filterAllActivityAndRelation(event, text) {
+    if (event) {
+      text = (text && text.toLowerCase())||""
+      if (event.type === active_types.relation) {
+        let oponentPhone = this.returnOponent(event)
+        let oponent = stores.TemporalUsersStore.Users[oponentPhone]
+        return oponent &&  oponent.nickname && oponent.nickname.toLowerCase().includes(text)
+      } else {
+        return event.about && event.about.title && event.about.title.includes(text)
+      }
+    } else {
+      return false
+    }
+  }
   isMe(phone) {
     return phone === stores.LoginStore.user.phone;
   }
@@ -78,33 +96,39 @@ class Functions {
   }
 
   filterMessages(ele, search) {
-    return ele && ((ele.text && ele.text.toLowerCase().includes(search.toLowerCase())) ||
-          ele.type == message_types.date_separator ||
-          ele.type === message_types.new_separator)
-      
+    if (ele && search && search.length > 0) {
+      search = search.toLowerCase()
+      let senderPhone = ele.sender && ele.sender.phone.replace && ele.sender.phone.replace("+", "00")
+      let isText = (ele.text && ele.text.toLowerCase().includes(search))
+      let user = senderPhone && senderPhone !== stores.LoginStore.user.phone &&
+        stores.TemporalUsersStore.Users[senderPhone]
+      let isUsername = user && user.nickname && user.nickname.toLowerCase().includes(search)
+      return isText || isUsername
+    } else {
+      return false
+    }
   }
-  byTitleAndDesc(ele,search){
+  byTitleAndDesc(ele, search) {
     return (ele.title && ele.title.toLowerCase().includes(search.toLowerCase()) ||
       ele.description && ele.description.toLowerCase().includes(search.toLowerCase()))
   }
-  filterStars(ele,search) {
-    return ele && ele.id !== request.Highlight().id && this.byTitleAndDesc(ele,search)
-    
+  filterStars(ele, search) {
+    return ele && ele.id !== request.Highlight().id && this.byTitleAndDesc(ele, search)
+
   }
-  filterReminds(ele,search){
-    return ele && ele.id !== request.Remind().id && this.byTitleAndDesc(ele,search)
+  filterReminds(ele, search) {
+    return ele && ele.id !== request.Remind().id && this.byTitleAndDesc(ele, search)
   }
-  filterHistory(ele,search){
-    if(ele){
+  filterHistory(ele, search) {
+    if (ele && search) {
       search = search.toLowerCase()
-      let updater = typeof ele.updater == "object"? stores.TemporalUsersStore.Users[ele.updater.phone]: 
-      stores.TemporalUsersStore.Users[ele.updater]
+      let updater = typeof ele.updater == "object" ? stores.TemporalUsersStore.Users[ele.updater.phone] :
+        stores.TemporalUsersStore.Users[ele.updater]
       let isLikeUpdater = updater && updater.nickname && updater.nickname.toLowerCase().includes(search)
       let likeUpdated = ele.changed && ele.changed.toLowerCase().includes(search)
       let likeTitle = ele.title && ele.title.toLowerCase().includes(search)
-      let likeNewValue = ele.new_value && ele.new_value.new_value && typeof ele.new_value.new_value == "string" && ele.new_value.new_value.toLowerCase().includes(search)   
-       return isLikeUpdater || likeUpdated || likeTitle || likeNewValue || ele.type == message_types.date_separator
-    }else{
+      return isLikeUpdater || likeUpdated || likeTitle
+    } else {
       return false
     }
   }

@@ -77,6 +77,7 @@ import { reply_me } from '../../../meta/events';
 import message_types from './message_types';
 import Vibrator from '../../../services/Vibrator';
 import MessageInfoModal from './messageInfoModal';
+import { search, computeSearch, startSearching, cancelSearch, finish, pushSearchDown, pushSearchUp } from './searchServices';
 
 const screenWidth = Math.round(Dimensions.get('window').width);
 const screenheight = Math.round(Dimensions.get('window').height);
@@ -87,10 +88,21 @@ class ChatRoom extends AnimatedComponent {
         this.state = {
             isModalOpened: false,
             showOptions: false,
-            searchString:"",
+            searchString: "",
+            currentSearchIndex: -1,
+            foundIndex:-1,
+            searchResult: [],
             showHeader: !this.props.isComment,
             messageListHeight: this.formHeight(120 / screenheight),
         };
+        this.filterFunc = globalFunctions.filterMessages
+        this.search = search.bind(this)
+        this.computeSearch = computeSearch.bind(this)
+        this.startSearching = startSearching.bind(this)
+        this.cancelSearch = cancelSearch.bind(this)
+        this.finish = finish.bind(this)
+        this.pushSearchDown = pushSearchDown.bind(this)
+        this.pushSearchUp = pushSearchUp.bind(this)
     }
     saveNotificationToken() {
         firebase
@@ -223,10 +235,10 @@ class ChatRoom extends AnimatedComponent {
             });
         });
     }
-    checkForReply(){
+    checkForReply() {
         setTimeout(() => {
             GState.reply && this.replying(GState.reply, null)
-        },GState.waitToReply)
+        }, GState.waitToReply)
     }
     showMessage = [];
     initializeNewMessageForRoom() {
@@ -284,12 +296,12 @@ class ChatRoom extends AnimatedComponent {
     scrollToMessage() {
         if (this.props.id) {
             return new Promise(() => {
-                let index = findIndex(stores.Messages.messages[this.props.firebaseRoom], 
+                let index = findIndex(stores.Messages.messages[this.props.firebaseRoom],
                     { id: this.props.id })
                 if (index >= 0) {
                     setTimeout(() => {
                         this.scrollToIndex(index)
-                    },1000)
+                    }, 1000)
                 }
             })
         }
@@ -356,14 +368,14 @@ class ChatRoom extends AnimatedComponent {
         this.keyboardDidShowSub = Keyboard.addListener('keyboardDidShow', this.handleKeyboardDidShow.bind(this));
         this.keyboardDidHideSub = Keyboard.addListener('keyboardDidHide', this.handleKeyboardDidHide.bind(this));
         BackHandler.addEventListener("hardwareBackPress", this.handleBackButton.bind(this));
-        emitter.on(reply_me, (rep) => {
-           this.props.closeMenu && this.props.closeMenu()
+        emitter.on(reply_me + this.props.activity_id, (rep) => {
+            this.props.closeMenu && this.props.closeMenu()
             this.replying(rep, null)
             this.focusInputTimeout = setTimeout(() => {
                 this.alreadyFocussed = false;
                 this.fucussTextInput()
                 clearTimeout(this.focusInputTimeout)
-            }, 200)
+            }, 400)
         })
         emitter.on(typing(this.typingListener), (typer) => {
             this.showTypingToast(typer);
@@ -377,7 +389,7 @@ class ChatRoom extends AnimatedComponent {
         this.keyboardDidShowSub.remove();
         emitter.off(typing(this.typingListener))
         //this.fireRef.off();
-        emitter.off(reply_me);
+        emitter.off(reply_me + this.props.activity_id);
         //this.typingRef.off();
         this.markAsRead();
         GState.currentRoom = null;
@@ -429,7 +441,7 @@ class ChatRoom extends AnimatedComponent {
         });
         this.animateKeyboard()
     }
-    animateKeyboard(){
+    animateKeyboard() {
         this.refs.keyboard && this.refs.keyboard.animateLayout();
     }
     buffering() {
@@ -475,11 +487,11 @@ class ChatRoom extends AnimatedComponent {
                     messager,
                     this.roomID,
                     this.props.activity_id
-                ,false,this.props.isRelation ? false: this.props.activity_name).then((response) => {
-                    setTimeout(() => {
-                        resolve(messager);
-                    }, 100)
-                });
+                    , false, this.props.isRelation ? false : this.props.activity_name).then((response) => {
+                        setTimeout(() => {
+                            resolve(messager);
+                        }, 100)
+                    });
             } else {
                 resolve(messager);
             }
@@ -497,14 +509,14 @@ class ChatRoom extends AnimatedComponent {
             });
         }
     }
-   
+
     user = this.props.user;
     creator = 1;
     showPhoto(photo, item) {
-        Keyboard.dismiss()
         setTimeout(() => {
             this.navigateToFullView(item);
-        },this.timeToDissmissKeyboard)
+        },  this.openedKeyboard?this.timeToDissmissKeyboard:10)
+        Keyboard.dismiss()
     }
     captionMessages = [];
     sendingCaptionMessages = false;
@@ -614,7 +626,7 @@ class ChatRoom extends AnimatedComponent {
     }
     showReceived() {
         this.state.currentMessage.sent ? this.setStatePure({
-            showMessageInfo:true
+            showMessageInfo: true
         }) : Toaster({ text: Texts.this_message_was_never_sent });
     }
     copyMessage() {
@@ -724,9 +736,9 @@ class ChatRoom extends AnimatedComponent {
             callback: () => this.deleteMessageAction()
         }
     ]
-    hideMessageInfo(){
+    hideMessageInfo() {
         this.setStatePure({
-            showMessageInfo:false
+            showMessageInfo: false
         })
     }
     render() {
@@ -754,84 +766,86 @@ class ChatRoom extends AnimatedComponent {
                                         height: '100%',
 
                                     }}>
-                                            <View style={{ height: this.state.messageListHeight, 
-                                            flexDirection: 'column', 
-                                            justifyContent: 'flex-end', 
+                                        <View style={{
+                                            height: this.state.messageListHeight,
+                                            flexDirection: 'column',
+                                            justifyContent: 'flex-end',
                                             marginHorizontal: 2,
-                                            flex: 1, 
+                                            flex: 1,
                                         }}>
-                                                <TouchableWithoutFeedback
-                                                    onPressIn={() => {
-                                                        this.scrolling = false;
-                                                        console.warn('pressing in');
-                                                        this.adjutRoomDisplay();
-                                                        !this.openedKeyboard && this.refs.keyboard && this.refs.keyboard.blur();
+                                            <TouchableWithoutFeedback
+                                                onPressIn={() => {
+                                                    this.scrolling = false;
+                                                    console.warn('pressing in');
+                                                    this.adjutRoomDisplay();
+                                                    !this.openedKeyboard && this.refs.keyboard && this.refs.keyboard.blur();
+                                                }}
+                                            ><View>
+                                                    {this.messageList()}
+                                                </View>
+                                                {this.state.showDownScroller && <SideButton
+                                                    buttonColor={'rgba(52, 52, 52, 0.8)'}
+                                                    position={"right"}
+                                                    //text={"D"}
+                                                    renderIcon={() => {
+                                                        return <TouchableOpacity onPress={() => requestAnimationFrame(() => { this.scrollToEnd() })}
+                                                            style={{
+                                                                backgroundColor: ColorList.bodyBackground,
+                                                                height: 40,
+                                                                width: 40,
+                                                                borderRadius: 30,
+                                                                justifyContent: "center",
+                                                                alignItems: "center",
+                                                                ...shadower(4)
+                                                            }}>
+                                                            <SimpleLineIcons name="arrow-down" type="SimpleLineIcons" style={{ color: ColorList.bodyIcon, fontSize: 22 }} />
+                                                        </TouchableOpacity>
                                                     }}
-                                                ><View>
-                                                        {this.messageList()}
-                                                    </View>
-                                                    {this.state.showDownScroller && <SideButton
-                                                        buttonColor={'rgba(52, 52, 52, 0.8)'}
-                                                        position={"right"}
-                                                        //text={"D"}
-                                                        renderIcon={() => {
-                                                            return <TouchableOpacity onPress={() => requestAnimationFrame(() => { this.scrollToEnd() })} 
-                                                            style={{ 
-                                                                backgroundColor: ColorList.bodyBackground, 
-                                                                height: 40, 
-                                                                width: 40, 
-                                                                borderRadius: 30, 
-                                                                justifyContent: "center", 
-                                                                alignItems: "center", 
-                                                                ...shadower(4) }}>
-                                                                <SimpleLineIcons name="arrow-down" type="SimpleLineIcons" style={{ color: ColorList.bodyIcon, fontSize: 22 }} />
-                                                            </TouchableOpacity>
-                                                        }}
-                                                        action={() => requestAnimationFrame(() => { this.scrollToEnd() })}
-                                                        //buttonTextStyle={{color:colorList.bodyBackground}}
-                                                        offsetX={15}
-                                                        size={20}
-                                                    //offsetY={20}
-                                                    />}
-                                                </TouchableWithoutFeedback>
-                                            </View>
-                                            <View style={{
-                                                //height:"3%",
-                                                justifyContent: 'flex-end',
-                                                flexDirection: 'column',
-                                                width: "100%",
-                                                alignSelf: 'flex-end',
-                                                alignItems: 'flex-end',
-                                                marginTop: 'auto',
-                                                //marginBottom: "1%",
-                                            }}>
-                                                {!this.props.opened || !this.props.generallyMember ? (
-                                                    <Text
-                                                        style={{
-                                                            ...GState.defaultTextStyle,
-                                                            fontStyle: 'italic',
-                                                            textAlign: "center",
-                                                            marginLeft: "auto",
-                                                            marginRight: "auto",
-                                                        }}
-                                                        note
-                                                    >
-                                                        {Texts.closed_activity}
-                                                    </Text>
-                                                ) : (
-                                                        // ***************** KeyBoard Displayer *****************************
+                                                    action={() => requestAnimationFrame(() => { this.scrollToEnd() })}
+                                                    //buttonTextStyle={{color:colorList.bodyBackground}}
+                                                    offsetX={15}
+                                                    size={20}
+                                                //offsetY={20}
+                                                />}
+                                            </TouchableWithoutFeedback>
+                                        </View>
+                                        <View style={{
+                                            //height:"3%",
+                                            justifyContent: 'flex-end',
+                                            flexDirection: 'column',
+                                            width: "100%",
+                                            alignSelf: 'flex-end',
+                                            alignItems: 'flex-end',
+                                            marginTop: 'auto',
+                                            //marginBottom: "1%",
+                                        }}>
+                                            {!this.props.opened || !this.props.generallyMember ? (
+                                                <Text
+                                                    style={{
+                                                        ...GState.defaultTextStyle,
+                                                        fontStyle: 'italic',
+                                                        textAlign: "center",
+                                                        marginLeft: "auto",
+                                                        marginRight: "auto",
+                                                    }}
+                                                    note
+                                                >
+                                                    {Texts.closed_activity}
+                                                </Text>
+                                            ) : (
+                                                    // ***************** KeyBoard Displayer *****************************
 
-                                                        !this.state.searching && <View style={{ justifyContent: 'flex-end' }}>{this.keyboardView()}</View>
-                                                    )}
-                                            </View>
+                                                    !this.state.searching && <View style={{ justifyContent: 'flex-end' }}>{this.keyboardView()}</View>
+                                                )}
+                                        </View>
                                     </KeyboardAvoidingView>
                                 )}
                             <MessageInfoModal
-                            isOpen={this.state.showMessageInfo}
-                            closed={() => this.hideMessageInfo()}
-                            item={this.state.currentMessage}
+                                isOpen={this.state.showMessageInfo}
+                                closed={() => this.hideMessageInfo()}
+                                item={this.state.currentMessage}
                             >
-                            
+
                             </MessageInfoModal>
                             {/*<VerificationModal
                                 isOpened={this.state.isModalOpened}
@@ -994,8 +1008,8 @@ class ChatRoom extends AnimatedComponent {
             this.roomID,
             reaction,
             this.props.activity_id,
-            this.props.isRelation?false: 
-            this.props.activity_name
+            this.props.isRelation ? false :
+                this.props.activity_name
         ).then(() => { });
     }
     openVoteCreation() {
@@ -1028,7 +1042,7 @@ class ChatRoom extends AnimatedComponent {
     addVote() { }
     getItemLayout(item, index) {
         return GState.getItemLayout(item, index,
-            stores.Messages.messages[this.roomID])
+            stores.Messages.messages[this.roomID],100)
     }
     choseReply(message) {
         let nickname = message.sender && message.sender.nickname;
@@ -1109,12 +1123,18 @@ class ChatRoom extends AnimatedComponent {
         }
         this._listViewOffset = currentOffset
     }
+    setCurrentLayout(layout,item,index){
+        this.messagelayouts[item.id] = layout;
+        GState.itemDebounce(item, () => {
+            this.storesLayouts(layout, index)
+        }, 500)
+
+    }
     messageList() {
-        let data = stores.Messages.messages[this.roomID]
-            ? stores.Messages.messages[this.roomID]:[]
-        data = data.filter((ele) => globalFunctions.filterMessages(ele,this.state.searchString||""))
-        let lastIndex = data ?
-            (data.length - 1) : 0
+        this.data = stores.Messages.messages[this.roomID]
+            ? stores.Messages.messages[this.roomID] : []
+        let lastIndex = this.data ?
+            (this.data.length - 1) : 0
         return (
             <BleashupFlatList
                 onScroll={this.onScroll.bind(this)}
@@ -1122,7 +1142,6 @@ class ChatRoom extends AnimatedComponent {
                 //notOptimized={this.state.searchString && this.state.searching}
                 backgroundColor={'transparent'}
                 keyboardShouldPersistTaps={'handled'}
-                marginTop
                 disableVirtualization={false}
                 firstIndex={0}
                 ref="bleashupSectionListOut"
@@ -1130,89 +1149,92 @@ class ChatRoom extends AnimatedComponent {
                 loadMoreFromRemote={() => this.props.isComment && this.loadComments()}
                 renderPerBatch={20}
                 initialRender={30}
-                numberOfItems={data.length}
+                numberOfItems={this.data.length}
                 getItemLayout={this.getItemLayout.bind(this)}
-                keyExtractor={(item, index) => (item ? item.id : index)}
+                keyExtractor={(item, index) => (item ? item.id : index.toString())}
                 renderItem={(item, index) => {
-                        let delay =
-                            this.delay >= 20 || (item && !item.sent) ? 0 : this.delay + 1;
-                        let played = item.type == message_types.audio
-                            && item.played && item.played.length >=
-                            this.props.members.length
-                        let recieved =
-                            item.receive && this.props.members
-                                ? item.receive.length >= this.props.members.length
-                                : false
-                        let seen = item.seen && this.props.members &&
-                            item.seen.length >= this.props.members.length ? true : false
-                        let sent = item.sent
-                        let pointed = item.id === GState.currentID
-                        let isFirst = index === 0
-                        let state = Number(recieved) + Number(played) + Number(sent) + Number(pointed) + Number(isFirst) + Number(seen) +
-                            this.state.searchString.length
-                        
-                        return <Message
-                            searchString={this.state.searchString}
-                            state={state}
-                            seen={seen}
-                            isPointed={pointed}
-                            isfirst={isFirst}
-                            received={recieved}
-                            allplayed={played}
-                            key={item.id}
-                            isRelation={this.props.isRelation}
-                            react={this.reactToMessage.bind(this)}
-                            showReacters={this.showReacters.bind(this)}
-                            messagelayouts={this.messagelayouts}
-                            setCurrentLayout={(layout) => {
-                                this.messagelayouts[item.id] = layout;
-                                GState.itemDebounce(item, () => {
-                                    this.storesLayouts(layout, index)
-                                }, 500)
+                    let delay =
+                        delay >= 20 || (item && !item.sent) ? 0 : delay + 1;
+                    let played = item.type == message_types.audio
+                        && item.played && item.played.length >=
+                        this.props.members.length
+                    let recieved =
+                        item.receive && this.props.members
+                            ? item.receive.length >= this.props.members.length
+                            : false
+                    let seen = item.seen && this.props.members &&
+                        item.seen.length >= this.props.members.length ? true : false
+                    let sent = item.sent
+                    let pointed = item.id === GState.currentID
+                    let found = this.state.foundIndex == index ? true : false
+                    let isFirst = index === 0
+                    let state = Number(found) +
+                        Number(recieved) +
+                        Number(played) +
+                        Number(sent) +
+                        Number(pointed) +
+                        Number(isFirst) +
+                        Number(seen) +
+                        this.state.searchString.length
 
-                            }}
-                            forwardMessage={() => {
-                                this.forwardToContacts(item);
-                            }}
-                            newCount={this.props.newMessages.length}
-                            index={index}
-                            key={item.id}
-                            scrolling={this.scrolling}
-                            computedMaster={this.props.computedMaster}
-                            activity_id={this.props.activity_id}
-                            showProfile={(pro) => this.props.showProfile(pro.replace("+", "00"))}
-                            delay={delay}
-                            room={this.roomID}
-                            PreviousMessage={
-                                stores.Messages.messages[this.roomID] &&
-                                stores.Messages.messages[this.roomID][index >= lastIndex ? lastIndex : index + 1]
-                            }
-                            showActions={(message, reply, sender) => this.showMessageAction(message, reply, sender)}
-                            firebaseRoom={this.props.firebaseRoom}
-                            roomName={this.props.roomName}
-                            sendMessage={(message) => this.sendTextMessage(message)}
-                            replaceMessageVideo={(data) => this.replaceMessageVideo(data)}
-                            showPhoto={(photo) => this.showPhoto(photo, item)}
-                            replying={(replyer, color) => {
-                                this.initReply(replyer);
-                            }}
-                            choseReply={this.choseReply}
-                            replaceMessage={(data) => this.replaceMessage(data)}
-                            replaceAudioMessage={(data) => this.replaceAudioMessage(data)}
-                            handleReplyExtern={(reply) => {
-                                this.handleReplyExtern(reply);
-                            }}
-                            message={item}
-                            openReply={(replyer) => {
-                                this.handleReply(replyer);
-                            }}
-                            user={this.props.user.phone}
-                            creator={this.props.creator}
-                            replaceMessageFile={(data) => this.replaceMessageFile(data)}
-                            playVideo={(source) => this.playVideo(source, item, index)}
-                        />
+                    return <View onLayout={e => this.setCurrentLayout(e.nativeEvent.layout,item,index)} ><Message
+                        animate={this.animateUI.bind(this)}
+                        searchString={this.state.searchString}
+                        foundString={found ? this.state.searchString:null}
+                        state={state}
+                        seen={seen}
+                        isPointed={pointed}
+                        isfirst={isFirst}
+                        received={recieved}
+                        allplayed={played}
+                        key={item.id}
+                        isRelation={this.props.isRelation}
+                        react={this.reactToMessage.bind(this)}
+                        showReacters={this.showReacters.bind(this)}
+                        messagelayouts={this.messagelayouts}
+                        forwardMessage={() => {
+                            this.forwardToContacts(item);
+                        }}
+                        newCount={this.props.newMessages.length}
+                        index={index}
+                        key={item.id}
+                        scrolling={this.scrolling}
+                        computedMaster={this.props.computedMaster}
+                        activity_id={this.props.activity_id}
+                        showProfile={(pro) => this.props.showProfile(pro.replace("+", "00"))}
+                        delay={delay}
+                        room={this.roomID}
+                        PreviousMessage={
+                            stores.Messages.messages[this.roomID] &&
+                            stores.Messages.messages[this.roomID][index >= lastIndex ? lastIndex : index + 1]
+                        }
+                        showActions={(message, reply, sender) => this.showMessageAction(message, reply, sender)}
+                        firebaseRoom={this.props.firebaseRoom}
+                        roomName={this.props.roomName}
+                        sendMessage={(message) => this.sendTextMessage(message)}
+                        replaceMessageVideo={(data) => this.replaceMessageVideo(data)}
+                        showPhoto={(photo) => this.showPhoto(photo, item)}
+                        replying={(replyer, color) => {
+                            this.initReply(replyer);
+                        }}
+                        choseReply={this.choseReply}
+                        replaceMessage={(data) => this.replaceMessage(data)}
+                        replaceAudioMessage={(data) => this.replaceAudioMessage(data)}
+                        handleReplyExtern={(reply) => {
+                            this.handleReplyExtern(reply);
+                        }}
+                        message={item}
+                        openReply={(replyer) => {
+                            this.handleReply(replyer);
+                        }}
+                        user={this.props.user.phone}
+                        creator={this.props.creator}
+                        replaceMessageFile={(data) => this.replaceMessageFile(data)}
+                        playVideo={(source) => this.playVideo(source, item, index)}
+                    />
+                    </View>
                 }}
-                dataSource={data}
+                dataSource={this.data}
                 newData={this.showMessage}
                 newDataLength={this.showMessage.length}
             />
@@ -1229,7 +1251,7 @@ class ChatRoom extends AnimatedComponent {
             Keyboard.dismiss()
             setTimeout(() => {
                 this.props.handleReplyExtern(replyer);
-            },this.timeToDissmissKeyboard )
+            }, this.openedKeyboard?this.timeToDissmissKeyboard:10)
         }
     }
     timeToDissmissKeyboard = 600
@@ -1269,30 +1291,19 @@ class ChatRoom extends AnimatedComponent {
             />
         );
     }
-    startSearching(){
-        this.setStatePure({
-            searching:true
-        })
-    }
-    cancelSearch(){
-        this.setStatePure({
-            searching:false,
-            searchString:""
-        })
-    }
-    search(text){
-        this.setStatePure({
-            searchString:text
-        })
-    }
+
     header() {
         return (
             <ChatRoomHeader
                 searching={this.state.searching}
-                search={this.search.bind(this)}
-                cancelSearch={this.cancelSearch.bind(this)}
+                pushUp={this.pushSearchUp}
+                pushDown={this.pushSearchDown}
+                search={this.search}
+                searchResult={this.state.searchResult}
+                currentSearchIndex={this.state.currentSearchIndex}
+                cancelSearch={this.cancelSearch}
                 searchString={this.state.searchString}
-                startSearching={this.startSearching.bind(this)}
+                startSearching={this.startSearching}
                 oponent={this.props.oponent}
                 isRelation={this.props.isRelation}
                 goback={this.props.goback}
@@ -1306,23 +1317,7 @@ class ChatRoom extends AnimatedComponent {
                 firebaseRoom={this.props.firebaseRoom}
                 public_state={this.props.public_state}
                 members={this.props.members}
-                addMembers={this.props.addMembers}
-                showMembers={this.showMembers.bind(this)}
-                close={this.props.close}
-                open={this.props.open}
-                leave={this.props.leave}
-                showRoomMedia={this.showRoomMedia.bind(this)}
-                openAudioPicker={this.openAudioPicker.bind(this)}
-                markAsRead={this.markAsRead.bind(this)}
-                openFilePicker={this.openFilePicker.bind(this)}
-                openVoteCreation={this.openVoteCreation.bind(this)}
-                addRemind={this.props.addRemind}
-                openPhotoSelector={this.openPhotoSelector.bind(this)}
-                removeMembers={this.props.removeMembers}
-                publish={this.props.publish}
                 master={this.props.master}
-                openSettings={this.props.openSettings}
-                editCommitteeName={this.props.editCommitteeName}
                 openMenu={() => {
                     Keyboard.dismiss()
                     this.props.openMenu && this.props.openMenu()

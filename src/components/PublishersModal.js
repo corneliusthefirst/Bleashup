@@ -16,6 +16,7 @@ export default class PublishersModal extends BleashupModal {
             loaded: false
         })
     }
+    borderRadius=8
     swipeToClose = this.props.reaction ? false : true
     modalHeight = this.props.reaction ? 550 : this.modalHeight
     modalWidth = this.props.reaction ? "80%" : this.modalWidth

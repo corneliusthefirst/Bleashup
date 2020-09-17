@@ -19,6 +19,7 @@ import Vibrator from "../services/Vibrator";
 import testForURL from "../services/testForURL";
 import GState from "../stores/globalState/index";
 import TextContent from './myscreens/eventChat/TextContent';
+import BeComponent from './BeComponent';
 
 const defaultCircleSize = 16;
 const defaultCircleColor = "#007AFF";
@@ -28,7 +29,7 @@ const defaultTimeTextColor = "black";
 const defaultDotColor = "white";
 const defaultInnerCircle = "none";
 
-export default class BleashupTimeLine extends PureComponent {
+export default class BleashupTimeLine extends BeComponent {
   constructor(props, context) {
     super(props, context);
 
@@ -48,7 +49,6 @@ export default class BleashupTimeLine extends PureComponent {
     this.renderEvent = this._renderEvent.bind(this);
 
     this.state = {
-      data: this.props.data,
       //dataSource: ds.cloneWithRows(this.props.data),
       x: 0,
       width: 0,
@@ -65,15 +65,18 @@ export default class BleashupTimeLine extends PureComponent {
     return null;
   }
   getItemLayout(item, index) {
-    return GState.getItemLayout(item, index, this.state.data);
+    return GState.getItemLayout(item, index, this.props.data);
   }
   componentDidMount() {
-    this.props.index &&
+    this.props.index || this.props.index >= 0 &&
       setTimeout(() => {
-        this.refs.changeList.scrollToIndex(this.props.index);
+      this.scrollToIndex(this.props.index)
       }, 1000);
   }
   delayer = 0;
+  scrollToIndex(index){
+    this.refs.changeList && this.refs.changeList.scrollToIndex(index);
+  }
   render() {
     return (
       <View style={[styles.container, this.props.style]}>
@@ -81,28 +84,29 @@ export default class BleashupTimeLine extends PureComponent {
           marginTop
           ref={"changeList"}
           style={[styles.listview, this.props.listViewStyle]}
-          dataSource={this.state.data}
+          dataSource={this.props.data}
           getItemLayout={this.getItemLayout.bind(this)}
           inverted={true}
           firstIndex={0}
           renderPerBatch={10}
           initialRender={10}
-          numberOfItems={this.state.data.length}
+          numberOfItems={this.props.data.length}
           //extraData={this.state}
           renderItem={(rowData, index) => {
             this.delayer = this.delayer + 1;
             if (this.delayer >= 6) this.delayer = 0;
             return (
-              <View>{this._renderItem(rowData, index, this.delayer)}</View>
+              <View onLayout={(e) => this.takeNewLayout(e.nativeEvent.layout, 
+                rowData, index)}>{this._renderItem(rowData, index, this.delayer)}</View>
             );
           }}
-          keyExtractor={(rowData, index) => index + ""}
+          keyExtractor={(rowData, index) => rowData.id || index.toString()}
           {...this.props.options}
         />
         <MessageActions
           title={"logs actions"}
           onClosed={() => {
-            this.setState({
+            this.setStatePure({
               showActions: false,
             });
           }}
@@ -168,7 +172,7 @@ export default class BleashupTimeLine extends PureComponent {
             break;
         }
     }
-    return <View key={index}>{content}</View>;
+    return <View>{content}</View>;
   }
 
   renderTimeSeparator(rowData) {
@@ -276,7 +280,7 @@ export default class BleashupTimeLine extends PureComponent {
         onLayout={(evt) => {
           if (!this.state.x && !this.state.width) {
             const { x, width } = evt.nativeEvent.layout;
-            this.setState({ x, width });
+            this.setStatePure({ x, width });
           }
         }}
       >
@@ -313,7 +317,7 @@ export default class BleashupTimeLine extends PureComponent {
   layoutsTimeout = {};
   selectItem(data, changer) {
     Vibrator.vibrateShort();
-    this.setState({
+    this.setStatePure({
       showActions: true,
       selectedItem: data,
       changer,
@@ -343,6 +347,7 @@ export default class BleashupTimeLine extends PureComponent {
         <TextContent
           numberOfLines={2}
           searchString={this.props.searchString}
+          foundString={this.props.foundIndex == index?this.props.searchString:null}
           ellipsizeMode={"tail"}
           style={[GState.defaultTextStyle, styles.title, this.props.titleStyle]}
         >
@@ -350,19 +355,11 @@ export default class BleashupTimeLine extends PureComponent {
         </TextContent>
         <ChangeBox
         searchString={this.props.searchString}
+        foundString={this.props.foundIndex == index?this.props.searchString:null}
           onLongPress={(changer) => {
             this.selectItem(rowData, changer);
           }}
           showChange={() => this.props.onEventPress(rowData)}
-          takeNewLayout={(layout) => {
-            GState.itemDebounce(
-              rowData,
-              () => {
-                this.storesLayouts(rowData.event_id, layout, index);
-              },
-              500
-            );
-          }}
           master={this.props.master}
           showPhoto={(url) => this.props.showPhoto(url)}
           restore={(data) => this.props.restore(data)}
@@ -374,7 +371,15 @@ export default class BleashupTimeLine extends PureComponent {
     );
     return <View style={styles.container}>{title}</View>;
   }
-
+  takeNewLayout = (layout,rowData,index) => {
+  GState.itemDebounce(
+    rowData,
+    () => {
+      this.storesLayouts(rowData.event_id, layout, index);
+    },
+    500
+  );
+}
   _renderCircle(rowData, rowID) {
     var circleSize = rowData.circleSize
       ? rowData.circleSize

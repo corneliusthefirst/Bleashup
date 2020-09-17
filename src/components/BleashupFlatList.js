@@ -61,7 +61,11 @@ export default class BleashupFlatList extends BeComponent {
     scrollToIndex(index) {
         this.resetCurrentRender()
         setTimeout(() => {
-           this.refs.bleashupFlatlist && this.refs.bleashupFlatlist.scrollToIndex({ animated: true, index: index })
+            let scroll = () => this.refs.bleashupFlatlist && this.refs.bleashupFlatlist.scrollToIndex({ animated: true, index: index })
+            scroll()
+            setTimeout(() => {
+                scroll()
+           },50)
         })
     }
     scrollToEnd(duration) {

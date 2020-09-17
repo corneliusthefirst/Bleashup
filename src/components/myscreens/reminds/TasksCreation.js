@@ -78,6 +78,7 @@ export default class TasksCreation extends BleashupModal {
       //recurrence:""
     };
   }
+  backdropPressToClose = false
   onClosedModal() {
     this.props.onClosed();
   }
@@ -89,6 +90,7 @@ export default class TasksCreation extends BleashupModal {
       ? "event"
       : "reminder";
   }
+  
   unmountingComponent() {
     clearTimeout(this.initTimeout)
   }

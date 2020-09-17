@@ -20,7 +20,7 @@ import Entypo from "react-native-vector-icons/Entypo";
 import shadower from "../../shadower";
 
 export default class DescriptionModal extends BleashupModal {
-  onClosedModal = () => {
+  onClosedModal() {
     this.props.onClosed();
   };
 

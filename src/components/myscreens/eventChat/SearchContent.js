@@ -95,14 +95,15 @@ export default class SearchContent extends BeComponent {
                             marginBottom: "auto",
                             marginLeft: "auto",
                             marginRight: "auto",
-                            width: "70%",
+                            width: "95%",
                         }}
                     >
                         <TextInput
-                            maxLength={30}
+                            //maxLength={30}
                             value={this.state.searchString}
                             onChange={this.changeSeachString.bind(this)}
                             autoFocus
+                            autoCapitalize={"none"}
                             style={{
                                 width: "100%",
                                 fontSize: 12,

@@ -74,7 +74,7 @@ class ChatStore {
     insetDateSeparator(roomID, messages, newMessage) {
         return new Promise((resolve, reject) => {
             let separator = {
-                ...newMessage,
+                ...request.Message(),
                 id: moment(newMessage.created_at).format("YYYY/MM/DD"),
                 type: "date_separator",
             };

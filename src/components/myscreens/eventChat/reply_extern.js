@@ -10,6 +10,9 @@ class reply_extern {
     changes = 'Updates'
     committees = 'Commitees'
     committee  = "Committee"
+    confirmed = "remind_confirmed"
+    done = "remind_done"
+    member = "remind_member"
 }
 const replies = new reply_extern()
 export default replies 

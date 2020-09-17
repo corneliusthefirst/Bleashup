@@ -10,11 +10,14 @@ export default class Swipeout extends PureComponent {
     }
 
     render() {
-        return <SwipeRow disableRightSwipe={this.props.disabled} disableLeftSwipe={this.props.disabled} swipeGestureEnded={(key, data) => {
+        return <SwipeRow 
+        disableRightSwipe={this.props.disabled} 
+        disableLeftSwipe={this.props.disableLeftSwipe} 
+        swipeGestureEnded={(key, data) => {
             if (data.translateX >= 3) {
-                this.props.swipeRight()
+                this.props.swipeRight && this.props.swipeRight()
             } else if (data.translateX <= -2) {
-               this.props.onLongPress()
+               this.props.onLongPress && this.props.onLongPress()
             }
         }}
             leftOpenValue={0}

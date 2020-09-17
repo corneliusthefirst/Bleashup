@@ -72,6 +72,12 @@ export default class TextContent extends Component {
   String_toRegExp(pattern, flags) {
     return new RegExp(pattern, "i");
   }
+  showAll(){
+    this.props.animate && this.props.animate()
+    this.setState({
+      notShowingAll: !this.state.notShowingAll,
+    })
+  }
   render() {
     //console.warn(this.props.text.length,this.props.text)
     return (
@@ -85,9 +91,7 @@ export default class TextContent extends Component {
         onPress={() =>
           this.props.onPress
             ? this.props.onPress()
-            : this.setState({
-                notShowingAll: !this.state.notShowingAll,
-              })
+            : this.showAll()
         }
       >
         <View>
@@ -107,6 +111,22 @@ export default class TextContent extends Component {
               this.state.notShowingAll ? this.props.numberOfLines || 25 : null
             }
             parse={[
+              ...(this.props.foundString
+                ? [
+                  {
+                    pattern: this.String_toRegExp(this.props.foundString),
+                    style: styles.textMatchFound,
+                  },
+                ]
+                : []),
+              ...(this.props.searchString
+                ? [
+                  {
+                    pattern: this.String_toRegExp(this.props.searchString),
+                    style: styles.textMatch,
+                  },
+                ]
+                : []),
               {
                 type: "url",
                 style: styles.url,
@@ -157,14 +177,6 @@ export default class TextContent extends Component {
                 style: styles.strikesText,
                 renderText: this.renderStrickenText.bind(this),
               },
-              ...(this.props.searchString
-                ? [
-                    {
-                      pattern: this.String_toRegExp(this.props.searchString),
-                      style: styles.textMatch,
-                    },
-                  ]
-                : []),
               { pattern: /#(\w+)/, style: styles.hashTag },
               ...(this.props.notScallEmoji
                 ? []
@@ -225,6 +237,12 @@ const styles = StyleSheet.create({
   },
   textMatch: {
     backgroundColor: ColorList.iconInactive,
+    fontWeight: "bold",
+    fontStyle: "italic",
+    color: ColorList.bodyBackground,
+  },
+  textMatchFound: {
+    backgroundColor: ColorList.reminds,
     fontWeight: "bold",
     fontStyle: "italic",
     color: ColorList.bodyBackground,

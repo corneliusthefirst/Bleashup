@@ -697,6 +697,22 @@ class TEXTS {
         en: "History",
         fr: "Historique"
     }[GState.lang]
+    delete_remind = {
+        en: "Delete program",
+        fr: "Effacer ce rappel"
+    }[GState.lang]
+    are_you_sure_to_delete = {
+        en: "Are you sure you want to delete this program ?",
+        fr: "etes vous sur de vouloire effacer ce program"
+    }[GState.lang]
+    remind_action = {
+        en: "program actions",
+        fr: "action sur le program"
+    }[GState]
+    no_connection_to_server = {
+        en: "loading... from remote",
+        fr: "chargement ..."
+    }[GState.lang]
 }
 const Texts = new TEXTS()
 export default Texts

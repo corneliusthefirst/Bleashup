@@ -57,6 +57,7 @@ export default class BleashupModal extends AnimatedComponent {
     modalBody() {
         return <View></View>
     }
+    backdropPressToClose=true
     modalMinHieight=null
     isOpened = false
     entry = 'bottom'
@@ -66,6 +67,7 @@ export default class BleashupModal extends AnimatedComponent {
             <Modal
                 backdropOpacity={this.backdropOpacity || 0.7}
                 backButtonClose={this.backButtonClose || true}
+                backdropPressToClose={this.backdropPressToClose}
                 position={this.position || "bottom"}
                 swipeToClose={this.swipeToClose || false}
                 onOpened={() => {

@@ -1386,7 +1386,7 @@ const styles = {
     },
     timerText: {
       backgroundColor: "transparent",
-      color: "#FEFFDE",
+      color: ColorList.bodyBackground,
       fontSize: 11,
       textAlign: "left",
     },

@@ -250,7 +250,9 @@ export default class AudioUploader extends BePureComponent {
                     </AnimatedCircularProgress></View>
             </TouchableOpacity>
                 {this.props.message.text?<TextContent
+                    animate={this.props.animate}
                     searchString={this.props.searchString}
+                    foundString={this.props.foundString}
                     //handleLongPress={this.props.onLongPress}
                     pressingIn={this.props.pressingIn} text={this.props.message.text} tags={this.props.message.tags}
                 >

@@ -4,7 +4,7 @@ import {
   View,
   TouchableNativeFeedback,
   TouchableWithoutFeedback,
-  Text
+  Text,
 } from "react-native";
 import CacheImages from "../../CacheImages";
 import moment from "moment";
@@ -16,16 +16,17 @@ import buttoner from "../../../services/buttoner";
 import ColorList from "../../colorList";
 import TextContent from "./TextContent";
 import replies from "./reply_extern";
-import rounder from '../../../services/rounder';
-import BePureComponent from '../../BePureComponent';
-import AntDesign from 'react-native-vector-icons/AntDesign';
-import Entypo from 'react-native-vector-icons/Entypo';
-import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
-import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
-import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
+import rounder from "../../../services/rounder";
+import BePureComponent from "../../BePureComponent";
+import AntDesign from "react-native-vector-icons/AntDesign";
+import Entypo from "react-native-vector-icons/Entypo";
+import FontAwesome5 from "react-native-vector-icons/FontAwesome5";
+import MaterialIcons from "react-native-vector-icons/MaterialIcons";
+import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
 import GState from "../../../stores/globalState";
-import Feather from 'react-native-vector-icons/Feather';
-import EvilIcons from 'react-native-vector-icons/EvilIcons';
+import Feather from "react-native-vector-icons/Feather";
+import EvilIcons from "react-native-vector-icons/EvilIcons";
+import Ionicons from 'react-native-vector-icons/Ionicons';
 export default class ReplyText extends BePureComponent {
   constructor(props) {
     super(props);
@@ -38,57 +39,107 @@ export default class ReplyText extends BePureComponent {
       this.props.reply.sender.phone.replace("+", "00")
     );
   }
-  reply_font = 10;
+  reply_font = 14;
   renderReplyIcon(type) {
-    return type ? (
-      type === replies.posts ? (
-        <AntDesign
-          name={"star"}
-          type={"AntDesign"}
-          style={{
-            fontSize: this.reply_font,
-            color: ColorList.post,
-          }}
-        />
-      ) : type === replies.reminds ? (
-        <Entypo
-          name={"bell"}
-          type={"Entypo"}
-          style={{
-            fontSize: this.reply_font,
-            color: ColorList.reminds,
-          }}
-        />
-      ) : type === replies.votes ? (
-        <FontAwesome5
-          name={"vote-yea"}
-          type={"FontAwesome5"}
-          style={{
-            fontSize: this.reply_font,
-            color: ColorList.vote,
-          }}
-        />
-      ) : type === replies.description ? <Feather name={"file-text"} style={{
-        fontSize: this.reply_font,
-        color: ColorList.iconActive
-      }}></Feather> : type == replies.activity_photo ? <EvilIcons
-        name={"camera"}
-        style={{
-          fontSize: 17,
-          color: ColorList.indicatorColor
-        }}
-      >
-      </EvilIcons> : (
-                  <MaterialIcons
-                    name={"history"}
-                    type={"MaterialIcons"}
-                    style={{
-                      fontSize: this.reply_font,
-                      color: ColorList.darkGrayText,
-                    }}
-                  />
-                )
-    ) : null
+    switch (type) {
+      case replies.posts:
+        return (
+          <AntDesign
+            name={"star"}
+            type={"AntDesign"}
+            style={{
+              fontSize: this.reply_font,
+              color: ColorList.post,
+            }}
+          />
+        );
+      case replies.reminds:
+        return (
+          <Entypo
+            name={"bell"}
+            type={"Entypo"}
+            style={{
+              fontSize: this.reply_font,
+              color: ColorList.reminds,
+            }}
+          />
+        );
+      case replies.votes:
+        return (
+          <FontAwesome5
+            name={"vote-yea"}
+            type={"FontAwesome5"}
+            style={{
+              fontSize: this.reply_font,
+              color: ColorList.vote,
+            }}
+          />
+        );
+      case replies.description:
+        return (
+          <Feather
+            name={"file-text"}
+            style={{
+              fontSize: this.reply_font,
+              color: ColorList.iconActive,
+            }}
+          ></Feather>
+        );
+      case replies.activity_photo:
+        return (
+          <EvilIcons
+            name={"camera"}
+            style={{
+              fontSize: 18,
+              color: ColorList.indicatorColor,
+            }}
+          ></EvilIcons>
+        );
+      case replies.member:
+        return (
+          <Ionicons
+            style={{
+              fontSize: 16,
+              color: ColorList.iconActive
+            }}
+            name={"ios-people"}
+          >
+          </Ionicons>
+        );
+      case replies.done:
+        return (
+          <Ionicons
+            name={"md-checkmark"}
+            style={{
+              fontSize: 16,
+              color: ColorList.indicatorColor
+            }}
+          >
+          </Ionicons>
+        );
+      case replies.confirmed:
+        return (
+          <MaterialCommunityIcons
+            name="check-all"
+            style={{
+              fontSize: 16,
+              color: ColorList.likeActive
+            }}
+          >
+          </MaterialCommunityIcons>
+        )
+      default:
+        return (
+          <MaterialIcons
+            name={"history"}
+            type={"MaterialIcons"}
+            style={{
+              fontSize: this.reply_font,
+              color: ColorList.darkGrayText,
+            }}
+          />
+        );
+    }
   }
   handleReply() {
     this.props.openReply(this.props.reply);
@@ -99,7 +150,9 @@ export default class ReplyText extends BePureComponent {
         //onLongPress={() =>
         //  this.props.handLongPress ? this.props.handLongPress() : null
         // }
-        onPress={() => requestAnimationFrame(() => this.props.openReply(this.props.reply))}
+        onPress={() =>
+          requestAnimationFrame(() => this.props.openReply(this.props.reply))
+        }
       >
         <View
           style={{
@@ -121,21 +174,30 @@ export default class ReplyText extends BePureComponent {
               /* width: "90%",*/ width: this.props.compose ? "100%" : null,
             }}
           >
-            <View style={{ margin: "1%", minWidth: 100, }}>
+            <View style={{ margin: "1%", minWidth: 100 }}>
               <View style={{ flexDirection: "column" }}>
                 {this.props.reply.forwarded ? (
                   <Text style={{ fontSize: 10, fontStyle: "italic" }} note>
                     {"(forwarded)"}
                   </Text>
                 ) : null}
-                <View style={{ flexDirection: "row" }}>
-                  <View style={{
-                    width: !this.props.reply.type_extern ? 0 : 13, justifyContent: 'flex-start', flexDirection: 'row',
-                    marginBottom: 'auto',
-                    marginTop: 'auto',
-                  }}>
-                    {this.renderReplyIcon(this.props.reply.type_extern)}</View>
-                  <View style={{ width: !this.props.reply.type_extern ? "100%" : "93%" }}>
+                <View style={{ 
+                  flexDirection: "row", 
+                  alignItems: 'center',
+                  justifyContent: 'space-between', 
+                }}>
+                  <View
+                    style={{
+                      width: !this.props.reply.type_extern ? 0 : 13,
+                    }}
+                  >
+                    {this.renderReplyIcon(this.props.reply.type_extern)}
+                  </View>
+                  <View
+                    style={{
+                      width: !this.props.reply.type_extern ? "100%" : "93%",
+                    }}
+                  >
                     <Text
                       note
                       ellipsizeMode={"tail"}
@@ -159,17 +221,25 @@ export default class ReplyText extends BePureComponent {
               <View></View>
               {this.props.reply.audio || this.props.reply.file ? (
                 <View style={{ display: "flex", flexDirection: "row" }}>
-                  {this.props.reply.audio ? <MaterialIcons style={{
-                    ...GState.defaultIconSize,
-                    width: "14%", color: ColorList.indicatorColor
-                  }} name={"audiotrack"}></MaterialIcons> :
-                    <MaterialCommunityIcons
-                      name={"file-document-box"}
+                  {this.props.reply.audio ? (
+                    <MaterialIcons
                       style={{
                         ...GState.defaultIconSize,
-                        width: "14%", color: ColorList.indicatorColor
+                        width: "14%",
+                        color: ColorList.indicatorColor,
                       }}
-                    ></MaterialCommunityIcons>}
+                      name={"audiotrack"}
+                    ></MaterialIcons>
+                  ) : (
+                      <MaterialCommunityIcons
+                        name={"file-document-box"}
+                        style={{
+                          ...GState.defaultIconSize,
+                          width: "14%",
+                          color: ColorList.indicatorColor,
+                        }}
+                      ></MaterialCommunityIcons>
+                    )}
                   {this.props.reply.type_extern && this.props.reply.audio ? (
                     <Text
                       ellipsizeMode={"tail"}
@@ -193,7 +263,11 @@ export default class ReplyText extends BePureComponent {
                         }}
                       >
                         {this.props.reply.audio ? (
-                          <Text ellipsizeMode={"tail"} style={{ ...GState.defaultTextStyle }} numberOfLines={1}>
+                          <Text
+                            ellipsizeMode={"tail"}
+                            style={{ ...GState.defaultTextStyle }}
+                            numberOfLines={1}
+                          >
                             {(this.props.reply.url &&
                               this.props.reply.url.duration) ||
                               this.props.reply.duration
@@ -223,7 +297,7 @@ export default class ReplyText extends BePureComponent {
                       {this.props.reply.sourcer ? (
                         <View
                           style={{
-                        /*width: this.props.reply.sourcer ? "20%" : "0%",*/ marginRight:
+                          /*width: this.props.reply.sourcer ? "20%" : "0%",*/ marginRight:
                               "1%",
                             marginTop: 3,
                           }}
@@ -232,8 +306,9 @@ export default class ReplyText extends BePureComponent {
                             <CacheImages
                               staySmall
                               thumbnails
-                              square
-                              style={{
+                              small={this.props.reply.rounded}
+                              square={!this.props.reply.rounded}
+                              style={!this.props.reply.rounded && {
                                 width: 70,
                                 minHeight:
                                   this.state.currentHeight > 30
@@ -258,7 +333,7 @@ export default class ReplyText extends BePureComponent {
                           });
                         }}
                         style={{
-                          alignSelf: "flex-end",
+                          alignSelf: this.props.reply.rounded ? "center" : "flex-end",
                           marginLeft: this.props.reply.sourcer ? ".5%" : null,
                           width: this.props.reply.sourcer ? "74%" : "100%",
                         }}
@@ -310,9 +385,13 @@ export default class ReplyText extends BePureComponent {
                 )}
             </View>
             {this.props.reply.change_date ? (
-              <Text style={{ fontSize: 12, color: ColorList.bodySubtext, fontStyle: 'italic', }}>{`${moment(
-                this.props.reply.change_date
-              ).calendar()}`}</Text>
+              <Text
+                style={{
+                  fontSize: 12,
+                  color: ColorList.bodySubtext,
+                  fontStyle: "italic",
+                }}
+              >{`${moment(this.props.reply.change_date).calendar()}`}</Text>
             ) : null}
           </View>
         </View>

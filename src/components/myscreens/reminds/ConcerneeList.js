@@ -1,26 +1,59 @@
 import React, { Component } from 'react';
-import { View, TouchableOpacity} from "react-native"
+import { View, TouchableOpacity } from "react-native"
 import BleashupFlatList from '../../BleashupFlatList';
 import IntervalSeparator from './IntervalSeparator';
 import ProfileView from '../invitations/components/ProfileView';
+import Swipeout from '../eventChat/Swipeout';
+import BePureComponent from '../../BePureComponent';
+import BeComponent from '../../BeComponent';
+import ColorList from '../../colorList';
+import { format } from '../../../services/recurrenceConfigs';
+import  moment  from 'moment';
 
 
-export default class ConcerneeList extends Component{
-    constructor(props){
+export default class ConcerneeList extends BeComponent {
+    constructor(props) {
         super(props)
+    }
+    state = {
+        index:null
     }
     _keyExtractor = (item, index) => index.toString()
     delay = 0
-    render(){
+    getItemLayout(tem, index) {
+        return { length: 60, offset: index * 60, index }
+    }
+    componentDidMount() {
+        setTimeout(() => {
+            if (this.props.currentRemindUser) {
+                let index = this.props.contacts.findIndex(ele => ele === this.props.currentRemindUser.phone)
+                if (index >= 0){
+                    this.setStatePure({
+                        index
+                    })
+                    this.refs.flatlist && this.refs.flatlist.scrollToIndex(index)
+                    setTimeout(() => {
+                        this.setStatePure({
+                            index:null
+                        })
+                    },2000)
+                }
+            }
+        })
+    }
+    render() {
         return <View>
-        <BleashupFlatList
+            <BleashupFlatList
                 firstIndex={0}
+                ref={"flatlist"}
                 renderPerBatch={5}
                 initialRender={20}
+                getItemLayout={this.getItemLayout.bind(this)}
                 numberOfItems={this.props.contacts.length}
                 keyExtractor={this._keyExtractor}
                 dataSource={this.props.contacts}
                 renderItem={(item, index) => {
+                    let isCurrentIndex = index == this.state.index
                     this.delay = this.delay >= 20 ? 0 : this.delay + 1
                     return (this.props.complexReport ? <View key={index.toString()}>
                         {item.type === 'interval' ? <IntervalSeparator to={item.to}
@@ -34,13 +67,31 @@ export default class ConcerneeList extends Component{
                                 </View>
                             </View></View>}
                     </View> :
-                        <View style={{margin: '1%',minHeight: 53,}} key={index.toString()}><View style={{ display: 'flex', flexDirection: 'row', }}>
-                                <View style={{ margin: '2%',alignSelf: 'center', }}><ProfileView delay={this.delay} phone={item}></ProfileView>
+                        <View
+                            style={{
+                                margin: '1%',
+                                minHeight: 53,
+                                padding: "1%",
+                                backgroundColor: isCurrentIndex ? ColorList.remindsTransparent : ColorList.bodyBackground,
+                                borderRadius:15,
+                                flexDirection: 'row',
+                                width: "90%"
+                            }}
+                            key={index.toString()}><Swipeout swipeRight={() => {
+                                this.props.reply({ phone: item, type: this.props.type, status: { date: moment(this.props.initDate,format).format() } })
+                            }}
+                                disableLeftSwipe={true}>
+                                <View
+                                    style={{
+                                        margin: '2%',
+                                        width: "100%",
+                                        alignSelf: 'center',
+                                    }}><ProfileView delay={this.delay} phone={item}></ProfileView>
                                 </View>
-                        </View></View>)
+                            </Swipeout></View>)
 
                 }}
-        />
+            />
         </View>
     }
 }

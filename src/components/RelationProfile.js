@@ -8,6 +8,7 @@ import BeComponent from "./BeComponent";
 import Toaster from "../services/Toaster";
 import Texts from '../meta/text';
 import GState from '../stores/globalState/index';
+import { observer } from "mobx-react";
 
 export default class RelationProfile extends BeComponent {
   constructor(props) {
@@ -46,6 +47,7 @@ export default class RelationProfile extends BeComponent {
               style={styles.profileContainer}
             >
               <ProfileSimple
+                searchString={this.props.searchString}
                 showPhoto={this.props.showPhoto}
                 profile={this.user}
                 relation
@@ -58,6 +60,7 @@ export default class RelationProfile extends BeComponent {
     );
   }
 }
+
 
 const styles = StyleSheet.create({
   mainContainer: {

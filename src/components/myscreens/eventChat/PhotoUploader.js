@@ -145,7 +145,9 @@ export default class PhotoUploader extends BePureComponent {
                 <View>
                     {this.props.message.text ? <TextContent
                         searchString={this.props.searchString}
+                        animate={this.props.animate}
                         //handleLongPress={this.props.onLongPress} 
+                    foundString={this.props.foundString}
                     text={this.props.message.text} 
                     tags={this.props.message.tags} ></TextContent> : null}
                 </View>

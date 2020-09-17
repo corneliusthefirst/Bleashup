@@ -67,10 +67,10 @@ class NavigatorClass {
     gotoChangeLogs(event,options){
         this.pushActivity(event,"ChangeLogs",options)
     }
-    gotoRemindsWithIndex(event,id,withReply) {
-        GState.toggleCurrentIndex(id, 5000)
+    gotoRemindsWithIndex(event,id,withReply,options) {
+        GState.toggleCurrentIndex(id, 7000)
         this.pushActivity(event, "Reminds", { id, 
-            reply: withReply ? () => this.handleReply(event) :null })
+            reply: withReply ? () => this.handleReply(event) :null,...options })
     }
     goToRemind(event,withReply){
         this.pushActivity(event, "Reminds", {
@@ -78,7 +78,7 @@ class NavigatorClass {
         })
     }
     gotoStarWithIndex(event, id, withReply) {
-        GState.toggleCurrentIndex(id, 2000)
+        GState.toggleCurrentIndex(id, 7000)
         this.pushActivity(event, "EventDetails", {
             id, reply: withReply ? () => this.handleReply(event): null })
     }

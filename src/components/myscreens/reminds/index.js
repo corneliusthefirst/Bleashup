@@ -45,26 +45,36 @@ import MessageActions from '../eventChat/MessageActons';
 import Vibrator from '../../../services/Vibrator';
 import GState from '../../../stores/globalState/index';
 import Toaster from '../../../services/Toaster';
-import MaterialIcons  from 'react-native-vector-icons/MaterialIcons';
-import AntDesign  from 'react-native-vector-icons/AntDesign';
+import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
+import AntDesign from 'react-native-vector-icons/AntDesign';
 import { observer } from 'mobx-react';
 import IDMaker from '../../../services/IdMaker';
 import Texts from '../../../meta/text';
 import globalFunctions from '../../globalFunctions';
 import BeNavigator from '../../../services/navigationServices';
+import SideButton from '../../sideButton';
+import rounder from '../../../services/rounder';
+import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
+import { _onScroll } from '../currentevents/components/sideButtonService';
+import Searcher from '../Contacts/Searcher';
+import { cancelSearch, startSearching, justSearch } from '../eventChat/searchServices';
 
 @observer class Reminds extends AnimatedComponent {
-  initialize(){
+  initialize() {
     this.state = {
       eventRemindData: [],
       mounted: true,
       newing: false,
       update: false,
+      isActionButtonVisible:true,
       event_id: this.props.event_id,
       RemindCreationState: false,
     };
+    this.onScroll = _onScroll.bind(this)
+    this.cancelSearch = cancelSearch.bind(this)
+    this.startSearching = startSearching.bind(this)
+    this.search = justSearch.bind(this)
   }
-  state = {};
   addMembers(currentMembers, item) {
     this.setStatePure({
       isSelectableContactsModalOpened: true,
@@ -90,8 +100,8 @@ import BeNavigator from '../../../services/navigationServices';
         RemindRequest.addMembers({
           ...this.state.currentTask,
           members: newMembers,
-        },null,
-        this.props.isRelation? false : this.props.event.about.title,)
+        }, null,
+          this.props.isRelation ? false : this.props.event.about.title)
           .then(() => {
             this.props.stopLoader();
             this.refreshReminds();
@@ -150,18 +160,18 @@ import BeNavigator from '../../../services/navigationServices';
     emitter.on("remind-updated", () => {
       this.refreshReminds();
     });
-    if(!stores.Reminds.Reminds[this.props.event_id] ||
-      stores.Reminds.Reminds[this.props.event_id].length <= 1){
+    if (!stores.Reminds.Reminds[this.props.event_id] ||
+      stores.Reminds.Reminds[this.props.event_id].length <= 1) {
       stores.Reminds.loadReminds(this.props.event_id).then((reminds) => {
       })
-      }
+    }
     this.setStatePure({
       mounted: true,
       RemindCreationState: this.props.currentMembers || this.props.remind ? true : false,
     });
-    if(this.props.id) this.waitToScroll = setTimeout(() => {
-       this.refs.RemindsList && this.refs.RemindsList.scrollToIndex(
-         findIndex(this.getRemindData(),{ id: this.props.id }))
+    if (this.props.id) this.waitToScroll = setTimeout(() => {
+      this.refs.RemindsList && this.refs.RemindsList.scrollToIndex(
+        findIndex(this.getRemindData(), { id: this.props.id }))
       clearTimeout(this.waitToScroll)
     }, 100)
   }
@@ -188,7 +198,7 @@ import BeNavigator from '../../../services/navigationServices';
     emitter.off("remind-updated");
     clearTimeout(this.waitToScroll)
     clearInterval(this.scrolling)
-    
+
   }
 
   AddRemind() {
@@ -247,7 +257,7 @@ import BeNavigator from '../../../services/navigationServices';
   }
   assignToMe(item) {
     this.setStatePure({
-      currentRemind:item,
+      currentRemind: item,
       isSelectAlarmPatternModalOpened: true,
       currentTask: item,
     });
@@ -278,7 +288,7 @@ import BeNavigator from '../../../services/navigationServices';
           ],
           item,
           null,
-          this.props.isRelation?false:this.props.event.about.title
+          this.props.isRelation ? false : this.props.event.about.title
         )
           .then((res) => {
             this.props.stopLoader();
@@ -291,7 +301,7 @@ import BeNavigator from '../../../services/navigationServices';
     }
   }
   showToastMessage(message) {
-    Toaster({text:message})
+    Toaster({ text: message })
   }
   confirm(user, interval) {
     if (this.props.working) {
@@ -373,19 +383,19 @@ import BeNavigator from '../../../services/navigationServices';
           this.props.stopLoader();
         });
     } else {
-     this.sayAppBusy()
+      this.sayAppBusy()
     }
   }
-  sayAppBusy(){
-    Toaster({text:Texts.app_busy})
+  sayAppBusy() {
+    Toaster({ text: Texts.app_busy })
   }
-  saveAlarms(alarms,date) {
-    if(this.state.forCurrentRemind){
+  saveAlarms(alarms, date) {
+    if (this.state.forCurrentRemind) {
       this.setStatePure({
-        forCurrentRemind:false,
-        currentRemind:{
+        forCurrentRemind: false,
+        currentRemind: {
           ...this.state.currentRemind,
-          extra:{
+          extra: {
             ...this.state.currentRemind.extra,
             alarms,
             date
@@ -394,7 +404,7 @@ import BeNavigator from '../../../services/navigationServices';
       })
     } else {
       if (this.props.working) {
-        
+
       } else {
         this.props.startLoader();
         RemindRequest.addMembers(
@@ -447,7 +457,8 @@ import BeNavigator from '../../../services/navigationServices';
   filterConfirmed(interval) {
     return this.state.currentTask.confirmed.filter(ele => this.intervalFilterFunc(ele, interval))
   }
-  showReport(item, intervals, thisInterval) {
+  showReport(intervals, thisInterval) {
+    let item = this.state.remind
     let members = item.members.map((ele) => ele.phone);
     this.setStatePure({
       members: uniq(members),
@@ -523,7 +534,7 @@ import BeNavigator from '../../../services/navigationServices';
   getRemindData = () => {
     let RemindData = (stores.Reminds.Reminds
       ? stores.Reminds.Reminds[this.props.event_id]
-      : []).filter(ele => globalFunctions.filterReminds(ele,this.state.searchString||""));
+      : []).filter(ele => globalFunctions.filterReminds(ele, this.state.searchString || ""));
     return RemindData;
   };
   onChangedStatus(newStatus) {
@@ -542,72 +553,85 @@ import BeNavigator from '../../../services/navigationServices';
     });
   }
   actionIndex = this.state.currentIndex ? this.state.currentIndex() : {}
-  remindsActions =() => [
+  remindsActions = () => [
     {
-      title:Texts.reply,
-      callback:() => this.mention(this.state.remind),
-      iconName:"reply",
-      condition:() => true,
-      iconType:"Entypo",
-      color:colorList.replyColor
+      title: Texts.reply,
+      callback: () => this.mention(this.state.remind),
+      iconName: "reply",
+      condition: () => true,
+      iconType: "Entypo",
+      color: colorList.replyColor
     },
     {
-      title:Texts.share,
-      callback:() => this.share(),
-      condition:() => true,
-      iconName:"forward",
-      iconType:"Entypo",
-      color:colorList.indicatorColor
+      title: Texts.share,
+      callback: () => this.share(),
+      condition: () => true,
+      iconName: "forward",
+      iconType: "Entypo",
+      color: colorList.indicatorColor
     },
     {
-      title:Texts.members,
-      callback: () => this.showReport(this.state.remind),
-      condition:() => true,
-      iconName:"ios-people",
-      iconType:"Ionicons",
-      color:colorList.likeActive
+      title: Texts.members,
+      callback: () => this.showReport(),
+      condition: () => true,
+      iconName: "ios-people",
+      iconType: "Ionicons",
+      color: colorList.likeActive
     },
     {
-      title:Texts.update,
-      condition:() => globalFunctions.isMe(this.state.creator) || this.props.master,
-      callback:() => this.updateRemind(this.state.remind),
-      iconName:"history",
-      iconType:"MaterialIcons",
-      color:colorList.darkGrayText
-    },
-    {
-      title:Texts.assign,
+      title: Texts.update,
       condition: () => globalFunctions.isMe(this.state.creator) || this.props.master,
-      callback:() => this.addMembers(uniqBy(this.state.remind.members,"phone"),this.state.remind),
+      callback: () => this.updateRemind(this.state.remind),
+      iconName: "history",
+      iconType: "MaterialIcons",
+      color: colorList.darkGrayText
+    },
+    {
+      title: Texts.assign,
+      condition: () => globalFunctions.isMe(this.state.creator) || this.props.master,
+      callback: () => this.addMembers(uniqBy(this.state.remind.members, "phone"), this.state.remind),
       iconName: "addusergroup",
       iconType: "AntDesign",
-      color:colorList.indicatorColor
-    },{
+      color: colorList.indicatorColor
+    }, {
       title: Texts.unassign,
       condition: () => globalFunctions.isMe(this.state.creator) || this.props.master,
       callback: () => this.removeMembers(uniqBy(this.state.remind.members.filter(ele => this.state.creator ||
-        ele.phone === stores.LoginStore.user.phone)),this.state.remind),
-      iconName:"deleteusergroup",
-      iconType:"AntDesign",
-      color:"orange"
+        ele.phone === stores.LoginStore.user.phone)), this.state.remind),
+      iconName: "deleteusergroup",
+      iconType: "AntDesign",
+      color: "orange"
     },
     {
-      title:Texts.delete_,
-      callback:() => this.removeRemind(this.state.remind),
+      title: Texts.delete_,
+      callback: () => this.removeRemind(this.state.remind),
       condition: () => globalFunctions.isMe(this.state.creator) || this.props.master,
       iconName: "delete-forever",
       iconType: "MaterialCommunityIcons",
-      color:colorList.delete
+      color: colorList.delete
     }
   ]
-  showRemindActions(remind,intervals,thisInterval,creator){
+  showRemindActions(remind, intervals, thisInterval, creator, showModal) {
     this.setStatePure({
       intervals,
       creator,
-      actualInterval:thisInterval,
-      showRemindActions:true,
-      remind:remind
+      actualInterval: thisInterval,
+      showRemindActions: !showModal,
+      remind: remind
     })
+  }
+  reply(item) {
+    this.hideReportModal()
+    setTimeout(() => {
+      let reply = GState.prepareMentionForRemindsMembers(item, this.state.currentTask)
+      this.props.mention(reply)
+    })
+  }
+  hideReportModal() {
+    this.setStatePure({
+      isReportModalOpened: false,
+    });
+    this.props.clearIndexedRemind && this.props.clearIndexedRemind()
   }
   render() {
     return (
@@ -630,7 +654,7 @@ import BeNavigator from '../../../services/navigationServices';
           remind_id={this.state.remind_id}
           isOpen={this.state.RemindCreationState}
           onClosed={(exernal) => {
-           exernal && this.props.clearCurrentMembers();
+            exernal && this.props.clearCurrentMembers();
             this.setStatePure({
               RemindCreationState: false,
               remind_id: null,
@@ -653,18 +677,18 @@ import BeNavigator from '../../../services/navigationServices';
           eventRemindData={this.getRemindData()}
         />
         <SetAlarmPatternModal
-          save={(alarms,date) => this.saveAlarms(alarms,date)}
-          pattern={this.state.currentRemind && 
-            this.state.currentRemind.extra && 
-            this.state.currentRemind.extra.alarms ? 
-            [...AlarmPatterns().map(ele => {return {...ele,autoselected:false}}).filter(ele => 
+          save={(alarms, date) => this.saveAlarms(alarms, date)}
+          pattern={this.state.currentRemind &&
+            this.state.currentRemind.extra &&
+            this.state.currentRemind.extra.alarms ?
+            [...AlarmPatterns().map(ele => { return { ...ele, autoselected: false } }).filter(ele =>
               this.state.currentRemind.extra.alarms.findIndex(e => e.id == ele.id) < 0),
-              ...this.state.currentRemind.extra.alarms.map(ele => {
-                return {
-                  ...ele,
-                  autoselected:true
-                }
-              })]:AlarmPatterns()}
+            ...this.state.currentRemind.extra.alarms.map(ele => {
+              return {
+                ...ele,
+                autoselected: true
+              }
+            })] : AlarmPatterns()}
           isOpen={this.state.isSelectAlarmPatternModalOpened}
           closed={() => {
             this.setStatePure({
@@ -680,8 +704,8 @@ import BeNavigator from '../../../services/navigationServices';
           }
           updateAlarms={() => {
             this.setStatePure({
-              isSelectAlarmPatternModalOpened:true,
-              forCurrentRemind:true
+              isSelectAlarmPatternModalOpened: true,
+              forCurrentRemind: true
             })
           }}
           onChangedStatus={this.onChangedStatus.bind(this)}
@@ -738,7 +762,10 @@ import BeNavigator from '../../../services/navigationServices';
           contacts={this.state.contacts ? this.state.contacts : []}
         />
         <ReportTabModal
+          type={this.props.type}
+          currentRemindUser={this.props.currentRemindUser}
           concernees={this.state.members}
+          reply={this.reply.bind(this)}
           confirmed={this.filterConfirmed.bind(this)}
           donners={this.filterDonners.bind(this)}
           intervals={this.state.intervals}
@@ -755,36 +782,32 @@ import BeNavigator from '../../../services/navigationServices';
               complexReport: !this.state.complexReport,
             });
           }}
-          onClosed={() => {
-            this.setStatePure({
-              isReportModalOpened: false,
-            });
-          }}
+          onClosed={this.hideReportModal.bind(this)}
           isOpen={this.state.isReportModalOpened}
         />
         <AreYouSure
           isOpen={this.state.isAreYouModalOpened}
-          title={"Delete Remind"}
+          title={Texts.delete_remind}
           closed={() => {
             this.setStatePure({
               isAreYouModalOpened: false,
             });
           }}
-          ok={'Delete'}
+          ok={Texts.delete_}
           callback={() => {
             this.deleteRemind();
           }}
-          message={"Are you sure you want to delete this remind?"}
+          message={Texts.are_you_sure_you_want_to_leave}
         />
         <MessageActions
-        title={"remind actions"}
-        actions={this.remindsActions}
-        isOpen={this.state.showRemindActions}
-        onClosed={() => {
-          this.setStatePure({
-            showRemindActions:false
-          })
-        }}
+          title={Texts.remind_action}
+          actions={this.remindsActions}
+          isOpen={this.state.showRemindActions}
+          onClosed={() => {
+            this.setStatePure({
+              showRemindActions: false
+            })
+          }}
         >
         </MessageActions>
       </View>
@@ -825,7 +848,7 @@ import BeNavigator from '../../../services/navigationServices';
       isAreYouModalOpened: true,
     });
   };
-  share(){
+  share() {
 
   }
   renderReminds() {
@@ -861,13 +884,13 @@ import BeNavigator from '../../../services/navigationServices';
                   }}
                 >
                   <MaterialIcons
-                    style={{...GState.defaultIconSize, color: colorList.headerIcon }}
+                    style={{ ...GState.defaultIconSize, color: colorList.headerIcon }}
                     type={"MaterialIcons"}
                     name={"arrow-back"}
                   />
                 </TouchableOpacity>
 
-                <View
+                {!this.state.searching?<View
                   style={{
                     width: "80%",
                     paddingLeft: "9%",
@@ -884,37 +907,34 @@ import BeNavigator from '../../../services/navigationServices';
                       fontSize: colorList.headerFontSize,
                     }}
                   >
-                    {Texts.reminds_at + " "+ this.props.event.about.title}
+                    {Texts.reminds_at + " " + this.props.event.about.title}
                   </Text>
-                </View>
-
-                <TouchableOpacity
-                  style={{
-                    width: "13%",
-                    paddingRight: "3%",
-                    height: "100%",
-                    justifyContent: "center",
-                  }}
-                  onPress={() => requestAnimationFrame(() => this.AddRemind())}
+                </View>:null}
+                <View style={{
+                  height:35,
+                  width:this.state.searching?"90%":35,
+                }}>
+                <Searcher
+                searchString={this.state.searchString}
+                searching={this.state.searching}
+                search={this.search}
+                startSearching={this.startSearching}
+                cancelSearch={this.cancelSearch}
                 >
-                  <AntDesign
-                    type="AntDesign"
-                    name="plus"
-                    style={{...GState.defaultIconSize, color: colorList.headerIcon, alignSelf: "center" }}
-                  />
-                </TouchableOpacity>
+                </Searcher>
+                </View>
               </View>
             </View>
           )}
 
           <View style={{ height: '92%' }}>
             <BleashupFlatList
+             onScroll={this.onScroll}
               fit={this.props.fit}
-              getItemLayout={(item,index) => GState.getItemLayout(item,index,data,70,0)}
+              getItemLayout={(item, index) => GState.getItemLayout(item, index, data, 70, 0)}
               initialRender={6}
               ref="RemindsList"
               renderPerBatch={5}
-              onScroll={this.props.onscroll}
               firstIndex={0}
               //showVerticalScrollIndicator={false}
               keyExtractor={(item, index) => index.toString()}
@@ -922,44 +942,80 @@ import BeNavigator from '../../../services/navigationServices';
               renderItem={(item, index) => {
                 this.delay = index >= 5 ? 0 : this.delay + 1;
                 return (
-                    <TasksCard
+                  <TasksCard
+                    searchString={this.state.searchString}
+                    showReport={this.showReport.bind(this)}
+                    pointed_id={this.props.id}
+                    type={this.props.type}
+                    currentRemindUser={this.props.currentRemindUser}
                     isPointed={item.id === GState.currentID}
-                    onLayout={(layout) => GState.itemDebounce(item,() => {
-                      stores.Reminds.persistDimenssion(index,item.event_id,layout)
-                    },500)}
-                      showRemindActions={(intervals,thisInterval,creator,date) => {
-                        Vibrator.vibrateShort()
-                        this.showRemindActions({...item,current_date:date},intervals,thisInterval,creator)
-                      }}
-                      animate={this.animateUI}
-                      showMedia={this.showMedia.bind(this)}
-                      isLast={index === this.getRemindData().length - 1}
-                      phone={stores.LoginStore.user.phone}
-                      mention={(itemer) => {
-                        this.mention(itemer);
-                      }}
-                      master={this.props.master}
-                      markAsDone={(item) => this.markAsDone(item)}
-                      assignToMe={(item) => this.assignToMe(item)}
-                      calendar_id={this.props.event.calendar_id}
-                      delay={this.delay}
-                      addMembers={(currentMembers, item) =>
-                        this.addMembers(currentMembers, item)
-                      }
-                      showMembers={this.showMembers.bind(this)}
-                      showReport={this.showReport.bind(this)}
-                      removeMembers={this.removeMembers}
-                      updateRemind={(item) => this.updateRemind(item)}
-                      update={(data) => this.updateRemind(data)}
-                      deleteRemind={this.removeRemind.bind(this)}
-                      item={item}
-                      key={index}
-                    />
+                    onLayout={(layout) => GState.itemDebounce(item, () => {
+                      index = findIndex(stores.Reminds.Reminds[item.event_id], { id: item.id })
+                      stores.Reminds.persistDimenssion(index, item.event_id, layout)
+                    }, 500)}
+                    showRemindActions={(intervals, thisInterval, creator, date, showModal) => {
+                      !showModal && Vibrator.vibrateShort()
+                      this.showRemindActions({ ...item, current_date: date },
+                        intervals,
+                        thisInterval,
+                        creator,
+                        showModal)
+                    }}
+                    animate={this.animateUI}
+                    showMedia={this.showMedia.bind(this)}
+                    isLast={index === this.getRemindData().length - 1}
+                    phone={stores.LoginStore.user.phone}
+                    mention={(itemer) => {
+                      this.mention(itemer);
+                    }}
+                    master={this.props.master}
+                    markAsDone={(item) => this.markAsDone(item)}
+                    assignToMe={(item) => this.assignToMe(item)}
+                    calendar_id={this.props.event.calendar_id}
+                    delay={this.delay}
+                    addMembers={(currentMembers, item) =>
+                      this.addMembers(currentMembers, item)
+                    }
+                    showMembers={this.showMembers.bind(this)}
+                    showReport={this.showReport.bind(this)}
+                    removeMembers={this.removeMembers}
+                    updateRemind={(item) => this.updateRemind(item)}
+                    update={(data) => this.updateRemind(data)}
+                    deleteRemind={this.removeRemind.bind(this)}
+                    item={item}
+                    key={index}
+                  />
                 );
               }}
               numberOfItems={this.getRemindData().length}
             />
           </View>
+          {this.state.isActionButtonVisible ? <SideButton
+            buttonColor={colorList.transparent}
+            action={() => requestAnimationFrame(() => this.AddRemind())}
+            renderIcon={() =>
+              <TouchableOpacity
+                style={{
+                  backgroundColor: colorList.bodyBackground,
+                  ...rounder(50, colorList.bodyBackground),
+                  ...shadower(2),
+                  justifyContent: 'center',
+                }}
+                onPress={() => requestAnimationFrame(() => this.AddRemind())}
+              >
+                <MaterialCommunityIcons
+                  type="AntDesign"
+                  name="bell-plus"
+                  style={{
+                    ...GState.defaultIconSize,
+                    color: colorList.reminds,
+                    alignSelf: "center"
+                  }}
+                />
+              </TouchableOpacity>}
+          >
+
+          </SideButton> : null}
         </View>
       );
   }

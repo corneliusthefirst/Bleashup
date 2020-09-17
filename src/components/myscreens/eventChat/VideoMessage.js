@@ -189,6 +189,7 @@ export default class VideoMessage extends BePureComponent {
                         </View>
                         {this.props.message.text ? <View style={{ marginTop: "-5%", padding: "2%", alignSelf: "flex-start" }}>
                             <TextContent
+                            foundString={this.props.foundString}
                             searchString={this.props.searchString}
                             tags={this.props.message.tags} 
                             pressingIn={this.props.pressingIn} 

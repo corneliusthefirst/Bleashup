@@ -82,7 +82,7 @@ class ProfileSimple extends BePureComponent {
     };
     let userName =
       user && user.phone === stores.LoginStore.user.phone
-        ? "You "
+        ? user.nickname + " (You)"
         : user && user.nickname;
     return (
       <View style={styles.mainContainer}>
@@ -112,6 +112,7 @@ class ProfileSimple extends BePureComponent {
             ellipsizeMode={"tail"}
             numberOfLines={1}
             style={styles.text}
+            foundString={this.props.foundString}
             searchString={this.props.searchString}
           >
             {userName}

@@ -391,6 +391,8 @@ export default class AudioMessage extends BePureComponent {
                 </TouchableOpacity>
                 {this.props.message.text ? <View style={{ margin: "1%", alignSelf: "flex-start" }}>
                     <TextContent
+                        animate={this.props.animate}
+                        foundString={this.props.foundString}
                         searchString={this.props.searchString}
                         text={this.props.message.text}
                         tags={this.props.message.tags}

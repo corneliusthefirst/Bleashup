@@ -9,6 +9,7 @@ import rounder from '../../../services/rounder';
 import ColorList from '../../colorList';
 import GState from '../../../stores/globalState/index';
 import SearchContent from "./SearchContent";
+import active_types from './activity_types';
 export default class ShareWithYourContacts extends TabModal {
   initialize() {
     this.state = {
@@ -41,7 +42,7 @@ export default class ShareWithYourContacts extends TabModal {
               users: users,
               activity: stores.Events.events.filter(
                 (ele) => actFilterFunc(ele) && ele.type
-                  !== "relation" && ele.id
+                  !== active_types.relation && ele.id
                   !== this.props.activity_id
               ),
               mounted: true,

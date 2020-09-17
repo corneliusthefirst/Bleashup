@@ -9,6 +9,7 @@ import {
 } from "lodash"
 import moment from "moment"
 import stores from "."
+import request from '../services/requestObjects';
 export default class changelogs {
     constructor() {
         this.initializeStore()
@@ -52,8 +53,10 @@ export default class changelogs {
       }
     }
     storeLayouts(eventID,layout,index){
-        this.changes[eventID][index].dimensions = layout
-        this.setProperty(this.changes) 
+        if(this.changes[eventID] && this.changes[eventID][index]){
+            this.changes[eventID][index].dimensions = layout
+            this.setProperty(this.changes) 
+        }
     }
     currentUpdateTime = moment().format()
     previousUpdateTime = moment().format()
@@ -66,7 +69,7 @@ export default class changelogs {
                 let date = moment(Newchange.date).format("YYYY/MM/DD");
                 let index = findIndex(Changes[Newchange.event_id], { id: date, event_id: Newchange.event_id })
                 if (index < 0) {
-                    Changes[Newchange.event_id].unshift({ ...Newchange, id: date, type: "date_separator" })
+                    Changes[Newchange.event_id].unshift({ ...request.Change(),event_id:eventID, id: date, type: "date_separator" })
                 }
                 Changes[Newchange.event_id].unshift(Newchange)
                 this.setProperty(Changes)

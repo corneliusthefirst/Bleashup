@@ -97,7 +97,7 @@ export default class EventHighlights extends BleashupModal {
         });
     }
   }
-
+  backdropPressToClose = false
   componentDidMount() {
    this.openModalTimeout = setTimeout(() => {
       stores.Highlights.readFromStore().then((Highlights) => {

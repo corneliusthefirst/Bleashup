@@ -1,9 +1,9 @@
 import { observable, action, extendObservable, autorun, computed } from "mobx";
-import ColorList from '../../components/colorList';
-import replies from '../../components/myscreens/eventChat/reply_extern';
+import ColorList from "../../components/colorList";
+import replies from "../../components/myscreens/eventChat/reply_extern";
 import stores from "..";
 import Toaster from "../../services/Toaster";
-import Texts from '../../meta/text';
+import Texts from "../../meta/text";
 
 export default class globalState {
   @observable scrollOuter = true;
@@ -11,38 +11,38 @@ export default class globalState {
   @observable eventUpdated = false;
   @observable isScrolling = true;
   @observable loading = false;
-  showingProfile = false
-  @observable currentID = null
-  @observable searchableMembers = []
-  editingCommiteeName = false
+  showingProfile = false;
+  @observable currentID = null;
+  @observable searchableMembers = [];
+  editingCommiteeName = false;
   @observable error = false;
-  @observable downlading = false
+  @observable downlading = false;
   @observable newContribution = false;
-  @observable connected = true
-  @observable initialized = false
+  @observable connected = true;
+  @observable initialized = false;
   @observable currentRoom = null;
-  @observable lang = "en"
-  profilePlaceHolder = require("../../../Images/images.jpeg")
-  bleashupImage = require('../../../assets/bleashuptitle1.png')
-  activity_place_holder = require("../../../assets/default_event_image.jpeg")
-  @observable reply = null
+  @observable lang = "en";
+  profilePlaceHolder = require("../../../Images/images.jpeg");
+  bleashupImage = require("../../../assets/bleashuptitle1.png");
+  activity_place_holder = require("../../../assets/default_event_image.jpeg");
+  @observable reply = null;
   @observable success = false;
   @observable previousCommitee = null;
   @observable socket = null;
-  @observable DeepLinkURL = "http://bleashup.com/"
+  @observable DeepLinkURL = "http://bleashup.com/";
   @observable currentRoomNewMessages;
   @observable passwordError = false;
   @observable newPasswordError = false;
-  @observable nav = {}
-  waitToReply = 100
-  nameMaxLength=40
-  animationsDeclared=false
+  @observable nav = {};
+  waitToReply = 100;
+  nameMaxLength = 40;
+  animationsDeclared = false;
   @observable nameError = false;
-  defaultIconSize = {fontSize: 30,color:ColorList.bodyIcon}
-  defaultTextStyle = {fontSize: 13,color:ColorList.bodyText}
+  defaultIconSize = { fontSize: 30, color: ColorList.bodyIcon };
+  defaultTextStyle = { fontSize: 13, color: ColorList.bodyText };
   @observable newEvent = false;
   @observable emailError = false;
-  @observable generalNewMessages = []
+  @observable generalNewMessages = [];
   @observable ageError = false;
   currentCommitee = "Generale";
   @observable invitationUpdated = true;
@@ -50,7 +50,7 @@ export default class globalState {
   @observable newVote = false;
   @observable dateError = false;
   @observable timeError = false;
-  confimResult = ()=>{}
+  confimResult = () => {};
 
   get newEvent() {
     return this.newEvent;
@@ -165,28 +165,34 @@ export default class globalState {
   get timeError() {
     return this.timeError;
   }
-  layoutsTimeout = {}
+  layoutsTimeout = {};
   set timeError(newValue) {
     this.timeError = newValue;
   }
-  prepareStarForMention(replyer){
+  prepareStarForMention(replyer) {
     return {
       id: replyer.id,
       video: replyer.url && replyer.url.video ? true : false,
-      audio: (!replyer.url || !replyer.url.video) && (replyer.url && replyer.url.audio) ? true : false,
-      photo: (!replyer.url || !replyer.url.video) && (replyer.url && replyer.url.photo) ? true : false,
+      audio:
+        (!replyer.url || !replyer.url.video) && replyer.url && replyer.url.audio
+          ? true
+          : false,
+      photo:
+        (!replyer.url || !replyer.url.video) && replyer.url && replyer.url.photo
+          ? true
+          : false,
       sourcer: replyer.url && replyer.url.photo ? replyer.url.photo : null,
       title: `${replyer.title} : \n ${replyer.description}`,
       replyer_phone: stores.LoginStore.user.phone,
       //replyer_name: stores.LoginStore.user.name,
-      change_date:replyer.created_at,
+      change_date: replyer.created_at,
       type_extern: replies.posts,
-    }
+    };
   }
   considerIvite() {
-    Toaster({ text: Texts.unknow_user_consider_inviting })
+    Toaster({ text: Texts.unknow_user_consider_inviting });
   }
-  prepareRemindsForMetion(itemer){
+  prepareRemindsForMetion(itemer) {
     return {
       id: itemer.id,
       replyer_phone: itemer.creator.phone,
@@ -203,69 +209,90 @@ export default class globalState {
         itemer.remind_url && itemer.remind_url.video
           ? itemer.remind_url.photo
           : itemer.remind_url && itemer.remind_url.photo
-            ? itemer.remind_url.photo
-            : itemer.remind_url && itemer.remind_url.audio
-              ? itemer.remind_url.audio
-              : null,
+          ? itemer.remind_url.photo
+          : itemer.remind_url && itemer.remind_url.audio
+          ? itemer.remind_url.audio
+          : null,
       type_extern: replies.reminds,
-      title: itemer.title + ': \n' + itemer.description,
-      change_date:itemer.current_date
-    }
+      title: itemer.title + ": \n" + itemer.description,
+      change_date: itemer.current_date,
+    };
   }
-  prepareDescriptionForMention(description,activity_id,creator){
+  prepareDescriptionForMention(description, activity_id, creator) {
     return {
-      id:activity_id,
+      id: activity_id,
       type_extern: replies.description,
-      title: Texts.activity_description + ': \n' + (description || Texts.no_description),
-      replyer_phone: creator
-    }
+      title:
+        Texts.activity_description +
+        ": \n" +
+        (description || Texts.no_description),
+      replyer_phone: creator,
+    };
   }
-  prepareActivityPhotoForMention(photo,activity_id,creator){
+  prepareActivityPhotoForMention(photo, activity_id, creator) {
     return {
-      id:activity_id,
+      id: activity_id,
       type_extern: replies.activity_photo,
-      photo:true,
-      sent:true,
-      title: Texts.activity_photo + ': \n',
+      photo: true,
+      sent: true,
+      title: Texts.activity_photo + ": \n",
       sourcer: photo,
+    };
+  }
+  computeRemindType(type) {
+    switch (type) {
+      case replies.done:
+        return;
     }
   }
-  isUndefined(data){
-    return !data || data == "undefined" || data == "null"
+  prepareMentionForRemindsMembers(data, remind) {
+    let user = stores.TemporalUsersStore.Users[data.phone];
+    return {
+      id: remind.id,
+      type_extern: data.type,
+      photo: true,
+      sourcer: user.profile,
+      rounded: true,
+      title: remind.title + ": \n" + user.nickname,
+      change_date: data.status.date,
+      [data.type]:data
+    };
   }
-  getItemLayout(item, index,dataArray,defaultVal,newOffset) {
-    let def = defaultVal||70
+  isUndefined(data) {
+    return !data || data == "undefined" || data == "null";
+  }
+  getItemLayout(item, index, dataArray, defaultVal, newOffset) {
+    let def =  defaultVal || 70;
     let offset = dataArray
       ? dataArray
-        .slice(0, index)
-        .reduce(
-          (a, b) =>
-            a + (b.dimensions
-              ? b.dimensions.height
-              :def ) + (.5 + newOffset||0),
-          0
-        )
-      : index * def
+          .slice(0, index)
+          .reduce(
+            (a, b) =>
+              a +
+              (b.dimensions ? b.dimensions.height : def) +
+              (newOffset || 0),
+            0
+          )
+      : index * def;
     return {
       length: item.dimensions ? item.dimensions.height : def,
       offset: offset,
       index: index,
     };
   }
-  itemDebounce(item, callback, delay){
-    if (this.layoutsTimeout[item.id]) clearTimeout(this.layoutsTimeout[item.id])
-      this.layoutsTimeout[item.id] = setTimeout(() => {
-        callback()
-        this.layoutsTimeout[item.id] = null
-      }, delay||500)
-    
+  itemDebounce(item, callback, delay) {
+    if (this.layoutsTimeout[item.id])
+      clearTimeout(this.layoutsTimeout[item.id]);
+    this.layoutsTimeout[item.id] = setTimeout(() => {
+      callback();
+      this.layoutsTimeout[item.id] = null;
+    }, delay || 500);
   }
-  toogleWait = 5000
-  toggleCurrentIndex(id,delay){
-    this.currentID = id
+  toogleWait = 5000;
+  toggleCurrentIndex(id, delay) {
+    this.currentID = id;
     setTimeout(() => {
-      this.currentID = ""
-    },delay||2000)
+      this.currentID = "";
+    }, delay || 2000);
   }
-
 }

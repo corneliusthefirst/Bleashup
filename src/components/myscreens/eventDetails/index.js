@@ -38,6 +38,9 @@ import { observer } from "mobx-react";
 import Texts from '../../../meta/text';
 import globalFunctions from '../../globalFunctions';
 import Searcher from '../Contacts/Searcher';
+import { _onScroll } from '../currentevents/components/sideButtonService';
+import rounder from '../../../services/rounder';
+import { justSearch, cancelSearch, startSearching } from '../eventChat/searchServices';
 
 let { height, width } = Dimensions.get('window');
 
@@ -61,15 +64,17 @@ let { height, width } = Dimensions.get('window');
       EventLocationState: false,
       creation_date: "",
       creation_time: "",
+      isActionButtonVisible:true,
       participant: request.Participant(),
       EventHighlightState: false,
       updateTitleState: false,
       viewdetail: false,
       newing: false,
     }
-  }
-  state = {
-    selectedItem: {}
+    this.onScroll = _onScroll.bind(this)
+    this.search = justSearch.bind(this)
+    this.cancleSearch = cancelSearch.bind(this)
+    this.startSearching = startSearching.bind(this)
   }
   scrolled = 0
   initializer() {
@@ -84,7 +89,7 @@ let { height, width } = Dimensions.get('window');
     if ((!stores.Highlights.highlights[this.props.Event.id] ||
       stores.Highlights.highlights[this.props.Event.id].length <= 1)) {
       stores.Highlights.fetchHighlights(this.props.Event.id).then(() => {
-        
+
       })
     }
     if (this.props.id) this.waitToScroll = setTimeout(() => {
@@ -245,25 +250,10 @@ let { height, width } = Dimensions.get('window');
       color: colorList.delete
     }
   ]
-  startSearching() {
-    this.setStatePure({
-      searching: true
-    })
-  }
-  cancleSearch() {
-    this.setStatePure({
-      searching: false,
-      searchString: ""
-    })
-  }
-  search(text) {
-    this.setStatePure({
-      searchString: text
-    })
-  }
+ 
   renderPosts() {
     let data = (stores.Highlights.highlights[this.props.Event.id] || []).
-      filter((ele) => globalFunctions.filterStars(ele,this.state.searchString||""));
+      filter((ele) => globalFunctions.filterStars(ele, this.state.searchString || ""));
     return (!this.state.isMounted ? <View style={{
       height: colorList.containerHeight,
       backgroundColor: colorList.bodyBackground,
@@ -287,7 +277,7 @@ let { height, width } = Dimensions.get('window');
             flexDirection: "row",
             alignItems: "center",
           }}>
-           <TouchableOpacity onPress={() => requestAnimationFrame(this.props.goback)} style={{ width: "10%", paddingLeft: "3%" }} >
+            <TouchableOpacity onPress={() => requestAnimationFrame(this.props.goback)} style={{ width: "10%", paddingLeft: "3%" }} >
               <MaterialIcons
                 style={{ ...GState.defaultIconSize, color: colorList.headerIcon, }} type={"MaterialIcons"}
                 name={"arrow-back"} />
@@ -311,7 +301,7 @@ let { height, width } = Dimensions.get('window');
                 searching={this.state.searching}
                 search={this.search.bind(this)}
                 startSearching={this.startSearching.bind(this)}
-                cancleSearch={this.cancleSearch}
+                cancelSearch={this.cancleSearch.bind(this)}
                 searchString={this.state.searchString}
               >
               </Searcher></View>
@@ -331,6 +321,7 @@ let { height, width } = Dimensions.get('window');
 
               <BleashupFlatList
                 initialRender={9}
+                onScroll={this.onScroll}
                 ref={"postList"}
                 horizontal={false}
                 renderPerBatch={5}
@@ -344,27 +335,28 @@ let { height, width } = Dimensions.get('window');
                 renderItem={(item, index) => {
                   let delay = index >= 5 ? 0 : delay + 1
                   return (<HighlightCard
-                      searchString={this.state.searchString}
-                      isPointed={item.id === GState.currentID}
-                      onLayout={(layout) => {
-                        GState.itemDebounce(item, () => {
-                          console.warn(item.title,": ",item.dimensions)
-                          stores.Highlights.persistDimenssion(index, item.event_id, layout)
-                        })
-                      }}
-                      showActions={() => this.showActions(item)}
-                      height={colorList.containerHeight * .45}
-                      phone={stores.LoginStore.user.phone}
-                      activity_id={this.props.Event.id}
-                      mention={this.mention.bind(this)}
-                      activity_name={this.props.Event.about.title}
-                      delay={this.delay}
-                      computedMaster={this.props.computedMaster}
-                      showItem={this.props.showHighlight}
-                      participant={this.state.participant}
-                      parentComponent={this}
-                      item={item}
-                    />
+                    searchString={this.state.searchString}
+                    isPointed={item.id === GState.currentID}
+                    onLayout={(layout) => {
+                      GState.itemDebounce(item, () => {
+                        index = findIndex(stores.Highlights.highlights[item.event_id], { id: item.id })
+                        stores.Highlights.persistDimenssion(index, item.event_id, layout)
+                      })
+                    }}
+                    showActions={() => this.showActions(item)}
+                    animate={this.animateUI.bind(this)}
+                    height={colorList.containerHeight * .45}
+                    phone={stores.LoginStore.user.phone}
+                    activity_id={this.props.Event.id}
+                    mention={this.mention.bind(this)}
+                    activity_name={this.props.Event.about.title}
+                    delay={this.delay}
+                    computedMaster={this.props.computedMaster}
+                    showItem={this.props.showHighlight}
+                    participant={this.state.participant}
+                    parentComponent={this}
+                    item={item}
+                  />
                   );
                 }}
               >
@@ -424,38 +416,45 @@ let { height, width } = Dimensions.get('window');
           isOpen={this.state.isAreYouSureModalOpened} onClosed={() => { this.setStatePure({ isAreYouSureModalOpened: false }) }} />
 
 
-        {!this.props.isRelation && <SideButton
-          buttonColor={'rgba(52, 52, 52, 0.8)'}
+        {!this.props.isRelation && this.state.isActionButtonVisible ? <SideButton
+          buttonColor={colorList.bodyBackground}
           position={"right"}
           //text={"D"}
           renderIcon={() => {
-            return <View style={{ backgroundColor: ColorList.bodyBackground, height: 40, width: 40, borderRadius: 30, justifyContent: "center", alignItems: "center", ...shadower(4) }}>
-              <Feather name="file-text" type="Feather" style={{ color: ColorList.bodyIcon, fontSize: 22 }} />
-            </View>
+            return <TouchableOpacity
+              onPress={() => requestAnimationFrame(this.props.showDescription)}
+            style={{ 
+              ...rounder(50,ColorList.bodyBackground),
+            ...shadower(4) 
+          }}>
+              <Feather name="file-text" type="Feather" style={{
+                ...GState.defaultIconSize,
+                color: ColorList.bodyIcon }} />
+            </TouchableOpacity>
           }}
-          action={() => requestAnimationFrame(this.props.showDescription)}
-          //buttonTextStyle={{color:colorList.bodyBackground}}
-          offsetX={10}
-          size={40}
           offsetY={30}
-        />}
+        /> : null}
 
-        <SideButton
-          //buttonColor={'rgba(52, 52, 52, 0.8)'}
+        {this.state.isActionButtonVisible ? <SideButton
+          buttonColor={ColorList.transparent}
           position={"right"}
           //text={"+"}
-          action={() => requestAnimationFrame(() => this.newHighlight())}
-          buttonTextStyle={{ color: "white" }}
+          buttonTextStyle={{ color: ColorList.transparent }}
           renderIcon={() => {
-            return <View style={{ backgroundColor: ColorList.bodyBackground, height: 40, width: 40, borderRadius: 30, justifyContent: "center", alignItems: "center", ...shadower(4) }}>
-              <AntDesign name="plus" type="AntDesign" style={{ color: ColorList.bodyIcon, fontSize: 22 }} />
-            </View>
+            return <TouchableOpacity
+              onPress={() => requestAnimationFrame(() => this.newHighlight())}
+            style={{ 
+              backgroundColor: ColorList.bodyBackground, 
+              ...rounder(50,ColorList.bodyBackground), 
+              ...shadower(4) }}>
+              <AntDesign name="star" type="AntDesign" style={{ 
+                ...GState.defaultIconSize,
+                 color: ColorList.post, }} />
+            </TouchableOpacity>
           }}
-          size={40}
-          offsetX={10}
           offsetY={90}
 
-        />
+        /> : null}
 
 
 

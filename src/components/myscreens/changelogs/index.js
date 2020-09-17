@@ -18,16 +18,30 @@ import Searcher from "../Contacts/Searcher";
 import BeComponent from '../../BeComponent';
 import globalFunctions from '../../globalFunctions';
 import BePureComponent from '../../BePureComponent';
+import { search, computeSearch, startSearching, cancelSearch, finish, pushSearchDown, pushSearchUp } from '../eventChat/searchServices';
+import searchToolsParts from '../eventChat/searchToolsPart';
 
-export default class ChangeLogs extends BePureComponent {
+export default class ChangeLogs extends BeComponent {
   constructor(props) {
     super(props);
     this.state = {
       newThing: false,
       loaded: false,
-      searchString: "",
+      searchString: this.props.activeMember ? stores.TemporalUsersStore.Users[this.props.activeMember].nickname : "",
+      currentSearchIndex: -1,
+      foundIndex: -1,
+      searchResult: [],
       hideHeader: false
     }
+    this.search = search.bind(this)
+    this.filterFunc = globalFunctions.filterHistory
+    this.computeSearch = computeSearch.bind(this)
+    this.startSearching = startSearching.bind(this)
+    this.cancelSearch = cancelSearch.bind(this)
+    this.finish = finish.bind(this)
+    this.pushDown = pushSearchDown.bind(this)
+    this.pushUp = pushSearchUp.bind(this)
+    this.searchToolsParts = searchToolsParts.bind(this)
   }
   state = {}
   changes = []
@@ -55,38 +69,24 @@ export default class ChangeLogs extends BePureComponent {
         newThing: !this.state.newThing,
         loaded: true
       })
+      if(this.props.activeMember){
+        this.setStatePure({
+          searching:true,
+        })
+        this.search(stores.TemporalUsersStore.Users[this.props.activeMember].nickname)
+      }
     })
   }
 
   renderDetail(item, sectionID, rowID) {
     return (<View><Text>{item.changed}</Text></View>)
   }
-  startSearching() {
-    this.setStatePure({
-      searching: true
-    })
-  }
-  search(text) {
-    this.setStatePure({
-      searchString: text
-    })
-  }
-  cancleSearch() {
-    this.setStatePure({
-      searching: false,
-      searchString: ""
-    })
+  scrollToIndex(index){
+    this.refs.timeline && this.refs.timeline.scrollToIndex(index)
   }
   render() {
-    let data = this.props.activeMember ?
-      stores.ChangeLogs.changes &&
-      stores.ChangeLogs.changes[this.props.event_id] &&
-      stores.ChangeLogs.changes[this.props.event_id].
-        filter(ele => ele && ele.updater === this.props.activeMember ||
-          ele && ele.updater && ele.updater.phone === this.props.activeMember ||
-          ele.type === message_types.date_separator) :
-      (stores.ChangeLogs.changes && stores.ChangeLogs.changes[this.props.event_id] || []).filter(ele => 
-        globalFunctions.filterHistory(ele,this.state.searchString||""))
+    this.data = (stores.ChangeLogs.changes &&
+      stores.ChangeLogs.changes[this.props.event_id])||[]
     return (!this.state.loaded ? <View style={{
       width: '100%', height: '100%',
       backgroundColor: colorList.bodyBackground,
@@ -96,7 +96,9 @@ export default class ChangeLogs extends BePureComponent {
 
         <View style={{ flex: 1, width: "100%" }} >
           <BleashupTimeLine
+            ref={"timeline"}
             searchString={this.state.searchString}
+            foundIndex={this.state.foundIndex}
             index={this.props.index}
             renderCircle={() => <View></View>}
             circleSize={20}
@@ -121,7 +123,7 @@ export default class ChangeLogs extends BePureComponent {
             onEventPress={(data) => {
               !GState.showingProfile ? this.props.propcessAndFoward(data) : null
             }}
-            data={data}
+            data={this.data}
           >
           </BleashupTimeLine>
         </View>
@@ -160,33 +162,21 @@ export default class ChangeLogs extends BePureComponent {
                 }}>{Texts.history}</Text>
               </View> : null}
 
-              {!this.state.searching ? <View style={{ width: '10%', paddingRight: '3%' }}>
-                <TouchableOpacity>
-                  <EvilIcons
-                    name={"gear"}
-                    style={{
-                      ...GState.defaultIconSize,
-                      color: colorList.headerIcon,
-                      alignSelf: 'flex-end',
-                    }} />
-                </TouchableOpacity>
-              </View> : null}
-
               <View style={{
                 paddingLeft: '1%',
                 marginRight: "2%",
-                height: 35, width: this.state.searching ? "90%" : 35
+                height: 35, width: this.state.searching ? "67%" : 35
               }}>
                 <Searcher
                   searching={this.state.searching}
-                  startSearching={this.startSearching.bind(this)}
-                  cancelSearch={this.cancleSearch.bind(this)}
-                  search={this.search.bind(this)}
+                  startSearching={this.startSearching}
+                  cancelSearch={this.cancelSearch}
+                  search={this.search}
                   searchString={this.state.searchString}
                 >
                 </Searcher>
               </View>
-
+              {this.state.searching && this.state.searchResult && this.state.searchResult.length > 0?this.searchToolsParts():null}
             </View>
           </View>}
 

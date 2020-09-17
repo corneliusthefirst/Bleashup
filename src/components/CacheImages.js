@@ -28,7 +28,7 @@ class CacheImages extends BeComponent {
             width: 40,
             borderRadius: 5,
           }
-        : rounder(40)),
+        : rounder(40,"gray")),
       justifyContent: "center",
       alignItems: "center",
     },
@@ -39,7 +39,7 @@ class CacheImages extends BeComponent {
             width: 60,
             borderRadius: this.props.borderRadius || 1,
           }
-        : rounder(this.props.dim || 60)),
+        : rounder(this.props.dim || 60,"gray")),
       justifyContent: "center",
       alignItems: "center",
     },

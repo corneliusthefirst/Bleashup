@@ -1,6 +1,6 @@
 
 import React, { Component } from 'react';
-import { View, Dimensions, StatusBar,StyleSheet } from 'react-native';
+import { View, Dimensions, StatusBar, StyleSheet } from 'react-native';
 import PublicEvent from "./publicEvent.js"
 import Relation from "./Relation"
 import BleashupFlatList from '../../../BleashupFlatList';
@@ -8,11 +8,14 @@ import DetailsModal from '../../invitations/components/DetailsModal.js';
 import CreateEvent from '../../event/createEvent/CreateEvent';
 import BeNavigator from "../../../../services/navigationServices"
 import AnimatedComponent from '../../../AnimatedComponent.js';
+import { _onScroll } from './sideButtonService';
+import globalFunctions from '../../../globalFunctions';
+import active_types from '../../eventChat/activity_types';
 const screenWidth = Math.round(Dimensions.get('window').width);
 const screenheight = Math.round(Dimensions.get('window').height);
 
 export default class CurrentEvents extends AnimatedComponent {
-    initialize(){
+    initialize() {
         this.state = {
             participants: [],
             event_id: null,
@@ -27,19 +30,9 @@ export default class CurrentEvents extends AnimatedComponent {
         this.hidePhoto = this.hidePhoto.bind(this)
         this.hideDetails = this.hideDetails.bind(this)
         this.goToActivity = this.goToActivity.bind(this)
+        this._onScroll = _onScroll.bind(this)
     }
-    _onScroll = (event) => {
-        const currentOffset = event.nativeEvent.contentOffset.y
-        const direction = (currentOffset > 0 && currentOffset > this._listViewOffset)
-            ? 'down'
-            : 'up'
-        // If the user is scrolling down (and the action-button is still visible) hide it
-        const isActionButtonVisible = direction === 'up'
-        if (isActionButtonVisible !== this.state.isActionButtonVisible) {
-            this.setStatePure({ isActionButtonVisible })
-        }
-        this._listViewOffset = currentOffset
-    }
+
 
 
 
@@ -49,46 +42,49 @@ export default class CurrentEvents extends AnimatedComponent {
     delay = 0
     renderPerbatch = 10
     componentDidMount() {
-        
+
     }
-    openDetails(event){
+    openDetails(event) {
         this.setStatePure({
             isDetailsModalOpened: true,
             event: event
         })
     }
-    hidePhoto(){
+    hidePhoto() {
         this.setStatePure({
             showPhoto: false
         })
     }
-    hideDetails(){
+    hideDetails() {
         this.setStatePure({
             isDetailsModalOpened: false
         })
     }
-    goToActivity(){
+    goToActivity() {
         BeNavigator.navigateToActivity('EventDetails', this.state.event);
     }
     render() {
-
+        let data = this.props.data && this.props.data.filter((ele) =>
+            globalFunctions.filterAllActivityAndRelation(ele, this.props.searchString || ""))
         StatusBar.setHidden(false, true)
         return (
             <View style={styles.container}>
                 <BleashupFlatList
-                //backgroundColor={"white"} 
+                    //backgroundColor={"white"} 
                     keyExtractor={(item, index) => item.id}
-                    dataSource={this.props.data||[]}
+                    dataSource={data || []}
                     onScroll={this._onScroll}
                     renderItem={(item, index) => {
                         this.delay = index % this.renderPerbatch == 0 ? 0 : this.delay + 1
-                        return item.type && item.type == "relation" ?<Relation
-                        key={item.id}
+                        return item.type && item.type == active_types.relation ? <Relation
+                            searchString={this.props.searchString}
+                            key={item.id}
                             openDetails={this.openDetails}
                             renderDelay={this.delay * 25}
-                            showPhoto={this.showPhoto} key={item.id}  Event={item} />
-                            :<PublicEvent
-                            key={item.id}
+                            showPhoto={this.showPhoto} key={item.id} Event={item} />
+                            : <PublicEvent
+                                searchString={this.props.searchString}
+                                key={item.id}
                                 openDetails={this.openDetails}
                                 renderDelay={this.delay * 5}
                                 showPhoto={this.showPhoto} key={item.id} Event={item} />
@@ -96,7 +92,7 @@ export default class CurrentEvents extends AnimatedComponent {
                     firstIndex={0}
                     renderPerBatch={this.renderPerbatch}
                     initialRender={20}
-                    numberOfItems={this.props.data.length}
+                    numberOfItems={(data && data.length) || 0}
                 >
                 </BleashupFlatList>
                 {<DetailsModal goToActivity={this.goToActivity} isToBeJoint event={this.state.event}

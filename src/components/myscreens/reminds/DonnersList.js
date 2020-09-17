@@ -9,18 +9,59 @@ import Octicons from "react-native-vector-icons/Octicons";
 import { TouchableOpacity, Text, View } from "react-native";
 import GState from "../../../stores/globalState";
 import ColorList from "../../colorList";
+import BeComponent from "../../BeComponent";
+import Swipeout from "../eventChat/Swipeout";
+import { format } from "../../../services/recurrenceConfigs";
+import moment from "moment";
+import shadower from "../../shadower";
 
-export default class DonnersList extends Component {
+export default class DonnersList extends BeComponent {
   constructor(props) {
     super(props);
     this.state = {};
   }
+  concludeScrollForInterval(intervalIndex) {
+    if (intervalIndex >= 0) {
+      intervalIndex && this.scrollToIndex(intervalIndex);
+      this.expandItem(this.props.intervals[intervalIndex]);
+    }
+  }
   state = {};
+  componentDidMount() {
+    setTimeout(() => {
+      if (this.props.type && this.props.currentRemindUser) {
+        let date = moment(this.props.currentRemindUser.status.date).format("x");
+        let intervalIndex = this.props.intervals.findIndex(
+          (ele) =>
+            moment(ele.start, format).format("x") <= date &&
+            moment(ele.end, format).format("x") > date
+        );
+        this.concludeScrollForInterval(intervalIndex);
+      } else {
+        let date = moment().format("x");
+        let intervalIndex = this.props.intervals.findIndex(
+          (ele) =>
+            moment(ele.start, format).format("x") >= date &&
+            moment(ele.end, format).format("x") > date
+        );
+        this.concludeScrollForInterval(intervalIndex);
+      }
+    }, 100);
+  }
+
   onItemExpand(item) {
     let donners = this.props.donners(item);
-    this.setState({
+    this.setStatePure({
       donners: donners,
     });
+    setTimeout(() => {
+      if (this.props.type && this.props.currentRemindUser) {
+        let index = donners.findIndex(
+          (ele) => ele.phone == this.props.currentRemindUser.phone
+        );
+        this.scrollToDonnersIndex(index);
+      }
+    }, 100);
   }
   renderHeader(item, index, toggle) {
     return (
@@ -46,90 +87,119 @@ export default class DonnersList extends Component {
         <BleashupFlatList
           fit
           firstIndex={0}
+          ref={"flatlist"}
           renderPerBatch={7}
           initialRender={20}
           numberOfItems={donners.length}
           keyExtractor={(item, index) => item.phone}
+          getItemLayout={this.getItemLayoutForFlatList}
           dataSource={donners}
           renderItem={(item, index) => {
-            this.delay = this.delay >= 20 ? 0 : this.delay + 1;
-            return item.type ? (
-              <IntervalSeparator
-                actualInterval={
-                  this.props.actualInterval &&
-                  item.from === this.props.actualInterval.start &&
-                  item.to === this.props.actualInterval.end
-                }
-                first={index == 0 ? true : false}
-                from={item.from}
-                to={item.to}
-              ></IntervalSeparator>
-            ) : item.phone ? (
-              <View
-                style={{ width: "90%", alignSelf: "center", minHeight: 53 }}
-              >
-                <View
-                  style={{
-                    display: "flex",
-                    flexDirection: "row",
-                    justifyContent: "space-between",
+            let delay = delay >= 20 ? 0 : delay + 1;
+            let isCurrentPointed = index === this.state.index;
+            return (
+              <View style={{ width: "90%", alignSelf: "center", height: 53 }}>
+                <Swipeout
+                  swipeRight={() => {
+                    this.props.reply &&
+                      this.props.reply({ ...item, type: this.props.type });
                   }}
+                  disableLeftSwipe={true}
+                  onLongPress={() => {}}
                 >
-                  <View style={{ width: "70%", alignSelf: "center" }}>
-                    <ProfileView
-                      delay={this.delay}
-                      phone={item.phone}
-                    ></ProfileView>
-                  </View>
-                  {!this.props.cannotReport ? (
-                    <TouchableOpacity
-                      style={{
-                        flexDirection: "column",
-                        justifyContent: "center",
-                        alignItems: "center",
-                      }}
-                      onPress={() => {
-                        this.setState({
-                          isReportModalOpened: true,
-                          interval: ParentItem,
-                          currentReport: item.status,
-                          currentUser: item,
-                        });
-                      }}
-                      transparent
-                    >
-                      <Octicons
+                  <View
+                    style={{
+                      flexDirection: "row",
+                      backgroundColor: isCurrentPointed
+                        ? ColorList.remindsTransparent
+                        : ColorList.bodyBackground,
+                      borderRadius: 15,
+                      ...shadower(1),
+                      paddingHorizontal: "2%",
+                      justifyContent: "space-between",
+                    }}
+                  >
+                    <View style={{ width: "70%", alignSelf: "center" }}>
+                      <ProfileView
+                        delay={this.delay}
+                        phone={item.phone}
+                      ></ProfileView>
+                    </View>
+                    {!this.props.cannotReport ? (
+                      <TouchableOpacity
                         style={{
-                          ...GState.defaultIconSize,
-                          color: ColorList.indicatorColor,
+                          flexDirection: "column",
+                          justifyContent: "center",
+                          alignItems: "center",
                         }}
-                        type="Octicons"
-                        name="report"
-                      />
-                      <Text
-                        style={{
-                          ...GState.defaultTextStyle,
-                          color: ColorList.indicatorColor,
+                        onPress={() => {
+                          this.setStatePure({
+                            isReportModalOpened: true,
+                            interval: ParentItem,
+                            currentReport: item.status,
+                            currentUser: item,
+                          });
                         }}
+                        transparent
                       >
-                        Report
-                      </Text>
-                    </TouchableOpacity>
-                  ) : null}
-                </View>
+                        <Octicons
+                          style={{
+                            ...GState.defaultIconSize,
+                            color: ColorList.indicatorColor,
+                          }}
+                          type="Octicons"
+                          name="report"
+                        />
+                        <Text
+                          style={{
+                            ...GState.defaultTextStyle,
+                            color: ColorList.indicatorColor,
+                          }}
+                        >
+                          Report
+                        </Text>
+                      </TouchableOpacity>
+                    ) : null}
+                  </View>
+                </Swipeout>
                 <MenuDivider color={ColorList.indicatorColor} />
               </View>
-            ) : null;
+            );
           }}
         ></BleashupFlatList>
       </View>
     );
   }
+  getItemLayout(index) {
+    return { length: 70, offset: index * 70, index };
+  }
+  getItemLayoutForFlatList(item, index) {
+    return { length: 70, offset: index * 70, index };
+  }
+  scrollToDonnersIndex(index) {
+    this.setStatePure({
+      index,
+    });
+    index >= 0 && this.refs.flatlist && this.refs.flatlist.scrollToIndex(index);
+    setTimeout(() => {
+      this.setStatePure({
+        index: null,
+      });
+    }, 2000);
+  }
+  expandItem(item) {
+    this.refs.accordion && this.refs.accordion.toggleExpand(item);
+  }
+  scrollToIndex(index) {
+    this.refs.accordion && this.refs.accordion.scrollToIndex(index);
+  }
   render() {
     return (
       <View>
         <AccordionModuleNative
+          ref={"accordion"}
           hideToggler
+          getItemLayout={this.getItemLayout}
           keyExtractor={this.keyExtractor}
           _renderHeader={this.renderHeader.bind(this)}
           _renderContent={this.renderItems.bind(this)}
@@ -143,7 +213,7 @@ export default class DonnersList extends Component {
             report={this.state.currentReport}
             user={this.state.currentUser}
             closed={() => {
-              this.setState({
+              this.setStatePure({
                 isReportModalOpened: false,
               });
             }}

@@ -34,7 +34,9 @@ class colorlist {
   bottunerLighter = 'rgba(34, 0, 0, 0.05)';
   headerFontSize = 16;
   reminds = '#2DDFD5';
+  remindsTransparent = "rgba(45, 223, 213, 0.3)"
   post = '#F4AC1C';
+  postTransparent = "rgba(244, 172, 28,0.3)"
   vote = '#4B6CF7';
   chatboxBorderRadius = 5;
   copy = '#92E578';

@@ -12,6 +12,7 @@ import replies from "../eventChat/reply_extern";
 import AnimatedComponent from "../../AnimatedComponent";
 import Swipeout from "../eventChat/Swipeout";
 import TextContent from "../eventChat/TextContent";
+import AnimatedPureComponent from '../../AnimatedPureComponent';
 
 export default class ChangeBox extends AnimatedComponent {
   initialize() {
@@ -31,7 +32,9 @@ export default class ChangeBox extends AnimatedComponent {
         : this.props.change.updater,
   };
   shouldComponentUpdate(nextProps, nextState, nextContext) {
-    return this.state.newThing !== nextState.newThing;
+    return this.state.newThing !== nextState.newThing || 
+    this.props.searchString !== nextProps.searchString || 
+    this.props.foundString !== nextProps.foundString
   }
   mention(changer) {
     this.props.mention({ ...this.props.change }, changer);
@@ -52,7 +55,6 @@ export default class ChangeBox extends AnimatedComponent {
         }}
       >
         <View
-          onLayout={(e) => this.props.takeNewLayout(e.nativeEvent.layout)}
           style={this.containerStyle}
         >
           {!this.props.change ? null : (
@@ -73,6 +75,8 @@ export default class ChangeBox extends AnimatedComponent {
                 >
                   <View style={{ width: "100%", height: "100%" }}>
                     <ProfileSimple
+                      foundString={this.props.foundString}
+                      searchString={this.props.searchString}
                       hidePhoto
                       showPhoto={(url) => {
                         this.props.showPhoto(url);
@@ -91,6 +95,7 @@ export default class ChangeBox extends AnimatedComponent {
                 <View style={{ flexDirection: "row" }}>
                   <TextContent
                     ellipsizeMode="tail"
+                    foundString={this.props.foundString}
                     searchString={this.props.searchString}
                     style={{
                       fontSize: 14,
@@ -104,6 +109,7 @@ export default class ChangeBox extends AnimatedComponent {
                 </View>
                 <TextContent
                 searchString={this.props.searchString}
+                foundString={this.props.foundString}
                   ellipsizeMode="tail"
                   style={{
                     fontSize: 13,

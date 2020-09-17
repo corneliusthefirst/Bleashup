@@ -6,6 +6,7 @@ import GlobalFunctions from '../../../globalFunctions';
 import BeNavigator from '../../../../services/navigationServices';
 import RelationProfile from '../../../RelationProfile';
 import BeComponent from '../../../BeComponent';
+import Swipeout from "../../eventChat/Swipeout";
 
 let globalFunctions =  GlobalFunctions;
 class PublicEvent extends BeComponent {
@@ -25,15 +26,19 @@ class PublicEvent extends BeComponent {
     this.props.Event.about.title !== nextProps.Event.about.title 
   }
   renderprofile() {
-    return <RelationProfile Event={this.props.Event} />;
+    return <RelationProfile searchString={this.props.searchString} Event={this.props.Event} />;
   }
 
   renderTitle() {
     return (<View style={styles.mainContainer}>
+      <Swipeout disabled={true} onLongPress={() => {
+        
+      }}>
       <View style={styles.subContainer}>
         <View style={styles.profileContainer}>
           <ActivityProfile
             //join={this.join.bind(this)}
+            searchString={this.props.searchString}
             dim={50}
             showPhoto={this.props.showPhoto}
             openDetails={this.props.openDetails}
@@ -41,6 +46,7 @@ class PublicEvent extends BeComponent {
             ></ActivityProfile>
         </View>
       </View>
+      </Swipeout>
     </View>
     )
   }

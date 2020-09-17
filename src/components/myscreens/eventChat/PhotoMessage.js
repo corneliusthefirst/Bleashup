@@ -45,6 +45,8 @@ export default class PhotoMessage extends BePureComponent {
                 {this.props.message.text ?
                     <View style={{ alignSelf: 'flex-start', }}>
                         <TextContent 
+                        animate={this.props.animate}
+                        foundString={this.props.foundString}
                         searchString={this.props.searchString}
                         tags={this.props.message.tags} 
                         //handleLongPress={() => this.props.handleLongPress ? this.props.handleLongPress() : null} 

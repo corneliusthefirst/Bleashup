@@ -47,6 +47,7 @@ import BeComponent from '../../BeComponent';
 import globalFunctions from '../../globalFunctions';
 import Texts from '../../../meta/text';
 import Toaster from '../../../services/Toaster';
+import { justSearch, cancelSearch, startSearching } from '../eventChat/searchServices';
 
 
 let { height, width } = Dimensions.get('window');
@@ -62,6 +63,9 @@ export default class ContactView extends BeComponent {
       alreadyCreated: false,
       creating: false,
     };
+    this.search = justSearch.bind(this)
+    this.cancelSearch = cancelSearch.bind(this)
+    this.startSearching = startSearching.bind(this)
   }
   codeObj = find(countries, { id: stores.LoginStore.user.country_code });
 
@@ -192,22 +196,6 @@ updatePhoneContacts = (bool) => {
         });
   };
 
-  startSearching(){
-    this.setStatePure({
-      searching:true,
-    })
-  }
-  search(str){
-    this.setStatePure({
-      searchString:str
-    })
-  }
-  stopSearching(){
-    this.setStatePure({
-      searching:false,
-      searchString:""
-    })
-  }
   render() {
     let data = this.state.contacts
     data = data.filter(ele => ele.phone && globalFunctions.filterForRelation(ele,this.state.searchString))
@@ -265,11 +253,11 @@ updatePhoneContacts = (bool) => {
               marginRight: "1%", 
             }}>
               <Searcher
-              search={this.search.bind(this)}
+              search={this.search}
               searching={this.state.searching}
               searchString={this.state.searchString}
-              startSearching={this.startSearching.bind(this)}
-              cancelSearch={this.stopSearching.bind(this)}
+              startSearching={this.startSearching}
+              cancelSearch={this.cancelSearch}
               >
               </Searcher>
             </View>
