@@ -32,6 +32,10 @@ export default class InChatVideoPlayer extends BeComponent {
         marginRight: 3,
         justifyContent: 'center',
     }
+    enterFullscreen(){
+        this.props.enterFullscreen(true)
+        
+    }
     showReactionModal() {
         this.setStatePure({
             isReactionOpened: true,
@@ -75,21 +79,21 @@ export default class InChatVideoPlayer extends BeComponent {
                         </TouchableOpacity>
                         <TouchableOpacity onPress={() => requestAnimationFrame(() => {
                             this.videoPlayer._pausePlayer()
-                            this.props.enterFullscreen(true)
+                            this.enterFullscreen(true)
                             this.props.forward(this.props.message)
                         })} style={this.containerStyle}>
                         <Entypo name="forward" style={this.iconStyles} type={"Entypo"}/>
                         </TouchableOpacity>
                         <TouchableOpacity onPress={() => requestAnimationFrame(() => {
                             this.videoPlayer._pausePlayer()
-                            this.props.enterFullscreen(true)
+                            //this.enterFullscreen(true)
                             this.props.starThis(this.props.message)
                         })} style={this.containerStyle}>
                             <AntDesign name={"star"} style={this.iconStyles} type={"AntDesign"}/>
                         </TouchableOpacity>
                         <TouchableOpacity onPress={() => requestAnimationFrame(() => {
                             this.videoPlayer._pausePlayer()
-                            this.props.enterFullscreen(true)
+                            //this.enterFullscreen(true)
                             this.props.remindThis(this.props.message)
                         })} style={this.containerStyle}>
                             <Entypo name="bell" style={this.iconStyles} type={"Entypo"}/>

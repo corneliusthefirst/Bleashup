@@ -484,7 +484,14 @@ export default class VideoController extends BeComponent {
 
     return this.formatTime(this.state.currentTime);
   }
-
+  returnCurrentTime(){
+    const time = this.state.currentTime
+    return `${this.formatTime(time)}`
+  }
+  returnTotalTime(){
+    const time = this.state.duration
+    return `${this.formatTime(time)}`
+  }
   /**
    * Format a time string as mm:ss
    *
@@ -999,15 +1006,15 @@ export default class VideoController extends BeComponent {
    * Render bottom control group and wrap it in a holder
    */
   renderBottomControls() {
-    const timerControl = this.props.disableTimer
+    const currentTime = this.props.disableTimer
       ? this.renderNullControl()
-      : this.renderTimer();
+      : this.renderCurrentTime();
+    const TotalTime = this.props.disableTimer?
+    this.renderNullControl():
+    this.renderTotalTime()
     const seekbarControl = this.props.disableSeekbar
       ? this.renderNullControl()
       : this.renderSeekbar();
-    const playPauseControl = this.props.disablePlayPause
-      ? this.renderNullControl()
-      : this.renderPlayPause();
 
     return (
       <Animated.View
@@ -1027,9 +1034,9 @@ export default class VideoController extends BeComponent {
           <View
             style={[styles.controls.row, styles.controls.bottomControlGroup]}
           >
-            {playPauseControl}
+          {currentTime}
             {this.renderTitle()}
-            {timerControl}
+            {TotalTime}
           </View>
         </View>
       </Animated.View>
@@ -1040,7 +1047,23 @@ export default class VideoController extends BeComponent {
    * Render center control group and wrap it in a holder
    */
   renderCenterControls() {
-    return null;
+    const playPauseControl = this.props.disablePlayPause
+      ? this.renderNullControl()
+      : this.renderPlayPause();
+
+    return (
+      <Animated.View
+        style={[
+          styles.controls.center,
+          {
+            opacity: this.animations.bottomControl.opacity,
+            marginBottom: this.animations.bottomControl.marginBottom,
+          },
+        ]}
+      >
+        {playPauseControl}
+      </Animated.View>
+    );;
   }
 
   /**
@@ -1097,12 +1120,13 @@ export default class VideoController extends BeComponent {
    * Render the play/pause button and show the respective icon
    */
   renderPlayPause() {
-    return this.renderControl(
+    return this.renderControl(<View style={{
+      ...rounder(50,ColorList.buttonerBackground),justifyContent: 'center',}}>
       <MaterialCommunityIcons
         type="MaterialCommunityIcons"
         name={!this.state.paused ? "pause" : "play-circle-outline"}
-        style={{ ...GState.defaultIconSize, color: "white" }}
-      />,
+        style={{ ...GState.defaultIconSize, color: "white",fontSize: 40, }}
+      /></View>,
       this.methods.togglePlayPause,
       styles.controls.playPause
     );
@@ -1145,7 +1169,20 @@ export default class VideoController extends BeComponent {
       styles.controls.timer
     );
   }
-
+  renderCurrentTime(){
+    return this.renderControl(
+      <Text style={styles.controls.timerText}>{this.returnCurrentTime()}</Text>,
+      this.methods.toggleTimer,
+      styles.controls.timer
+    );
+  }
+renderTotalTime(){
+  return this.renderControl(
+    <Text style={styles.controls.timerText}>{this.returnTotalTime()}</Text>,
+    this.methods.toggleTimer,
+    styles.controls.timer
+  );
+}
   /**
    * Show loading icon
    */
@@ -1328,6 +1365,14 @@ const styles = {
       alignItems: "stretch",
       flex: 2,
       justifyContent: "flex-end",
+    },
+    center:{
+      width:"100%",
+      alignSelf: 'center',
+      justifyContent: 'flex-end',
+      flexDirection: 'column',
+      flex: 2,
+      alignItems: 'center',
     },
     topControlGroup: {
       alignSelf: "stretch",
