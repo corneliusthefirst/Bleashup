@@ -15,7 +15,7 @@ class colorlist {
   redIcon = 'red';
   photoPlaceHolderColor = "#C5C5C5"
   containerBackground = 'white';
-  profilePlaceHolderHeight = 35
+  profilePlaceHolderHeight = 30
   replyColor = "#56B671"
 
   //header

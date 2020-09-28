@@ -27,6 +27,7 @@ import GState from "../../../stores/globalState";
 import Feather from "react-native-vector-icons/Feather";
 import EvilIcons from "react-native-vector-icons/EvilIcons";
 import Ionicons from 'react-native-vector-icons/Ionicons';
+import ChatUser from './ChatUser';
 export default class ReplyText extends BePureComponent {
   constructor(props) {
     super(props);
@@ -34,10 +35,7 @@ export default class ReplyText extends BePureComponent {
   }
   state = {};
   showReplyer() {
-    this.props.showProfile(
-      this.props.reply.replyer_phone ||
-      this.props.reply.sender.phone.replace("+", "00")
-    );
+    this.props.showProfile( this.props.reply.replyer_phone );
   }
   reply_font = 14;
   renderReplyIcon(type) {
@@ -181,10 +179,10 @@ export default class ReplyText extends BePureComponent {
                     {"(forwarded)"}
                   </Text>
                 ) : null}
-                <View style={{ 
-                  flexDirection: "row", 
+                <View style={{
+                  flexDirection: "row",
                   alignItems: 'center',
-                  justifyContent: 'space-between', 
+                  justifyContent: 'space-between',
                 }}>
                   <View
                     style={{
@@ -198,7 +196,12 @@ export default class ReplyText extends BePureComponent {
                       width: !this.props.reply.type_extern ? "100%" : "93%",
                     }}
                   >
-                    <Text
+                    {this.props.reply.replyer_name ? <ChatUser
+                      reply
+                      phone={this.props.reply.replyer_phone}
+                      showProfile={this.showReplyer.bind(this)}
+                    >
+                    </ChatUser> : <Text
                       note
                       ellipsizeMode={"tail"}
                       numberOfLines={1}
@@ -209,12 +212,8 @@ export default class ReplyText extends BePureComponent {
                         maxWidth: "100%",
                       }}
                     >
-                      {`${
-                        this.props.reply.replyer_name
-                          ? this.props.reply.replyer_name
-                          : this.props.reply.title.split(": \n")[0]
-                        }`}
-                    </Text>
+                        {`${this.props.reply.title && this.props.reply.title.split(": \n")[0]}`}
+                      </Text>}
                   </View>
                 </View>
               </View>

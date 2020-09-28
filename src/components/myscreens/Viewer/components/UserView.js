@@ -6,6 +6,8 @@ import SwipeMenu from '../../../SwiperComponent/swipeMenu';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import GState from '../../../../stores/globalState';
 import MaterialIcons  from 'react-native-vector-icons/MaterialIcons';
+import  Feather  from 'react-native-vector-icons/Feather';
+import ColorList from '../../../colorList';
 class UserView extends React.PureComponent {
   constructor(props) {
     super(props);
@@ -49,7 +51,6 @@ class UserView extends React.PureComponent {
         />
       </TouchableOpacity>
        }
-
       </View> 
       :
       <View style={{
@@ -84,6 +85,14 @@ class UserView extends React.PureComponent {
          {props.swiper?<RenderDate style={styles.time} date={this.props.updated_at} />
          :<Text style={styles.time}>{"Posted "+props.updated_at}</Text>}
         </View>
+          <TouchableOpacity onPress={props.rotate}>
+            <Feather
+              name="rotate-ccw"
+              color="white"
+              style={{ ...GState.defaultIconSize, 
+                color:ColorList.bodyBackground }}
+            />
+          </TouchableOpacity>
           <SwipeMenu forward={this.props.forward} reply={this.props.reply} />
       </View>
 

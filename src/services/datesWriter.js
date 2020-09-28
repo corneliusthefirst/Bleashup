@@ -2,18 +2,18 @@
 import moment from 'moment';
 import { format } from './recurrenceConfigs';
 export function writeDateTime(event) {
-    let date = event.period
+    let date = event && event.period
     let statDate = moment(date)
     let currentDate = moment()
-    let end = moment(typeof event.recurrence === "string" ? event.recurrence : null)
+    let end = event && moment(typeof event.recurrence === "string" ? event.recurrence : null)
     let mathDiff = moment.duration(statDate.diff(currentDate)).asDays()
-    let endMathdiff = moment.duration(end.diff(currentDate)).asDays()
-    return mathDiff >= 0 ? `${mathDiff >= 0 ? "Starting" : "Ended"} ${moment(event.period).isValid() ? moment(event.period).calendar() : ' ...'}` :
-        `${endMathdiff >= 0 ? "Ends" : "Ended"} ${moment(event.recurrence).isValid() ? moment(event.recurrence).calendar() : ' ...'}`
+    let endMathdiff = end && moment.duration(end.diff(currentDate)).asDays()
+    return event ? mathDiff >= 0 ? `${mathDiff >= 0 ? "Starting" : "Ended"} ${moment(event.period).isValid() ? moment(event.period).calendar() : ' ...'}` :
+        `${endMathdiff >= 0 ? "Ends" : "Ended"} ${moment(event.recurrence).isValid() ? moment(event.recurrence).calendar() : ' ...'}`:""
 }
 export function dateDiff(event) {
     let currentDate = moment()
-    if (moment(event.recurrence).isValid()) {
+    if (event && moment(event.recurrence).isValid()) {
         let end = moment(event.recurrence ? event.recurrence : moment(currentDate).format())
         return daysDiff = moment.duration(currentDate.diff(end)).asDays()
     } else {

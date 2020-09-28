@@ -48,7 +48,7 @@ export function pushSearchDown(){
 export function computeSearch(text){
     let searchResult = []
     this.data.forEach((ele, index) => {
-        if (this.filterFunc(ele, text)) {
+        if (this.filterFunc(ele, text,this.props.isRelation)) {
             searchResult.push({ index })
         }
     })

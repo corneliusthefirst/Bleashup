@@ -3,6 +3,7 @@ import { View, TouchableOpacity, Text } from 'react-native';
 import UpdateStateIndicator from "./updateStateIndicator";
 import stores from "../../../../stores";
 import Toaster from "../../../../services/Toaster";
+import ActivityPages from '../../eventChat/chatPages';
 
 export default class Options extends Component {
     constructor(props) {
@@ -42,7 +43,7 @@ export default class Options extends Component {
             if (status) {
                 this.props.navigation.navigate("Event", {
                     Event: this.props.Event,
-                    tab: "Reminds"
+                    tab: ActivityPages.reminds
                 });
             } else {
                 Toaster({

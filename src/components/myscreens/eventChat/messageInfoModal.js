@@ -14,7 +14,15 @@ import shadower from "../../shadower";
 
 @observer
 class MessageInfoModal extends TabModal {
+    initialize(){
+        this.state = {
+            mounted: false
+        }
+    }
     onOpenModal() {
+        this.setStatePure({
+            mounted:true
+        })
     }
     countStyle = {
         ...GState.defaultTextStyle,
@@ -35,7 +43,7 @@ class MessageInfoModal extends TabModal {
     }
     shouldUpdateTabs=true
     returnTabs() {
-        return {
+        return this.state.mounted && {
             Received: {
                 navigationOptions: {
                     tabBarIcon: () => (

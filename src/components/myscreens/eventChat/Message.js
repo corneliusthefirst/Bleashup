@@ -26,7 +26,6 @@ import ColorList from "../../colorList";
 import ReactionModal from "./ReactionsModal";
 import stores from "../../../stores";
 import rounder from "../../../services/rounder";
-import emitter from "../../../services/eventEmiter";
 import { SwipeRow } from "react-native-swipe-list-view";
 import BeComponent from "../../BeComponent";
 import Vibrator from "../../../services/Vibrator";
@@ -39,6 +38,9 @@ import message_types from "./message_types";
 import Requester from "./Requester";
 import GState from "../../../stores/globalState";
 import ChatUser from './ChatUser';
+import { showHighlightForScrollToIndex } from './highlightServices';
+import RemindMessage from "./RemindMessage";
+import StarMessage from "./StarMessage";
 
 export default class Message extends BeComponent {
     constructor(props) {
@@ -57,8 +59,8 @@ export default class Message extends BeComponent {
                 this.props.message.sender.phone == this.props.user
             ),
             different:
-                this.props.PreviousMessage.sender && 
-                this.props.message.sender && 
+                this.props.PreviousMessage.sender &&
+                this.props.message.sender &&
                 this.props.PreviousMessage.sender.phone !==
                 this.props.message.sender.phone,
             time: /*!isDiff &&
@@ -78,32 +80,6 @@ export default class Message extends BeComponent {
             loaded: true,
         };
     }
-    placeHolder = {
-        audio: {
-            height: 150,
-            width: 250,
-        },
-        photo: {
-            height: 250,
-            width: 250,
-        },
-        video: {
-            height: 250,
-            width: 250,
-        },
-        attachement: {
-            height: 150,
-            width: 250,
-        },
-        vote: {
-            height: 300,
-            width: 250,
-        },
-        text: {
-            height: 50,
-            width: 100,
-        },
-    };
     chooseComponent(data, index, sender) {
         switch (data.type) {
             case message_types.text:
@@ -273,10 +249,26 @@ export default class Message extends BeComponent {
                         replaceMessage={(data) => this.props.replaceAudioMessage(data)}
                     ></AudioUploader>
                 );
+            case message_types.remind_message:
+                return <RemindMessage
+                    onPress={this.props.showRemindMessage}
+                    searchString={this.props.searchString}
+                    foundString={this.props.foundString}
+                    message={data}>
+                </RemindMessage>;
+            case message_types.star_message:
+                return <StarMessage
+                    onPress={this.props.showStarMessage}
+                    searchString={this.props.searchString}
+                    foundString={this.props.foundString}
+                    message={data}
+                >
+                </StarMessage>
             default:
                 return null;
         }
     }
+
     voteCreator = null;
     componentDidMount() {
         setTimeout(() => {
@@ -284,7 +276,8 @@ export default class Message extends BeComponent {
                 loaded: true,
             });
         }, 5 * this.props.delay);
-
+        let showHighlight = showHighlightForScrollToIndex.bind(this)
+        showHighlight()
         setTimeout(() => {
             if (
                 !stores.Messages.haveIseen(
@@ -312,8 +305,8 @@ export default class Message extends BeComponent {
     testReactions = [];
     renderMessageReactions(sender) {
         return this.props.message.reaction
-            ? this.props.message.reaction.map((ele) => this.reaction(sender, ele))
-            : this.testReactions.map((ele) => this.reaction(sender, ele));
+            ? this.props.message.reaction.map((ele, index) => this.reaction(sender, ele, index))
+            : this.testReactions.map((ele, index) => this.reaction(sender, ele, index));
     }
     reactions(sender) {
         return (
@@ -327,9 +320,9 @@ export default class Message extends BeComponent {
             </View>
         );
     }
-    reaction(sender, element) {
+    reaction(sender, element, index) {
         return (
-            <View style={{ flexDirection: "column" }}>
+            <View key={element.reaction + index} style={{ flexDirection: "column" }}>
                 <TouchableOpacity
                     onPress={() =>
                         requestAnimationFrame(() => {
@@ -386,16 +379,6 @@ export default class Message extends BeComponent {
             refresh: !this.state.refresh,
         });
     }
-    event = "updated" + this.props.message.id;
-    componentMounting() {
-        emitter.on(this.event, () => {
-            console.warn("receiving message update");
-            this.refresh();
-        });
-    }
-    unmountingComponent() {
-        emitter.off(this.event);
-    }
     iconStyles = {
         fontSize: 14,
         color: ColorList.indicatorColor,
@@ -407,12 +390,6 @@ export default class Message extends BeComponent {
         this.props.showActions(this.props.message, reply, !this.state.sender);
         Vibrator.vibrateLong();
     }
-    testForImoji(message) {
-        let imoji = message.match(
-            /[\u{1f300}-\u{1f5ff}\u{1f900}-\u{1f9ff}\u{1f600}-\u{1f64f}\u{1f680}-\u{1f6ff}\u{2600}-\u{26ff}\u{2700}-\u{27bf}\u{1f1e6}-\u{1f1ff}\u{1f191}-\u{1f251}\u{1f004}\u{1f0cf}\u{1f170}-\u{1f171}\u{1f17e}-\u{1f17f}\u{1f18e}\u{3030}\u{2b50}\u{2b55}\u{2934}-\u{2935}\u{2b05}-\u{2b07}\u{2b1b}-\u{2b1c}\u{3297}\u{3299}\u{303d}\u{00a9}\u{00ae}\u{2122}\u{23f3}\u{24c2}\u{23e9}-\u{23ef}\u{25b6}\u{23f8}-\u{23fa}]/gu
-        );
-        return imoji && imoji.length == 1 && message.length == imoji[0].length;
-    }
     isVote() {
         return this.props.message.type === "vote";
     }
@@ -423,6 +400,12 @@ export default class Message extends BeComponent {
                 break;
             case message_types.photo:
                 this.props.showPhoto(this.props.message.photo);
+                break;
+            case message_types.remind_message:
+                this.props.handleRemindPress()
+                break;
+            case message_types.star_message:
+                this.props.handleStarPress()
                 break;
             default:
                 null; //console.warn("message pressed")
@@ -461,7 +444,7 @@ export default class Message extends BeComponent {
     }
     placeholderStyle = this.props.message.dimensions
         ? this.props.message.dimensions
-        : {height:100,width:80};
+        : { height: 100, width: 80 };
     render() {
         let showName = this.state.sender && this.state.different;
         let topMostStyle = {
@@ -498,13 +481,7 @@ export default class Message extends BeComponent {
         let subNameStyle = {
             paddingBottom: 0,
             flexDirection: "row",
-            margin: "2%",
-            backgroundColor:
-                this.props.message.text && this.props.message.type === "text"
-                    ? this.testForImoji(this.props.message.text)
-                        ? color
-                        : "transparent"
-                    : "transparent",
+            margin: "2%"
             // backgroundColor: color,
         };
         placeholderStyle = {
@@ -623,7 +600,7 @@ export default class Message extends BeComponent {
                                                         style={{
                                                             flexDirection: "row",
                                                             alignItems: "flex-end",
-                                                            width:20,
+                                                            width: 20,
                                                             justifyContent: "center",
                                                         }}
                                                     >
@@ -658,13 +635,14 @@ export default class Message extends BeComponent {
                                                                             />
                                                                         )
                                                                 ) : (
-                                                                       <View style={{
-                                                                           ...rounder(14,color),justifyContent: 'center',}} 
-                                                                           ><EvilIcons
-                                                                            style={this.iconStyles}
-                                                                            type={"EvilIcons"}
-                                                                            name="check"
-                                                                        />
+                                                                        <View style={{
+                                                                            ...rounder(14, color), justifyContent: 'center',
+                                                                        }}
+                                                                        ><EvilIcons
+                                                                                style={this.iconStyles}
+                                                                                type={"EvilIcons"}
+                                                                                name="check"
+                                                                            />
                                                                         </View>
                                                                     )
                                                             ) : (
@@ -697,20 +675,20 @@ export default class Message extends BeComponent {
                                                         {this.state.different &&
                                                             this.state.sender &&
                                                             !this.props.isRelation ? (
-                                                                <ChatUser 
-                                                                searchString={this.props.searchString}
-                                                                foundString={this.props.foundString}
-                                                                phone={this.props.message && this.props.message.sender &&
-                                                                    this.props.message.sender.phone}
+                                                                <ChatUser
+                                                                    searchString={this.props.searchString}
+                                                                    foundString={this.props.foundString}
+                                                                    phone={this.props.message && this.props.message.sender &&
+                                                                        this.props.message.sender.phone}
                                                                     onPressIn={this.handlePressIn.bind(this)}
-                                                                    showProfile={() =>
+                                                                    showProfile={() => {
                                                                         requestAnimationFrame(() => {
                                                                             this.props.showProfile(
                                                                                 this.props.message.sender.phone
                                                                             );
                                                                         })
-                                                                    }
-                                                                />     
+                                                                    }}
+                                                                />
                                                             ) : null}
                                                         <View>
                                                             {this.props.message.reply ? (

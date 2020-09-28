@@ -1,7 +1,7 @@
 /* eslint-disable react-native/no-inline-styles */
 /* eslint-disable prettier/prettier */
 import React, { PureComponent } from 'react';
-import { View, TouchableOpacity, Text } from 'react-native';
+import { View, TouchableOpacity, Text, Image } from 'react-native';
 import bleashupHeaderStyle from '../../../services/bleashupHeaderStyle';
 import ColorList from '../../colorList';
 import TypingIndicator from './TypingIndicator';
@@ -17,6 +17,9 @@ import { checkUserOnlineStatus } from './services';
 import Searcher from '../Contacts/Searcher';
 import rounder from '../../../services/rounder';
 import searchToolsParts from './searchToolsPart';
+import CacheImages from '../../CacheImages';
+import testForURL from '../../../services/testForURL';
+import shadower from '../../shadower';
 
 export default class ChatRoomHeader extends BePureComponent {
     constructor(props) {
@@ -58,7 +61,7 @@ export default class ChatRoomHeader extends BePureComponent {
                     flexDirection: 'row',
                 }}
             >
-                <TouchableOpacity style={{
+               <TouchableOpacity style={{
                     width: '10%',
                     alignItems: 'center',
                 }} onPress={() => requestAnimationFrame(() => this.props.goback())} >
@@ -72,7 +75,36 @@ export default class ChatRoomHeader extends BePureComponent {
                         name={'arrow-back'}
                     />
                 </TouchableOpacity>
-                {this.props.searching ? null : <View style={{
+                {this.props.searching ? null : <TouchableOpacity
+                    style={{
+                        ...shadower(),
+                        marginHorizontal: '1%',
+                        ...rounder(35, ColorList.indicatorColor),
+                        justifyContent: 'center',
+                    }}
+                    onPress={() =>
+                        requestAnimationFrame(this.props.showActivityPhotoAction)
+                    }
+                >
+                    {testForURL(this.props.background) ? (
+                        <CacheImages
+                            style={{
+                                ...rounder(30, ColorList.indicatorColor),
+                            }}
+                            thumbnails
+                            source={{ uri: this.props.background }}
+                        ></CacheImages>
+                    ) : (
+                            <Image
+                                resizeMode={"cover"}
+                                style={{ ...rounder(30) }}
+                                source={this.props.isRelation ? GState.profilePlaceHolder : GState.activity_place_holder}
+                            ></Image>
+                        )}
+                </TouchableOpacity>}
+                {this.props.searching ? null : <TouchableOpacity onPress={() => {
+                    requestAnimationFrame(this.props.openSettings)
+                }} style={{
                     flexDirection: 'column',
                     width: "60%",
                     alignItems: 'flex-start',
@@ -95,10 +127,10 @@ export default class ChatRoomHeader extends BePureComponent {
                     <View>
                         {this.onlinePart && this.onlinePart()}
                     </View>
-                </View>}
+                </TouchableOpacity>}
                 <View style={{
                     marginHorizontal: '1%',
-                    width: this.props.searching ? "67%" : 35,
+                    width: this.props.searching ? "65%" : 35,
                     height: 35,
                     justifyContent: 'center',
                     alignSelf: 'center',
@@ -113,10 +145,10 @@ export default class ChatRoomHeader extends BePureComponent {
                     </Searcher>
                 </View>
                 {this.props.searching && this.props.searchResult && this.props.searchResult.length > 0 ?
-                  this.searchToolsParts():
+                    this.searchToolsParts() :
                     <View
                         style={{
-                            width: 55,
+                            width: 40,
                             alignSelf: 'flex-end',
                             alignItems: 'center',
                             flexDirection: 'row',
@@ -125,22 +157,11 @@ export default class ChatRoomHeader extends BePureComponent {
                             height: 50,
                         }}
                     >
-                        <TouchableOpacity
-                            onPress={() => {
-                                requestAnimationFrame(() => this.props.openMenu());
-                            }}
-                            style={{
-                                alignSelf: 'flex-end',
-                                height: ColorList.headerHeight,
-                                justifyContent: 'center',
-                            }}
-                        >
-                            <Ionicons
-                                style={{ color: ColorList.headerIcon, fontSize: 30 }}
-                                type={'Ionicons'}
-                                name={'ios-menu'}
-                            />
-                        </TouchableOpacity>
+                       <ChatroomMenu
+                       openPage={this.props.openPage}
+                       settings={this.props.openSettings}
+                       >
+                       </ChatroomMenu>
                     </View>}
 
             </View>

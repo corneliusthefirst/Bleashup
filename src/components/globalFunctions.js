@@ -56,11 +56,11 @@ class Functions {
   }
   filterAllActivityAndRelation(event, text) {
     if (event) {
-      text = (text && text.toLowerCase())||""
+      text = (text && text.toLowerCase()) || ""
       if (event.type === active_types.relation) {
         let oponentPhone = this.returnOponent(event)
         let oponent = stores.TemporalUsersStore.Users[oponentPhone]
-        return oponent &&  oponent.nickname && oponent.nickname.toLowerCase().includes(text)
+        return oponent && oponent.nickname && oponent.nickname.toLowerCase().includes(text)
       } else {
         return event.about && event.about.title && event.about.title.includes(text)
       }
@@ -95,7 +95,7 @@ class Functions {
     return name && name.includes(search.toLowerCase()) ? true : false;
   }
 
-  filterMessages(ele, search) {
+  filterMessages(ele, search, isRelation) {
     if (ele && search && search.length > 0) {
       search = search.toLowerCase()
       let senderPhone = ele.sender && ele.sender.phone.replace && ele.sender.phone.replace("+", "00")
@@ -103,14 +103,17 @@ class Functions {
       let user = senderPhone && senderPhone !== stores.LoginStore.user.phone &&
         stores.TemporalUsersStore.Users[senderPhone]
       let isUsername = user && user.nickname && user.nickname.toLowerCase().includes(search)
-      return isText || isUsername
+      return isText || (!isRelation && isUsername)
     } else {
       return false
     }
   }
   byTitleAndDesc(ele, search) {
-    return (ele.title && ele.title.toLowerCase().includes(search.toLowerCase()) ||
-      ele.description && ele.description.toLowerCase().includes(search.toLowerCase()))
+    search = search ? search.toLowerCase() : ""
+    return (ele.title && ele.title.toLowerCase().includes(search) ||
+      ele.description && ele.description.toLowerCase().includes(search)) ||
+      (ele.location && ele.location.toLowerCase().includes(search))||
+      (ele.members && ele.members.length && search.includes(ele.members.length.toString()))
   }
   filterStars(ele, search) {
     return ele && ele.id !== request.Highlight().id && this.byTitleAndDesc(ele, search)

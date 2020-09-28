@@ -15,7 +15,8 @@ import GState from "../../../stores/globalState";
 import rounder from "../../../services/rounder";
 import replies from '../eventChat/reply_extern';
 import { format } from "../../../services/recurrenceConfigs";
-import  moment  from 'moment';
+import moment from 'moment';
+import Spinner from "../../Spinner";
 const screenheight = Math.round(Dimensions.get("window").height);
 export default class ReportTabModal extends TabModal {
   initialize() {
@@ -28,27 +29,31 @@ export default class ReportTabModal extends TabModal {
   swipeToClose = false
   onClosedModal() {
     this.props.onClosed();
-    this.setState({
+    this.setStatePure({
       content: null,
+      mounted: false
     });
   }
-  backdropPressToClose=false
+  backdropPressToClose = false
   shouldComponentUpdate(prevprops, prevState) {
     return (prevState.mounted !== this.state.mounted ||
-      this.props.isOpen !== prevprops.isOpen ||
-      (this.props.concernees &&
-        prevprops.concernees &&
-        this.props.concernees.length !== prevprops.concernees.length))
+      this.props.isOpen !== prevprops.isOpen)
       ? true : false
   }
   onOpenModal() {
-    /*setTimeout(() => {
-      this.setState({
-        content: this.props.content,
+    setTimeout(() => {
+      this.setStatePure({
+        //content: this.props.content,
         mounted: true,
       });
-      this.props.stopLoader();
-    }, 20);*/
+      //this.props.stopLoader();
+    });
+  }
+  mountedComponent() {
+    this.isRoute && this.onOpenModal()
+  }
+  goback() {
+    this.isRoute ? this.props.navigation.goBack() : this.onClosedModal()
   }
   mapInitialRoute(type) {
     switch (type) {
@@ -60,7 +65,20 @@ export default class ReportTabModal extends TabModal {
         return "Members"
     }
   }
-  inialPage = this.mapInitialRoute(this.props.type)
+  isRoute = this.props.navigation && true
+  getParam = (param) => this.props.navigation && this.props.navigation.getParam(param)
+  type = this.getParam("type") || this.props.type
+  actualInterval = this.getParam("actualInterval") || this.props.actualInterval
+  intervals = this.getParam("intervals") || this.props.intervals
+  currentRemindUser = this.getParam("currentRemindUser") || this.props.currentRemindUser
+  master = this.getParam("master") || this.props.master
+  confirm = this.getParam("confirm") || this.props.confirm
+  reply = this.getParam("reply") || this.props.reply
+  confirmed = this.getParam("confirmed") || this.props.confirmed
+  must_report = this.getParam("must_report") || this.props.must_report
+  concernees = this.getParam("concernees") || this.props.concernees
+  donners = this.getParam("donners") || this.props.donners
+  inialPage = this.mapInitialRoute(this.type)
   tabs = {
     Members: {
       navigationOptions: {
@@ -74,18 +92,18 @@ export default class ReportTabModal extends TabModal {
           />
       },
       screen: () => (
-        <View style={{ height: "100%" }}>
+        this.state.mounted ? <View style={{ height: "100%" }}>
           <ConcerneeList
-            initDate={this.props.actualInterval ? this.props.actualInterval.start:moment().format(format)}
-            reply={this.props.reply}
+            initDate={this.actualInterval ? this.actualInterval.start : moment().format(format)}
+            reply={this.reply}
             type={replies.member}
-            currentRemindUser={this.props.currentRemindUser}
-            contacts={this.props.concernees}
+            currentRemindUser={this.currentRemindUser}
+            contacts={this.concernees}
             complexReport={false}
-            must_report={this.props.must_report}
-            actualInterval={this.props.actualInterval}
+            must_report={this.must_report}
+            actualInterval={this.actualInterval}
           ></ConcerneeList>
-        </View>
+        </View> : <Spinner></Spinner>
       ),
     },
     Donners: {
@@ -99,19 +117,19 @@ export default class ReportTabModal extends TabModal {
         tabBarColor: ColorList.indicatorColor,
       },
       screen: () => (
-        <View style={{ height: "100%" }}>
+        this.state.mounted ? <View style={{ height: "100%" }}>
           <DonnersList
-            currentRemindUser={this.props.currentRemindUser}
+            currentRemindUser={this.currentRemindUser}
             type={replies.done}
-            reply={this.props.reply}
-            intervals={this.props.intervals}
-            donners={this.props.donners}
-            master={this.props.master}
-            actualInterval={this.props.actualInterval}
-            confirm={this.props.confirm}
-            must_report={this.props.must_report}
+            reply={this.reply}
+            intervals={this.intervals}
+            donners={this.donners}
+            master={this.master}
+            actualInterval={this.actualInterval}
+            confirm={this.confirm}
+            must_report={this.must_report}
           ></DonnersList>
-        </View>
+        </View> : <Spinner></Spinner>
       ),
     },
     Confirmed: {
@@ -125,19 +143,19 @@ export default class ReportTabModal extends TabModal {
         tabBarColor: ColorList.likeActive,
       },
       screen: () => (
-        <View style={{ height: "100%" }}>
+        this.state.mounted ? <View style={{ height: "100%" }}>
           <DonnersList
-            currentRemindUser={this.props.currentRemindUser}
+            currentRemindUser={this.currentRemindUser}
             type={replies.confirmed}
-            reply={this.props.reply}
+            reply={this.reply}
             cannotReport
-            intervals={this.props.intervals}
-            master={this.props.master}
-            donners={this.props.confirmed}
-            must_report={this.props.must_report}
-            actualInterval={this.props.actualInterval}
+            intervals={this.intervals}
+            master={this.master}
+            donners={this.confirmed}
+            must_report={this.must_report}
+            actualInterval={this.actualInterval}
           ></DonnersList>
-        </View>
+        </View> : <Spinner></Spinner>
       ),
     },
     Back: {
@@ -152,9 +170,12 @@ export default class ReportTabModal extends TabModal {
           /></TouchableOpacity>,
       },
       screen: () => {
-        this.onClosedModal()
+        this.goback()
         return <View></View>
       }
     },
   };
+  render() {
+    return this.isRoute ? this.modalBody() : this.modal()
+  }
 }

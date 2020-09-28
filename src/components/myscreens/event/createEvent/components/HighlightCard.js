@@ -10,6 +10,7 @@ import BePureComponent from "../../../../BePureComponent";
 import GState from "../../../../../stores/globalState";
 import TextContent from "../../../eventChat/TextContent";
 import Creator from "../../../reminds/Creator";
+import { showHighlightForScrollToIndex } from "../../../eventChat/highlightServices";
 
 let { height, width } = Dimensions.get("window");
 
@@ -22,10 +23,7 @@ export default class HighlightCard extends BePureComponent {
       mounted: false,
       isOpen: false,
       check: false,
-      master:
-        this.props.participant.master == false
-          ? this.props.participant.master
-          : true,
+      master: this.props.participant && this.props.participant.master
     };
   }
 
@@ -38,7 +36,8 @@ export default class HighlightCard extends BePureComponent {
   }
 
   componentDidMount() {
-    //console.error(this.props.item.dimensions)
+    const showHighlight = showHighlightForScrollToIndex.bind(this);
+    showHighlight();
     setTimeout(() => {
       this.setStatePure({
         mounted: true,
@@ -58,95 +57,100 @@ export default class HighlightCard extends BePureComponent {
     //borderColor: "ivory",
   };
   render() {
-    return this.state.mounted ? (<View onLayout={(e) => {
-      this.props.onLayout(e.nativeEvent.layout);
-    }}>
-      <Swipeout
-        disabled={false}
-        minSwipe={50}
-        onLongPress={this.props.showActions}
-        swipeLeft={() => {}}
-        swipeRight={() => {
-          this.props.mention(this.props.item);
+    return this.state.mounted ? (
+      <View
+        onLayout={(e) => {
+          this.props.onLayout(e.nativeEvent.layout);
         }}
       >
-        <View
-          style={[
-            this.container,
-            {
-              backgroundColor: this.props.isPointed
-                ? ColorList.postTransparent
-                : ColorList.bodyBackground,
-            },
-          ]}
+        <Swipeout
+          disabled={false}
+          minSwipe={50}
+          onLongPress={this.props.showActions}
+          swipeLeft={() => {}}
+          swipeRight={() => {
+            this.props.mention(this.props.item);
+          }}
         >
           <View
-            style={{
-              flexDirection: "row",
-              width: "97%",
-              justifyContent: "center",
-              minHeight: 70,
-              alignSelf: "center",
-            }}
+            style={[
+              this.container,
+              {
+                backgroundColor: this.props.isPointed
+                  ? ColorList.postTransparent
+                  : ColorList.bodyBackground,
+              },
+            ]}
           >
-            <TextContent
-              animate={this.props.animate}
-              searchString={this.props.searchString}
+            <View
               style={{
-                ...GState.defaultTextStyle,
-                fontSize: 15,
-                marginTop: "2%",
-
-                textAlign: "center",
-                color: ColorList.headerBlackText,
-                fontWeight: "bold",
-                //marginTop: "10%",
+                flexDirection: "row",
+                width: "97%",
+                justifyContent: "center",
+                minHeight: 70,
+                alignSelf: "center",
               }}
-              //numberOfLines={3}
             >
-              {this.props.item.title}
-            </TextContent>
+              <TextContent
+                tags={this.props.item.extra && this.props.item.extra.tags}
+                animate={this.props.animate}
+                searchString={this.props.searchString}
+                style={{
+                  ...GState.defaultTextStyle,
+                  fontSize: 15,
+                  marginTop: "2%",
+
+                  textAlign: "center",
+                  color: ColorList.headerBlackText,
+                  fontWeight: "bold",
+                  //marginTop: "10%",
+                }}
+                //numberOfLines={3}
+              >
+                {this.props.item.title}
+              </TextContent>
+            </View>
+            <MedaiView
+              width={ColorList.containerWidth}
+              height={this.props.height}
+              showItem={() => this.props.showItem(this.props.item, false, true)}
+              url={this.props.item.url || {}}
+            ></MedaiView>
+            <View
+              style={{
+                margin: "1%",
+              }}
+            >
+              <TextContent
+                animate={this.props.animate}
+                tags={this.props.item.extra && this.props.item.extra.tags}
+                searchString={this.props.searchString}
+                text={
+                  this.props.item.description ? this.props.item.description : ""
+                }
+              ></TextContent>
+            </View>
+            <View
+              style={{
+                width: ColorList.containerWidth,
+                alignSelf: "center",
+                alignItems: "center",
+                marginLeft: "3%",
+                flexDirection: "row",
+                justifyContent: "space-between",
+              }}
+            >
+              <Creator creator={this.props.item.creator}></Creator>
+              <Social
+                title={this.props.item.title}
+                activity_name={this.props.activity_name}
+                creator={this.props.item.creator}
+                activity_id={this.props.activity_id}
+                id={this.props.item.id}
+              ></Social>
+            </View>
           </View>
-          <MedaiView
-            width={ColorList.containerWidth}
-            height={this.props.height}
-            showItem={() => this.props.showItem(this.props.item, false, true)}
-            url={this.props.item.url || {}}
-          ></MedaiView>
-          <View
-            style={{
-              margin: "1%",
-            }}
-          >
-            <TextContent
-            animate={this.props.animate}
-              searchString={this.props.searchString}
-              text={
-                this.props.item.description ? this.props.item.description : ""
-              }
-            ></TextContent>
-          </View>
-          <View
-            style={{
-              width: ColorList.containerWidth,
-              alignSelf: "center",
-              alignItems: "center",
-              marginLeft: "3%",
-              flexDirection: "row",
-              justifyContent: "space-between",
-            }}
-          >
-            <Creator creator={this.props.item.creator}></Creator>
-            <Social
-              title={this.props.item.title}
-              activity_name={this.props.activity_name}
-              creator={this.props.item.creator}
-              activity_id={this.props.activity_id}
-              id={this.props.item.id}
-            ></Social>
-          </View>
-        </View>
-      </Swipeout>
+        </Swipeout>
       </View>
     ) : (
       <View

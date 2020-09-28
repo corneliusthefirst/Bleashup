@@ -48,6 +48,7 @@ import globalFunctions from '../../globalFunctions';
 import Texts from '../../../meta/text';
 import Toaster from '../../../services/Toaster';
 import { justSearch, cancelSearch, startSearching } from '../eventChat/searchServices';
+import ActivityPages from '../eventChat/chatPages';
 
 
 let { height, width } = Dimensions.get('window');
@@ -189,7 +190,7 @@ updatePhoneContacts = (bool) => {
   createRelation = (user) => {
       getRelation(user)
         .then((relation) => {
-          BeNavigator.navigateToActivity('EventChat', relation);
+          BeNavigator.navigateToActivity(ActivityPages.chat, relation);
         })
         .catch((err) => {
           console.warn(err);

@@ -11,6 +11,7 @@ import {
   TouchableOpacity,
   Image,
   StyleSheet,
+  Keyboard
 } from "react-native";
 import { withInAppNotification } from "react-native-in-app-notification";
 import stores from "../../../stores";
@@ -91,12 +92,18 @@ class Home extends BeComponent {
     })
   }
   showDetailModal(event, data) {
-    console.warn("setting event")
-    this.setStatePure({
-      showDetailModal: true,
-      data: data || this.state.data,
-      event: event || this.state.event
-    })
+    if (data.remind_id) {
+      BeNavigator.goToRemindDetail(data.remind_id, data.activity_id)
+    } else if (data.post_id) {
+      BeNavigator.gotoStarDetail(data.post_id, data.activity_id)
+    } else {
+      console.warn("setting event")
+      this.setStatePure({
+        showDetailModal: true,
+        data: data || this.state.data,
+        event: event || this.state.event
+      })
+    }
   }
   hideDetailModal() {
     this.setStatePure({
@@ -160,7 +167,7 @@ class Home extends BeComponent {
   animating = false;
   realNew = [];
   componentDidMount() {
-    stores.Events.initSearch();
+    //stores.Events.initSearch();
     emitter.on("notify", (event) => {
       if (GState.currentRoom !== event.data.room_key) {
         this.props.showNotification({
@@ -181,6 +188,7 @@ class Home extends BeComponent {
     AppState.removeEventListener("change", this._handleAppStateChange);
     this.removeNotificationOpenedListener();
   }
+  hide_keyboard_event = "hide_keyboard"
   _handleAppStateChange = (nextAppState) => {
     if (nextAppState !== "active") {
 
@@ -192,6 +200,7 @@ class Home extends BeComponent {
       GState.currentRoom && PrivacyRequester.makeOnline()
       console.warn("App has come to the foreground!");
     } else {
+      Keyboard.dismiss()
       PrivacyRequester.makeOffline()
     }
     //this.setState({ appState: nextAppState });

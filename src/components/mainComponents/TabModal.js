@@ -55,6 +55,10 @@ export default class TabModal extends BleashupModal {
   }
   componentDidMount(){
     this.initRoutes()
+    this.mountedComponent()
+  }
+  mountedComponent(){
+    
   }
   onClosedModal() {
     this.props.closed();
@@ -70,11 +74,11 @@ export default class TabModal extends BleashupModal {
       navigationOptions: {
         tabBarIcon: () => (
           <View>
-            <Text style={{ ...GState.defaultTextStyle }}>Sample</Text>
+            <Text style={{ ...GState.defaultTextStyle }}>{""}</Text>
           </View>
         ),
       },
-      screen: () => <View><Text>Hello, this is a tab content</Text></View>,
+      screen: () => <View><Text>{""}</Text></View>,
     },
   };
   tabHeight = ColorList.headerHeight;

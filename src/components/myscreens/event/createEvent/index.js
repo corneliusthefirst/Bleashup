@@ -35,6 +35,7 @@ import MaterialIconCommunity from "react-native-vector-icons/MaterialCommunityIc
 import MaterialIcons from "react-native-vector-icons/MaterialIcons";
 import Texts from "../../../../meta/text";
 import BeNavigator from "../../../../services/navigationServices";
+import ActivityPages from '../../eventChat/chatPages';
 
 let { height, width } = Dimensions.get("window");
 
@@ -70,7 +71,7 @@ export default class CreateEventView extends Component {
   navigateToActivity = (event) => {
     this.props.navigation.navigate("Event", {
       Event: event,
-      tab: "EventDetails",
+      tab: ActivityPages.starts,
     });
   };
 

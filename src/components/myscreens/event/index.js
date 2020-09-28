@@ -40,7 +40,6 @@ import HighlightCardDetail from "./createEvent/components/HighlightCardDetail";
 import TasksCreation from "../reminds/TasksCreation";
 import testForURL from "../../../services/testForURL";
 import ProfileModal from "../invitations/components/ProfileModal";
-import Drawer from "react-native-drawer";
 import shadower from "../../shadower";
 import colorList from "../../colorList";
 import SettingsTabModal from "./SettingTabModal";
@@ -55,6 +54,7 @@ import Texts from '../../../meta/text';
 import { close_all_modals, reply_me } from '../../../meta/events';
 import EventDescription from './createEvent/components/EventDescription';
 import DescriptionModal from "../eventDetails/descriptionModal";
+import ActivityPages from '../eventChat/chatPages';
 
 const screenWidth = Math.round(Dimensions.get("window").width);
 
@@ -91,11 +91,11 @@ export default class Event extends BeComponent {
   state = {
     Event: undefined /*{ about: { title: "Event title" }, updated: true }*/,
     activeTab: undefined,
-    initalPage: "EventDetails",
-    currentPage: "EventDetails",
+    initalPage: ActivityPages.starts,
+    currentPage: ActivityPages.starts,
     enabled: false,
     members: [],
-    newing:false,
+    newing: false,
     isOpen: false,
   };
   textStyle = {
@@ -103,34 +103,23 @@ export default class Event extends BeComponent {
   };
 
   showRemindID(id) {
-    this.setStatePure({
-      remind_id: id,
-      isremindConfigurationModal: true,
-      remind: null,
-    });
+    BeNavigator.goToRemindDetail(id,this.event.id)
   }
   showHighlightID(id) {
     stores.Highlights.loadHighlight(this.event.id, id).then((High) => {
       High
-        ? this.setStatePure({
-          isHighlightDetailModalOpened: true,
-          shouldNotMention: true,
-          highlight: High,
-        })
+        ? BeNavigator.gotoStarDetail(id, High.event_id, { star: High })
         : null;
     });
   }
   showHighlightDetails(H, restoring, play) {
     play ? (H.url.video ?
       this.showVideo(H.url.video) :
-      this.showPhoto(H.url.photo)) : this.setStatePure({
-        highlight: H,
-        shouldRestore: restoring,
-        isHighlightDetailModalOpened: true,
-      });
+      this.showPhoto(H.url.photo)) :
+      BeNavigator.gotoStarDetail(H.id, H.event_id, { star: H })
   }
   addRemindForCommittee(members) {
-    BeNavigator.pushActivity(this.event, "Reminds", { currentRemindMembers: members })
+    BeNavigator.pushActivity(this.event, ActivityPages.reminds, { currentRemindMembers: members })
   }
   applystate() {
     this.setStatePure({
@@ -149,10 +138,10 @@ export default class Event extends BeComponent {
 
   }
   startThis(star) {
-    BeNavigator.pushActivity(this.event, "EventDetails", { star })
+    BeNavigator.pushActivity(this.event, ActivityPages.starts, { star })
   }
   remindThis(remind) {
-    BeNavigator.pushActivity(this.event, "Reminds", { remind })
+    BeNavigator.pushActivity(this.event, ActivityPages.reminds, { remind })
   }
   currentWidth = 0.5;
   isOpen = false;
@@ -180,7 +169,7 @@ export default class Event extends BeComponent {
   showDescription() {
     this.setStatePure({ viewdetail: true })
   }
-  clearIndexedRemind(){
+  clearIndexedRemind() {
     /*this.type = null
     this.currentRemindUser = null 
     this.setStatePure({
@@ -190,7 +179,7 @@ export default class Event extends BeComponent {
   renderMenu(NewMessages) {
     ///console.error(this.state.currentPage)
     switch (this.state.currentPage) {
-      case "EventDetails":
+      case ActivityPages.starts:
         return (
           <EventDetails
             isRelation={this.isRelation}
@@ -228,7 +217,7 @@ export default class Event extends BeComponent {
             Event={this.event}
           ></EventDetails>
         );
-      case "Reminds":
+      case ActivityPages.reminds:
         return (
           <Remind
             //shared={false}
@@ -269,10 +258,14 @@ export default class Event extends BeComponent {
             event_id={this.event.id}
           ></Remind>
         );
-      case "EventChat":
+      case ActivityPages.chat:
         return (
           <EventChat
-            ref="EventChat"
+            openPage={this.setCurrentPage.bind(this)}
+            openSettings={this.openSettingsModal.bind(this)}
+            activityPhoto={this.event.background}
+            showActivityPhotoAction={this.openPhotoSelectorModal.bind(this)}
+            ref={ActivityPages.chat}
             oponent={this.oponent.phone}
             id={this.id}
             isRelation={this.isRelation}
@@ -342,7 +335,7 @@ export default class Event extends BeComponent {
             }}
           ></EventChat>
         );
-      case "ChangeLogs":
+      case ActivityPages.logs:
         return (
           <ChangeLogs
             isRelation={this.isRelation}
@@ -384,12 +377,10 @@ export default class Event extends BeComponent {
     };
     let index = findIndex(stores.ChangeLogs.changes[this.event.id], (ele) => {
       return ele.updater == data.updater &&
-        ele.updated == data.updated &&
-        ele.new_value.data == data.new_value.data //&& 
-      //ele.new_value.new_value == data.new_value.data.new_value
+        ele.date == data.date 
     })
     if (index >= 0) {
-      BeNavigator.pushActivity(this.event, "ChangeLogs", { index })
+      BeNavigator.pushActivity(this.event, ActivityPages.logs, { index })
     } else {
       this.propcessAndFoward(change);
     }
@@ -412,9 +403,7 @@ export default class Event extends BeComponent {
       change.updated == "highlight_restored"
     ) {
       this.showHighlightDetails(
-        change.new_value.new_value,
-        change.updated == "highlight_delete" ? true : false
-      );
+        change.new_value.new_value      );
     } else if (change.updated === "highlight_url") {
       this.showHighlightDetails({
         title: change.changed,
@@ -473,11 +462,7 @@ export default class Event extends BeComponent {
     });
   }
   showRemind(remind, restoring) {
-    this.setStatePure({
-      isremindConfigurationModal: true,
-      remind: remind,
-      shouldRestore: restoring,
-    });
+    BeNavigator.goToRemindDetail(remind.id,this.event.id,{remind})
   }
   openPhoto(url) {
     this.showPhoto(url)
@@ -543,11 +528,10 @@ export default class Event extends BeComponent {
     });
   }
   handleActivityUpdates(change, newValue) {
-    if (!this.unmounted)
-      this.setStatePure({
-        change: change,
-        showNotifiation: true,
-      });
+    this.setStatePure({
+      change: change,
+      showNotifiation: true,
+    });
     if (
       change &&
       change.changed &&
@@ -560,16 +544,15 @@ export default class Event extends BeComponent {
       if (commitee.id == this.state.roomID) {
         emitter.emit("open-close", commitee.opened);
         emitter.emit("publish-unpublish", commitee.public_state);
-        if (!this.unmounted)
-          this.setStatePure({
-            roomName: commitee.name,
-            public_state: commitee.public_state,
-            opened: commitee.opened,
-            newMessageCount: GState.currentRoomNewMessages
-              ? GState.currentRoomNewMessages.length
-              : 0,
-            roomMembers: commitee.member,
-          });
+        this.setStatePure({
+          roomName: commitee.name,
+          public_state: commitee.public_state,
+          opened: commitee.opened,
+          newMessageCount: GState.currentRoomNewMessages
+            ? GState.currentRoomNewMessages.length
+            : 0,
+          roomMembers: commitee.member,
+        });
       }
     } else if (
       (change &&
@@ -597,7 +580,7 @@ export default class Event extends BeComponent {
       console.warn("including vote");
       emitter.emit("votes-updated", newValue.committee_id);
     }
-    if (!this.unmounted) emitter.emit("refresh-history");
+    emitter.emit("refresh-history");
     setTimeout(() => {
       this.setStatePure({
         change: null,
@@ -641,13 +624,16 @@ export default class Event extends BeComponent {
   }
   duration = 10;
   mention(data) {
-    GState.reply = data;
+    GState.reply = {
+      ...data,
+      activity_id: this.event.id
+    };
     Vibration.vibrate(this.duration);
     let reply = this.getParam("reply")
-    if (this.refs.EventChat) {
+    if (this.refs[ActivityPages.chat]) {
       this.directReply(data)
     } else if (reply) {
-      reply()
+      reply(data)
       this.goback()
     } else {
       emitter.emit(reply_me + this.event.id, GState.reply);
@@ -697,11 +683,14 @@ export default class Event extends BeComponent {
     }
   }
   master = false;
+  leave_route_event = "leave_route"
   componentMounting() {
-    this.unmounted = false;
-    emitter.on(`event_updated_${this.event.id}`, (change, newValue) => {
+    emitter.on(this.leave_route_event, () => {
+      this.goback()
+    })
+    emitter.on(this.event_to_be_listen, (change, newValue) => {
       this.handleActivityUpdates(change, newValue);
-    });
+    })
     this.initializeMaster();
   }
   getParam(key) {
@@ -730,12 +719,13 @@ export default class Event extends BeComponent {
   }
   id = this.getParam("id")
   index = this.getParam("index")
+  currentTab = this.getParam("tab")
   user = null;
   isOpen = true;
   event = this.returnRealEvent(this.getParam("Event"))
   currentRemindMembers = this.getParam("currentRemindMembers")
   componentDidMount() {
-    let page = this.getParam("tab");
+    let page = this.currentTab;
     let isEventCurrentPage = this.isChat(page);
     isEventCurrentPage ? (GState.currentCommitee = this.event.id) : null;
     this.setStatePure({
@@ -785,18 +775,20 @@ export default class Event extends BeComponent {
     }
   }
   isChat(currentPage) {
-    return currentPage === "EventChat"
+    return currentPage === ActivityPages.chat
   }
+
+
+  event_to_be_listen = `event_updated_${this.event.id}`
   unInitialize() {
-    this.unmounted = true;
     Pickers.CleanAll();
-    this.isChat(this.state.currentPage) ? GState.reply = null : null;
-    emitter.off(`event_updated_${this.event.id}`);
+    emitter.off(this.leave_route_event)
+    emitter.off(this.event_to_be_listen);
+
     this.isChat(this.state.currentPage) ? GState.currentCommitee = null : null;
   }
   unmountingComponent() {
     this.unInitialize();
-    //!emitter.off(close_all_modals)
   }
   _allowScroll(scrollEnabled) {
     this.setStatePure({ scrollEnabled: scrollEnabled });
@@ -1002,7 +994,7 @@ export default class Event extends BeComponent {
     this.setStatePure({
       roomID: commitee.id,
       roomName: commitee.name,
-      currentPage: "EventChat",
+      currentPage: ActivityPages.chat,
       fresh: true,
       public_state: commitee.public_state,
       opened: commitee.opened,
@@ -1377,13 +1369,7 @@ export default class Event extends BeComponent {
     this.mention(GState.prepareStarForMention(replyer));
   }
   setCurrentPage(page, data) {
-    if (this.isChat(page)) {
-      this.setStatePure({
-        isChat: true,
-      });
-    } else {
-      BeNavigator.pushActivity(this.event, page);
-    }
+    BeNavigator.pushActivity(this.event, page);
   }
   preleaveActivity() {
     this.isOpen = false;
@@ -1417,13 +1403,15 @@ export default class Event extends BeComponent {
     })
   }
   directReply(reply) {
-    this.refs.EventChat && this.refs.EventChat.initReply(reply)
+    this.refs[ActivityPages.chat] && this.refs[ActivityPages.chat].initReply(reply)
   }
   replyToPhoto() {
     this.hidePhotoIput()
-    let reply = GState.prepareActivityPhotoForMention(this.event.background,
-      this.event.id, this.event.creator_phone)
-    this.mention(reply)
+    setTimeout(() => {
+      let reply = GState.prepareActivityPhotoForMention(this.event.background,
+        this.event.id, this.event.creator_phone)
+      this.mention(reply)
+    }, 100)
   }
   closeSettingModal() {
     this.setStatePure({
@@ -1462,12 +1450,12 @@ export default class Event extends BeComponent {
           marginTop: "12%",
         }}
       >
-        <NotificationModal
+        {this.state.showNotifiation ? <NotificationModal
           change={this.state.change || {}}
           onPress={() => {
             this.setStatePure({
               showNotifiation: false,
-              currentPage: "ChangeLogs",
+              currentPage: ActivityPages.logs,
               forMember: !this.state.forMember,
             });
             this.resetSelectedCommitee();
@@ -1478,7 +1466,7 @@ export default class Event extends BeComponent {
             });
           }}
           isOpen={this.state.showNotifiation}
-        ></NotificationModal>
+        ></NotificationModal> : false}
         <View
           style={{
             marginRight: "95%",
@@ -1493,7 +1481,7 @@ export default class Event extends BeComponent {
           <Spinner size={"small"}></Spinner>
         </View>
       ) : null}
-      <ParticipantModal
+      {this.state.showMembers ? <ParticipantModal
         hideTitle={this.state.hideTitle}
         master={this.master}
         creator={this.event.creator_phone}
@@ -1516,8 +1504,8 @@ export default class Event extends BeComponent {
           });
         }}
         event_id={this.event.id}
-      ></ParticipantModal>
-      <SetAlarmPatternModal
+      ></ParticipantModal> : null}
+      {this.state.showAlarms ? <SetAlarmPatternModal
         isOpen={this.state.showAlarms}
         dontSet
         pattern={this.state.alarms}
@@ -1527,8 +1515,8 @@ export default class Event extends BeComponent {
           })
         }}
       >
-      </SetAlarmPatternModal>
-      <SelectableContactList
+      </SetAlarmPatternModal> : null}
+      {this.state.isSelectableListOpened ? <SelectableContactList
         removing={this.state.removing}
         notcheckall={this.state.notcheckall}
         saveRemoved={(mem) => this.saveRemoved(mem)}
@@ -1562,8 +1550,8 @@ export default class Event extends BeComponent {
         }}
         isOpen={this.state.isSelectableListOpened}
         takecheckedResult={(data) => this.createCommitee(data)}
-      ></SelectableContactList>
-      <CreateCommiteeModal
+      ></SelectableContactList> : null}
+      {this.state.isCommiteeModalOpened ? <CreateCommiteeModal
         isOpen={this.state.isCommiteeModalOpened}
         createCommitee={(data) => this.processResult(data)}
         close={() =>
@@ -1571,8 +1559,8 @@ export default class Event extends BeComponent {
             isCommiteeModalOpened: false,
           })
         }
-      ></CreateCommiteeModal>
-      <ContactListModal
+      ></CreateCommiteeModal> : null}
+      {this.state.isContactListOpened ? <ContactListModal
         contacts={this.state.contactList}
         title={this.state.title}
         isOpen={this.state.isContactListOpened}
@@ -1582,8 +1570,8 @@ export default class Event extends BeComponent {
             contactList: [],
           });
         }}
-      ></ContactListModal>
-      <DescriptionModal
+      ></ContactListModal> : null}
+      {this.state.viewdetail ? <DescriptionModal
         Event={this.event}
         isOpen={this.state.viewdetail}
         onClosed={this.hideDescription.bind(this)}
@@ -1591,9 +1579,9 @@ export default class Event extends BeComponent {
         replyDescription={this.replyDescription.bind(this)}
         showEditDescription={this.showEditDescription.bind(this)}
       >
-      </DescriptionModal>
+      </DescriptionModal> : null}
 
-      <EventDescription
+      {this.state.EventDescriptionState ? <EventDescription
         updateDesc={(newDesc) => {
           this.updateActivityDescription(newDesc)
         }}
@@ -1601,10 +1589,10 @@ export default class Event extends BeComponent {
         isOpen={this.state.EventDescriptionState}
         onClosed={this.hideEditDescription.bind(this)}
         ref={"description_ref"}
-        eventId={this.event.id} />
+        eventId={this.event.id} /> : null}
 
 
-      <ContentModal
+      {this.state.isContentModalOpened ? <ContentModal
         content={this.state.textContent}
         isOpen={this.state.isContentModalOpened}
         closed={() => {
@@ -1613,8 +1601,8 @@ export default class Event extends BeComponent {
             textContent: null,
           });
         }}
-      ></ContentModal>
-      <AreYouSure
+      ></ContentModal> : null}
+      {this.state.isAreYouSureModalOpened ? <AreYouSure
         isOpen={this.state.isAreYouSureModalOpened}
         title={this.state.warnTitle}
         closed={() => {
@@ -1628,8 +1616,8 @@ export default class Event extends BeComponent {
         callback={() => this.state.callback()}
         ok={this.state.okButtonText}
         message={this.state.warnDescription}
-      ></AreYouSure>
-      <InviteParticipantModal
+      ></AreYouSure> : null}
+      {this.state.isInviteModalOpened ? <InviteParticipantModal
         adding={this.state.adding}
         invite={(members) => this.invite(members)}
         onClosed={() => {
@@ -1640,8 +1628,8 @@ export default class Event extends BeComponent {
         master={this.master}
         isOpen={this.state.isInviteModalOpened}
         participant={this.event.participant}
-      ></InviteParticipantModal>
-      <ManageMembersModal
+      ></InviteParticipantModal> : null}
+      {this.state.isManagementModalOpened ? <ManageMembersModal
         isOpen={this.state.isManagementModalOpened}
         checkActivity={(member) => this.checkActivity(member)}
         creator={this.event.creator_phone}
@@ -1656,8 +1644,8 @@ export default class Event extends BeComponent {
             isManagementModalOpened: false,
           });
         }}
-      ></ManageMembersModal>
-      <PhotoInputModal
+      ></ManageMembersModal> : null}
+      {this.state.isSelectPhotoInputMethodModal ? <PhotoInputModal
         replyToPhoto={this.replyToPhoto.bind(this)}
         isRelation={!this.computedMaster || this.isRelation}
         saveBackground={(url) => this.saveBackground(url)}
@@ -1667,53 +1655,8 @@ export default class Event extends BeComponent {
         }}
         isOpen={this.state.isSelectPhotoInputMethodModal}
         closed={this.hidePhotoIput.bind(this)}
-      ></PhotoInputModal>
-      <HighlightCardDetail
-        mention={(item) => {
-          this.mentionPost(item);
-          this.setStatePure({
-            isHighlightDetailModalOpened: false,
-          });
-        }}
-        shouldRestore={this.state.shouldRestore}
-        showPhoto={(url) => this.showPhoto(url)}
-        showVideo={(url) => this.showVideo(url)}
-        shouldNotMention={this.state.shouldNotMention}
-        restore={(item) =>
-          this.restoreHighlight({ new_value: { new_value: item } })
-        }
-        isOpen={this.state.isHighlightDetailModalOpened}
-        item={this.state.highlight}
-        onClosed={() => {
-          this.setStatePure({
-            isHighlightDetailModalOpened: false,
-            shouldNotMention: false,
-            shouldRestore: false,
-          });
-        }}
-      ></HighlightCardDetail>
-      <TasksCreation
-        shouldRestore={this.state.shouldRestore}
-        canRestore={
-          this.state.remind &&
-          (this.state.remind.creator === this.user.phone || this.master)
-        }
-        restore={(item) =>
-          this.restoreRemind({ new_value: { new_value: item } })
-        }
-        isOpen={this.state.isremindConfigurationModal}
-        onClosed={() => {
-          this.setStatePure({
-            isremindConfigurationModal: false,
-            shouldRestore: false,
-          });
-        }}
-        event_id={this.event.id}
-        event={this.event}
-        remind_id={this.state.remind_id}
-        remind={this.state.remind}
-      ></TasksCreation>
-      <ProfileModal
+      ></PhotoInputModal> : null}
+      {this.state.isProfileModalOpened ? <ProfileModal
         profile={this.state.profile}
         isOpen={this.state.isProfileModalOpened}
         onClosed={() => {
@@ -1721,8 +1664,8 @@ export default class Event extends BeComponent {
             isProfileModalOpened: false,
           });
         }}
-      ></ProfileModal>
-      <SettingsTabModal
+      ></ProfileModal> : null}
+      {this.state.isSettingsModalOpened ? <SettingsTabModal
         addMembers={() => this.startInvitation(true)}
         invite={() => this.startInvitation()}
         remove={() => this.showMembers()}
@@ -1753,153 +1696,25 @@ export default class Event extends BeComponent {
           this.saveSettings(original, newSettings);
         }}
         closed={this.closeSettingModal.bind(this)}
-      ></SettingsTabModal>
+      ></SettingsTabModal> : null}
     </View>
   }
   render() {
     StatusBar.setHidden(false, true);
     return !this.state.mounted ? null : (!this.isChat(this.state.currentPage) ? <View style={{ height: '100%' }}>{this.renderMenu()}
       {this.renderExtra()}
-    </View> :
-      <Drawer
-        useInteractionManager={true}
-        tweenHandler={
-          //this.isChat(this.state.currentPage)
-          //  ? null
-          // : 
-          Drawer.tweenPresets.parallax
-        }
-        open={this.isOpen}
-        onOpen={() => {
-          this.isOpen = true;
-        }}
-        onClose={() => {
-          this.isOpen = false;
-          setTimeout(() => {
-            !this.isChat(this.state.currentPage)
-              ? this.setStatePure({
-                isChat: false,
-              })
-              : null;
-          }, 50);
-        }}
-        tapToClose={true}
-        panOpenMask={0.1}
-        acceptDoubleTap={true}
-        panOpenMask={0.2}
-        elevation={//this.state.isChat ? 16 : 
-          null
-        }
-        openDrawerOffset={//this.state.isChat ? 0.23 : 
-          0.815}
-        type={//this.state.isChat ? "overlay" : 
-          "static"}
-        styles={{
-          drawer: {
-            shadowColor: "#000000",
-            shadowOpacity: 0.8,
-            shadowRadius: 3,
-          },
-          main: {},
-        }}
-        autoClosing={false}
-        onMove={(position) => { }}
-        bounceBackOnOverdraw={false}
-        onChange={(position) => {
-          this.isOpen = position;
-        }}
-        isOpen={this.isOpen}
-        //initializeOpen={true}
-        openMenuOffset={this.currentWidth}
-        content={
+    </View> : <View>
+        {this.state.fresh ? (
           <View
-            style={{ backgroundColor: colorList.bodyBackground, width: "100%" }}
-          >
-            <SWView
-              isRelation={this.isRelation}
-              join={this.joinCommitee.bind(this)}
-              navigateHome={() => {
-                this.setStatePure({
-                  isChat: false,
-                });
-                //this.goback()
-              }}
-              exitActivity={() => {
-                this.goback();
-              }}
-              hideMenu={() => {
-                this.isOpen = false;
-                this.setStatePure({});
-              }}
-              period={this.event.period}
-              calendared={this.event.calendar_id ? true : false}
-              isChat={this.state.isChat}
-              computedMaster={this.computedMaster}
-              ref="swipperView"
-              //publish={() => this.publish()}
-              showActivityPhotoAction={() => this.openPhotoSelectorModal()}
-              openSettingsModal={() => this.openSettingsModal()}
-              addMembers={(id, currentMembers) =>
-                this.addCommiteeMembers(id, currentMembers)
-              }
-              publishCommitee={(id, stater) => {
-                this.publishCommitee(id, stater);
-              }}
-              editName={(newName, id, currentName) =>
-                this.computedMaster
-                  ? this.editName(newName, id)
-                  : Toaster({ text: Texts.unable_to_perform_request })
-              }
-              swapChats={(room) => this.swapChats(room)}
-              phone={stores.LoginStore.user.phone}
-              commitees={this.event.commitee ? this.event.commitee : []}
-              showCreateCommiteeModal={() => {
-                if (!this.state.working && this.computedMaster) {
-                  this.setStatePure({
-                    isCommiteeModalOpened: true,
-                  });
-                } else {
-                  Toaster({
-                    text: Texts.unable_to_perform_request,
-                    duration: 4000,
-                  });
-                }
-              }}
-              //showMembers={() => this.showMembers()}
-              setCurrentPage={(page, data) => {
-                this.setCurrentPage(page, data);
-              }}
-              currentPage={this.state.currentPage}
-              //width={this.state.isChat ? this.normalWidth : this.currentWidth}
-              event={this.event}
-              master={this.master}
-              public={this.event.public}
-              navigatePage={(page) => {
-                BeNavigator.navigateTo(page);
-              }}
-            ></SWView>
-          </View>
-        }
-      >
-        <View
-          style={{
-            height: "100%",
-            backgroundColor: colorList.bodyBackground,
-          }}
-        >
-          {this.state.fresh ? (
-            <View
-              style={{
-                height: "100%",
-                width: "100%",
-                backgroundColor: colorList.bodyBackground,
-              }}
-            ></View>
-          ) : (
-              this.renderMenu()
-            )}
-          {this.renderExtra()}
-        </View>
-      </Drawer>);
+            style={{
+              height: "100%",
+              width: "100%",
+              backgroundColor: colorList.bodyBackground,
+            }}
+          ></View>
+        ) : this.renderMenu()}
+        {this.renderExtra()}
+      </View>
+    )
   }
 }

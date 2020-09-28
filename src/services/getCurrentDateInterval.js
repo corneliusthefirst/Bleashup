@@ -20,8 +20,10 @@ export function getCurrentDateIntervalNonAsync(intervals, currentDate) {
 export function getcurrentDateIntervals(period, interval, frequency, daysOfWeek) {
     return new Promise((resolve, reject) => {
         let intervals = returnAllIntervals(period, interval, frequency, daysOfWeek)
-        resolve(datesIntervalflaterner(period, cleanupResult(intervals,period.end), [], 0)
-        )
+        let final = datesIntervalflaterner(period, cleanupResult(intervals, period.end), [], 0)
+        if(final && final[final.length-1] && final[final.length-1].end) 
+        final[final.length-1].end = period.end
+        resolve(final)
     })
 }
 export function getcurrentDateIntervalsNoneAsync(period, interval, frequency, daysOfWeek) {

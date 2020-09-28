@@ -24,7 +24,7 @@ export default class SwipeMenu extends React.PureComponent {
 
   render() {
     return (
-      <View style={{ flex: 1, alignItems: 'flex-end', justifyContent: 'center',height:'100%' }}>
+      <View style={{ width:70, alignItems: 'flex-end', justifyContent: 'center',height:'100%' }}>
         <Menu
           ref={this.setMenuRef}
           button={

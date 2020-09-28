@@ -94,6 +94,7 @@ export default class ChangeBox extends AnimatedComponent {
               >
                 <View style={{ flexDirection: "row" }}>
                   <TextContent
+                    onPress={this.props.onPress}
                     ellipsizeMode="tail"
                     foundString={this.props.foundString}
                     searchString={this.props.searchString}
@@ -108,6 +109,7 @@ export default class ChangeBox extends AnimatedComponent {
                   </TextContent>
                 </View>
                 <TextContent
+                onPress={this.props.onPress}
                 searchString={this.props.searchString}
                 foundString={this.props.foundString}
                   ellipsizeMode="tail"

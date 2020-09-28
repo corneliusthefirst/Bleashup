@@ -69,7 +69,7 @@ export default class changelogs {
                 let date = moment(Newchange.date).format("YYYY/MM/DD");
                 let index = findIndex(Changes[Newchange.event_id], { id: date, event_id: Newchange.event_id })
                 if (index < 0) {
-                    Changes[Newchange.event_id].unshift({ ...request.Change(),event_id:eventID, id: date, type: "date_separator" })
+                    Changes[Newchange.event_id].unshift({ ...request.Change(),event_id:Newchange.event_id, id: date, type: "date_separator" })
                 }
                 Changes[Newchange.event_id].unshift(Newchange)
                 this.setProperty(Changes)

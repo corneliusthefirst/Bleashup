@@ -86,14 +86,14 @@ export default class events {
   }
   @observable searchdata = [];
   @observable array = [];
-  initSearch(){
+  initSearch() {
     this.createSearchdata(this.events).then((array) => {
       this.searchdata = array;
     });
   }
   @action createSearchdata(Events) {
     return new Promise((resolve, reject) => {
-     Events && Events.forEach((event) => {
+      Events && Events.forEach((event) => {
         if (event.type && event.type == 'relation') {
           event.participant.forEach((participant) => {
             if (participant.phone != stores.LoginStore.user.phone) {
@@ -129,7 +129,7 @@ export default class events {
             Events.push(NewEvent);
             this.saveKey.data = Events;
           }
-          else {this.saveKey.data = [NewEvent];}
+          else { this.saveKey.data = [NewEvent]; }
           this.saveKey.data = uniqBy(this.saveKey.data, 'id');
           this.setProperties(this.saveKey.data, true);
           resolve();
@@ -168,8 +168,8 @@ export default class events {
         let index = findIndex(Events, { id: EventID });
         let Participants = Events[index].participant;
         let Masters = filter(Participants, { master: true });
-        if (find(Masters, { phone: Phone })) {resolve(true);}
-        else {resolve(false);}
+        if (find(Masters, { phone: Phone })) { resolve(true); }
+        else { resolve(false); }
       });
     });
   }
@@ -231,34 +231,23 @@ export default class events {
           find(Event.participant, {
             phone: phone,
           })
-        )
-          {resolve(true);}
-        else {resolve(false);}
+        ) { resolve(Event); }
+        else { resolve(false); }
       });
     });
   }
-  extraEvents = {}
-  loadCurrentEventFromRemote(EventID, simple) {
+  loadCurrentEventFromRemote(EventID) {
     return new Promise((resolve, reject) => {
-      if (this.extraEvents[EventID]) {
-        resolve(this.extraEvents[EventID]);
-      } else {
-        serverEventListener.GetData(EventID).then(event => {
-          if (event === 'no_such_key') {
-            resolve(request.Event());
-          } else {
-            simple ? this.extraEvents[EventID] = event : null;
-            !simple && this.addEvent(event).then(() => {
-              resolve(event);
-            }) || resolve(event);
-          }
-        }).catch(error => {
-          serverEventListener.socket.write = undefined;
-          console.warn(error, 'in load events');
+      serverEventListener.GetData(EventID).then(event => {
+        if (event === 'no_such_key') {
           resolve(request.Event());
-        });
-      }
-
+        } else {
+          resolve(event);
+          this.addEvent(event)
+        }
+      }).catch(error => {
+        resolve(request.Event());
+      });
     });
   }
   @action loadCurrentEvent(EventID) {
@@ -358,7 +347,6 @@ export default class events {
     return new Promise((resolve, reject) => {
       this.readFromStore().then(Events => {
         let eventIndex = findIndex(Events, { id: EventID });
-        console.warn("updating paricipant of ",eventIndex,newParticipant.phone)
         let index = findIndex(Events[eventIndex].participant, {
           phone: newParticipant.phone,
         });
@@ -402,7 +390,7 @@ export default class events {
             Events[eventIndex].updated_at = moment().format();
             Events[eventIndex].joint = true;
           }
-          else {Events[eventIndex].joint = true;}
+          else { Events[eventIndex].joint = true; }
           this.saveKey.data = Events;
           this.setProperties(this.saveKey.data, inform);
           resolve(Events[eventIndex]);
@@ -414,7 +402,7 @@ export default class events {
               event.updated_at = moment().format();
               event.joint = true;
             }
-            else {event.joint = true;}
+            else { event.joint = true; }
             this.addEvent(event).then(() => {
               resolve(event);
             });
@@ -440,7 +428,7 @@ export default class events {
             Events[eventIndex].updated_at = moment().format();
             Events[eventIndex].joint = true;
           }
-          else {Events[eventIndex].joint = true;}
+          else { Events[eventIndex].joint = true; }
           this.saveKey.data = Events;
           this.setProperties(this.saveKey.data, inform);
           resolve(Events[eventIndex]);
@@ -452,7 +440,7 @@ export default class events {
               event.updated_at = moment().format();
               event.joint = true;
             }
-            else {event.joint = true;}
+            else { event.joint = true; }
             this.addEvent(event).then(() => {
               resolve(event);
             });
@@ -475,7 +463,7 @@ export default class events {
           Events[eventIndex].participant_removed = true;
           Events[eventIndex].updated = true;
         }
-        else {Events[eventIndex].left = true;}
+        else { Events[eventIndex].left = true; }
         Events[eventIndex].updated_at = moment().format();
         this.saveKey.data = Events;
         this.setProperties(this.saveKey.data, inform);
@@ -490,8 +478,7 @@ export default class events {
         let eventIndex = findIndex(Events, { id: EventID });
         let cid = JSON.stringify({ cal_id: Events[eventIndex].calendar_id });
         Events[eventIndex].period = NewPeriod;
-        if (!NewPeriod || (NewPeriod && !NewPeriod.includes('T')))
-          {Events[eventIndex].calendared = false;}
+        if (!NewPeriod || (NewPeriod && !NewPeriod.includes('T'))) { Events[eventIndex].calendared = false; }
         Events[eventIndex].calendar_id = null;
         if (inform) {
           Events[eventIndex].period_updated = true;
@@ -742,9 +729,8 @@ export default class events {
           id: EventID,
         });
         if (index >= 0) {
-          if (Events[index].votes && Events[index].votes.length > 0)
-            {Events[index].votes = uniq(Events[index].votes.concat([VoteID]));}
-          else {Events[index].votes = [VoteID];}
+          if (Events[index].votes && Events[index].votes.length > 0) { Events[index].votes = uniq(Events[index].votes.concat([VoteID])); }
+          else { Events[index].votes = [VoteID]; }
           Events[index].updated_at = moment().format();
           if (inform) {
             Events[index].vote_added = true;
@@ -795,11 +781,12 @@ export default class events {
       this.readFromStore().then(Events => {
         let index = findIndex(Events, { id: EventID });
         if (index >= 0) {
-          if (Events[index].contributions.length !== 0)
-            {Events[index].contributions = uniq(
+          if (Events[index].contributions.length !== 0) {
+            Events[index].contributions = uniq(
               Events[index].contributions.concat([ContributionID])
-            );}
-          else {Events[index].contributions = [ContributionID];}
+            );
+          }
+          else { Events[index].contributions = [ContributionID]; }
           Events[index].updated_at = moment().format();
           if (inform) {
             Events[index].contribution_added = true;
@@ -852,7 +839,7 @@ export default class events {
     return new Promise((resolve, rejectPromise) => {
       this.readFromStore().then(Events => {
         let index = findIndex(Events, { id: EventID });
-        console.warn(index, 'index1',EventID);
+        console.warn(index, 'index1', EventID);
         Events[index].highlights = dropWhile(
           Events[index].highlights,
           element => element == HighlightID
@@ -876,9 +863,8 @@ export default class events {
           id: EventID,
         });
         if (index >= 0) {
-          if (Events[index].highlights && Events[index].highlights.length > 0)
-            {Events[index].highlights.push(HighlightID);}
-          else {Events[index].highlights = [HighlightID];}
+          if (Events[index].highlights && Events[index].highlights.length > 0) { Events[index].highlights.push(HighlightID); }
+          else { Events[index].highlights = [HighlightID]; }
           if (inform) {
             Events[index].highlight_added = true;
             Events[index].updated = true;
@@ -916,9 +902,8 @@ export default class events {
           id: EventID,
         });
         if (index >= 0) {
-          if (Events[index].reminds && Events[index].reminds.length !== 0)
-            {Events[index].reminds = uniq(Events[index].reminds.concat([RemindID]));}
-          else {Events[index].reminds = [RemindID];}
+          if (Events[index].reminds && Events[index].reminds.length !== 0) { Events[index].reminds = uniq(Events[index].reminds.concat([RemindID])); }
+          else { Events[index].reminds = [RemindID]; }
           if (inform) {
             Events[index].remind_added = true;
             Events[index].updated = true;

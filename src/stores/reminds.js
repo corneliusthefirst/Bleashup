@@ -10,9 +10,11 @@ import EventListener from "../services/severEventListener";
 import {
   getcurrentDateIntervalsNoneAsync,
   getCurrentDateIntervalNonAsync,
+  getCurrentDateInterval,
 } from "../services/getCurrentDateInterval";
 import { format } from "../services/recurrenceConfigs";
 //import { mapper } from '../services/mapper';
+import { getcurrentDateIntervals } from "../services/getCurrentDateInterval";
 
 export default class Reminds {
   constructor() {
@@ -21,9 +23,10 @@ export default class Reminds {
     });*/
     this.initializeReminds();
     this.timer();
+    this.initializeRemindsIntervals();
+    this.intervalsSavetimer();
   }
   saveInterval = 2000;
-  saverInterval = null;
   currentSaveTime = moment().format();
   previousSaveTime = moment().format();
   initializeReminds() {
@@ -36,22 +39,63 @@ export default class Reminds {
         this.Reminds = {};
       });
   }
+  initializeRemindsIntervals() {
+    storage
+      .load(this.saveIntervalsKeys)
+      .then((data) => {
+        this.remindsIntervals = data;
+      })
+      .catch((err) => {
+        this.remindsIntervals = {};
+      });
+  }
   timer = () => {
     setInterval(() => {
       this.previousSaveTime !== this.currentSaveTime ? this.saver() : null;
     }, this.saveInterval);
   };
-
+  intervalsSavetimer() {
+    setInterval(() => {
+      this.previousIntervalsSaveTime !== this.currentIntervalsSaveTime
+        ? this.invervalsSaver()
+        : null;
+    }, this.saveInterval);
+  }
+  intervalKeys = "intervals";
+  readIntervalsKey = {
+    key: this.intervalKeys,
+    autoSync: true,
+  };
+  saveIntervalsKeys = {
+    key: this.intervalKeys,
+    data: {},
+  };
+  @observable remindsIntervals = {};
   @observable Reminds = {};
   extraVotes = {};
+  invervalsSaver() {
+    if (Object.keys(this.remindsIntervals).length > 0) {
+      console.warn("persisiting reminds intervals");
+      this.saveIntervalsKeys.data = this.remindsIntervals;
+      storage.save(this.saveIntervalsKeys).then(() => {
+        this.previousIntervalsSaveTime = this.currentIntervalsSaveTime;
+      });
+    }
+  }
+  previousIntervalsSaveTime = moment().format();
+  currentIntervalsSaveTime = moment().format();
   saver() {
     if (Object.keys(this.Reminds).length > 0) {
-      console.warn("persisiting reminds")
+      console.warn("persisiting reminds");
       this.saveKey.data = this.Reminds;
       storage.save(this.saveKey).then(() => {
         this.previousSaveTime = this.currentSaveTime;
       });
     }
+  }
+  setIntervalProperties(data) {
+    this.remindsIntervals = data;
+    this.currentIntervalsSaveTime = moment().format();
   }
   setProperty(Reminds) {
     this.Reminds = Reminds;
@@ -66,6 +110,58 @@ export default class Reminds {
     autoSync: true,
   };
 
+  issetRemindIntervals(remind) {
+    return (
+      this.remindsIntervals[remind.event_id] &&
+      this.remindsIntervals[remind.event_id][remind.id] &&
+      this.remindsIntervals[remind.event_id][remind.id].currentDateIntervals
+    );
+  }
+  getRemindsIntervals(remind,fresh) {
+    return new Promise((resolve, reject) => {
+      if (!this.issetRemindIntervals(remind)||fresh) {
+        this.computeRemindIntervals(remind).then((vals) => {
+          resolve(vals);
+        });
+        //this.computeRemindIntervals(remind)
+      } else {
+        resolve(this.remindsIntervals[remind.event_id][remind.id]);
+      }
+    });
+  }
+  computeRemindIntervals(remind) {
+    let remindPeriod = {
+      start: moment(remind.period).format(format),
+      end: moment(remind.recursive_frequency.recurrence).format(format),
+    };
+    const interval = remind.recursive_frequency.interval;
+    const frequency = remind.recursive_frequency.frequency;
+    const daysOfWeeek = remind.recursive_frequency.days_of_week;
+    return new Promise((resolve, reject) => {
+      getcurrentDateIntervals(
+        remindPeriod,
+        interval,
+        frequency,
+        daysOfWeeek
+      ).then((currentDateIntervals) => {
+        if (this.remindsIntervals[remind.event_id]) {
+          this.remindsIntervals[remind.event_id][remind.id] = {
+            currentDateIntervals,
+            updated_at: moment().format(),
+          };
+        } else {
+          this.remindsIntervals[remind.event_id] = {
+            [remind.id]: {
+              currentDateIntervals,
+              updated_at: moment().format(),
+            },
+          };
+        }
+        this.setIntervalProperties(this.remindsIntervals);
+        resolve({ currentDateIntervals });
+      });
+    });
+  }
   @action addReminds(EventID, NewRemind) {
     return new Promise((resolve, Reject) => {
       this.readFromStore().then((Reminds) => {
@@ -97,8 +193,11 @@ export default class Reminds {
 
   loadReminds(EventID, fresh) {
     let sorter = (a, b) =>
-     moment(a.created_at).format("x") > moment( b.created_at).format("x") ? -1
-      : moment(a.created_at).format("x") < moment(b.created_at).format("x") ? 1 : 0;
+      moment(a.created_at).format("x") > moment(b.created_at).format("x")
+        ? -1
+        : moment(a.created_at).format("x") < moment(b.created_at).format("x")
+        ? 1
+        : 0;
     return new Promise((resolve, reject) => {
       this.readFromStore().then((Reminds) => {
         let ActReminds = Reminds[EventID];
@@ -148,13 +247,13 @@ export default class Reminds {
         let RemindIndex = findIndex(Reminds[EventID], {
           id: NewRemind.remind_id,
         });
-        console.warn(RemindIndex,NewRemind)
+        console.warn(RemindIndex, NewRemind);
         Reminds[EventID][RemindIndex].description = NewRemind.description;
         Reminds[EventID][RemindIndex].updated_at = moment().format();
         Reminds[EventID][RemindIndex].description_updated = inform;
         Reminds[EventID][RemindIndex].updated = inform;
-        this.setProperty(Reminds)
-        resolve(Reminds[EventID][RemindIndex])
+        this.setProperty(Reminds);
+        resolve(Reminds[EventID][RemindIndex]);
       });
     });
   }
@@ -174,8 +273,8 @@ export default class Reminds {
         Reminds[EventID][RemindIndex].updated_at = moment().format();
         Reminds[EventID][RemindIndex].description_updated = inform;
         Reminds[EventID][RemindIndex].updated = inform;
-       this.setProperty(Reminds)
-       resolve(Reminds[EventID][RemindIndex])
+        this.setProperty(Reminds);
+        resolve(Reminds[EventID][RemindIndex]);
       });
     });
   }
@@ -185,7 +284,7 @@ export default class Reminds {
         let RemindIndex = findIndex(Reminds[EventID], {
           id: NewRemind.remind_id,
         });
-        const oldRem = JSON.stringify(Reminds[EventID][RemindIndex])
+        const oldRem = JSON.stringify(Reminds[EventID][RemindIndex]);
         Reminds[EventID][RemindIndex].title = NewRemind.title;
         Reminds[EventID][RemindIndex].updated_at = moment().format();
         Reminds[EventID][RemindIndex].description_updated = inform;
@@ -226,7 +325,7 @@ export default class Reminds {
         Reminds[EventID][RemindIndex].updated_at = moment().format();
         Reminds[EventID][RemindIndex].description_updated = inform;
         Reminds[EventID][RemindIndex].updated = inform;
-       //Reminds[EventID].splice(RemindIndex, 1, Reminds[EventID][RemindIndex]);
+        //Reminds[EventID].splice(RemindIndex, 1, Reminds[EventID][RemindIndex]);
 
         this.setProperty(Reminds);
         GState.eventUpdated = true;
@@ -244,10 +343,9 @@ export default class Reminds {
         Reminds[EventID][RemindIndex].recursive_frequency =
           NewRemind.recursive_frequency;
         Reminds[EventID][RemindIndex].updated_at = moment().format();
-        Reminds[EventID][RemindIndex].description_updated = inform;
         Reminds[EventID][RemindIndex].updated = inform;
-       // Reminds[EventID].splice(RemindIndex, 1, Reminds[EventID][RemindIndex]);
-
+        // Reminds[EventID].splice(RemindIndex, 1, Reminds[EventID][RemindIndex]);
+        this.computeRemindIntervals(Reminds[EventID][RemindIndex]);
         this.setProperty(Reminds);
         GState.eventUpdated = true;
         resolve(Reminds[EventID][RemindIndex]);
@@ -303,8 +401,9 @@ export default class Reminds {
         Reminds[EventID][RemindIndex].updated_at = moment().format();
         Reminds[EventID][RemindIndex].description_updated = inform;
         Reminds[EventID][RemindIndex].updated = inform;
-         this.setProperty(Reminds);
+        this.setProperty(Reminds);
         GState.eventUpdated = true;
+        this.computeRemindIntervals(Reminds[EventID][RemindIndex]);
         resolve(Reminds[EventID][RemindIndex]);
       });
     });
@@ -365,9 +464,7 @@ export default class Reminds {
           : (Reminds[EventID][index].members = Array.isArray(Remind.members)
               ? Remind.members
               : [Remind.members]);
-        inform
-          ? (Reminds[EventID][index].updated_at = moment().format())
-          : null;
+        Reminds[EventID][index].updated_at = moment().format();
         Reminds[EventID][index].updated = true;
         this.setProperty(Reminds);
         GState.eventUpdated = true;
@@ -381,9 +478,7 @@ export default class Reminds {
       this.readFromStore().then((Reminds) => {
         let index = findIndex(Reminds[EventID], { id: Remind.remind_id });
         Reminds[EventID][index].must_report = Remind.must_report;
-        if (inform) {
-          Reminds[EventID][index].updated_at = moment().format();
-        }
+        Reminds[EventID][index].updated_at = moment().format();
         this.setProperty(Reminds);
         GState.eventUpdated = true;
         resolve(Reminds[EventID][index]);
@@ -402,9 +497,7 @@ export default class Reminds {
             ? remindUpdate.members.indexOf(ele.phone) < 0
             : ele.phone !== remindUpdate.members
         );
-        inform
-          ? (Reminds[EventID][index].updated_at = moment().format())
-          : null;
+        Reminds[EventID][index].updated_at = moment().format();
         Reminds[EventID][index].updated = inform;
         this.setProperty(Reminds);
         GState.eventUpdated = true;
@@ -425,9 +518,7 @@ export default class Reminds {
           : (Reminds[EventID][index].donners = Array.isArray(Remind.donners)
               ? Remind.donners
               : [Remind.donners]);
-        inform
-          ? (Reminds[EventID][index].updated_at = moment().format())
-          : null;
+        Reminds[EventID][index].updated_at = moment().format();
         Reminds[EventID][index].updated = true;
         this.setProperty(Reminds);
         GState.eventUpdated = true;
@@ -448,9 +539,7 @@ export default class Reminds {
           : (Reminds[EventID][index].confirmed = Array.isArray(Remind.confirmed)
               ? Remind.confirmed
               : [Remind.confirmed]);
-        inform
-          ? (Reminds[EventID][index].updated_at = moment().format())
-          : null;
+        Reminds[EventID][index].updated_at = moment().format();
         Reminds[EventID][index].updated = true;
         this.setProperty(Reminds);
         GState.eventUpdated = true;
@@ -463,32 +552,33 @@ export default class Reminds {
     return new Promise((resolve, RejectPromise) => {
       this.readFromStore().then((Reminds) => {
         let index = findIndex(Reminds[EventID], { id: RemindId });
-        const oldRem  = Reminds[EventID][index]
-          Reminds[EventID] = reject(Reminds[EventID], { "id": RemindId });
-          RemindId === request.Remind().id
-            ? Reminds[EventID].unshift(request.Remind())
-            : null;
-          this.setProperty(Reminds);
-          GState.eventUpdated = true;
-          resolve(oldRem);
+        const oldRem = Reminds[EventID][index];
+        Reminds[EventID] = reject(Reminds[EventID], { id: RemindId });
+        RemindId === request.Remind().id
+          ? Reminds[EventID].unshift(request.Remind())
+          : null;
+        this.setProperty(Reminds);
+        GState.eventUpdated = true;
+        resolve(oldRem);
       });
     });
   }
-  updateAlarmPatern(EventID,remindId,newAlarm,newDate){
-    return new Promise((resolve,reject) => {
+  updateAlarmPatern(EventID, remindId, newAlarm, newDate) {
+    return new Promise((resolve, reject) => {
       this.readFromStore().then((reminds) => {
-        let index = findIndex(reminds[EventID],{id:remindId})
-        const oldRemind = reminds[EventID][index]
+        let index = findIndex(reminds[EventID], { id: remindId });
+        const oldRemind = reminds[EventID][index];
         reminds[EventID][index].extra = {
           ...reminds[EventID][index].extra,
-          alarms:newAlarm,
-          date:newDate
-        }
-        this.setProperty(reminds)
-        GState.eventUpdated = true
-        resolve(oldRemind)
-      })
-    })
+          alarms: newAlarm,
+          date: newDate,
+        };
+        Reminds[EventID][index].updated_at = moment().format();
+        this.setProperty(reminds);
+        GState.eventUpdated = true;
+        resolve(oldRemind);
+      });
+    });
   }
 
   loadRemindFromRemote(EventID, id) {
@@ -496,17 +586,17 @@ export default class Reminds {
       let RemindID = request.RemindID();
       RemindID.remind_id = id;
       tcpRequest.getRemind(RemindID, id + "_get_remind").then((JSONData) => {
-        EventListener.sendRequest(JSONData, id + "_get_remind").then(
-          (Remind) => {
+        EventListener.sendRequest(JSONData, id + "_get_remind")
+          .then((Remind) => {
             if (Remind.data !== "empty") {
               resolve(Remind.data);
             } else {
               reject();
             }
-          }
-        ).catch(() => {
-          reject()
-        });
+          })
+          .catch(() => {
+            reject();
+          });
       });
     });
   }
@@ -520,7 +610,7 @@ export default class Reminds {
         } else {
           this.loadRemindFromRemote(EventID, id)
             .then((Remind) => {
-              console.warn("loaded remind from remote ", id)
+              console.warn("loaded remind from remote ", id);
               this.addReminds(EventID, Remind)
                 .then(() => {
                   resolve(Remind.data);
@@ -538,7 +628,7 @@ export default class Reminds {
                   .catch(() => {
                     resolve(request.Remind());
                   });
-              }else{
+              } else {
                 reject();
               }
             });
@@ -546,9 +636,9 @@ export default class Reminds {
       });
     });
   }
-  persistDimenssion(index,eventID,layout){
-    this.Reminds[eventID][index].dimensions = layout
-    this.setProperty(this.Reminds)
+  persistDimenssion(index, eventID, layout) {
+    this.Reminds[eventID][index].dimensions = layout;
+    this.setProperty(this.Reminds);
   }
   readFromStore() {
     return new Promise((resolve, rejectpromise) => {

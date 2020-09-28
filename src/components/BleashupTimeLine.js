@@ -345,6 +345,7 @@ export default class BleashupTimeLine extends BeComponent {
     let title = (
       <View>
         <TextContent
+          onPress={() => this.props.onEventPress(rowData)}
           numberOfLines={2}
           searchString={this.props.searchString}
           foundString={this.props.foundIndex == index?this.props.searchString:null}
@@ -354,12 +355,12 @@ export default class BleashupTimeLine extends BeComponent {
           {rowData.title}
         </TextContent>
         <ChangeBox
+        onPress={() => this.props.onEventPress(rowData)}
         searchString={this.props.searchString}
         foundString={this.props.foundIndex == index?this.props.searchString:null}
           onLongPress={(changer) => {
             this.selectItem(rowData, changer);
           }}
-          showChange={() => this.props.onEventPress(rowData)}
           master={this.props.master}
           showPhoto={(url) => this.props.showPhoto(url)}
           restore={(data) => this.props.restore(data)}

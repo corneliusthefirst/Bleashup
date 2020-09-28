@@ -57,7 +57,7 @@ export default class ContactList extends Component {
         },30) 
     }
     delay = 0
-    _keyExtractor = (item, index) => item.phone
+    _keyExtractor = (item, index) => item.phone+item.date
     render() {
         StatusBar.setBarStyle('dark-content', true)
         return <View >

@@ -71,9 +71,9 @@ export default class MessageActions extends BleashupModal {
     }
     renderActions(){
         return this.props.actions && 
-        this.props.actions().map(ele => ele.condition && 
+        this.props.actions().map((ele,index) => ele.condition && 
             ele.condition() && 
-        <TouchableOpacity key={ele.title} onPress={() => requestAnimationFrame(() =>{
+        <TouchableOpacity key={ele.title+index} onPress={() => requestAnimationFrame(() =>{
             this.onClosedModal()
             ele.callback()
         })} style={{

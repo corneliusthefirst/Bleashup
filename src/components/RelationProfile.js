@@ -9,6 +9,7 @@ import Toaster from "../services/Toaster";
 import Texts from '../meta/text';
 import GState from '../stores/globalState/index';
 import { observer } from "mobx-react";
+import ActivityPages from './myscreens/eventChat/chatPages';
 
 export default class RelationProfile extends BeComponent {
   constructor(props) {
@@ -17,7 +18,7 @@ export default class RelationProfile extends BeComponent {
   }
   gotoRelation(){
     requestAnimationFrame(() =>
-      BeNavigator.navigateToActivity("EventChat", this.props.Event)
+      BeNavigator.navigateToActivity(ActivityPages.chat, this.props.Event)
     );
   }
   

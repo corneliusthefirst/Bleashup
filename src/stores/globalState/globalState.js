@@ -50,7 +50,7 @@ export default class globalState {
   @observable newVote = false;
   @observable dateError = false;
   @observable timeError = false;
-  confimResult = () => {};
+  confimResult = () => { };
 
   get newEvent() {
     return this.newEvent;
@@ -169,6 +169,27 @@ export default class globalState {
   set timeError(newValue) {
     this.timeError = newValue;
   }
+  listeners = {}
+  addEventListners(id) {
+    if (this.listeners[id] && this.listeners[id].length >= 0) {
+      this.listeners[id] = this.listeners[id].concat([this.listeners[id].length])
+    } else {
+      this.listeners[id] = [0]
+    }
+  }
+  removeListener(id) {
+    this.listeners[id].pop()
+
+  }
+  canStopListening(id) {
+    if (!this.listeners[id] ||
+      this.listeners[id].length <= 1) {
+      return true
+    } else {
+      return false
+    }
+  }
+  currentPage = null
   prepareStarForMention(replyer) {
     return {
       id: replyer.id,
@@ -209,10 +230,10 @@ export default class globalState {
         itemer.remind_url && itemer.remind_url.video
           ? itemer.remind_url.photo
           : itemer.remind_url && itemer.remind_url.photo
-          ? itemer.remind_url.photo
-          : itemer.remind_url && itemer.remind_url.audio
-          ? itemer.remind_url.audio
-          : null,
+            ? itemer.remind_url.photo
+            : itemer.remind_url && itemer.remind_url.audio
+              ? itemer.remind_url.audio
+              : null,
       type_extern: replies.reminds,
       title: itemer.title + ": \n" + itemer.description,
       change_date: itemer.current_date,
@@ -255,24 +276,24 @@ export default class globalState {
       rounded: true,
       title: remind.title + ": \n" + user.nickname,
       change_date: data.status.date,
-      [data.type]:data
+      [data.type]: data
     };
   }
   isUndefined(data) {
     return !data || data == "undefined" || data == "null";
   }
   getItemLayout(item, index, dataArray, defaultVal, newOffset) {
-    let def =  defaultVal || 70;
+    let def = defaultVal || 70;
     let offset = dataArray
       ? dataArray
-          .slice(0, index)
-          .reduce(
-            (a, b) =>
-              a +
-              (b.dimensions ? b.dimensions.height : def) +
-              (newOffset || 0),
-            0
-          )
+        .slice(0, index)
+        .reduce(
+          (a, b) =>
+            a +
+            (b.dimensions ? b.dimensions.height : def) +
+            (newOffset || 0),
+          0
+        )
       : index * def;
     return {
       length: item.dimensions ? item.dimensions.height : def,
@@ -289,6 +310,12 @@ export default class globalState {
     }, delay || 500);
   }
   toogleWait = 5000;
+  setPointedID(id){
+    this.currentID = id
+  }
+  isPointed(id){
+    return this.currentID === id 
+   }
   toggleCurrentIndex(id, delay) {
     this.currentID = id;
     setTimeout(() => {

@@ -8,7 +8,8 @@ import BePureComponent from '../../BePureComponent';
 import BeComponent from '../../BeComponent';
 import ColorList from '../../colorList';
 import { format } from '../../../services/recurrenceConfigs';
-import  moment  from 'moment';
+import moment from 'moment';
+import Spinner from '../../Spinner';
 
 
 export default class ConcerneeList extends BeComponent {
@@ -16,33 +17,37 @@ export default class ConcerneeList extends BeComponent {
         super(props)
     }
     state = {
-        index:null
+        index: null,
+        mounted: false
     }
     _keyExtractor = (item, index) => index.toString()
     delay = 0
     getItemLayout(tem, index) {
         return { length: 60, offset: index * 60, index }
     }
+    highlightItem(index) {
+            this.setStatePure({
+                index,
+            })
+            setTimeout(() => {
+                this.setStatePure({
+                    index: null,
+                })
+            }, 2000)
+    }
     componentDidMount() {
         setTimeout(() => {
             if (this.props.currentRemindUser) {
                 let index = this.props.contacts.findIndex(ele => ele === this.props.currentRemindUser.phone)
-                if (index >= 0){
-                    this.setStatePure({
-                        index
-                    })
-                    this.refs.flatlist && this.refs.flatlist.scrollToIndex(index)
-                    setTimeout(() => {
-                        this.setStatePure({
-                            index:null
-                        })
-                    },2000)
-                }
+                index>= 0 && this.refs.flatlist && this.refs.flatlist.scrollToIndex(index)
             }
+            this.setStatePure({
+                mounted: true
+            })
         })
     }
     render() {
-        return <View>
+        return this.state.mounted ? <View>
             <BleashupFlatList
                 firstIndex={0}
                 ref={"flatlist"}
@@ -61,11 +66,25 @@ export default class ConcerneeList extends BeComponent {
                                 item.from === this.props.actualInterval.start &&
                                 item.to === this.props.actualInterval.end}
                             first={index === 0 ? true : false}
-                            from={item.from}></IntervalSeparator> :
-                            <View style={{ width: '90%', alignSelf: 'center', minHeight: 53, }} key={index.toString()}><View style={{ display: 'flex', flexDirection: 'row', }}>
-                                <View style={{ alignSelf: 'center', }}><ProfileView delay={this.delay} phone={item.data.phone}></ProfileView>
-                                </View>
-                            </View></View>}
+                            from={item.from}>
+                            </IntervalSeparator> :
+                            <View style={{
+                                width: '90%',
+                                alignSelf: 'center',
+                                minHeight: 53,
+                            }}
+                                key={index.toString()}>
+                                <View style={{
+                                    display: 'flex',
+                                    flexDirection: 'row',
+                                }}>
+                                    <View style={{ alignSelf: 'center', }}>
+                                        <ProfileView
+                                            delay={this.delay}
+                                            phone={item.data.phone}>
+                                        </ProfileView>
+                                    </View>
+                                </View></View>}
                     </View> :
                         <View
                             style={{
@@ -73,12 +92,12 @@ export default class ConcerneeList extends BeComponent {
                                 minHeight: 53,
                                 padding: "1%",
                                 backgroundColor: isCurrentIndex ? ColorList.remindsTransparent : ColorList.bodyBackground,
-                                borderRadius:15,
+                                borderRadius: 15,
                                 flexDirection: 'row',
                                 width: "90%"
                             }}
                             key={index.toString()}><Swipeout swipeRight={() => {
-                                this.props.reply({ phone: item, type: this.props.type, status: { date: moment(this.props.initDate,format).format() } })
+                                this.props.reply({ phone: item, type: this.props.type, status: { date: moment(this.props.initDate, format).format() } })
                             }}
                                 disableLeftSwipe={true}>
                                 <View
@@ -86,12 +105,16 @@ export default class ConcerneeList extends BeComponent {
                                         margin: '2%',
                                         width: "100%",
                                         alignSelf: 'center',
-                                    }}><ProfileView delay={this.delay} phone={item}></ProfileView>
+                                    }}><ProfileView
+                                        showHighlighter={() => this.props.currentRemindUser &&
+                                            this.props.currentRemindUser.phone == item &&
+                                            this.highlightItem(index)}
+                                    delay={this.delay} phone={item}></ProfileView>
                                 </View>
                             </Swipeout></View>)
 
                 }}
             />
-        </View>
+        </View> : <Spinner></Spinner>
     }
 }

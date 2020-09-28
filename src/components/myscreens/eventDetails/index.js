@@ -41,6 +41,8 @@ import Searcher from '../Contacts/Searcher';
 import { _onScroll } from '../currentevents/components/sideButtonService';
 import rounder from '../../../services/rounder';
 import { justSearch, cancelSearch, startSearching } from '../eventChat/searchServices';
+import ShareWithYourContacts from "../eventChat/ShareWithYourContacts";
+import messagePreparer from '../eventChat/messagePreparer';
 
 let { height, width } = Dimensions.get('window');
 
@@ -64,7 +66,7 @@ let { height, width } = Dimensions.get('window');
       EventLocationState: false,
       creation_date: "",
       creation_time: "",
-      isActionButtonVisible:true,
+      isActionButtonVisible: true,
       participant: request.Participant(),
       EventHighlightState: false,
       updateTitleState: false,
@@ -95,8 +97,10 @@ let { height, width } = Dimensions.get('window');
     if (this.props.id) this.waitToScroll = setTimeout(() => {
       let arr = stores.Highlights.highlights[this.props.Event.id].
         filter(el => globalFunctions.filterStars(el, this.state.searchString || ""))
-      this.refs.postList && this.refs.postList.scrollToIndex(
-        findIndex(arr, { id: this.props.id }))
+      let scrollIndex = findIndex(arr, { id: this.props.id })
+      if (scrollIndex >= 0)
+        this.refs.postList && this.refs.postList.scrollToIndex(scrollIndex)
+
     }, 100)
   }
   initialScrollIndexer = 2
@@ -117,29 +121,8 @@ let { height, width } = Dimensions.get('window');
   componentDidMount() {
     this.initializer();
   }
-  initShare() {
-    this.sharStore = new Share(this.props.share.id)
-    this.sharStore.readFromStore().then(() => {
-      this.setStatePure({
-        isMounted: true
-      })
-    })
-    stores.Highlights.loadHighlightFromRemote(this.props.Event.id, this.props.share.item_id).
-      then((post) => {
-        stores.Events.loadCurrentEventFromRemote(this.props.share.event_id, true).
-          then((event) => {
-            this.sharStore.saveCurrentState({ ...this.props.share, post: Array.isArray(post) && post[0] || post, event }).then(() => {
-              this.setStatePure({
-                isMountedSec: true
-              })
-            })
-          })
-      }).catch((error) => {
-        console.warn("ERROR: ", error)
-      })
-  }
   init() {
-    !this.props.shared ? this.initializer() : this.initShare()
+    this.initializer()
   }
   componentWillUnmount() {
     this.animateHighlight = false;
@@ -223,12 +206,24 @@ let { height, width } = Dimensions.get('window');
       highlight_id: hid
     })
   }
-
+  share() {
+    this.setStatePure({
+      isSharing: true
+    })
+  }
   action = () => [
     {
       title: 'Reply',
       callback: () => this.mention(this.state.selectedItem),
       iconName: Texts.reply,
+      condition: () => true,
+      iconType: "Entypo",
+      color: colorList.replyColor
+    },
+    {
+      title: 'Share',
+      callback: () => this.share(this.state.selectedItem),
+      iconName: "forward",
       condition: () => true,
       iconType: "Entypo",
       color: colorList.replyColor
@@ -250,7 +245,11 @@ let { height, width } = Dimensions.get('window');
       color: colorList.delete
     }
   ]
- 
+  hideSharing() {
+    this.setStatePure({
+      isSharing: false
+    })
+  }
   renderPosts() {
     let data = (stores.Highlights.highlights[this.props.Event.id] || []).
       filter((ele) => globalFunctions.filterStars(ele, this.state.searchString || ""));
@@ -324,7 +323,7 @@ let { height, width } = Dimensions.get('window');
                 onScroll={this.onScroll}
                 ref={"postList"}
                 horizontal={false}
-                renderPerBatch={5}
+                renderPerBatch={10}
                 firstIndex={0}
                 getItemLayout={(item, index) => GState.getItemLayout(item, index, data, 70, 0)}
                 refHorizontal={(ref) => { this.detail_flatlistRef = ref }}
@@ -333,7 +332,7 @@ let { height, width } = Dimensions.get('window');
                 numberOfItems={data.length}
                 parentComponent={this}
                 renderItem={(item, index) => {
-                  let delay = index >= 5 ? 0 : delay + 1
+                  this.delay = index >= 5 ? 0 : this.delay + 1
                   return (<HighlightCard
                     searchString={this.state.searchString}
                     isPointed={item.id === GState.currentID}
@@ -411,11 +410,29 @@ let { height, width } = Dimensions.get('window');
             showActions: false
           })
         }} isOpen={this.state.showActions}></MessageActions>
-        <BleashupAlert title={"Delete Higlight"} accept={"Yes"} refuse={"No"} message={" Are you sure you want to delete these highlight ?"}
+        <BleashupAlert
+          title={Texts.delete_highlight}
+          accept={Texts.yes} refuse={Texts.no}
+          message={Texts.are_you_sure_to_delete_this_highlight}
           deleteFunction={() => this.deleteHighlight(this.state.current_highlight)}
           isOpen={this.state.isAreYouSureModalOpened} onClosed={() => { this.setStatePure({ isAreYouSureModalOpened: false }) }} />
 
-
+        <ShareWithYourContacts
+          isOpen={this.state.isSharing}
+          activity_id={this.props.Event.id}
+          sender={request.Message().sender}
+          committee_id={this.props.Event.id}
+          message={{
+            ...messagePreparer.formMessagefromStar(this.state.selectedItem),
+            forwarded: true,
+            reply: null,
+            from_activity: this.props.Event.id,
+            from_committee: this.props.Event.id,
+            from: null
+          }}
+          onClosed={this.hideSharing.bind(this)}
+        >
+        </ShareWithYourContacts>
         {!this.props.isRelation && this.state.isActionButtonVisible ? <SideButton
           buttonColor={colorList.bodyBackground}
           position={"right"}
@@ -423,13 +440,14 @@ let { height, width } = Dimensions.get('window');
           renderIcon={() => {
             return <TouchableOpacity
               onPress={() => requestAnimationFrame(this.props.showDescription)}
-            style={{ 
-              ...rounder(50,ColorList.bodyBackground),
-            ...shadower(4) 
-          }}>
+              style={{
+                ...rounder(50, ColorList.bodyBackground),
+                ...shadower(4)
+              }}>
               <Feather name="file-text" type="Feather" style={{
                 ...GState.defaultIconSize,
-                color: ColorList.bodyIcon }} />
+                color: ColorList.bodyIcon
+              }} />
             </TouchableOpacity>
           }}
           offsetY={30}
@@ -443,13 +461,15 @@ let { height, width } = Dimensions.get('window');
           renderIcon={() => {
             return <TouchableOpacity
               onPress={() => requestAnimationFrame(() => this.newHighlight())}
-            style={{ 
-              backgroundColor: ColorList.bodyBackground, 
-              ...rounder(50,ColorList.bodyBackground), 
-              ...shadower(4) }}>
-              <AntDesign name="star" type="AntDesign" style={{ 
+              style={{
+                backgroundColor: ColorList.bodyBackground,
+                ...rounder(50, ColorList.bodyBackground),
+                ...shadower(4)
+              }}>
+              <AntDesign name="star" type="AntDesign" style={{
                 ...GState.defaultIconSize,
-                 color: ColorList.post, }} />
+                color: ColorList.post,
+              }} />
             </TouchableOpacity>
           }}
           offsetY={90}
@@ -461,32 +481,8 @@ let { height, width } = Dimensions.get('window');
       </View>
     )
   }
-  renderSharedPost() {
-    return this.state.isMounted && <ShareFrame
-      share={this.sharStore.share}
-      sharer={this.sharStore.share.sharer}
-      date={this.sharStore.share.date}
-      content={() => <View style={{ width: '98%', height: 300 }}><HighlightCard
-        height={colorList.containerHeight * .45}
-        shadowless
-        phone={stores.LoginStore.user.phone}
-        showItem={this.props.showHighlight}
-        activity_id={this.props.Event.id}
-        activity_name={this.props.Event.about.title}
-        delay={this.delay}
-        item={this.sharStore.share.post}
-        participant={this.sharStore.share &&
-          this.sharStore.share.event &&
-          this.sharStore.share.event.participant &&
-          find(this.sharStore.share.event.participant,
-            (ele => ele.phone === stores.LoginStore.user.phone))
-          || { phone: stores.LoginStore.user.phone, master: false }}
-      ></HighlightCard></View>}
-    >
-    </ShareFrame>
-  }
   renderBody() {
-    return !this.props.shared ? this.renderPosts() : this.renderSharedPost()
+    return this.renderPosts()
   }
   render() {
     return this.renderBody()

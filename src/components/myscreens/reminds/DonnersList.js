@@ -14,39 +14,42 @@ import Swipeout from "../eventChat/Swipeout";
 import { format } from "../../../services/recurrenceConfigs";
 import moment from "moment";
 import shadower from "../../shadower";
+import Spinner from "../../Spinner";
 
 export default class DonnersList extends BeComponent {
   constructor(props) {
     super(props);
-    this.state = {};
+    this.state = {
+      mounted: false
+    };
   }
   concludeScrollForInterval(intervalIndex) {
-    if (intervalIndex >= 0) {
-      intervalIndex && this.scrollToIndex(intervalIndex);
-      this.expandItem(this.props.intervals[intervalIndex]);
-    }
+    this.setStatePure({
+      mounted: true,
+      intervalIndex
+    })
+      if (intervalIndex >= 0) {
+        intervalIndex && this.scrollToIndex(intervalIndex);
+      }
   }
   state = {};
   componentDidMount() {
+    let checker = (ele, date) => moment(ele.start, format).format("x") <= date &&
+      moment(ele.end, format).format("x") > date
+    let actualIntervalIndex = (date) => this.props.intervals.findIndex(
+      (ele) => checker(ele, date)
+    )
     setTimeout(() => {
       if (this.props.type && this.props.currentRemindUser) {
         let date = moment(this.props.currentRemindUser.status.date).format("x");
-        let intervalIndex = this.props.intervals.findIndex(
-          (ele) =>
-            moment(ele.start, format).format("x") <= date &&
-            moment(ele.end, format).format("x") > date
-        );
+        let intervalIndex = actualIntervalIndex(date)
         this.concludeScrollForInterval(intervalIndex);
       } else {
         let date = moment().format("x");
-        let intervalIndex = this.props.intervals.findIndex(
-          (ele) =>
-            moment(ele.start, format).format("x") >= date &&
-            moment(ele.end, format).format("x") > date
-        );
+        let intervalIndex = actualIntervalIndex(date);
         this.concludeScrollForInterval(intervalIndex);
       }
-    }, 100);
+    });
   }
 
   onItemExpand(item) {
@@ -54,18 +57,17 @@ export default class DonnersList extends BeComponent {
     this.setStatePure({
       donners: donners,
     });
-    setTimeout(() => {
       if (this.props.type && this.props.currentRemindUser) {
         let index = donners.findIndex(
           (ele) => ele.phone == this.props.currentRemindUser.phone
         );
         this.scrollToDonnersIndex(index);
       }
-    }, 100);
   }
-  renderHeader(item, index, toggle) {
+  renderHeader(item, index, toggle, expanded, shouldExpand) {
     return (
       <IntervalSeparator
+        shouldExpand={shouldExpand}
         onPress={() => toggle()}
         actualInterval={
           this.props.actualInterval &&
@@ -91,12 +93,14 @@ export default class DonnersList extends BeComponent {
           renderPerBatch={7}
           initialRender={20}
           numberOfItems={donners.length}
-          keyExtractor={(item, index) => item.phone}
+          keyExtractor={(item, index) => item.phone + item.status.date}
           getItemLayout={this.getItemLayoutForFlatList}
-          dataSource={donners}
+          dataSource={donners}  
           renderItem={(item, index) => {
-            let delay = delay >= 20 ? 0 : delay + 1;
+            this.delay = this.delay >= 20 ? 0 : this.delay + 1;
             let isCurrentPointed = index === this.state.index;
+            let shouldHighlight = this.props.currentRemindUser &&
+              this.props.currentRemindUser.phone == item.phone
             return (
               <View style={{ width: "90%", alignSelf: "center", height: 53 }}>
                 <Swipeout
@@ -105,7 +109,7 @@ export default class DonnersList extends BeComponent {
                       this.props.reply({ ...item, type: this.props.type });
                   }}
                   disableLeftSwipe={true}
-                  onLongPress={() => {}}
+                  onLongPress={() => { }}
                 >
                   <View
                     style={{
@@ -114,6 +118,7 @@ export default class DonnersList extends BeComponent {
                         ? ColorList.remindsTransparent
                         : ColorList.bodyBackground,
                       borderRadius: 15,
+                      minHeight: 55,
                       ...shadower(1),
                       paddingHorizontal: "2%",
                       justifyContent: "space-between",
@@ -121,6 +126,7 @@ export default class DonnersList extends BeComponent {
                   >
                     <View style={{ width: "70%", alignSelf: "center" }}>
                       <ProfileView
+                        showHighlighter={() => shouldHighlight && this.toggleItemHighlight(index)}
                         delay={this.delay}
                         phone={item.phone}
                       ></ProfileView>
@@ -150,19 +156,10 @@ export default class DonnersList extends BeComponent {
                           type="Octicons"
                           name="report"
                         />
-                        <Text
-                          style={{
-                            ...GState.defaultTextStyle,
-                            color: ColorList.indicatorColor,
-                          }}
-                        >
-                          Report
-                        </Text>
                       </TouchableOpacity>
                     ) : null}
                   </View>
                 </Swipeout>
-                <MenuDivider color={ColorList.indicatorColor} />
               </View>
             );
           }}
@@ -176,16 +173,18 @@ export default class DonnersList extends BeComponent {
   getItemLayoutForFlatList(item, index) {
     return { length: 70, offset: index * 70, index };
   }
-  scrollToDonnersIndex(index) {
+  toggleItemHighlight(index) {
     this.setStatePure({
-      index,
+      index: index,
     });
-    index >= 0 && this.refs.flatlist && this.refs.flatlist.scrollToIndex(index);
     setTimeout(() => {
       this.setStatePure({
         index: null,
       });
     }, 2000);
+  }
+  scrollToDonnersIndex(index) {
+    index >= 0 && this.refs.flatlist && this.refs.flatlist.scrollToIndex(index);
   }
   expandItem(item) {
     this.refs.accordion && this.refs.accordion.toggleExpand(item);
@@ -194,11 +193,12 @@ export default class DonnersList extends BeComponent {
     this.refs.accordion && this.refs.accordion.scrollToIndex(index);
   }
   render() {
-    return (
+    return this.state.mounted ? (
       <View>
         <AccordionModuleNative
           ref={"accordion"}
           hideToggler
+          mainIndex={this.state.intervalIndex}
           getItemLayout={this.getItemLayout}
           keyExtractor={this.keyExtractor}
           _renderHeader={this.renderHeader.bind(this)}
@@ -224,6 +224,6 @@ export default class DonnersList extends BeComponent {
           ></RemindReportContent>
         ) : null}
       </View>
-    );
+    ) : <Spinner></Spinner>;
   }
 }

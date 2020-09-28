@@ -13,6 +13,8 @@ class types {
     text_sender = "text_sender"
     new_separator = "new_separator"
     date_separator = "date_separator"
+    remind_message = "remind"
+    star_message = "star"
 }
 const message_types = new types
 export default message_types

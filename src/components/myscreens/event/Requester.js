@@ -958,17 +958,17 @@ class Request {
         })
     }
     createHighlight(newHighlight, activityName) {
-        this.yourName = toTitleCase(stores.LoginStore.user.nickname)
-        this.shortName = this.yourName.split(" ")[0]
+     //   this.yourName = toTitleCase(stores.LoginStore.user.nickname)
+     //   this.shortName = this.yourName.split(" ")[0]
         return new Promise((resolve, reject) => {
-            let notif = request.Notification()
+            /*let notif = request.Notification()
             notif.notification.body = activityName? this.shortName + 'Add a Star Message': this.yourName + 'Added a star message'
             notif.notification.title = 'New Star Message @ ' + activityName
             notif.notification.image = newHighlight.url && newHighlight.url.photo
             notif.notification.android_channel_id = notification_channels.stars
             notif.data.activity_id = newHighlight.event_id
             notif.data.post_id = newHighlight.id
-            newHighlight.notif = notif
+            newHighlight.notif = notif*/
             tcpRequest.addHighlight(newHighlight, newHighlight.id).then(JSONData => {
                 serverEventListener.sendRequest(JSONData, newHighlight.id).then(response => {
                     stores.Events.addHighlight(newHighlight.event_id, newHighlight.id).then(res => {

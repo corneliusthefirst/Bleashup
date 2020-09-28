@@ -46,7 +46,8 @@ import TextContent from '../../eventChat/TextContent';
   }
   onOpenModal() {
     if (this.props.profile) {
-      emitter.on(typing(this.props.profile.phone), (typer) => () => {
+      this.event_to_be_listen = typing(this.props.profile.phone)
+      emitter.on(this.event_to_be_listen, (typer) => () => {
         !this.sayTyping ? this.sayTyping = sayTyping.bind(this) : null
       })
       !this.checkUserOnlineStatus ? this.checkUserOnlineStatus = checkUserOnlineStatus.bind(this) : null
@@ -57,7 +58,7 @@ import TextContent from '../../eventChat/TextContent';
   }
   onClosedModal() {
     clearInterval(this.checkRef)
-    //!this.props.profile && emitter.off(typing(this.props.profile.phone))
+    this.props.profile && emitter.off(typing(this.props.profile.phone))
     this.props.onClosed()
     this.checkRef = null
   }
@@ -68,7 +69,7 @@ import TextContent from '../../eventChat/TextContent';
       if(rems){
         BeNavigator.goToRemind(relation,true)
       }else{
-        BeNavigator.pushActivity(relation, "EventChat")
+        BeNavigator.pushToChat(relation)
       }
     }) : GState.considerIvite()
     emitter.emit(close_all_modals)

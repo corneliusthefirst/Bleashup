@@ -12,7 +12,7 @@ import Toaster from '../../../services/Toaster';
 import Texts from '../../../meta/text';
 
 
- export default class EventChat extends BeComponent {
+export default class EventChat extends BeComponent {
   constructor(props) {
     super(props)
     this.state = {
@@ -28,7 +28,7 @@ import Texts from '../../../meta/text';
   newMessageCount = 0
   componentDidMount() {
     let user = stores.LoginStore.user
-   this.mountTimeout = setTimeout(() => {
+    this.mountTimeout = setTimeout(() => {
       this.setStatePure({
         user: user,
         new_messages: [],
@@ -171,12 +171,12 @@ There are also Erlang plugins for other code editors Vim (vim-erlang) , Atom , E
     duration: Math.floor(0),
     created_at: moment().format(),
   }]
-  initReply(reply){
-    if(this.refs.room){
+  initReply(reply) {
+    if (this.refs.room) {
       this.refs.room.fucussTextInput()
-      this.refs.room && this.refs.room.replying(reply) 
-    }else{
-      Toaster({text:Texts.unable_to_reply})
+      this.refs.room && this.refs.room.replying(reply)
+    } else {
+      Toaster({ text: Texts.unable_to_reply })
     }
   }
   render() {
@@ -184,14 +184,18 @@ There are also Erlang plugins for other code editors Vim (vim-erlang) , Atom , E
       roomName={this.props.roomName}
       closeMenu={this.props.closeMenu}
       user={{
-        ...this.state.user,
-        phone: this.state.user.phone.replace("00", "+")
+        nickname: stores.LoginStore.user.nickname,
+        phone: stores.LoginStore.user.phone.replace("00", "+")
       }}
       handleReplyExtern={(reply) => {
         this.props.handleReplyExtern(reply)
       }}
       ref={"room"}
+      openPage={this.props.openPage}
+      openSettings={this.props.openSettings}
       id={this.props.id}
+      showActivityPhotoAction={this.props.showActivityPhotoAction}
+      activityPhoto={this.props.activityPhoto}
       openMenu={this.props.openMenu}
       isComment={false}
       oponent={this.props.oponent}

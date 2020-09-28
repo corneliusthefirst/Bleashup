@@ -6,6 +6,7 @@ import AnimatedPureComponent from '../AnimatedPureComponent';
 import emitter from "../../services/eventEmiter";
 import { close_all_modals } from "../../meta/events";
 import AnimatedComponent from '../AnimatedComponent';
+import GState from '../../stores/globalState/index';
 
 const screenheight = Math.round(Dimensions.get('window').height);
 
@@ -24,20 +25,20 @@ export default class BleashupModal extends AnimatedComponent {
     onClosedModal() {
 
     }
-    unMountingModal(){
+    unMountingModal() {
 
     }
-    mountingModal(){
-        
+    mountingModal() {
+
     }
-    componentMounting(){
-        emitter.on(close_all_modals,() => {
-            this.onClosedModal(true)
+    componentMounting() {
+        emitter.on(close_all_modals, () => {
+            (this.props.isOpen || this.props.open) ? this.onClosedModal(true) : null
         })
         this.mountingModal()
     }
-    unmountingComponent(){
-        //!emitter.off("close-all-modals")
+    unmountingComponent() {
+        emitter.off(close_all_modals)
         this.unMountingModal()
     }
     jusify = false
@@ -52,17 +53,17 @@ export default class BleashupModal extends AnimatedComponent {
     borderTopLeftRadius = 8
     borderTopRightRadius = 8
     height = screenheight
-    style={}
-    coverScreen=true
+    style = {}
+    coverScreen = true
     modalBody() {
         return <View></View>
     }
-    backdropPressToClose=true
-    modalMinHieight=null
+    backdropPressToClose = true
+    modalMinHieight = null
     isOpened = false
     entry = 'bottom'
-    borderWidth=0
-    modal(){
+    borderWidth = 0
+    modal() {
         return (
             <Modal
                 backdropOpacity={this.backdropOpacity || 0.7}
@@ -80,10 +81,10 @@ export default class BleashupModal extends AnimatedComponent {
                 isOpen={this.props.isOpen ? true : this.props.open ? true : false}
                 coverScreen={this.coverScreen}
                 style={{
-                    borderWidth:this.borderWidth,
+                    borderWidth: this.borderWidth,
                     backgroundColor: this.modalBackground || '#FFFFFF',
-                    height: !this.modalMinHieight ?this.modalHeight: null,
-                    minHeight:this.modalMinHieight? this.modalMinHieight:null,
+                    height: !this.modalMinHieight ? this.modalHeight : null,
+                    minHeight: this.modalMinHieight ? this.modalMinHieight : null,
                     maxHeight: this.modalMinHieight && this.modalHeight,
                     width: this.modalWidth || "100%",
                     justifyContent: this.jusify ? 'center' : null,

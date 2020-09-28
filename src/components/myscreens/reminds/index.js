@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { Component } from "react";
 import {
   StyleSheet,
   View,
@@ -6,74 +6,85 @@ import {
   TouchableOpacity,
   Platform,
   Dimensions,
-  Text
+  Text,
 } from "react-native";
-import TasksCard from './TasksCard';
+import TasksCard from "./TasksCard";
 import stores from "../../../stores/index";
 import BleashupFlatList from "../../BleashupFlatList";
-import TasksCreation from "./TasksCreation";
-import { find, findIndex, uniqBy, reject, filter, concat, uniq } from 'lodash';
+import { find, findIndex, uniqBy, reject, filter, concat, uniq } from "lodash";
 import shadower from "../../shadower";
 import RemindRequest from "./Requester";
 import emitter from "../../../services/eventEmiter";
 import SetAlarmPatternModal from "../event/SetAlarmPatternModal";
-import AddReport from './AddReportModal';
-import SelectableContactList from '../../SelectableContactList';
-import ContactListModal from '../event/ContactListModal';
-import ContactsReportModal from './ContactsReportModal';
-import AreYouSure from '../event/AreYouSureModal';
+import AddReport from "./AddReportModal";
+import SelectableContactList from "../../SelectableContactList";
+import ContactListModal from "../event/ContactListModal";
+import AreYouSure from "../event/AreYouSureModal";
 import moment from "moment";
-import { format, AlarmPatterns, callculateAlarmOffset } from '../../../services/recurrenceConfigs';
+import {
+  format,
+  AlarmPatterns,
+  callculateAlarmOffset,
+} from "../../../services/recurrenceConfigs";
 import {
   getcurrentDateIntervalsNoneAsync,
   getCurrentDateIntervalNonAsync,
   getcurrentDateIntervals,
   getCurrentDateInterval,
-} from '../../../services/getCurrentDateInterval';
-import { confirmedChecker } from '../../../services/mapper';
-import ReportTabModal from "./NewReportTab";
-import bleashupHeaderStyle from '../../../services/bleashupHeaderStyle';
-import { dateDiff } from '../../../services/datesWriter';
+} from "../../../services/getCurrentDateInterval";
+import { confirmedChecker } from "../../../services/mapper";
+import bleashupHeaderStyle from "../../../services/bleashupHeaderStyle";
+import { dateDiff } from "../../../services/datesWriter";
 import colorList from "../../colorList";
-import ShareFrame from '../../mainComponents/ShareFram';
-import Share from '../../../stores/share';
-import request from '../../../services/requestObjects';
+import ShareFrame from "../../mainComponents/ShareFram";
+import Share from "../../../stores/share";
+import request from "../../../services/requestObjects";
 import replies from "../eventChat/reply_extern";
-import TaskCreationExtra from './TaskCreationExtra';
-import AnimatedComponent from '../../AnimatedComponent';
-import MessageActions from '../eventChat/MessageActons';
-import Vibrator from '../../../services/Vibrator';
-import GState from '../../../stores/globalState/index';
-import Toaster from '../../../services/Toaster';
-import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
-import AntDesign from 'react-native-vector-icons/AntDesign';
-import { observer } from 'mobx-react';
-import IDMaker from '../../../services/IdMaker';
-import Texts from '../../../meta/text';
-import globalFunctions from '../../globalFunctions';
-import BeNavigator from '../../../services/navigationServices';
-import SideButton from '../../sideButton';
-import rounder from '../../../services/rounder';
-import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
-import { _onScroll } from '../currentevents/components/sideButtonService';
-import Searcher from '../Contacts/Searcher';
-import { cancelSearch, startSearching, justSearch } from '../eventChat/searchServices';
+import TaskCreationExtra from "./TaskCreationExtra";
+import AnimatedComponent from "../../AnimatedComponent";
+import MessageActions from "../eventChat/MessageActons";
+import Vibrator from "../../../services/Vibrator";
+import GState from "../../../stores/globalState/index";
+import Toaster from "../../../services/Toaster";
+import MaterialIcons from "react-native-vector-icons/MaterialIcons";
+import AntDesign from "react-native-vector-icons/AntDesign";
+import { observer } from "mobx-react";
+import IDMaker from "../../../services/IdMaker";
+import Texts from "../../../meta/text";
+import globalFunctions from "../../globalFunctions";
+import BeNavigator from "../../../services/navigationServices";
+import SideButton from "../../sideButton";
+import rounder from "../../../services/rounder";
+import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
+import { _onScroll } from "../currentevents/components/sideButtonService";
+import Searcher from "../Contacts/Searcher";
+import {
+  cancelSearch,
+  startSearching,
+  justSearch,
+} from "../eventChat/searchServices";
+import Spinner from "../../Spinner";
+import AnimatedPureComponent from "../../AnimatedPureComponent";
+import { returnCurrentPatterns, sendRemindAsMessage } from "./remindsServices";
+import ShareWithYourContacts from "../eventChat/ShareWithYourContacts";
+import messagePreparer from "../eventChat/messagePreparer";
 
-@observer class Reminds extends AnimatedComponent {
+@observer
+class Reminds extends AnimatedPureComponent {
   initialize() {
     this.state = {
       eventRemindData: [],
-      mounted: true,
+      mounted: false,
       newing: false,
       update: false,
-      isActionButtonVisible:true,
+      isActionButtonVisible: true,
       event_id: this.props.event_id,
       RemindCreationState: false,
     };
-    this.onScroll = _onScroll.bind(this)
-    this.cancelSearch = cancelSearch.bind(this)
-    this.startSearching = startSearching.bind(this)
-    this.search = justSearch.bind(this)
+    this.onScroll = _onScroll.bind(this);
+    this.cancelSearch = cancelSearch.bind(this);
+    this.startSearching = startSearching.bind(this);
+    this.search = justSearch.bind(this);
   }
   addMembers(currentMembers, item) {
     this.setStatePure({
@@ -89,7 +100,7 @@ import { cancelSearch, startSearching, justSearch } from '../eventChat/searchSer
   }
   saveAddMembers(members) {
     if (this.props.working) {
-      this.sayAppBusy()
+      this.sayAppBusy();
     } else {
       let newMembers = members.filter(
         (ele) =>
@@ -97,11 +108,14 @@ import { cancelSearch, startSearching, justSearch } from '../eventChat/searchSer
       );
       if (newMembers.length > 0) {
         this.props.startLoader();
-        RemindRequest.addMembers({
-          ...this.state.currentTask,
-          members: newMembers,
-        }, null,
-          this.props.isRelation ? false : this.props.event.about.title)
+        RemindRequest.addMembers(
+          {
+            ...this.state.currentTask,
+            members: newMembers,
+          },
+          null,
+          this.props.isRelation ? false : this.props.event.about.title
+        )
           .then(() => {
             this.props.stopLoader();
             this.refreshReminds();
@@ -121,63 +135,43 @@ import { cancelSearch, startSearching, justSearch } from '../eventChat/searchSer
   }
 
   componentDidMount() {
-    !this.props.shared ? this.initReminds() : this.initShared();
+    this.initReminds();
   }
-  initShared() {
-    this.shareStore = new Share(this.props.share.id);
-    this.shareStore.readFromStore().then(() => {
-      this.shareStore && this.shareStore.share && this.shareStore.share.event
-        ? this.setStatePure({
-          mounted: true,
-        })
-        : null;
-    });
-    stores.Reminds.loadRemindFromRemote(this.props.share.item_id).then(
-      (remind) => {
-        stores.Events.loadCurrentEventFromRemote(this.props.share.event_id)
-          .then((event) => {
-            this.shareStore
-              .saveCurrentState({
-                ...this.props.share,
-                remind: Array.isArray(remind) ? remind[0] : remind,
-                event,
-              })
-              .then(() => {
-                this.setStatePure({
-                  mountedx: true,
-                  mounted: true,
-                });
-              });
-          })
-          .catch(() => {
-            console.warn("unable to fetch activity");
-          });
-      }
-    );
-  }
-  scrolled = 0
+  scrolled = 0;
   initReminds() {
     emitter.on("remind-updated", () => {
       this.refreshReminds();
     });
-    if (!stores.Reminds.Reminds[this.props.event_id] ||
-      stores.Reminds.Reminds[this.props.event_id].length <= 1) {
-      stores.Reminds.loadReminds(this.props.event_id).then((reminds) => {
-      })
+    if (
+      !stores.Reminds.Reminds[this.props.event_id] ||
+      stores.Reminds.Reminds[this.props.event_id].length <= 1
+    ) {
+      stores.Reminds.loadReminds(this.props.event_id).then((reminds) => { });
     }
-    this.setStatePure({
-      mounted: true,
-      RemindCreationState: this.props.currentMembers || this.props.remind ? true : false,
-    });
-    if (this.props.id) this.waitToScroll = setTimeout(() => {
-      this.refs.RemindsList && this.refs.RemindsList.scrollToIndex(
-        findIndex(this.getRemindData(), { id: this.props.id }))
-      clearTimeout(this.waitToScroll)
-    }, 100)
+    if (this.props.currentMembers || this.props.remind) {
+      BeNavigator.pushTo("TaskCreation", this.returnTaskCreationOptions())
+    }
+    setTimeout(() => {
+      this.setStatePure({
+        mounted: true,
+        //RemindCreationState:
+        //  this.props.currentMembers || this.props.remind ? true : false,
+      });
+    }, 5);
+    if (this.props.id)
+      this.waitToScroll = setTimeout(() => {
+        let scrollIndex = findIndex(this.getRemindData(), {
+          id: this.props.id,
+        });
+        scrollIndex >= 0 &&
+          this.refs.RemindsList &&
+          this.refs.RemindsList.scrollToIndex(scrollIndex);
+        clearTimeout(this.waitToScroll);
+      }, 5);
   }
   saveRemoved(members) {
     if (this.props.working) {
-      this.sayAppBusy()
+      this.sayAppBusy();
     } else {
       this.props.startLoader();
       RemindRequest.removeMembers(
@@ -196,9 +190,8 @@ import { cancelSearch, startSearching, justSearch } from '../eventChat/searchSer
   }
   unmountingComponent() {
     emitter.off("remind-updated");
-    clearTimeout(this.waitToScroll)
-    clearInterval(this.scrolling)
-
+    clearTimeout(this.waitToScroll);
+    clearInterval(this.scrolling);
   }
 
   AddRemind() {
@@ -208,32 +201,29 @@ import { cancelSearch, startSearching, justSearch } from '../eventChat/searchSer
         duration: 4000,
       });
     } else {
-      this.setStatePure({
+      BeNavigator.pushTo("TaskCreation", this.returnTaskCreationOptions())
+      /*this.setStatePure({
         RemindCreationState: true,
         update: false,
         newing: !this.state.newing,
-      });
+      });*/
     }
   }
   sendUpdate() {
-    if (!this.props.working) {
-      this.props.startLoader();
-      RemindRequest.performAllUpdates(
-        this.previousRemind,
-        this.state.currentRemind
-      )
-        .then((res) => {
-          this.props.stopLoader();
-        })
-        .catch(() => {
-          this.props.stopLoader();
-        });
-    } else {
-      this.sayAppBusy()
-    }
+    this.props.startLoader();
+    RemindRequest.performAllUpdates(
+      this.previousRemind,
+      this.state.currentRemind
+    )
+      .then((res) => {
+        this.props.stopLoader();
+      })
+      .catch(() => {
+        this.props.stopLoader();
+      });
   }
   refreshReminds() {
-    this.animateUI()
+    this.animateUI();
     this.setStatePure({
       newing: !this.state.newing,
       currentTask:
@@ -245,11 +235,12 @@ import { cancelSearch, startSearching, justSearch } from '../eventChat/searchSer
   updateRemind(data) {
     this.previousRemind = JSON.stringify(data);
     this.setStatePure({
-      RemindCreationState: true,
+      //RemindCreationState: true,
       update: true,
       newing: !this.state.newing,
       remind_id: data.id,
     });
+    BeNavigator.pushTo("TaskCreation", this.returnTaskCreationOptions(data.id, true))
   }
 
   back() {
@@ -264,7 +255,7 @@ import { cancelSearch, startSearching, justSearch } from '../eventChat/searchSer
   }
   markAsDone(item) {
     if (this.props.working) {
-      this.sayAppBusy()
+      this.sayAppBusy();
     } else {
       if (item.must_report) {
         this.setStatePure({
@@ -301,11 +292,11 @@ import { cancelSearch, startSearching, justSearch } from '../eventChat/searchSer
     }
   }
   showToastMessage(message) {
-    Toaster({ text: message })
+    Toaster({ text: message });
   }
   confirm(user, interval) {
     if (this.props.working) {
-      this.sayAppBusy()
+      this.sayAppBusy();
     } else {
       if (
         findIndex(this.state.currentTask.confirmed, (ele) =>
@@ -336,7 +327,7 @@ import { cancelSearch, startSearching, justSearch } from '../eventChat/searchSer
   }
   markAsDoneWithReport(report) {
     if (this.props.working) {
-      this.sayAppBusy()
+      this.sayAppBusy();
     } else {
       this.setStatePure({
         showReportModal: false,
@@ -383,11 +374,11 @@ import { cancelSearch, startSearching, justSearch } from '../eventChat/searchSer
           this.props.stopLoader();
         });
     } else {
-      this.sayAppBusy()
+      this.sayAppBusy();
     }
   }
   sayAppBusy() {
-    Toaster({ text: Texts.app_busy })
+    Toaster({ text: Texts.app_busy });
   }
   saveAlarms(alarms, date) {
     if (this.state.forCurrentRemind) {
@@ -398,13 +389,12 @@ import { cancelSearch, startSearching, justSearch } from '../eventChat/searchSer
           extra: {
             ...this.state.currentRemind.extra,
             alarms,
-            date
-          }
-        }
-      })
+            date,
+          },
+        },
+      });
     } else {
       if (this.props.working) {
-
       } else {
         this.props.startLoader();
         RemindRequest.addMembers(
@@ -445,40 +435,101 @@ import { cancelSearch, startSearching, justSearch } from '../eventChat/searchSer
   }
   filterDonners(interval) {
     //console.warn(interval)
-    let donners = this.state.currentTask.donners.filter((ele) => this.intervalFilterFunc(ele, interval))
-    return donners
+    let donners = this.state.currentTask.donners.filter((ele) =>
+      this.intervalFilterFunc(ele, interval)
+    );
+    return donners;
   }
   intervalFilterFunc(el, ele) {
-    return moment(el.status.date).format("x") >
-      moment(ele.start, format).format('x') &&
-      moment(el.status.date).format("x") <=
-      moment(ele.end, format).format("x")
+    return (
+      moment(el.status.date).format("x") >
+      moment(ele.start, format).format("x") &&
+      moment(el.status.date).format("x") <= moment(ele.end, format).format("x")
+    );
   }
   filterConfirmed(interval) {
-    return this.state.currentTask.confirmed.filter(ele => this.intervalFilterFunc(ele, interval))
+    return this.state.currentTask.confirmed.filter((ele) =>
+      this.intervalFilterFunc(ele, interval)
+    );
+  }
+  returnRouteActions(members, currentTask,
+    actualInterval, intervals) {
+    return {
+      type: this.props.type,
+      currentRemindUser: this.props.currentRemindUser,
+      concernees: members,
+      reply: this.reply.bind(this),
+      confirmed: this.filterConfirmed.bind(this),
+      donners: this.filterDonners.bind(this),
+      intervals: intervals,
+      confirm: this.confirm.bind(this),
+      master:
+        currentTask &&
+        stores.LoginStore.user.phone === currentTask.creator,
+      must_report:
+        currentTask && currentTask.must_report,
+      actualInterval: actualInterval,
+
+    }
+  }
+  returnTaskCreationOptions(remind_id, update) {
+    return {
+      CreateRemind: (remind) => {
+        this.setStatePure({
+          currentRemind: remind,
+          RemindCreationState: false,
+          isExtra: true,
+          TaskCreationExtra: true,
+        });
+      }
+      ,
+      starRemind: this.props.remind,
+      master: this.props.master,
+      event_id: this.props.event_id,
+      update: update || this.state.update,
+      remind_id: remind_id || this.state.remind_id,
+      updateRemind: (remind) => {
+        //console.error(remind)
+        this.setStatePure({
+          currentRemind: remind,
+          TaskCreationExtra: true,
+          isExtra: true,
+          RemindCreationState: false,
+        })
+      },
+      currentMembers: this.props.currentMembers,
+      event: this.props.event
+    }
   }
   showReport(intervals, thisInterval) {
-    let item = this.state.remind
-    let members = item.members.map((ele) => ele.phone);
+    let item = this.state.remind;
+    let members = uniq(item.members.map((ele) => ele.phone));
+    BeNavigator.pushTo("Report", this.returnRouteActions(members,
+      item,
+      thisInterval,
+      intervals))
     this.setStatePure({
-      members: uniq(members),
-      isReportModalOpened: true,
+      members: this.members,
       currentTask: item,
-      complexReport: false,
     });
   }
+
   addNewRemind() {
-    this.scrollRemindListToTop()
-    RemindRequest.CreateRemind({ ...this.state.currentRemind, id: IDMaker.make() },
-      this.props.event.about.title).then(() => {
-        this.refs.task_creator.resetRemind()
-        stores.Reminds.removeRemind(this.props.event.id,
-          request.Remind().id).then(() => {
-            //this.updateData(this.state.currentRemind)
-          })
-      }).catch(() => {
-        console.warn("an error occured while creating the remind")
-      })
+    this.scrollRemindListToTop();
+    let remind = { ...this.state.currentRemind, id: IDMaker.make() };
+    RemindRequest.CreateRemind(remind).then(() => {
+      stores.Reminds.removeRemind(
+        this.props.event.id,
+        request.Remind().id
+      ).then(() => {
+        sendRemindAsMessage(
+          remind,
+          this.props.event.about.title
+        ).then(() => { });
+      });
+    }); /*.catch(() => {
+      console.warn("an error occured while creating the remind")
+    })*/
   }
   scrollRemindListToTop() {
     this.refs.RemindsList.scrollToEnd();
@@ -486,55 +537,13 @@ import { cancelSearch, startSearching, justSearch } from '../eventChat/searchSer
   }
   _keyExtractor = (item, index) => item.id;
   delay = 1;
-  renderSharedRemind() {
-    return (
-      this.state.mounted && (
-        <ShareFrame
-          share={this.shareStore && this.shareStore.share}
-          sharer={
-            this.shareStore &&
-            this.shareStore.share &&
-            this.shareStore.share.sharer
-          }
-          date={
-            this.shareStore &&
-            this.shareStore.share &&
-            this.shareStore.share.date
-          }
-          content={() => (
-            <View style={{ width: "100%" }}>
-              <TasksCard
-                animate={this.animateUI}
-                showMedia={this.showMedia.bind(this)}
-                phone={stores.LoginStore.user.phone}
-                mention={(itemer) => {
-                  this.mention(itemer);
-                }}
-                delay={this.delay}
-                markAsDone={(item) => this.markAsDone(item)}
-                assignToMe={(item) => this.assignToMe(item)}
-                showMembers={this.showMembers.bind(this)}
-                showReport={this.showReport.bind(this)}
-                removeMembers={this.removeMembers}
-                updateRemind={(item) => this.updateRemind(item)}
-                deleteRemind={this.removeRemind.bind(this)}
-                item={
-                  this.shareStore &&
-                  this.shareStore.share &&
-                  this.shareStore.share.remind
-                }
-              />
-            </View>
-          )}
-        />
-      )
-    );
-  }
-
   getRemindData = () => {
     let RemindData = (stores.Reminds.Reminds
       ? stores.Reminds.Reminds[this.props.event_id]
-      : []).filter(ele => globalFunctions.filterReminds(ele, this.state.searchString || ""));
+      : []
+    ).filter((ele) =>
+      globalFunctions.filterReminds(ele, this.state.searchString || "")
+    );
     return RemindData;
   };
   onChangedStatus(newStatus) {
@@ -552,7 +561,7 @@ import { cancelSearch, startSearching, justSearch } from '../eventChat/searchSer
       },
     });
   }
-  actionIndex = this.state.currentIndex ? this.state.currentIndex() : {}
+  actionIndex = this.state.currentIndex ? this.state.currentIndex() : {};
   remindsActions = () => [
     {
       title: Texts.reply,
@@ -560,7 +569,7 @@ import { cancelSearch, startSearching, justSearch } from '../eventChat/searchSer
       iconName: "reply",
       condition: () => true,
       iconType: "Entypo",
-      color: colorList.replyColor
+      color: colorList.replyColor,
     },
     {
       title: Texts.share,
@@ -568,248 +577,234 @@ import { cancelSearch, startSearching, justSearch } from '../eventChat/searchSer
       condition: () => true,
       iconName: "forward",
       iconType: "Entypo",
-      color: colorList.indicatorColor
+      color: colorList.indicatorColor,
     },
     {
       title: Texts.members,
-      callback: () => this.showReport(),
+      callback: () => this.showReport(this.state.intervals,
+        this.state.actualInterval),
       condition: () => true,
       iconName: "ios-people",
       iconType: "Ionicons",
-      color: colorList.likeActive
+      color: colorList.likeActive,
     },
     {
       title: Texts.update,
-      condition: () => globalFunctions.isMe(this.state.creator) || this.props.master,
+      condition: () =>
+        globalFunctions.isMe(this.state.creator) || this.props.master,
       callback: () => this.updateRemind(this.state.remind),
       iconName: "history",
       iconType: "MaterialIcons",
-      color: colorList.darkGrayText
+      color: colorList.darkGrayText,
     },
     {
       title: Texts.assign,
-      condition: () => globalFunctions.isMe(this.state.creator) || this.props.master,
-      callback: () => this.addMembers(uniqBy(this.state.remind.members, "phone"), this.state.remind),
+      condition: () =>
+        globalFunctions.isMe(this.state.creator) || this.props.master,
+      callback: () =>
+        this.addMembers(
+          uniqBy(this.state.remind.members, "phone"),
+          this.state.remind
+        ),
       iconName: "addusergroup",
       iconType: "AntDesign",
-      color: colorList.indicatorColor
-    }, {
+      color: colorList.indicatorColor,
+    },
+    {
       title: Texts.unassign,
-      condition: () => globalFunctions.isMe(this.state.creator) || this.props.master,
-      callback: () => this.removeMembers(uniqBy(this.state.remind.members.filter(ele => this.state.creator ||
-        ele.phone === stores.LoginStore.user.phone)), this.state.remind),
+      condition: () =>
+        globalFunctions.isMe(this.state.creator) || this.props.master,
+      callback: () =>
+        this.removeMembers(
+          uniqBy(
+            this.state.remind.members.filter(
+              (ele) =>
+                this.state.creator || ele.phone === stores.LoginStore.user.phone
+            )
+          ),
+          this.state.remind
+        ),
       iconName: "deleteusergroup",
       iconType: "AntDesign",
-      color: "orange"
+      color: "orange",
     },
     {
       title: Texts.delete_,
       callback: () => this.removeRemind(this.state.remind),
-      condition: () => globalFunctions.isMe(this.state.creator) || this.props.master,
+      condition: () =>
+        globalFunctions.isMe(this.state.creator) || this.props.master,
       iconName: "delete-forever",
       iconType: "MaterialCommunityIcons",
-      color: colorList.delete
-    }
-  ]
+      color: colorList.delete,
+    },
+  ];
   showRemindActions(remind, intervals, thisInterval, creator, showModal) {
     this.setStatePure({
       intervals,
       creator,
       actualInterval: thisInterval,
       showRemindActions: !showModal,
-      remind: remind
-    })
+      remind: remind,
+    });
   }
   reply(item) {
-    this.hideReportModal()
+    this.hideReportModal();
     setTimeout(() => {
-      let reply = GState.prepareMentionForRemindsMembers(item, this.state.currentTask)
-      this.props.mention(reply)
-    })
+      let reply = GState.prepareMentionForRemindsMembers(
+        item,
+        this.state.currentTask
+      );
+      this.props.mention(reply);
+    });
   }
   hideReportModal() {
     this.setStatePure({
       isReportModalOpened: false,
     });
-    this.props.clearIndexedRemind && this.props.clearIndexedRemind()
+    this.props.clearIndexedRemind && this.props.clearIndexedRemind();
+  }
+  showSharer() {
+    this.setStatePure({
+      isSharing: true,
+    });
+  }
+  hideSharing() {
+    this.setStatePure({
+      isSharing: false,
+    });
   }
   render() {
     return (
       <View>
-        {!this.props.shared ? this.renderReminds() : this.renderSharedRemind()}
-        <TasksCreation
-          CreateRemind={(remind) => {
-            this.setStatePure({
-              currentRemind: remind,
-              RemindCreationState: false,
-              isExtra: true,
-              TaskCreationExtra: true
-            })
-          }}
-          ref={"task_creator"}
-          starRemind={this.props.remind}
-          master={this.props.master}
-          event_id={this.props.event_id}
-          update={this.state.update}
-          remind_id={this.state.remind_id}
-          isOpen={this.state.RemindCreationState}
-          onClosed={(exernal) => {
-            exernal && this.props.clearCurrentMembers();
-            this.setStatePure({
-              RemindCreationState: false,
-              remind_id: null,
-              remind: null,
-            });
-          }}
-          updateRemind={(remind) => {
-            this.setStatePure({
-              currentRemind: remind,
-              TaskCreationExtra: true,
-              isExtra: true,
-              RemindCreationState: false
-            })
-          }}
-          working={this.props.working}
-          currentMembers={this.props.currentMembers}
-          stopLoader={this.props.stopLoader}
-          startLoader={this.props.startLoader}
-          event={this.props.event}
-          eventRemindData={this.getRemindData()}
-        />
-        <SetAlarmPatternModal
-          save={(alarms, date) => this.saveAlarms(alarms, date)}
-          pattern={this.state.currentRemind &&
-            this.state.currentRemind.extra &&
-            this.state.currentRemind.extra.alarms ?
-            [...AlarmPatterns().map(ele => { return { ...ele, autoselected: false } }).filter(ele =>
-              this.state.currentRemind.extra.alarms.findIndex(e => e.id == ele.id) < 0),
-            ...this.state.currentRemind.extra.alarms.map(ele => {
-              return {
-                ...ele,
-                autoselected: true
-              }
-            })] : AlarmPatterns()}
-          isOpen={this.state.isSelectAlarmPatternModalOpened}
-          closed={() => {
-            this.setStatePure({
-              isSelectAlarmPatternModalOpened: false,
-            });
-          }}
-        />
-        <TaskCreationExtra
-          proceed={
-            !this.state.update
-              ? this.addNewRemind.bind(this)
-              : this.sendUpdate.bind(this)
-          }
-          updateAlarms={() => {
-            this.setStatePure({
-              isSelectAlarmPatternModalOpened: true,
-              forCurrentRemind: true
-            })
-          }}
-          onChangedStatus={this.onChangedStatus.bind(this)}
-          currentRemind={this.state.currentRemind || {}}
-          onComplete={this.updateRequestReportOnComplete.bind(this)}
-          isOpen={this.state.isExtra}
-          onClosed={() => {
-            this.setStatePure({
-              isExtra: false,
-            });
-          }}
-        />
-        <AddReport
-          report={(report) => {
-            this.markAsDoneWithReport(report);
-          }}
-          onClosed={() => {
-            this.setStatePure({
-              showReportModal: false,
-            });
-          }}
-          isOpen={this.state.showReportModal}
-        />
-        <SelectableContactList
-          adding={this.state.adding}
-          removing={this.state.removing}
-          addMembers={(members) => {
-            this.saveAddMembers(members);
-          }}
-          saveRemoved={(members) => this.saveRemoved(members)}
-          members={
-            this.state.contacts && this.state.contacts.length > 0
-              ? this.state.contacts
-              : []
-          }
-          notcheckall={this.state.notcheckAll}
-          isOpen={this.state.isSelectableContactsModalOpened}
-          close={() => {
-            this.setStatePure({
-              isSelectableContactsModalOpened: false,
-            });
-          }}
-        />
-        <ContactListModal
-          title={this.state.title}
-          isOpen={this.state.isContactsModalOpened}
-          onClosed={() => {
-            this.setStatePure({
-              isContactsModalOpened: false,
-            });
-          }}
-          complexReport={this.state.complexReport}
-          actualInterval={this.state.actualInterval}
-          contacts={this.state.contacts ? this.state.contacts : []}
-        />
-        <ReportTabModal
-          type={this.props.type}
-          currentRemindUser={this.props.currentRemindUser}
-          concernees={this.state.members}
-          reply={this.reply.bind(this)}
-          confirmed={this.filterConfirmed.bind(this)}
-          donners={this.filterDonners.bind(this)}
-          intervals={this.state.intervals}
-          confirm={this.confirm.bind(this)}
-          master={
-            this.state.currentTask && stores.LoginStore.user.phone === this.state.currentTask.creator
-          }
-          must_report={this.state.currentTask && this.state.currentTask.must_report}
-          stopLoader={() => this.props.stopLoader()}
-          actualInterval={this.state.actualInterval}
-          complexReport={this.state.complexReport}
-          changeComplexReport={() => {
-            this.setStatePure({
-              complexReport: !this.state.complexReport,
-            });
-          }}
-          onClosed={this.hideReportModal.bind(this)}
-          isOpen={this.state.isReportModalOpened}
-        />
-        <AreYouSure
-          isOpen={this.state.isAreYouModalOpened}
-          title={Texts.delete_remind}
-          closed={() => {
-            this.setStatePure({
-              isAreYouModalOpened: false,
-            });
-          }}
-          ok={Texts.delete_}
-          callback={() => {
-            this.deleteRemind();
-          }}
-          message={Texts.are_you_sure_you_want_to_leave}
-        />
-        <MessageActions
-          title={Texts.remind_action}
-          actions={this.remindsActions}
-          isOpen={this.state.showRemindActions}
-          onClosed={() => {
-            this.setStatePure({
-              showRemindActions: false
-            })
-          }}
-        >
-        </MessageActions>
+        {this.renderReminds()}
+        {this.state.isSelectAlarmPatternModalOpened ? (
+          <SetAlarmPatternModal
+            save={(alarms, date) => this.saveAlarms(alarms, date)}
+            pattern={returnCurrentPatterns(this.state.currentRemind)}
+            isOpen={this.state.isSelectAlarmPatternModalOpened}
+            closed={() => {
+              this.setStatePure({
+                isSelectAlarmPatternModalOpened: false,
+              });
+            }}
+          />
+        ) : null}
+        {this.state.isExtra ? (
+          <TaskCreationExtra
+            proceed={
+              !this.state.update
+                ? this.addNewRemind.bind(this)
+                : this.sendUpdate.bind(this)
+            }
+            updateAlarms={() => {
+              this.setStatePure({
+                isSelectAlarmPatternModalOpened: true,
+                forCurrentRemind: true,
+              });
+            }}
+            onChangedStatus={this.onChangedStatus.bind(this)}
+            currentRemind={this.state.currentRemind || {}}
+            onComplete={this.updateRequestReportOnComplete.bind(this)}
+            isOpen={this.state.isExtra}
+            onClosed={() => {
+              this.setStatePure({
+                isExtra: false,
+              });
+            }}
+          />
+        ) : null}
+        {this.state.showReportModal ? (
+          <AddReport
+            report={(report) => {
+              this.markAsDoneWithReport(report);
+            }}
+            onClosed={() => {
+              this.setStatePure({
+                showReportModal: false,
+              });
+            }}
+            isOpen={this.state.showReportModal}
+          />
+        ) : null}
+        {this.state.isSelectableContactsModalOpened ? (
+          <SelectableContactList
+            adding={this.state.adding}
+            removing={this.state.removing}
+            addMembers={(members) => {
+              this.saveAddMembers(members);
+            }}
+            saveRemoved={(members) => this.saveRemoved(members)}
+            members={
+              this.state.contacts && this.state.contacts.length > 0
+                ? this.state.contacts
+                : []
+            }
+            notcheckall={this.state.notcheckAll}
+            isOpen={this.state.isSelectableContactsModalOpened}
+            close={() => {
+              this.setStatePure({
+                isSelectableContactsModalOpened: false,
+              });
+            }}
+          />
+        ) : null}
+        {this.state.isContactsModalOpened ? (
+          <ContactListModal
+            title={this.state.title}
+            isOpen={this.state.isContactsModalOpened}
+            onClosed={() => {
+              this.setStatePure({
+                isContactsModalOpened: false,
+              });
+            }}
+            complexReport={this.state.complexReport}
+            actualInterval={this.state.actualInterval}
+            contacts={this.state.contacts ? this.state.contacts : []}
+          />
+        ) : null}
+
+        {this.state.isAreYouModalOpened ? (
+          <AreYouSure
+            isOpen={this.state.isAreYouModalOpened}
+            title={Texts.delete_remind}
+            closed={() => {
+              this.setStatePure({
+                isAreYouModalOpened: false,
+              });
+            }}
+            ok={Texts.delete_}
+            callback={() => {
+              this.deleteRemind();
+            }}
+            message={Texts.are_you_sure_you_want_to_leave}
+          />
+        ) : (
+            false
+          )}
+        {this.state.showRemindActions ? (
+          <MessageActions
+            title={Texts.remind_action}
+            actions={this.remindsActions}
+            isOpen={this.state.showRemindActions}
+            onClosed={() => {
+              this.setStatePure({
+                showRemindActions: false,
+              });
+            }}
+          ></MessageActions>
+        ) : null}
+        {this.state.isSharing ? (
+          <ShareWithYourContacts
+            isOpen={this.state.isSharing}
+            activity_id={this.props.event.id}
+            sender={request.Message().sender}
+            committee_id={this.props.event.id}
+            message={{
+              ...messagePreparer.formMessageFromRemind(this.state.remind),
+            }}
+            onClosed={this.hideSharing.bind(this)}
+          ></ShareWithYourContacts>
+        ) : null}
       </View>
     );
   }
@@ -818,17 +813,17 @@ import { cancelSearch, startSearching, justSearch } from '../eventChat/searchSer
   }
   showMedia = (url) => {
     if (url.video) {
-      console.warn('showing video');
-      BeNavigator.openVideo(url.video)
+      console.warn("showing video");
+      BeNavigator.openVideo(url.video);
     } else {
-      BeNavigator.openPhoto(url.photo)
+      BeNavigator.openPhoto(url.photo);
     }
   };
   showMembers = (members) => {
     this.setStatePure({
       contacts: members,
       isContactsModalOpened: true,
-      title: 'Concernees',
+      title: "Concernees",
       complexReport: false,
     });
   };
@@ -849,48 +844,50 @@ import { cancelSearch, startSearching, justSearch } from '../eventChat/searchSer
     });
   };
   share() {
-
+    this.showSharer();
   }
   renderReminds() {
-    let data = this.getRemindData()
-    return !this.state.mounted ? (
-      <View style={{ width: "100%", height: "100%" }} />
-    ) : (
-        <View style={{ width: "100%", height: "100%" }}>
-          {this.props.removeHeader ? null : (
+    let data = this.getRemindData();
+    return (
+      <View style={{ width: "100%", height: "100%" }}>
+        {this.props.removeHeader ? null : (
+          <View
+            style={{
+              height: colorList.headerHeight,
+              width: "100%",
+              //paddingLeft: "1%",
+              //paddingRight: "1%",
+            }}
+          >
             <View
               style={{
-                height: colorList.headerHeight,
-                width: "100%",
-                //paddingLeft: "1%",
-                //paddingRight: "1%",
+                ...bleashupHeaderStyle,
+                backgroundColor: colorList.headerBackground,
+                flexDirection: "row",
+                alignItems: "center",
               }}
             >
-              <View
+              <TouchableOpacity
+                onPress={() => requestAnimationFrame(() => this.props.goback())}
                 style={{
-                  ...bleashupHeaderStyle,
-                  backgroundColor: colorList.headerBackground,
-                  flexDirection: "row",
-                  alignItems: 'center',
+                  width: "10%",
+                  paddingLeft: "3%",
+                  height: "100%",
+                  justifyContent: "center",
                 }}
               >
-                <TouchableOpacity
-                  onPress={() => requestAnimationFrame(() => this.props.goback())}
+                <MaterialIcons
                   style={{
-                    width: "10%",
-                    paddingLeft: "3%",
-                    height: "100%",
-                    justifyContent: "center",
+                    ...GState.defaultIconSize,
+                    color: colorList.headerIcon,
                   }}
-                >
-                  <MaterialIcons
-                    style={{ ...GState.defaultIconSize, color: colorList.headerIcon }}
-                    type={"MaterialIcons"}
-                    name={"arrow-back"}
-                  />
-                </TouchableOpacity>
+                  type={"MaterialIcons"}
+                  name={"arrow-back"}
+                />
+              </TouchableOpacity>
 
-                {!this.state.searching?<View
+              {!this.state.searching ? (
+                <View
                   style={{
                     width: "80%",
                     paddingLeft: "9%",
@@ -909,57 +906,102 @@ import { cancelSearch, startSearching, justSearch } from '../eventChat/searchSer
                   >
                     {Texts.reminds_at + " " + this.props.event.about.title}
                   </Text>
-                </View>:null}
-                <View style={{
-                  height:35,
-                  width:this.state.searching?"90%":35,
-                }}>
-                <Searcher
-                searchString={this.state.searchString}
-                searching={this.state.searching}
-                search={this.search}
-                startSearching={this.startSearching}
-                cancelSearch={this.cancelSearch}
-                >
-                </Searcher>
                 </View>
+              ) : null}
+              <View
+                style={{
+                  height: 35,
+                  width: this.state.searching ? "90%" : 35,
+                }}
+              >
+                <Searcher
+                  searchString={this.state.searchString}
+                  searching={this.state.searching}
+                  search={this.search}
+                  startSearching={this.startSearching}
+                  cancelSearch={this.cancelSearch}
+                ></Searcher>
               </View>
             </View>
-          )}
+          </View>
+        )}
 
-          <View style={{ height: '92%' }}>
+        <View style={{ height: "92%" }}>
+          {this.state.mounted ? (
             <BleashupFlatList
-             onScroll={this.onScroll}
+              onScroll={this.onScroll}
               fit={this.props.fit}
-              getItemLayout={(item, index) => GState.getItemLayout(item, index, data, 70, 0)}
+              getItemLayout={(item, index) =>
+                GState.getItemLayout(item, index, data, 70, 0)
+              }
               initialRender={6}
               ref="RemindsList"
-              renderPerBatch={5}
+              renderPerBatch={10}
               firstIndex={0}
               //showVerticalScrollIndicator={false}
-              keyExtractor={(item, index) => index.toString()}
+              keyExtractor={(item, index) => item.id}
               dataSource={data}
               renderItem={(item, index) => {
                 this.delay = index >= 5 ? 0 : this.delay + 1;
+                let isPointed = item.id === GState.currentID;
+                let update_state =
+                  moment(item.updated_at).format("x") +
+                  Number(isPointed) +
+                  (this.state.searchString
+                    ? this.state.searchString.length
+                    : 0);
+                let membersState =
+                  item.members.length +
+                  item.donners.length +
+                  item.confirmed.length;
                 return (
                   <TasksCard
+                    members_state={membersState}
+                    intervals_updated_at={
+                      stores.Reminds.remindsIntervals[item.event_id] &&
+                      stores.Reminds.remindsIntervals[item.event_id][item.id] &&
+                      stores.Reminds.remindsIntervals[item.event_id][item.id]
+                        .updated_at
+                    }
+                    update_state={update_state}
                     searchString={this.state.searchString}
                     showReport={this.showReport.bind(this)}
                     pointed_id={this.props.id}
                     type={this.props.type}
                     currentRemindUser={this.props.currentRemindUser}
-                    isPointed={item.id === GState.currentID}
-                    onLayout={(layout) => GState.itemDebounce(item, () => {
-                      index = findIndex(stores.Reminds.Reminds[item.event_id], { id: item.id })
-                      stores.Reminds.persistDimenssion(index, item.event_id, layout)
-                    }, 500)}
-                    showRemindActions={(intervals, thisInterval, creator, date, showModal) => {
-                      !showModal && Vibrator.vibrateShort()
-                      this.showRemindActions({ ...item, current_date: date },
+                    isPointed={isPointed}
+                    onLayout={(layout) =>
+                      GState.itemDebounce(
+                        item,
+                        () => {
+                          index = findIndex(
+                            stores.Reminds.Reminds[item.event_id],
+                            { id: item.id }
+                          );
+                          stores.Reminds.persistDimenssion(
+                            index,
+                            item.event_id,
+                            layout
+                          );
+                        },
+                        500
+                      )
+                    }
+                    showRemindActions={(
+                      intervals,
+                      thisInterval,
+                      creator,
+                      date,
+                      showModal
+                    ) => {
+                      !showModal && Vibrator.vibrateShort();
+                      this.showRemindActions(
+                        { ...item, current_date: date },
                         intervals,
                         thisInterval,
                         creator,
-                        showModal)
+                        showModal
+                      );
                     }}
                     animate={this.animateUI}
                     showMedia={this.showMedia.bind(this)}
@@ -983,23 +1025,26 @@ import { cancelSearch, startSearching, justSearch } from '../eventChat/searchSer
                     update={(data) => this.updateRemind(data)}
                     deleteRemind={this.removeRemind.bind(this)}
                     item={item}
-                    key={index}
                   />
                 );
               }}
               numberOfItems={this.getRemindData().length}
             />
-          </View>
-          {this.state.isActionButtonVisible ? <SideButton
+          ) : (
+              <Spinner></Spinner>
+            )}
+        </View>
+        {this.state.isActionButtonVisible ? (
+          <SideButton
             buttonColor={colorList.transparent}
             action={() => requestAnimationFrame(() => this.AddRemind())}
-            renderIcon={() =>
+            renderIcon={() => (
               <TouchableOpacity
                 style={{
                   backgroundColor: colorList.bodyBackground,
                   ...rounder(50, colorList.bodyBackground),
                   ...shadower(2),
-                  justifyContent: 'center',
+                  justifyContent: "center",
                 }}
                 onPress={() => requestAnimationFrame(() => this.AddRemind())}
               >
@@ -1009,16 +1054,16 @@ import { cancelSearch, startSearching, justSearch } from '../eventChat/searchSer
                   style={{
                     ...GState.defaultIconSize,
                     color: colorList.reminds,
-                    alignSelf: "center"
+                    alignSelf: "center",
                   }}
                 />
-              </TouchableOpacity>}
-          >
-
-          </SideButton> : null}
-        </View>
-      );
+              </TouchableOpacity>
+            )}
+          ></SideButton>
+        ) : null}
+      </View>
+    );
   }
 }
 
-export default Reminds
+export default Reminds;

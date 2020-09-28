@@ -10,6 +10,7 @@ import ProfileView from "../myscreens/invitations/components/ProfileView";
 import request from '../../services/requestObjects';
 import BeNavigator from '../../services/navigationServices';
 import GState from "../../stores/globalState";
+import ActivityPages from '../myscreens/eventChat/chatPages';
 export default class ShareFrame extends Component {
     constructor(props) {
         super(props);
@@ -62,7 +63,7 @@ export default class ShareFrame extends Component {
             </View>
             {this.state.showDetails ? <DetailsModal
                 goToActivity={
-                    () => BeNavigator.pushActivity(this.props.share.event, 'EventDetails')
+                    () => BeNavigator.pushActivity(this.props.share.event, ActivityPages.starts)
                 }
                 isOpen={this.state.showDetails}
                 onClosed={() => {

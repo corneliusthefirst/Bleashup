@@ -9,6 +9,7 @@ import GState from '../../../stores/globalState';
 import { AlarmPatterns } from '../../../services/recurrenceConfigs';
 import Texts from '../../../meta/text';
 import shadower from '../../shadower';
+import public_states from './public_states';
 
 export default class TaskCreationExtra extends BleashupModal {
 
@@ -18,10 +19,9 @@ export default class TaskCreationExtra extends BleashupModal {
     borderRadius = 10 
     position = "center"
     onClosedModal(global) {
-        if(!global){
-        this.props.proceed()
+        //this.props.proceed()
         this.props.onClosed()
-        }
+        
     }
     writeAlarms() {
         let reduceFun = (prev, current) => prev + "  " + current
@@ -53,11 +53,11 @@ export default class TaskCreationExtra extends BleashupModal {
                                 menu={[{
                                     title: Texts.public,
                                     condition: true,
-                                    callback: () => this.props.onChangedStatus('public')
+                                    callback: () => this.props.onChangedStatus(public_states.public_)
                                 }, {
                                     title: Texts.private,
                                     condition: true,
-                                    callback: () => this.props.onChangedStatus('private')
+                                    callback: () => this.props.onChangedStatus(public_states.private_)
                                 }]}
                             ></TextMenu></View>
                     </View>
@@ -85,7 +85,8 @@ export default class TaskCreationExtra extends BleashupModal {
                         </TouchableOpacity>
                     </View>
                     <View style={{ height: 80, margin: '2%', justifyContent: 'center', }}>
-                        <CreateButton title={"Proceed"} action={() => {
+                        <CreateButton title={Texts.proceed} action={() => {
+                           this.props.proceed()
                            this.props.onClosed()
                         }}></CreateButton>
                     </View>

@@ -22,12 +22,18 @@ export default class IntervalSeparator extends BePureComponent {
       });
     }
   }
+  press(){
+    this.props.onPress && this.props.onPress()
+  }
+  componentDidMount(){
+    this.props.shouldExpand && this.press()
+  }
   render() {
     return (
       <TouchableOpacity
         onPress={() =>
           requestAnimationFrame(
-            () => this.props.onPress && this.props.onPress()
+            () => this.press()
           )
         }
         style={{

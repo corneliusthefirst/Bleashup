@@ -47,12 +47,18 @@ class ProfileSimple extends BePureComponent {
   showInvite() {
     this.props.showInvite && this.props.showInvite(this.props.profile);
   }
+  typing_event = typing(this.props.profile.phone)
   componentMounting() {
-    this.props.profile &&
-      emitter.on(typing(this.props.profile.phone), (typer) => {
+    if(this.props.profile){
+      emitter.on(this.typing_event, (typer) => {
         !this.sayTyping ? (this.sayTyping = sayTyping.bind(this)) : null;
         this.sayTyping(typer);
       });
+    }
+  }
+  unmountingComponent(){
+    emitter.off(this.typing_event)
+    
   }
   showTyper() {
     return (

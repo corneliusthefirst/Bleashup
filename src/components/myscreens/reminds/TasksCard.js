@@ -7,13 +7,10 @@ import {
   Text,
   TouchableOpacity,
 } from "react-native";
-import Modal from "react-native-modalbox";
 import stores from "../../../stores/index";
 import moment from "moment";
 import { find, isEqual, findIndex, uniqBy, cloneDeep } from "lodash";
-import AccordionModule from "../invitations/components/Accordion";
 import Creator from "./Creator";
-import RemindsMenu from "./RemindsMenu";
 import { dateDiff, writeDateTime } from "../../../services/datesWriter";
 import {
   getCurrentDateInterval,
@@ -28,11 +25,13 @@ import CreateButton from "../event/createEvent/components/ActionButton";
 import shadower from "../../shadower";
 import Swipeout from "../eventChat/Swipeout";
 import BeComponent from "../../BeComponent";
-import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
-import AntDesign from "react-native-vector-icons/AntDesign";
 import GState from "../../../stores/globalState";
 import BePureComponent from "../../BePureComponent";
 import TextContent from '../eventChat/TextContent';
+import { showHighlightForScrollToIndex } from '../eventChat/highlightServices';
+import Texts from '../../../meta/text';
+import { loadStates, loadIntervals, calculateCurrentStates, returnRealActualIntervals, returnActualDatesIntervals } from "./remindsServices";
+import { remindTime, remindLocation, remindTitle, remindMedia, remindDescription, remindMembers, remindTimeDetail, remindActons, remindCreator } from './taskCardParts';
 
 let { height, width } = Dimensions.get("window");
 
@@ -40,75 +39,38 @@ export default class EventTasksCard extends BeComponent {
   constructor(props) {
     super(props);
     this.state = {
-      isOpenTasks: false,
-      isDone: this.props.item.isDone,
-      created_date: "",
-      created_time: "",
-      period_date: "",
       newing: false,
       showAll: false,
-      period_time: "",
-      hasDoneForThisInterval: false,
       correspondingDateInterval: {},
-      mounted: false,
-      creator: this.props.master, //this.props.item.creator === this.props.phone,
+      mounted: true,
       currentDateIntervals: [],
-      cardData: this.props.item,
-
       assignToMe: false,
-      userphone: "",
-      accordData: { title: "", content: "" },
-      RemindCreationState: false,
-      long: false,
     };
+    this.loadStates = loadStates.bind(this)
+    this.loadIntervals = loadIntervals.bind(this)
+    this.calculateCurrentStates = calculateCurrentStates.bind(this)
+    this.returnRealActualIntervals = returnRealActualIntervals.bind(this)
+    this.returnActualDatesIntervals = returnActualDatesIntervals.bind(this)
+    this.remindTime = remindTime.bind(this)
+    this.remindLocation = remindLocation.bind(this)
+    this.remindTitle = remindTitle.bind(this)
+    this.remindMedia = remindMedia.bind(this)
+    this.remindDescription = remindDescription.bind(this)
+    this.remindMembers = remindMembers.bind(this)
+    this.remindTimeDetail = remindTimeDetail.bind(this)
+    this.remindActions = remindActons.bind(this)
+    this.remindCreator = remindCreator.bind(this)
   }
-  componentMounting() {
-    setTimeout(() => {
-      let isThisProgram =
-        this.props.pointed_id == this.props.item.id &&
-        this.props.type &&
-        this.props.currentRemindUser;
-      this.loadIntervals(isThisProgram);
-    });
-  }
-  loadIntervals(canCheck) {
-    return new Promise((resolve, reject) => {
-      getcurrentDateIntervals(
-        {
-          start: moment(this.props.item.period).format(format),
-          end: moment(this.props.item.recursive_frequency.recurrence).format(
-            format
-          ),
-        },
-        this.props.item.recursive_frequency.interval,
-        this.props.item.recursive_frequency.frequency,
-        this.props.item.recursive_frequency.days_of_week
-      ).then((currentDateIntervals) => {
-        getCurrentDateInterval(
-          currentDateIntervals,
-          moment().format(format)
-        ).then((correspondingDateInterval) => {
-          this.setStatePure({
-            correspondingDateInterval,
-            currentDateIntervals,
-            //hasDoneForThisInterval,
-            newing: !this.state.newing,
-          });
-          canCheck && this.showActions(true);
-          setTimeout(() => {
-          canCheck &&  this.props.showReport && this.props.showReport()
-          })
-          resolve("ok");
-        });
-      });
-    });
-  }
-  
+
   componentDidMount() {
     this.mountTimeout = setTimeout(() => {
-      this.setStatePure({
-        mounted: true,
-      });
+      const showHighlighted = showHighlightForScrollToIndex.bind(this)
+      const isPointed = showHighlighted()
+      let isThisProgram =
+        isPointed &&
+        this.props.type &&
+        this.props.currentRemindUser;
+      this.loadStates(isThisProgram)
     }, 30 * this.props.delay);
   }
 
@@ -126,90 +88,36 @@ export default class EventTasksCard extends BeComponent {
   previousItem = null;
   shouldComponentUpdate(nextProps, nextState, nextContext) {
     this.props.animate();
+    let canUpdate = this.props.update_state !== nextProps.update_state || this.state.newing !== nextState.newing
     return (
-      this.state.mounted !== nextState.mounted ||
-      !isEqual(this.previousItem, nextProps.item) ||
-      this.props.isPointed !== nextProps.isPointed ||
-      this.props.searchString !== nextProps.searchString ||
-      this.previousItem.period !== nextProps.item.period ||
-      this.state.newing !== nextState.newing
+      canUpdate
     );
   }
 
   componentDidUpdate(prevProps, prevState) {
-    let canUpdate =
-      this.state.mounted &&
-      (!this.previousItem ||
-        this.previousItem.period !== this.props.item.period ||
-        !isEqual(
-          this.props.item.recursive_frequency,
-          this.previousItem.recursive_frequency
-        ));
-    if (canUpdate) {
-      this.loadIntervals().then(() => {});
+    let canReload = (prevProps.members_state !== this.props.members_state) ||
+      (prevProps.intervals_updated_at !== this.props.intervals_updated_at)
+    if (canReload) {
+      this.loadStates()
     }
-    this.previousItem = cloneDeep(this.props.item);
   }
-  unmountingComponent() {}
   saveAll(alarms) {
     this.props.assignToMe(this.props.item, alarms);
   }
-  accordData = {
-    title: null,
-    content: null,
-  };
-  returnActualDatesIntervals() {
-    return this.state.correspondingDateInterval
-      ? {
-          period: moment(
-            this.state.correspondingDateInterval.end,
-            format
-          ).format(),
-          recurrence: moment(
-            this.state.correspondingDateInterval.end,
-            format
-          ).format(),
-          title: this.props.item.title,
-        }
-      : {
-          period: moment(
-            this.state.currentDateIntervals[
-              this.state.currentDateIntervals.length - 1
-            ].end,
-            format
-          ).format(),
-          recurrence: moment(
-            this.state.currentDateIntervals[
-              this.state.currentDateIntervals.length - 1
-            ].end,
-            format
-          ).format(),
-          title: this.props.item.title,
-        };
-  }
-  returnRealActualIntervals() {
-    return this.state.correspondingDateInterval
-      ? {
-          start: this.state.correspondingDateInterval.start,
-          end: this.state.correspondingDateInterval.end,
-        }
-      : {
-          period: this.state.currentDateIntervals[
-            this.state.currentDateIntervals.length - 1
-          ].start,
-          recurrence: this.state.currentDateIntervals[
-            this.state.currentDateIntervals.length - 1
-          ].end,
-        };
-  }
-  showActions(dontShowModal) {
-    this.props.showRemindActions(
-      this.state.currentDateIntervals,
-      this.state.correspondingDateInterval,
-      this.state.creator.phone,
-      this.returnActualDatesIntervals().period,
-      dontShowModal
-    );
+  showActions(
+    currentDateIntervals,
+    correspondingDateInterval,
+    dontShowModal) {
+    currentDateIntervals = currentDateIntervals || this.state.currentDateIntervals,
+      correspondingDateInterval = correspondingDateInterval || this.state.correspondingDateInterval,
+      this.props.showRemindActions(
+        currentDateIntervals,
+        correspondingDateInterval,
+        this.props.item.creator,
+        this.returnActualDatesIntervals(currentDateIntervals,
+          correspondingDateInterval).period,
+        dontShowModal
+      );
   }
   container = {
     width: "98%",
@@ -221,69 +129,11 @@ export default class EventTasksCard extends BeComponent {
     padding: "1%",
     ...shadower(1),
   };
+  showMedia(url){
+    this.props.showMedia(url)
+  }
   render() {
-    let hasDoneForThisInterval = find(
-      this.props.item.donners,
-      (ele) =>
-        ele.status.date &&
-        this.state.correspondingDateInterval &&
-        moment(ele.status.date).format("x") >
-          moment(this.state.correspondingDateInterval.start, format).format(
-            "x"
-          ) &&
-        moment(ele.status.date).format("x") <=
-          moment(this.state.correspondingDateInterval.end, format).format(
-            "x"
-          ) &&
-        ele.phone === stores.LoginStore.user.phone
-    )
-      ? true
-      : false;
-
-    let actualInterval = this.returnActualDatesIntervals();
-    let realActualIntervals = this.returnRealActualIntervals();
-    let lastIndex = 0;
-    let lastInterval = {};
-    let isLastInterval = false;
-    if (
-      this.state.currentDateIntervals &&
-      this.state.currentDateIntervals.length > 0
-    ) {
-      lastIndex = this.state.currentDateIntervals.length - 1;
-      lastInterval = this.state.currentDateIntervals[lastIndex];
-      isLastInterval =
-        realActualIntervals.start == lastInterval.start &&
-        realActualIntervals.end == lastInterval.end;
-    }
-
-    canBeDone = this.state.correspondingDateInterval ? true : false;
-
-    missed =
-      dateDiff({
-        recurrence: this.state.correspondingDateInterval
-          ? moment(this.state.correspondingDateInterval.end, format).format()
-          : this.props.item.recursive_frequency.recurrence,
-      }) > 0 && !hasDoneForThisInterval;
-    status =
-      this.props.item.confirmed &&
-      this.state.correspondingDateInterval &&
-      findIndex(this.props.item.confirmed, (ele) =>
-        confirmedChecker(
-          ele,
-          stores.LoginStore.user.phone,
-          this.state.correspondingDateInterval
-        )
-      ) >= 0;
-    cannotAssign =
-      dateDiff({
-        recurrence: this.state.correspondingDateInterval
-          ? moment(this.state.correspondingDateInterval.end, format).format()
-          : this.props.item.period,
-      }) > 0;
-    member =
-      findIndex(this.props.item.members, {
-        phone: stores.LoginStore.user.phone,
-      }) >= 0;
+    console.warn("rendering: ", this.props.item.id)
     return !this.state.mounted ? (
       <View
         style={{
@@ -293,224 +143,59 @@ export default class EventTasksCard extends BeComponent {
         }}
       ></View>
     ) : (
-      <Swipeout
-        onLongPress={this.showActions.bind(this)}
-        disabled={false}
-        swipeRight={() => {
-          this.props.mention({
-            ...this.props.item,
-            current_date: this.returnActualDatesIntervals().period,
-          });
-        }}
-      >
-        <View
-          onLayout={(e) => this.props.onLayout(e.nativeEvent.layout)}
-          style={[
-            this.container,
-            {
-              backgroundColor: this.props.isPointed
-                ? ColorList.remindsTransparent
-                : ColorList.bodyBackground,
-            },
-          ]}
+        <Swipeout
+          onLongPress={this.showActions.bind(this)}
+          disabled={false}
+          swipeRight={() => {
+            this.props.mention({
+              ...this.props.item,
+              current_date: this.returnActualDatesIntervals(this.state.currentDateIntervals,
+                this.state.correspondingDateInterval).period,
+            });
+          }}
         >
-          <View>
-            <View
-              style={{
-                justifyContent: "space-between",
-                flexDirection: "row",
-              }}
-            >
-              <View style={{ width: "95%" }}>
-                <Text
-                  style={{
-                    width: "100%",
-                    fontWeight: "300",
-                    fontSize: 14,
-                    color: ColorList.bodySubtext,
-                    color:
-                      dateDiff({
-                        recurrence: this.state.correspondingDateInterval
-                          ? moment(
-                              this.state.correspondingDateInterval.end,
-                              format
-                            ).format()
-                          : this.props.item.period,
-                      }) > 0
-                        ? ColorList.bodySubtext
-                        : ColorList.iconActive,
-                    alignSelf: "flex-end",
-                  }}
-                >{`${writeDateTime(actualInterval)
-                  .replace("Starting", isLastInterval ? "Ends" : "Due")
-                  .replace("Ended", "Past")
-                  .replace("Started", "Past")}`}</Text>
-              </View>
-            </View>
-
-            {this.props.item.location ? (
-              <View style={{ flexDirection: "row" }}>
-                <TouchableOpacity
-                  style={{ flexDirection: "row" }}
-                  onPress={() =>
-                    requestAnimationFrame(() => {
-                      let Query = { query: this.props.item.location };
-                      createOpenLink({ ...Query, zoom: 50 })();
-                    })
-                  }
-                >
-                  <Text
-                    style={{ ...GState.defaultTextStyle, fontWeight: "bold" }}
-                  >
-                    {"Venue: "}
-                  </Text>
-                  <Text style={{ textDecorationLine: "underline" }}>
-                    {this.props.item.location}
-                  </Text>
-                </TouchableOpacity>
-              </View>
-            ) : null}
-            <View style={{ flexDirection: "row" }}>
-              <View>
-                <TextContent
-                searchString={this.props.searchString}
-                  ellipsizeMode={"tail"}
-                  numberOfLines={7}
-                  style={{
-                    ...GState.defaultTextStyle,
-                    fontWeight: "500",
-                    marginBottom: "5%",
-                    marginLeft: "0%",
-                    fontSize: 17,
-                    color: ColorList.bodyText,
-                    textTransform: "capitalize",
-                  }}
-                >
-                  {this.props.item.title}
-                </TextContent>
-              </View>
-            </View>
-            {this.props.item.remind_url &&
-            (this.props.item.remind_url.photo ||
-              this.props.item.remind_url.video) ? (
-              <MedaiView
-                height={ColorList.containerHeight * 0.39}
-                width={"100%"}
-                url={this.props.item.remind_url}
-                showItem={this.props.showMedia}
-              ></MedaiView>
-            ) : null}
-
-            <View
-              style={{
-                flexDirection: "row",
-              }}
-            >
-              <TextContent
-              animate={this.props.animate}
-              searchString={this.props.searchString}
-                note
+          <View
+            onLayout={(e) => this.props.onLayout(e.nativeEvent.layout)}
+            style={[
+              this.container,
+              {
+                backgroundColor: this.props.isPointed
+                  ? ColorList.remindsTransparent
+                  : ColorList.bodyBackground,
+              },
+            ]}
+          >
+            <View>
+              {this.remindTime()}
+              {this.remindLocation()}
+              {this.remindTitle()}
+              {this.remindMedia()}
+              {this.remindDescription()}
+              {this.remindMembers()}
+              <View
                 style={{
-                  fontSize: 12,
-                  marginTop: "2%",
-                  color: ColorList.bodyText,
+                  width: "100%",
+                  marginTop: "1%",
+                  marginBottom: "2%",
+                  alignItems: 'center',
+                  flexDirection: "row",
+                  justifyContent: "space-between",
+                  paddingRight: 5,
                 }}
               >
-                {this.props.item.description}
-              </TextContent>
-            </View>
-
-            <View
-              style={{
-                width: "100%",
-                marginTop: "3%",
-                flexDirection: "row",
-                justifyContent: "flex-end",
-                paddingRight: 15,
-              }}
-            >
-              {!member ? (
-                cannotAssign ? null : (
-                  <CreateButton
-                    title={"Assign To Me"}
-                    style={{
-                      borderWidth: 0,
-                      borderRadius: 10,
-                      width: 135,
-                      alignSelf: "flex-end",
-                      height: 35,
-                      alignItems: "center",
-                      justifyContent: "center",
-                      ...shadower(3),
-                      backgroundColor: ColorList.bodyDarkWhite,
-                    }}
-                    action={this.assignToMe.bind(this)}
-                  ></CreateButton>
-                )
-              ) : hasDoneForThisInterval ? (
-                status ? (
-                  <MaterialCommunityIcons
-                    type="MaterialCommunityIcons"
-                    name="check-all"
-                    style={{
-                      ...GState.defaultIconSize,
-                      color: "#54F5CA",
-                      marginLeft: "90%",
-                    }}
-                  ></MaterialCommunityIcons>
-                ) : (
-                  <AntDesign
-                    type="AntDesign"
-                    name="check"
-                    style={{
-                      ...GState.defaultIconSize,
-                      color: "#1FABAB",
-                      marginLeft: "90%",
-                    }}
-                  ></AntDesign>
-                )
-              ) : missed ? /*<Button style={{
-                  borderWidth: 2, marginTop: 5, borderRadius: 10,
-                  width: "21%", alignItems: 'center', justifyContent: 'center',
-                  marginLeft: "78%"
-                }} transparent><Text style={{ fontWeight: 'bold', color: 'red' }}>{"Missed"}</Text></Button>*/ null : canBeDone ? (
-                <CreateButton
-                  style={{
-                    borderRadius: 10,
-                    alignSelf: "flex-end",
-                    ...shadower(3),
-                    borderWidth: 0,
-                    backgroundColor: ColorList.bodyDarkWhite,
-                    width: 70,
-                    alignItems: "center",
-                    justifyContent: "center",
-                    height: 35,
-                  }}
-                  title={"Done"}
-                  action={this.onDone.bind(this)}
-                ></CreateButton>
-              ) : null}
-            </View>
-            <View
-              style={{
-                alignItems: "flex-start",
-                padding: 2,
-              }}
-            >
-              <Creator
-                giveCreator={(creator) => {
-                  this.setStatePure({
-                    creator: creator,
-                    newing: !this.state.newing,
-                  });
-                }}
-                creator={this.props.item.creator}
-                created_at={this.props.item.created_at}
-              ></Creator>
+                <View style={{
+                  width: "60%"
+                }}>
+                  {this.remindTimeDetail()}
+                </View>
+                <View>
+                  {this.remindActions()}
+                </View>
+              </View>
+              {this.remindCreator()}
             </View>
           </View>
-        </View>
-      </Swipeout>
-    );
+        </Swipeout>
+      );
   }
 }

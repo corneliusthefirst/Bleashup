@@ -15,6 +15,7 @@ import EvilIcons  from 'react-native-vector-icons/EvilIcons';
 import Ionicons  from 'react-native-vector-icons/Ionicons';
 import rounder from "../../../services/rounder";
 import shadower from "../../shadower";
+import ActivityPages from '../eventChat/chatPages';
 
 let globalFunctions =  GlobalFunctions;
 let { height, width } = Dimensions.get('window');
@@ -52,7 +53,7 @@ navigateToEventDetails = (item) => {
   let event = find(stores.Events.events , { id:item.id});
   stores.Events.isParticipant(item.id, stores.Session.SessionStore.phone).then(status => {
       if (status) {
-       BeNavigator.pushActivity(event,"EventChat")
+       BeNavigator.pushActivity(event,ActivityPages.chat)
       } else {
          this.openDetails(event);
       }
@@ -127,7 +128,7 @@ navigateToEventDetails = (item) => {
          <DetailsModal goToActivity={() => {
                     this.props.navigation.navigate('Event',
                     {
-                        'tab':'EventDetails',
+                        'tab': ActivityPages.starts,
                          Event:this.state.event
                     })
                   }} 

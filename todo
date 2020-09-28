@@ -88,7 +88,7 @@ see: https://github.com/wmcmahan/react-native-calendar-events/issues/12
 [*] apply default date on the datime picker implemented on votes on all the other parts of the application 
     where date time pickers are used namely reminds settings and activity settings .
 
-[ ] handle Error reporting on change background photo of an activity when the file server is not available.
+[*] handle Error reporting on change background photo of an activity when the file server is not available.
 [ ] handle error on the upload of posts media when the file is not available . 
 [*] change The storage functioning of TemporalUserStore to follow the way documented on react-native-storage so as the to acheive the benefits of 
     of having a each item in the store attached to and individual expiration time . 
@@ -116,32 +116,82 @@ see: https://github.com/wmcmahan/react-native-calendar-events/issues/12
     which is going to aprear nicer. 
 [*] backpresses are not working on none of the auth pages
  
-[] 
-    A solution needs to implemented to handle this . 
+[*]  A solution needs to implemented to handle this . 
     The same applies for sharers.
 
-[] Search implementation on the following pages. 
-    - [] Reminds the user should be able to search by:
+[*] Search implementation on the following pages. 
+    - [*] Reminds the user should be able to search by:
         - title,
         - description (if provided),
         - location (if provided)
 
-    - [] Start; the user should be able to search by: 
+    - [*] Start; the user should be able to search by: 
         - title,
         - description (if provided),
         - location (if provided)
 
-    - [] Messages; the user should be able to searchby: 
+    - [*] Messages; the user should be able to searchby: 
         - text,
         - sender.nickname,
 
-    - [] Change Logs; the user should be able to search by:
+    - [*] Change Logs; the user should be able to search by:
         - updater.nickname,
         - changed
     
-    - [] Relation; the user should be able to search search by
+    - [*] Relation; the user should be able to search search by
         - name,
 
 [] while picking audion files, the picker has the possibility of 
 giving out a file wchich is stored drive. hence the app crashes
+
+[*] Change the alerts for beup to implement instead @coenelius bleashupAlers 
+
+[*] Change the way item highlighting are currently handled when scrolling to index 
+    in reminds/starts and donners/members
+
+[*] change the way event_listerns are currently registered, it's not dry.  
+
+[*] currently drawer has been removed from the app; some implement the new activity menu layout.
+    this is not a menu just sending nav for stars, rems, changelogs,settings to a menu list and 
+    adding the activity photo on the chatroom header with menu list being also displayed on the 
+    chatroom header 
+
+[*] update the searching strategy in messages so as not to consider nicknames in case of 
+    relation. 
+
+[*] resurect long press on remindscards and highlightscards
+
+[*] handler remind message and star message
+
+[*] once and for all resolve the problem at the origin of the 
+    slow remind page and optimise it by creating an intervals store
+    so that reminds should just be rendered as normal post with 
+    their intervals precalculated.
+
+[] make reminds intervals mentionable
+
+[] handle sharing for reminds and stars. not that this follow the current sharing strategy of the app
+    this implementation should take into consideration sharing each items as links also
+
+[] handler share activity as message and as link.
+
+[] handle sharing of relations as links. 
+
+[] resolve the issue of the audio slider not moving sometimes the audio is playing.
+
+[] handle private reply of message. here a user in an activity can privately reply to any members of the activity 
+    about a message discussed in the activity. 
+[] add the new star Option of the Options in the chatroom. 
+
+[] apply rules on message actions reminds actions start actions 
+
+[] finally and for all add the possibility to to have files as posts 
+
+[] add the possiblilty to upload many photos in post. this is very important to handle memories. 
+
+[] add the possibility to update a report. this is very important to remove stress on the users. 
+
+
+
+
 

@@ -7,7 +7,7 @@ import rounder from "../../../services/rounder";
 import CacheImages from '../../CacheImages';
 import shadower from "../../shadower";
 import BeComponent from '../../BeComponent';
-import  EvilIcons  from 'react-native-vector-icons/EvilIcons';
+import EvilIcons from 'react-native-vector-icons/EvilIcons';
 import GState from "../../../stores/globalState";
 import PhotoViewer from '../event/PhotoViewer';
 import BeNavigator from '../../../services/navigationServices';
@@ -16,18 +16,18 @@ export default class PhotoPreview extends BeComponent {
         super(props)
         this.state = {}
     }
-    shouldComponentUpdate(nextProp,nextState){
-        return this.props.video !== nextProp.video || 
-        this.props.image !== nextProp.image
+    shouldComponentUpdate(nextProp, nextState) {
+        return this.props.video !== nextProp.video ||
+            this.props.image !== nextProp.image
     }
-    showPhoto(){
+    showPhoto() {
         Keyboard.dismiss()
         setTimeout(() => {
             BeNavigator.openPhoto(this.props.image, true)
-        }, this.props.timeToDissmissKeyboard)
+        }, this.props.openedKeyboard() ? this.props.timeToDissmissKeyboard : 0)
         //BeNavigator.pushTo("PhotoViewer",{photo:this.props.image,hideActions:true})
     }
-    containerHeight= this.props.showVideo ? 200 : 100
+    containerHeight = this.props.showVideo ? 200 : 100
     logOutZoomState = (event, gestureState, zoomableViewEventObject) => { };
     render() {
         let containerHeight = this.props.showVideo ? 200 : 100
@@ -55,13 +55,15 @@ export default class PhotoPreview extends BeComponent {
                     bindToBorders={true}
                     onZoomAfter={this.logOutZoomState}
                 >
-                <TouchableOpacity onPress={this.showPhoto.bind(this)}>
-                    <CacheImages thumbnails square
-                        style={{ width: "98%", height: "98%",alignSelf:"center",margin: '1%',
-                        borderTopLeftRadius: 5,backgroundColor: ColorList.bodyBackground,
-                        borderTopRightRadius: 5,}}
-                        source={{ uri: this.props.image }}
-                    ></CacheImages>
+                    <TouchableOpacity onPress={this.showPhoto.bind(this)}>
+                        <CacheImages thumbnails square
+                            style={{
+                                width: "98%", height: "98%", alignSelf: "center", margin: '1%',
+                                borderTopLeftRadius: 5, backgroundColor: ColorList.bodyBackground,
+                                borderTopRightRadius: 5,
+                            }}
+                            source={{ uri: this.props.image }}
+                        ></CacheImages>
                     </TouchableOpacity>
                 </ReactNativeZoomableView>
                 <TouchableOpacity

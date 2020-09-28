@@ -15,6 +15,8 @@ export default class SwiperComponent extends AnimatedComponent {
     this.state = {
       itemswiper: {},
       mounted:false,
+      rotation:0,
+      rotated:false,
       isPause: true,
     };
   }
@@ -67,6 +69,11 @@ export default class SwiperComponent extends AnimatedComponent {
     this.props.navigation.getParam(method) &&
       this.props.navigation.getParam(method)(this.state.itemswiper);
   }
+  rotate(){
+    this.setStatePure({
+      rotation: this.state.rotation + 90
+    })
+  }
   render() {
     return (
       !this.state.mounted?<View style={{
@@ -104,6 +111,8 @@ export default class SwiperComponent extends AnimatedComponent {
             return (
               <View style={styles.slide1}>
                 <Post
+                  rotation={this.state.rotation}
+                  key={this.state.rotation}
                   ref={(ref) => (this.post = ref)}
                   //isPause={this.state.isPause}
                   post={this.mapFunction(itemswiper)}
@@ -129,6 +138,7 @@ export default class SwiperComponent extends AnimatedComponent {
               this.goBack();
             }}
             swiper
+            rotate={this.rotate.bind(this)}
             removeMessage={() =>
               this.props.removeMessage(this.state.itemswiper)
             }

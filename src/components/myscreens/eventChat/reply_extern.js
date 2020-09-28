@@ -1,8 +1,10 @@
+import ActivityPages from './chatPages';
+
 class reply_extern {
     posts = 'Posts'
     post = 'Post'
     remind = "Remind"
-    reminds = "Reminds"
+    reminds = ActivityPages.reminds
     votes = 'Votes'
     vote = 'Vote'
     description = 'description'

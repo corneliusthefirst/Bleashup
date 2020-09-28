@@ -37,11 +37,13 @@ import CreationHeader from "./CreationHeader";
 import CreateButton from './ActionButton';
 import CreateTextInput from './CreateTextInput';
 import Toaster from "../../../../../services/Toaster";
-import  EvilIcons  from 'react-native-vector-icons/EvilIcons';
+import EvilIcons from 'react-native-vector-icons/EvilIcons';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import Spinner from '../../../../Spinner';
 import GState from "../../../../../stores/globalState";
 import IDMaker from '../../../../../services/IdMaker';
+import MessageRequester from '../../../eventChat/Requester';
+import messagePreparer from '../../../eventChat/messagePreparer';
 //create an extension to toast so that it can work in my modal
 
 
@@ -76,30 +78,14 @@ export default class EventHighlights extends BleashupModal {
       currentHighlight: request.Highlight(),
       update: false,
       audioState: false,
-      searchImageState: false, 
+      searchImageState: false,
       participant: null,
       isMounted: false,
     };
   }
 
   componentDidUpdate(prevProps, prevState) {
-   if (prevProps.highlight_id !== this.props.highlight_id) {
-         stores.Highlights.readFromStore().then((Highlights) => {
-          let highlight = find(Highlights[this.props.event_id], {
-            id: this.props.highlight_id || request.Highlight().id,
-          });
-          this.setStatePure({
-            newing: !this.state.newing,
-            isMounted: true,
-            currentHighlight: highlight ? highlight : request.Highlight(),
-            update: this.props.highlight_id ? true : false,
-          });
-        });
-    }
-  }
-  backdropPressToClose = false
-  componentDidMount() {
-   this.openModalTimeout = setTimeout(() => {
+    if (prevProps.highlight_id !== this.props.highlight_id) {
       stores.Highlights.readFromStore().then((Highlights) => {
         let highlight = find(Highlights[this.props.event_id], {
           id: this.props.highlight_id || request.Highlight().id,
@@ -107,7 +93,23 @@ export default class EventHighlights extends BleashupModal {
         this.setStatePure({
           newing: !this.state.newing,
           isMounted: true,
-          currentHighlight:this.props.star?this.props.star:highlight ? highlight : request.Highlight(),
+          currentHighlight: highlight ? highlight : request.Highlight(),
+          update: this.props.highlight_id ? true : false,
+        });
+      });
+    }
+  }
+  backdropPressToClose = false
+  componentDidMount() {
+    this.openModalTimeout = setTimeout(() => {
+      stores.Highlights.readFromStore().then((Highlights) => {
+        let highlight = find(Highlights[this.props.event_id], {
+          id: this.props.highlight_id || request.Highlight().id,
+        });
+        this.setStatePure({
+          newing: !this.state.newing,
+          isMounted: true,
+          currentHighlight: this.props.star ? this.props.star : highlight ? highlight : request.Highlight(),
         });
       });
     }, 100);
@@ -131,13 +133,13 @@ export default class EventHighlights extends BleashupModal {
   onChangedTitle(value) {
     this.setStatePure({
       newing: !this.state.newing,
-      currentHighlight: {...this.state.currentHighlight,title:value},
+      currentHighlight: { ...this.state.currentHighlight, title: value },
     });
     if (!this.props.updateState) {
       stores.Highlights.updateHighlightTitle(this.props.event_id,
         this.state.currentHighlight,
         false
-      ).then(() => {});
+      ).then(() => { });
     }
   }
   onChangedDescription(value) {
@@ -145,7 +147,7 @@ export default class EventHighlights extends BleashupModal {
     //this.state.currentHighlight.description = value;
     this.setStatePure({
       newing: !this.state.newing,
-      currentHighlight: {...this.state.currentHighlight,description:value},
+      currentHighlight: { ...this.state.currentHighlight, description: value },
     });
 
     if (!this.props.updateState) {
@@ -178,41 +180,45 @@ export default class EventHighlights extends BleashupModal {
       : request.Event().id; //new event id
     newHighlight.creator = stores.LoginStore.user.phone;
     newHighlight.created_at = moment().format();
-      this.props.startLoader();
-      this.props.onClosed();
-      if (
-        newHighlight.title ||
-        newHighlight.url.audio ||
-        newHighlight.url.photo ||
-        newHighlight.url.video
-      ) {
-        this.setStatePure({
-          creating: true,
-        });
-        Requester.createHighlight(newHighlight,this.props.isRelation?false:this.props.event.about.title)
-          .then(() => {
-            this.resetHighlight();
-            stores.Highlights.removeHighlight(newHighlight.event_id, request.Highlight().id).then(() => {
-              this.props.stopLoader();
-              this.setStatePure({
-                creating: false,
-              });
-            });
-          })
-          .catch(() => {
+    this.props.startLoader();
+    this.props.onClosed();
+    if (
+      newHighlight.title ||
+      newHighlight.url.audio ||
+      newHighlight.url.photo ||
+      newHighlight.url.video
+    ) {
+      this.setStatePure({
+        creating: true,
+      });
+      Requester.createHighlight(newHighlight, this.props.isRelation ? false : this.props.event.about.title)
+        .then(() => {
+          MessageRequester.sendMessage(messagePreparer.formMessagefromStar(newHighlight),
+            this.props.event.id, this.props.event.id,
+            true,
+            this.props.event.about.title)
+          this.resetHighlight();
+          stores.Highlights.removeHighlight(newHighlight.event_id, request.Highlight().id).then(() => {
             this.props.stopLoader();
             this.setStatePure({
               creating: false,
             });
           });
-      } else {
-        Toaster({
-          text: "Post Must include at least a media or title",
-          duration: 5000,
-          buttonText: "ok",
+        })
+        .catch(() => {
+          this.props.stopLoader();
+          this.setStatePure({
+            creating: false,
+          });
         });
-        this.props.stopLoader();
-      }
+    } else {
+      Toaster({
+        text: "Post Must include at least a media or title",
+        duration: 5000,
+        buttonText: "ok",
+      });
+      this.props.stopLoader();
+    }
   }
 
   updateHighlight() {
@@ -239,7 +245,7 @@ export default class EventHighlights extends BleashupModal {
     }
   }
 
-  swipeToClose=false
+  swipeToClose = false
   cleanAudio() {
     if (!this.props.updateState) {
       stores.Highlights.updateHighlightUrl(this.props.event_id, {
@@ -339,16 +345,16 @@ export default class EventHighlights extends BleashupModal {
       animateHighlight: false,
     });
   }
-  center={marginBottom: 'auto',marginTop: 'auto',}
-  width='90%'
+  center = { marginBottom: 'auto', marginTop: 'auto', }
+  width = '90%'
   modalBody() {
     return this.state.isMounted ? (
       <View>
-       <CreationHeader
-       back={this.back.bind(this)}
-        title={this.props.updateState ? "Update Post" : "Add New Post"}
-       >
-       </CreationHeader>
+        <CreationHeader
+          back={this.back.bind(this)}
+          title={this.props.updateState ? "Update Post" : "Add New Post"}
+        >
+        </CreationHeader>
         <View
           style={{
             height: ColorList.containerHeight - (ColorList.headerHeight + 10),
@@ -358,82 +364,82 @@ export default class EventHighlights extends BleashupModal {
         >
           <ScrollView keyboardShouldPersistTaps={'handled'} showsVerticalScrollIndicator={false} ref={"scrollView"}>
             <View style={{ height: "100%" }}>
-            <View style={{width:this.width,alignSelf: 'center',}}>
-            <CreateTextInput
-                height={height/11}
-                value={this.state.currentHighlight.title
-                  ? this.state.currentHighlight.title
-                  : ""}
-                onChange={this.onChangedTitle.bind(this)}
-                placeholder={"title"}
-            >
-            </CreateTextInput>
-            </View>
-            <View style={{width:this.width,alignSelf: 'center',}}>
-            <CreateTextInput
-                height={height/6}
-                value={this.state.currentHighlight.description
-                  ? this.state.currentHighlight.description
-                  : ""}
-                onChange={this.onChangedDescription.bind(this)}
-                placeholder={"description"}
-                maxLength={3000}
-                numberOfLines={5}
-                multiline={true}
-                backgroundColor={"#fbfafd"}
-            >
-            </CreateTextInput>
+              <View style={{ width: this.width, alignSelf: 'center', }}>
+                <CreateTextInput
+                  height={height / 11}
+                  value={this.state.currentHighlight.title
+                    ? this.state.currentHighlight.title
+                    : ""}
+                  onChange={this.onChangedTitle.bind(this)}
+                  placeholder={"title"}
+                >
+                </CreateTextInput>
               </View>
-              <View style={{ marginTop: 5, marginBottom: 5,width:this.width,alignSelf:"center",alignItems:"flex-start" }}>
+              <View style={{ width: this.width, alignSelf: 'center', }}>
+                <CreateTextInput
+                  height={height / 6}
+                  value={this.state.currentHighlight.description
+                    ? this.state.currentHighlight.description
+                    : ""}
+                  onChange={this.onChangedDescription.bind(this)}
+                  placeholder={"description"}
+                  maxLength={3000}
+                  numberOfLines={5}
+                  multiline={true}
+                  backgroundColor={"#fbfafd"}
+                >
+                </CreateTextInput>
+              </View>
+              <View style={{ marginTop: 5, marginBottom: 5, width: this.width, alignSelf: "center", alignItems: "flex-start" }}>
                 <PickersUpload
                   //notAudio
                   creating={!this.props.updateState}
-                  currentURL={this.state.currentHighlight.url||{}}
+                  currentURL={this.state.currentHighlight.url || {}}
                   id={this.state.currentHighlight.id}
                   saveMedia={(url) => {
                     this.applySave(url);
                   }}
                 ></PickersUpload>
               </View>
-                <View style={{width:this.width,alignSelf: 'center',}}>
-              <MediaPreviewer
-                height={ColorList.containerHeight * 0.22}
-                defaultPhoto={this.state.defaultUrl}
-                url={this.state.currentHighlight.url||{}}
-                cleanMedia={() => this.cleanMedia()}
-              ></MediaPreviewer>
+              <View style={{ width: this.width, alignSelf: 'center', }}>
+                <MediaPreviewer
+                  height={ColorList.containerHeight * 0.22}
+                  defaultPhoto={this.state.defaultUrl}
+                  url={this.state.currentHighlight.url || {}}
+                  cleanMedia={() => this.cleanMedia()}
+                ></MediaPreviewer>
               </View>
-              {this.state.currentHighlight && 
+              {this.state.currentHighlight &&
                 this.state.currentHighlight.url &&
                 this.state.currentHighlight.url.audio ? (
-                <View
-                  style={{
-                    height: height / 11,
-                    alignSelf: "center",
-                    backgroundColor: ColorList.bodyDarkWhite,
-                    ...shadower(2),
-                    margin: "3%",
-                    width: this.width, 
-                  }}
-                >
-                  <SimpleAudioPlayer
-                    url={this.state.currentHighlight.url}
-                  ></SimpleAudioPlayer>
-
-                  <EvilIcons
-                    name={"close"}
-                    type="EvilIcons"
-                    onPress={() => this.cleanAudio()}
+                  <View
                     style={{
-                      color: "red",
-                      position: "absolute",
-                      alignSelf: "flex-end",
-                      fontSize: 20,
+                      height: height / 11,
+                      alignSelf: "center",
+                      backgroundColor: ColorList.bodyDarkWhite,
+                      ...shadower(2),
+                      margin: "3%",
+                      width: this.width,
                     }}
-                  />
-                </View>
-              ) : null}
-              
+                  >
+                    <SimpleAudioPlayer
+                      url={this.state.currentHighlight.url}
+                    ></SimpleAudioPlayer>
+
+                    <EvilIcons
+                      name={"close"}
+                      type="EvilIcons"
+                      onPress={() => this.cleanAudio()}
+                      style={{
+                        color: "red",
+                        position: "absolute",
+                        alignSelf: "flex-end",
+                        fontSize: 20,
+                      }}
+                    />
+                  </View>
+                ) : null}
+
               <TouchableOpacity
                 transparent
                 onPress={() => {
@@ -443,10 +449,12 @@ export default class EventHighlights extends BleashupModal {
                       : "public"
                   );
                 }}
-                style={{marginTop:"3%",flexDirection:"row",height:40,alignItems:"center",
-                width:this.width,
-                alignSelf: 'center',
-                marginBottom: '3%',}}
+                style={{
+                  marginTop: "3%", flexDirection: "row", height: 40, alignItems: "center",
+                  width: this.width,
+                  alignSelf: 'center',
+                  marginBottom: '3%',
+                }}
               >
                 <MaterialIcons
                   name={
@@ -457,23 +465,24 @@ export default class EventHighlights extends BleashupModal {
                   type={"MaterialIcons"}
                   style={{
                     ...GState.defaultIconSize,
-                    fontSize:22,
-                    width:'15%',
-                    ...this.center}}
+                    fontSize: 22,
+                    width: '15%',
+                    ...this.center
+                  }}
                 />
-                <Text style={{color:ColorList.bodyText,...this.center}}>{`${this.state.currentHighlight.public_state}`}</Text>
+                <Text style={{ color: ColorList.bodyText, ...this.center }}>{`${this.state.currentHighlight.public_state}`}</Text>
               </TouchableOpacity>
 
 
-                {this.state.creating ? (
-                  <Spinner></Spinner>
-                ) :<CreateButton
-                    action={!this.props.updateState ? this.AddHighlight.bind(this) : this.updateHighlight.bind(this)}
-                    title={!this.props.updateState ? "Add New Post" : "Update Post"}
-                    width={this.width}
-                >
+              {this.state.creating ? (
+                <Spinner></Spinner>
+              ) : <CreateButton
+                action={!this.props.updateState ? this.AddHighlight.bind(this) : this.updateHighlight.bind(this)}
+                title={!this.props.updateState ? "Add New Post" : "Update Post"}
+                width={this.width}
+              >
                 </CreateButton>}
-             
+
             </View>
           </ScrollView>
         </View>

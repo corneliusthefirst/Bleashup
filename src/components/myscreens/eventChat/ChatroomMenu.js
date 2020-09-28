@@ -3,12 +3,17 @@ import {
     View, Text, TouchableOpacity
 } from 'react-native';
 import Menu, { MenuItem, MenuDivider } from 'react-native-material-menu';
-import emitter from '../../../services/eventEmiter';
 import colorList from "../../colorList";
 import replies from './reply_extern';
-import  EvilIcons  from 'react-native-vector-icons/EvilIcons';
+import  Entypo  from 'react-native-vector-icons/Entypo';
+import GState from "../../../stores/globalState";
+import ColorList from "../../colorList";
+import Texts from '../../../meta/text';
+import ActivityPages from './chatPages';
+import rounder from "../../../services/rounder";
+import BePureComponent from '../../BePureComponent';
 
-export default class ChatroomMenu extends Component {
+export default class ChatroomMenu extends BePureComponent {
     constructor(props) {
         super(props)
         this.state = {
@@ -46,6 +51,9 @@ export default class ChatroomMenu extends Component {
         //this._menu.hide()
 
     }
+    gotToPage(page){
+        this.props.openPage(page)
+    }
     isGeneral = this.props.roomID == this.props.eventID
     render() {
         return this.state.isMount ? (
@@ -54,57 +62,42 @@ export default class ChatroomMenu extends Component {
                     style={{ backgroundColor: colorList.popMenuBackground }}
                     ref={this.setMenuRef}
                     button={<TouchableOpacity 
+                        style={{
+                            ...rounder(35,ColorList.bodyBackground),
+                            justifyContent: 'center',
+                        }}
                         onPress={ () => 
                             requestAnimationFrame(() => this.showMenu())
-                    }><EvilIcons style={{
+                    }><Entypo style={{
+                        ...GState.defaultIconSize,
                         color: colorList.headerIcon,
                     }}
-                     name="gear" 
-                     type="EvilIcons">
-                    </EvilIcons>
+                     name="dots-three-vertical">
+                    </Entypo>
                     </TouchableOpacity>}
                 >
-                    {this.isGeneral?null: <View><MenuItem textStyle={{ color: "#0A4E52" }} onPress={() => {
-                        this.hideMenu()
-                        return this.props.showMembers()
-                    }
-                    }>View Members</MenuItem></View>}
-                    {/*<View><MenuDivider color="gray" /><MenuItem textStyle={{ color: "#0A4E52" }} onPress={() => {
-                        this.hideMenu()
-                        this.props.showRoomMedia()
-                    }}>Media</MenuItem><MenuDivider color="#1FABAB" /></View>*/}
-                    {this.isGeneral ? null : !this.props.master ? null : <View>
-                        <MenuItem textStyle={{ color: "#0A4E52" }} onPress={() => {
+                    <View>
+                        <MenuItem textStyle={{ color: ColorList.bodyText }} onPress={() => {
                             this.hideMenu()
-                            this.props.removeMembers()
-                        }}>Remove Members</MenuItem>
-                        <MenuDivider color="#1FABAB" /></View>}
-                    {this.isGeneral ? null : !this.props.master ? null :
-                        <View><MenuItem textStyle={{ color: this.props.opened ? "red" : "green" }} onPress={() => {
+                            this.gotToPage(ActivityPages.reminds)
+                        }}>{Texts.remind}</MenuItem>
+                        <MenuDivider color={ColorList.bodyText} /></View>
+                        <View><MenuItem textStyle={{ color: ColorList.bodyText}} onPress={() => {
                             this.hideMenu()
-                            this.props.opened ? this.props.closeCommitee() : this.props.openCommitee()
-                        }}>{this.props.opened ? "Close Committee" : "Open Committee"}</MenuItem>
-                            <MenuDivider color="#1FABAB" /></View>}
-                    {this.isGeneral ? null : !this.props.master ? null :
-                        <View><MenuItem textStyle={{ color: "#0A4E52" }} onPress={() => {
+                            this.gotToPage(ActivityPages.starts)
+                        }}>{Texts.star}</MenuItem>
+                            <MenuDivider color={ColorList.bodyText} /></View>
+                        <View><MenuItem textStyle={{ color: ColorList.bodyText }} onPress={() => {
                             this.hideMenu()
-                            this.props.public ? this.props.publishCommitee() : this.props.publishCommitee()
-                        }}>{this.isGeneral ? null : this.props.public ?
-                            "Unpublish Committee" : "Publish Committee"}</MenuItem>
-                            <MenuDivider color="#1FABAB" /></View>}
-                    {this.isGeneral || (this.props.master) ? <View><MenuItem textStyle={{ color: "#0A4E52" }} onPress={() => {
+                            this.gotToPage(ActivityPages.logs)
+                        }}>{Texts.logs}</MenuItem>
+                            <MenuDivider color={ColorList.bodyIcon} /></View>
+                   <View><MenuItem textStyle={{ color: ColorList.bodyText }} onPress={() => {
                         this.hideMenu()
                         this.props.settings()
-                    }}>{this.isGeneral ?
-                        "Activity Settings" : `Edit ${replies.committee} Name`}
+                    }}>{Texts.settings}
                     </MenuItem>
-                        <MenuDivider color="#1FABAB" /></View> : null}
-                    {this.isGeneral ? null :
-                        <View><MenuItem textStyle={{ color: "#0A4E52" }} onPress={() => {
-                            this.hideMenu()
-                            this.props.leaveCommitee()
-                        }}>{"Leave Committee"}</MenuItem>
-                            <MenuDivider color="#1FABAB" /></View>}
+                        <MenuDivider color={ColorList.bodyText} /></View>
                 </Menu>
             </View>
         ) : <ImageActivityIndicator />;

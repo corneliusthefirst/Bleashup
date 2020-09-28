@@ -2,6 +2,7 @@ import * as RootNav from "../RootNave"
 import GState from '../stores/globalState/index';
 import emitter from './eventEmiter';
 import { close_all_modals } from '../meta/events';
+import ActivityPages from '../components/myscreens/eventChat/chatPages';
 
 class NavigatorClass {
     constructor() {
@@ -62,29 +63,32 @@ class NavigatorClass {
         })
     }
     handleReply(event){
-        setTimeout(() => this.pushActivity(event, "EventChat"), GState.waitToReply)
+        setTimeout(() => this.pushToChat(event,{}), GState.waitToReply)
     }
     gotoChangeLogs(event,options){
-        this.pushActivity(event,"ChangeLogs",options)
+        this.pushActivity(event,ActivityPages.logs,options)
     }
     gotoRemindsWithIndex(event,id,withReply,options) {
-        GState.toggleCurrentIndex(id, 7000)
-        this.pushActivity(event, "Reminds", { id, 
-            reply: withReply ? () => this.handleReply(event) :null,...options })
+        //GState.toggleCurrentIndex(id, 7000)
+        GState.setPointedID(id)
+        this.pushActivity(event, ActivityPages.reminds, { id, 
+            reply: withReply ? (reply) => this.handleReply(event) :null,...options })
     }
     goToRemind(event,withReply){
-        this.pushActivity(event, "Reminds", {
-            reply: withReply ? () => this.handleReply(event) : null
+        this.pushActivity(event, ActivityPages.reminds, {
+            reply: withReply ? (reply) => this.handleReply(event) : null
         })
     }
     gotoStarWithIndex(event, id, withReply) {
-        GState.toggleCurrentIndex(id, 7000)
-        this.pushActivity(event, "EventDetails", {
-            id, reply: withReply ? () => this.handleReply(event): null })
+        //GState.toggleCurrentIndex(id, 7000)
+        GState.setPointedID(id)
+        this.pushActivity(event, ActivityPages.starts, {
+            id, reply: withReply ? (reply) => this.handleReply(event): null })
     }
     goToChatWithIndex(event,id){
-        GState.toggleCurrentIndex(id,5000)
-        this.pushActivity(event,"EventChat",{id})
+        //GState.toggleCurrentIndex(id,5000)
+        GState.setPointedID(id)
+        this.pushToChat(event,ActivityPages.chat,{id})
     }
     sayCloseAllModals(){
         emitter.emit(close_all_modals)
@@ -92,19 +96,27 @@ class NavigatorClass {
     }
     openPhoto(url,hideActions,date,callback){
        // this.sayCloseAllModals()
-        this.pushRoute('PhotoViewer', { 
+        let route = 'PhotoViewer'
+        this.pushRoute(route, { 
             photo: url,
             date,
             hideActions: hideActions||false,
             callback
-        })
+        },route)
     }
     pushTo(page, param){
         this.pushRoute(page,param,page)
     }
+    leave_route_event = "leave_route"
+    pushToChat(event,options){
+        emitter.emit(this.leave_route_event)
+        setTimeout(() => {
+            this.pushActivity(event, ActivityPages.chat, options)
+        })
+    }
     pushActivity(event, page,options) {
-        page = page || 'EventDetails'
-        this.pushRoute('Event', { Event: event, tab: page, ...options },`Event/${page}`)
+        page = page || ActivityPages.chat
+        this.pushRoute('Event', { Event: event, tab: page, ...options }, `Event/${page}`)
     }
     navigateToContacts(){
         this.navigateTo("Contacts")
@@ -114,6 +126,14 @@ class NavigatorClass {
     }
     navigateToCreateEvent(){
         this.navigateTo("CreateEventView")
+    }
+    gotoStarDetail(post_id,activity_id,more){
+        let route = "StarDetail"
+        this.pushRoute(route,{post_id,activity_id,...more},route)
+    }
+    goToRemindDetail(remind_id,activity_id,more){
+        let route = "RemindDetail"
+        this.pushRoute(route,{remind_id,activity_id,...more},route)
     }
     goBack() {
         GState.nav.goBack()

@@ -22,6 +22,7 @@ import { observer } from "mobx-react";
 import BePureComponent from "../../../BePureComponent";
 import Texts from "../../../../meta/text";
 import TextContent from "../../eventChat/TextContent";
+import GState from '../../../../stores/globalState/index';
 
 @observer
 class ProfileView extends BePureComponent {
@@ -33,6 +34,7 @@ class ProfileView extends BePureComponent {
   state = { isMount: false, hide: false };
  
   componentDidMount() {
+    this.props.showHighlighter && this.props.showHighlighter()
     setTimeout(
       () =>
         stores.TemporalUsersStore.getUser(this.props.phone)
@@ -66,14 +68,16 @@ class ProfileView extends BePureComponent {
   openModal() {
     this.setStatePure({ isModalOpened: true });
   }
+  typing_event = typing(this.props.phone)
   componentMounting() {
-    emitter.on(typing(this.props.phone), (typer) => {
+    emitter.on(this.typing_event, (typer) => {
       !this.sayTyping ? (this.sayTyping = sayTyping.bind(this)) : null;
       this.sayTyping(typer);
     });
   }
   unmountingComponent() {
-    //!emitter.off(typing(this.props.phone))
+    emitter.off(this.typing_event)
+    
   }
   showTyper() {
     return (

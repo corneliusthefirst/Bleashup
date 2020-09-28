@@ -1,10 +1,10 @@
 import GState from '../stores/globalState/index';
 class TEXTS {
-    constructor(language){
+    constructor(language) {
         this.lang = language
     }
     profile_card = {
-        en:"Profile Card",
+        en: "Profile Card",
         fr: "Carte De Profile"
     }[GState.lang]
 
@@ -12,58 +12,58 @@ class TEXTS {
         en: "Phone number",
         fr: "Numero De Telephone"
     }[GState.lang]
-    
+
     continue = {
-        en:"Continue",
+        en: "Continue",
         fr: "Continuer"
     }[GState.lang]
     join = {
-        en:"Join",
+        en: "Join",
         fr: "Rejoindre"
     }[GState.lang]
     on = {
         en: "On ",
-        fr:"Le "
+        fr: "Le "
     }[GState.lang]
     remind_message = {
-        en:"Remind Message",
-        fr:"Message Rappel"
+        en: "Remind Message",
+        fr: "Message Rappel"
     }[GState.lang]
     files = {
-        en:"Files",
-        fr:"Fichier"
+        en: "Files",
+        fr: "Fichier"
     }[GState.lang]
     add_photos = {
-        en:"Photos",
-        fr:"Photos"
+        en: "Photos",
+        fr: "Photos"
     }[GState.lang]
     qr_scanner = {
-        en:"QR Join",
+        en: "QR Join",
         fr: "Joindre Par QR"
     }[GState.lang]
     reminds = {
-        en:"Reminds",
-        fr:"Rappels"
+        en: "Reminds",
+        fr: "Rappels"
     }[GState.lang]
     new_activity = {
-        en:"New Activity",
-        fr:"Nouvelle Activitee"
+        en: "New Activity",
+        fr: "Nouvelle Activitee"
     }[GState.lang]
     cancel = {
-        en:"Cancel",
-        fr:"Anuller"
+        en: "Cancel",
+        fr: "Anuller"
     }[GState.lang]
     go_back = {
         en: "Go Back",
-        fr:"Retoure"
+        fr: "Retoure"
     }[GState.lang]
     join_via_qr = {
         en: "Join activity through QR Code",
-        fr:"Rejoindre par QR"
+        fr: "Rejoindre par QR"
     }[GState.lang]
-    confirm_password =  {
-        en:"Please confirm password",
-        fr:"Confirmez votre mots de pass"
+    confirm_password = {
+        en: "Please confirm password",
+        fr: "Confirmez votre mots de pass"
     }[GState.lang]
     password_not_matched = {
         en: "password not matching",
@@ -75,7 +75,7 @@ class TEXTS {
     }[GState.lang]
     enter_password = {
         en: "Please enter password",
-        fr:"Entree votre mots de pass"
+        fr: "Entree votre mots de pass"
     }[GState.lang]
     invalide_password = {
         en: "Invalid password",
@@ -83,7 +83,7 @@ class TEXTS {
     }[GState.lang]
     not_empty_password = {
         en: "password cannot be empty",
-        fr:"mots de pass ne peut etre vide"
+        fr: "mots de pass ne peut etre vide"
     }[GState.lang]
     enter_name = {
         en: "Please enter your name",
@@ -93,27 +93,27 @@ class TEXTS {
         en: "User name cannot be empty",
         fr: "Ce champ ne peut etre vide"
     }[GState.lang]
-    unable_to_verify_account= {
+    unable_to_verify_account = {
         en: "Unable To Verify Your Account, Please Check Your Internet Connection",
         fr: "Votre Compte N'a pas pu etre verifiee; SVP verifiez votre connection internet"
     }[GState.lang]
     phone_number_verify = {
-        en:"Verify Your Phone Number",
-        fr:"Verifiez votre numero de telephone"
+        en: "Verify Your Phone Number",
+        fr: "Verifiez votre numero de telephone"
     }[GState.lang]
     ok = {
         en: "OK",
-        fr:"OK"
+        fr: "OK"
     }[GState.lang]
-    sign_in= {
-        en:"Sign In",
-        fr:"Entree Votre Mots de pass"
+    sign_in = {
+        en: "Sign In",
+        fr: "Entree Votre Mots de pass"
     }[GState.lang]
     phone_number_verification = {
         en: "Phone Number Verification",
-        fr:"Numero de verification"
+        fr: "Numero de verification"
     }[GState.lang]
-    enter_verification_code =  {
+    enter_verification_code = {
         en: "Please enter email verification code",
         fr: "Entree le code de verification recu"
     }[GState.lang]
@@ -122,8 +122,8 @@ class TEXTS {
         fr: "Code de verfication invalide"
     }[GState.lang]
     confirm_you_account = {
-        en:"Please Comfirm your Account; A verification Code was sent to your number",
-        fr:"Confirmez votre compte; Un code de verificaton vous a ete envoyee"
+        en: "Please Comfirm your Account; A verification Code was sent to your number",
+        fr: "Confirmez votre compte; Un code de verificaton vous a ete envoyee"
     }[GState.lang]
     reset_password = {
         en: "Reset Password",
@@ -131,15 +131,15 @@ class TEXTS {
     }[GState.lang]
     contacts = {
         en: "Contacts",
-        fr:"Contacts"
+        fr: "Contacts"
     }[GState.lang]
     activity = {
         en: "Activity",
-        fr:"Activitee"
+        fr: "Activitee"
     }[GState.lang]
     cannot_send_message = {
         en: "cannot to forward message",
-        fr:"message ne peut etre transmit"
+        fr: "message ne peut etre transmit"
     }[GState.lang]
     search_in_your_contact = {
         en: "Search in your contacts",
@@ -158,12 +158,12 @@ class TEXTS {
         fr: "Changer"
     }[GState.lang]
     public = {
-        en:"Public",
+        en: "Public",
         fr: "Public"
     }[GState.lang]
     private = {
         en: "Private",
-        fr:"Privee",
+        fr: "Privee",
     }[GState.lang]
     this_program = {
         en: "This program is ",
@@ -175,7 +175,7 @@ class TEXTS {
     }[GState.lang]
     a_week_before = {
         en: "1 Week Before",
-        fr:"Une Semaine Avant"
+        fr: "Une Semaine Avant"
     }[GState.lang]
     two_days_before = {
         en: "2 Days Befors",
@@ -187,19 +187,19 @@ class TEXTS {
     }[GState.lang]
     thirty_mins_before = {
         en: "30 Minuts Before",
-        fr:"Trente minutes avant"
+        fr: "Trente minutes avant"
     }[GState.lang]
     one_hour_before = {
         en: "One hour before",
-        fr:"Une heure avant"
+        fr: "Une heure avant"
     }[GState.lang]
     two_hours_before = {
-        en:"Two hours before",
-        fr:"Deux heures avant"
+        en: "Two hours before",
+        fr: "Deux heures avant"
     }[GState.lang]
     three_hours_before = {
         en: "Three hours before",
-        fr:"Trois heures avant",
+        fr: "Trois heures avant",
     }[GState.lang]
     four_hours_before = {
         en: "Four hours before",
@@ -223,14 +223,14 @@ class TEXTS {
     }[GState.lang]
     nine_hours_before = {
         en: "Nine hours before",
-        fr:"Neuf heures avant"
+        fr: "Neuf heures avant"
     }[GState.lang]
-    ten_hours_before =  {
-        en:"Ten hours before",
-        fr:"Dix heures avant"
+    ten_hours_before = {
+        en: "Ten hours before",
+        fr: "Dix heures avant"
     }[GState.lang]
     eleven_hours_before = {
-        en:"Eleven hours before",
+        en: "Eleven hours before",
         fr: "Onze heures avant"
     }[GState.lang]
     twelve_hours_before = {
@@ -294,8 +294,8 @@ class TEXTS {
         fr: "Alarmes"
     }[GState.lang]
     unable_to_perform_request = {
-        en:"Unable to perform request",
-        fr:"Impossible d'efecture cette action"
+        en: "Unable to perform request",
+        fr: "Impossible d'efecture cette action"
     }[GState.lang]
     not_enough_previledges_to_perform_action = {
         en: "you don't have enough priviledges to perform this action",
@@ -311,10 +311,10 @@ class TEXTS {
     }[GState.lang]
     confirmed_already = {
         en: 'confirmed already!',
-        fr:"Deja Confirmee"
+        fr: "Deja Confirmee"
     }[GState.lang]
     reply = {
-        en:"reply",
+        en: "reply",
         fr: "Repondre"
     }[GState.lang]
     update = {
@@ -322,12 +322,12 @@ class TEXTS {
         fr: "Metre a jour"
     }[GState.lang]
     delete_ = {
-        en:"Delete",
+        en: "Delete",
         fr: "Suprimer"
     }[GState.lang]
     members = {
-        en:"Members",
-        fr:"Membres"
+        en: "Member(s)",
+        fr: "Membre(s)"
     }[GState.lang]
     assign = {
         en: "Assign",
@@ -339,47 +339,47 @@ class TEXTS {
     }[GState.lang]
     share = {
         en: 'Share',
-        fr:"Partager"
+        fr: "Partager"
     }[GState.lang]
     closed_activity = {
         en: `This activity has been closed`,
-        fr:"Cette Activitee a ete suspendu"
+        fr: "Cette Activitee a ete suspendu"
     }[GState.lang]
     copy = {
         en: "Copy",
-        fr:"Copier"
+        fr: "Copier"
     }[GState.lang]
     star = {
         en: "Star",
         fr: "Favoriser"
     }[GState.lang]
     remind = {
-        en:"Remind / Program",
-        fr:"Rappeler / Programer"
+        en: "Remind / Program",
+        fr: "Rappeler / Programer"
     }[GState.lang]
     reminder = {
-        en:"Remind",
-        fr:"Rappel"
+        en: "Remind",
+        fr: "Rappel"
     }[GState.lang]
     seen_by = {
         en: "Seen by",
-        fr:"Vue par",
+        fr: "Vue par",
     }[GState.lang]
     message_report = {
-        en:"Message report",
-        fr:"Raport du message"
+        en: "Message report",
+        fr: "Raport du message"
     }[GState.lang]
     not_available_video = {
         en: "This video is not more available",
-        fr:"Cette video n'est plus accessible"
+        fr: "Cette video n'est plus accessible"
     }[GState.lang]
     new_messages = {
         en: 'New Messages',
         fr: "Nouveau messages"
     }[GState.lang]
     remind_must_have_atleate_date_time_or_title = {
-        en:"Remind / Program Must Have Atleat a Title and Data/Time",
-        fr:"Un Rappel doit au moin contenire un title et une date"
+        en: "Remind / Program Must Have Atleat a Title and Data/Time",
+        fr: "Un Rappel doit au moin contenire un title et une date"
     }[GState.lang]
     remind_configs = {
         en: "Remind configs",
@@ -387,23 +387,23 @@ class TEXTS {
     }[GState.lang]
     add_remind = {
         en: "Add Remind",
-        fr:"Ajouter un Rappel / Program"
+        fr: "Ajouter un Rappel / Program"
     }[GState.lang]
     program = {
-        en:"Program",
-        fr:"Program"
+        en: "Program",
+        fr: "Program"
     }[GState.lang]
     restore = {
-        en:"Restore",
-        fr:"restorer"
+        en: "Restore",
+        fr: "restorer"
     }[GState.lang]
     your_event_title = {
         en: "Program title",
-        fr:"Title du program"
+        fr: "Title du program"
     }[GState.lang]
     remind_message = {
         en: "Remind message",
-        fr:"Message du rappel"
+        fr: "Message du rappel"
     }[GState.lang]
     remind_date = {
         en: "Remind Date",
@@ -419,22 +419,22 @@ class TEXTS {
     }[GState.lang]
     view_days = {
         en: "view days",
-        fr:"voir les jours"
+        fr: "voir les jours"
     }[GState.lang]
     on_the = {
-        en:"on the",
+        en: "on the",
         fr: "le"
     }[GState.lang]
     update_remind = {
         en: "Update Remind",
-        fr:"Editer le Rappel / Program"
+        fr: "Editer le Rappel / Program"
     }[GState.lang]
     all_days = {
-        en:"(all days)",
+        en: "(all days)",
         fr: "(tous les jours)"
     }[GState.lang]
     days = {
-        en:"days",
+        en: "days",
         fr: "jours"
     }[GState.lang]
     selete_recurrence_stop_date = {
@@ -443,11 +443,11 @@ class TEXTS {
     }[GState.lang]
     venue = {
         en: "Venue",
-        fr:"lieux"
+        fr: "lieux"
     }[GState.lang]
     details = {
         en: "Details",
-        fr:"Detailes"
+        fr: "Detailes"
     }[GState.lang]
     unable_to_upload = {
         en: 'Unable To upload photo',
@@ -458,7 +458,7 @@ class TEXTS {
         fr: "Une activitee doit avoir un nom"
     }[GState.lang]
     this_message_was_never_sent = {
-        en:"This messages wa never sent",
+        en: "This messages wa never sent",
         fr: "Ce message n'a jamais ete envoyee"
     }[GState.lang]
     press_long_to_record = {
@@ -491,7 +491,7 @@ class TEXTS {
     }[GState.lang]
     typing = {
         en: "typing ...",
-        fr:"ecrit ..."
+        fr: "ecrit ..."
     }[GState.lang]
     successfull_restoration = {
         en: "restoration was successful",
@@ -553,12 +553,12 @@ class TEXTS {
         en: "Select Members",
         fr: "Selectioner les membres"
     }[GState.lang]
-    enter_your_name= {
+    enter_your_name = {
         en: "Enter your name",
         fr: "Entree Votre nom"
     }[GState.lang]
     apply = {
-        en:"Aply",
+        en: "Aply",
         fr: "Apliquer"
     }[GState.lang]
     enter_new_value = {
@@ -578,8 +578,8 @@ class TEXTS {
         fr: "Disponible"
     }[GState.lang]
     busy = {
-        en:"Busy",
-        fr:"Occupee"
+        en: "Busy",
+        fr: "Occupee"
     }[GState.lang]
     at_school = {
         en: "At school",
@@ -599,19 +599,19 @@ class TEXTS {
     }[GState.lang]
     sleeping = {
         en: "Sleeping",
-        fr:"Endormis"
+        fr: "Endormis"
     }[GState.lang]
-    urgent_call_only={
+    urgent_call_only = {
         en: "Urgent calls only",
         fr: "Appel urgents uniquement"
     }[GState.lang]
     very_low_battery = {
         en: "Battery very low",
-        fr:"Batterie tres faible"
+        fr: "Batterie tres faible"
     }[GState.lang]
-    copied={
+    copied = {
         en: 'copied !',
-        fr:'copiee'
+        fr: 'copiee'
     }[GState.lang]
     your_text = {
         en: "Your Message",
@@ -643,7 +643,7 @@ class TEXTS {
     }[GState.lang]
     accept = {
         en: "Accept",
-        fr:"Accepter"
+        fr: "Accepter"
     }[GState.lang]
     unknow_user_consider_inviting = {
         en: "unnknown user please consider inviting this contact",
@@ -658,20 +658,20 @@ class TEXTS {
         fr: "Description de l'activitee"
     }[GState.lang]
     activity_description_placeholder = {
-        en:"Activity Desciption goes here; no description currently provided.",
+        en: "Activity Desciption goes here; no description currently provided.",
         fr: "La description de l'activitee vien ici; aucune description donnee pour le moment"
     }[GState.lang]
     no_description = {
         en: "No Description Provided",
         fr: "Pas de Description Donnee"
     }[GState.lang]
-    select_new_members={
+    select_new_members = {
         en: "Select New Members",
-        fr:"Selectionez les nouveaux membres"
+        fr: "Selectionez les nouveaux membres"
     }[GState.lang]
     members_and = {
         en: " members and ",
-        fr:" membres et"
+        fr: " membres et"
     }[GState.lang]
     masters = {
         en: " masters",
@@ -690,7 +690,7 @@ class TEXTS {
         fr: "programmons ca"
     }[GState]
     last_seen = {
-        en:"last seen: ",
+        en: "last seen: ",
         fr: "dernier fois: "
     }[GState.lang]
     history = {
@@ -712,6 +712,94 @@ class TEXTS {
     no_connection_to_server = {
         en: "loading... from remote",
         fr: "chargement ..."
+    }[GState.lang]
+    logs = {
+        en: "Change Logs",
+        fr: "Changement"
+    }[GState.lang]
+    settings = {
+        en: "Settings",
+        fr: "Parametres"
+    }[GState.lang]
+    done = {
+        en: "Done",
+        fr: "Fait"
+    }[GState.lang]
+    assign_me = {
+        en: "Assign To Me",
+        fr: "M'assgner"
+    }[GState.lang]
+    un_assign_to_me = {
+        en:"Unassign To Me",
+        fr:"Me Deassigner"
+    }[GState.lang]
+    past_since = {
+        en: "Past since: ",
+        fr: "Passee Depuis"
+    }[GState.lang]
+    started = {
+        en:"Started",
+        fr: "Depuis"
+    }[GState.lang]
+    starts = {
+        en:"Due",
+        fr:"Pour"
+    }[GState.lang]
+    ends = {
+        en:"Ends",
+        fr:"Passes"
+    }[GState.lang]
+    deu = {
+        en: "Deu",
+        fr: "Pour"
+    }[GState.lang]
+    delete_highlight = {
+        en: "Delete Star",
+        fr: "Effacer Cette Etoile"
+    }[GState.lang]
+    are_you_sure_to_delete_this_highlight = {
+        en: " Are you sure you want to delete these highlight ?",
+        fr: "Etes vous sur de vouloir effacer cette eetoile"
+    }[GState.lang]
+    no = {
+        en: "No",
+        fr: "Non"
+    }[GState.lang]
+    yes = {
+        en: "Yes",
+        no: "Oui"
+    }[GState.lang]
+    every_day_at ={
+        en:"every days at",
+        fr: "tous les jours a"
+    }[GState.lang]
+    every_month_on_the = {
+        en:"every months on the",
+        fr:"chaques mois le"
+    }[GState.lang]
+    every = {
+        en:"every",
+        fr: "chaques"
+    }[GState.lang]
+    yearly = {
+        en: "yearly on",
+        fr: "annuellement le"
+    }[GState.lang]
+    until = {
+        en: "until",
+        fr: "jusqu'a"
+    }[GState.lang]
+    proceed = {
+        en: "Proceed",
+        fr: "Continuer"
+    }[GState.lang]
+    venue = {
+        en:"Venue",
+        fr: "Lieu"
+    }[GState.lang]
+    unable_to_load_data = {
+        en: "Unable to load data",
+        fr: "impossible de montree cette info"
     }[GState.lang]
 }
 const Texts = new TEXTS()

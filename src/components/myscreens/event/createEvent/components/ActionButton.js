@@ -29,7 +29,9 @@ export default class CreateButton extends Component {
         }}
           onPress={() => requestAnimationFrame(this.props.action)}
         >
-          <Text style={{ color: ColorList.bodyText, fontWeight: 'bold',
+          <Text style={{ 
+            color:(this.props.style && this.props.style.color)||ColorList.bodyText, 
+            fontWeight: 'bold',
           textAlign:"center" }}>
             {this.props.title}
           </Text>

@@ -23,6 +23,7 @@ import { AddParticipant } from '../../../services/cloud_services';
 import testForURL from '../../../services/testForURL';
 import request from '../../../services/requestObjects';
 import Toaster from '../../../services/Toaster';
+import ActivityPages from '../eventChat/chatPages';
 
 
 const defaultPlaceholderObject = {
@@ -141,7 +142,7 @@ class CardListItem extends Component {
       let event = filter(stores.Events.events, { id: this.state.event_id })
       this.props.navigation.navigate("Event", {
         Event: event[0],
-        tab: "EventDetails"
+        tab: ActivityPages.starts
       })
     } else {
       this.props.openDetails(this.state.item.event)

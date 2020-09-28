@@ -124,27 +124,7 @@ export default class SWView extends BeComponent {
                 height: 73,
               }}
             >
-              <TouchableOpacity
-                style={{  ...shadower(),...rounder(50,ColorList.indicatorColor) }}
-                onPress={() =>
-                  requestAnimationFrame(() =>
-                    this.props.showActivityPhotoAction()
-                  )
-                }
-              >
-                {testForURL(this.props.event.background) ? (
-                  <CacheImages
-                    thumbnails
-                    source={{ uri: this.props.event.background }}
-                  ></CacheImages>
-                ) : (
-                  <Image
-                    resizeMode={"cover"}
-                    style={{...rounder(60)}}
-                      source={this.props.isRelation ? GState.profilePlaceHolder : GState.activity_place_holder}
-                  ></Image>
-                )}
-              </TouchableOpacity>
+             
             </View>
 
             <View style={{ height: 240, alignSelf: "center" }}>

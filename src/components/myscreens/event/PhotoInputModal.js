@@ -29,6 +29,7 @@ export default class PhotoInputModal extends BleashupModal {
             callback: null,
         })
     }
+    entry="top"
     swipeToClose = false
     modalHeight = 340
     modalWidth = 300

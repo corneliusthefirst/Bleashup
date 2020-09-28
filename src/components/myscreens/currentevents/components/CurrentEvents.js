@@ -11,6 +11,7 @@ import AnimatedComponent from '../../../AnimatedComponent.js';
 import { _onScroll } from './sideButtonService';
 import globalFunctions from '../../../globalFunctions';
 import active_types from '../../eventChat/activity_types';
+import ActivityPages from '../../eventChat/chatPages';
 const screenWidth = Math.round(Dimensions.get('window').width);
 const screenheight = Math.round(Dimensions.get('window').height);
 
@@ -61,7 +62,7 @@ export default class CurrentEvents extends AnimatedComponent {
         })
     }
     goToActivity() {
-        BeNavigator.navigateToActivity('EventDetails', this.state.event);
+        BeNavigator.navigateToActivity(ActivityPages.starts, this.state.event);
     }
     render() {
         let data = this.props.data && this.props.data.filter((ele) =>

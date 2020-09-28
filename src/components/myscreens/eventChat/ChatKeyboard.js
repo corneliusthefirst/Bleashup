@@ -29,11 +29,11 @@ import BeComponent from "../../BeComponent";
 import BeNavigator from '../../../services/navigationServices';
 import Vibrator from '../../../services/Vibrator';
 import Toaster from "../../../services/Toaster";
-import EvilIcons  from 'react-native-vector-icons/EvilIcons';
+import EvilIcons from 'react-native-vector-icons/EvilIcons';
 import MaterialIconCommunity from 'react-native-vector-icons/MaterialCommunityIcons';
 import Entypo from 'react-native-vector-icons/Entypo';
 import Ionicons from 'react-native-vector-icons/Ionicons';
-import FontAwesome5  from 'react-native-vector-icons/FontAwesome5';
+import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 import IDMaker from '../../../services/IdMaker';
 import AnimatedComponent from '../../AnimatedComponent';
 import Texts from '../../../meta/text';
@@ -91,7 +91,7 @@ export default class ChatKeyboard extends AnimatedComponent {
         Pickers.CleanAll();
     }
     sendAudioMessge(filename, duration, dontsend) {
-       !this.state.audio && this.props.toggleAudio()
+        !this.state.audio && this.props.toggleAudio()
         if (!dontsend) {
             this.props.scrollToEnd();
             let message = {
@@ -181,8 +181,8 @@ export default class ChatKeyboard extends AnimatedComponent {
         });
         this.animateLayout();
     }
-    componentDidUpdate(previousProps,prevState){
-        if(previousProps.members.length !== this.props.members.length){
+    componentDidUpdate(previousProps, prevState) {
+        if (previousProps.members.length !== this.props.members.length) {
             this.formSerachableMembers()
         }
     }
@@ -323,10 +323,10 @@ export default class ChatKeyboard extends AnimatedComponent {
     openCamera() {
         this.blur();
         Pickers.SnapPhoto("all").then((snap) => {
-           this.concludePicking(snap)
+            this.concludePicking(snap)
         });
     }
-    concludePicking(snap){
+    concludePicking(snap) {
         this.props.openOptions(true)
         let isVideo = snap.content_type.includes("video") ? true : false;
         this.setStatePure({
@@ -343,10 +343,10 @@ export default class ChatKeyboard extends AnimatedComponent {
             size: snap.size,
         });
         this.animateLayout();
-        this.focusTimeout =  setTimeout(() => {
+        this.focusTimeout = setTimeout(() => {
             this.focus()
             clearTimeout(this.focusTimeout)
-        },700)
+        }, 700)
     }
     _sendCaptionMessage() {
         if (this.state.file) {
@@ -390,8 +390,8 @@ export default class ChatKeyboard extends AnimatedComponent {
     }
     toggleAudioRecorder() {
         this.props.openOptions(true)
-       this.props.toggleAudio()
-       this.toggleAudioTimeout = setTimeout(() => {
+        this.props.toggleAudio()
+        this.toggleAudioTimeout = setTimeout(() => {
             if (!this.props.showAudioRecorder) {
                 this.refs.AudioRecorder.stopRecordSimple();
             } else {
@@ -399,13 +399,13 @@ export default class ChatKeyboard extends AnimatedComponent {
                 this.refs.AudioRecorder.startRecorder();
             }
             clearTimeout(this.toggleAudioTimeout)
-        },50);
+        }, 50);
         this.animateLayout();
     }
-    sendAllPhoto(photos,index,completed){
-        if(index == photos.length){
+    sendAllPhoto(photos, index, completed) {
+        if (index == photos.length) {
             completed()
-        }else{
+        } else {
             stores.Messages.addMessageToStore(this.props.roomID, photos[index]).then(
                 () => {
                     this.sendAllPhoto(photos, index + 1, completed)
@@ -416,8 +416,8 @@ export default class ChatKeyboard extends AnimatedComponent {
     pickMultiplePhotos() {
         Pickers.TakeManyPhotos()
             .then((response) => {
-              this.sendAllPhoto(response.map((res) => {
-                   return {
+                this.sendAllPhoto(response.map((res) => {
+                    return {
                         ...request.Message(),
                         id: IDMaker.make(),
                         type: "photo" + "_upload",
@@ -431,8 +431,8 @@ export default class ChatKeyboard extends AnimatedComponent {
                         content_type: res.content_type,
                         filename: res.filename,
                     };
-                    
-                }),0,() => {
+
+                }), 0, () => {
                     this.props.initialzeFlatList()
                 });
             })
@@ -464,9 +464,9 @@ export default class ChatKeyboard extends AnimatedComponent {
         this.temp = GState.reply ? JSON.stringify(GState.reply) : null;
         GState.reply = null;
         Keyboard.dismiss();
-       this.toggleTimeout = setTimeout(
+        this.toggleTimeout = setTimeout(
             () => {
-                this.props.showingImoji?this.props.hideImoji():this.props.showImoji()
+                this.props.showingImoji ? this.props.hideImoji() : this.props.showImoji()
                 clearTimeout(this.toggleTimeout)
                 this.props.adjutRoomDisplay(true);
             },
@@ -480,7 +480,7 @@ export default class ChatKeyboard extends AnimatedComponent {
     }
     tags = null;
     resetImoji() {
-        this.toggleTimeout =  setTimeout(() => {
+        this.toggleTimeout = setTimeout(() => {
             this.props.hideImoji()
             clearTimeout(this.toggleTimeout)
             //this.props.adjutRoomDisplay()
@@ -514,7 +514,7 @@ export default class ChatKeyboard extends AnimatedComponent {
         this.animateLayout(true);
     }
     activateKeyboard() {
-       this.activateKeyboardTimeout = setTimeout(() => {
+        this.activateKeyboardTimeout = setTimeout(() => {
             this.focus();
             clearTimeout(this.activateKeyboardTimeout)
         });
@@ -544,7 +544,7 @@ export default class ChatKeyboard extends AnimatedComponent {
             sender: this.props.sender,
             content_type: this.state.type,
             text: this.state.textValue,
-            commitee_id : this.props.roomID,
+            commitee_id: this.props.roomID,
             type: "attachement_upload",
             received: 0,
             total: this.state.size,
@@ -596,7 +596,7 @@ export default class ChatKeyboard extends AnimatedComponent {
         });
         this.animateLayout();
     }
-    endCamera(){
+    endCamera() {
         this.setStatePure({
             isCameraOpened: false
         })
@@ -631,38 +631,39 @@ export default class ChatKeyboard extends AnimatedComponent {
             </View>
         ) : <PhotoPreview
             image={this.state.image}
+            openedKeyboard={this.props.openedKeyboard}
             timeToDissmissKeyboard={this.props.timeToDissmissKeyboard}
             showVideo={this.state.showVideo}
             video={this.state.video}
             hideCaption={this.hideCaption.bind(this)}>
                 </PhotoPreview>
     }
-    showSnapper(){
+    showSnapper() {
         Keyboard.dismiss()
         setTimeout(() => {
             BeNavigator.pushTo("CameraScreen", {
-                callback: (souce) => setTimeout( () => this.concludePicking(souce),
-                this.props.timeToDissmissKeyboard),
+                callback: (souce) => setTimeout(() => this.concludePicking(souce),
+                    this.props.openedKeyboard() ? this.props.timeToDissmissKeyboard : 400),
                 directReturn: false,
                 openGallery: () => setTimeout(() => this.openCamera(), 100)
             })
-        },this.props.timeToDissmissKeyboard)
+        }, this.props.openedKeyboard() ? this.props.timeToDissmissKeyboard : 0)
     }
-    showOptionsModal(){
+    showOptionsModal() {
         this.setStatePure({
-            isOptionsOpened:true
-        })  
+            isOptionsOpened: true
+        })
     }
     keyBoardActionContainer = {
         width: 20,
         position: "absolute",
-        height:20,
+        height: 20,
         bottom: 10,
         right: 2,
     }
-    attemptAudio(){
+    attemptAudio() {
         Vibrator.vibrateShort()
-        Toaster({"text":Texts.press_long_to_record})
+        Toaster({ "text": Texts.press_long_to_record })
     }
     render() {
         return (
@@ -702,22 +703,22 @@ export default class ChatKeyboard extends AnimatedComponent {
                             }}
                         >
                             {//this.state.textValue.length <= 0 ?
-                                 <TouchableOpacity
-                                onPress={() => requestAnimationFrame(() => this.showSnapper() //this.openCamera()
-                                )}
-                                style={{
-                                    width: "12%",
-                                    alignSelf: "flex-end",
-                                    bottom: 2,
-                                    padding: "1%",
-                                }}
-                            >
-                                <View
+                                <TouchableOpacity
+                                    onPress={() => requestAnimationFrame(() => this.showSnapper() //this.openCamera()
+                                    )}
                                     style={{
-                                        alignItems: "center",
-                                        ...rounder(30, ColorList.bodyBackground),
+                                        width: "12%",
+                                        alignSelf: "flex-end",
+                                        bottom: 2,
+                                        padding: "1%",
                                     }}
                                 >
+                                    <View
+                                        style={{
+                                            alignItems: "center",
+                                            ...rounder(30, ColorList.bodyBackground),
+                                        }}
+                                    >
                                         <MaterialIconCommunity
                                             style={{
                                                 color: ColorList.indicatorColor,
@@ -726,14 +727,14 @@ export default class ChatKeyboard extends AnimatedComponent {
                                             type={"MaterialCommunityIcons"}
                                             name={"camera"}
                                         />
-                                </View>
-                            </TouchableOpacity>//:null
-                        }
+                                    </View>
+                                </TouchableOpacity>//:null
+                            }
 
                             <View
                                 style={{
                                     width: //this.state.textValue.length <= 0 ? 
-                                    "88%" //: "88%"
+                                        "88%" //: "88%"
                                     ,
                                     flexDirection: "column",
                                     borderRadius: 35,
@@ -761,16 +762,17 @@ export default class ChatKeyboard extends AnimatedComponent {
                                     onPress={() => requestAnimationFrame(() => this.toggleEmojiKeyboard()//this.openCamera()
                                     )}
                                     style={
-                                        {...this.keyBoardActionContainer,
-                                            right:null,
-                                            width:25,
-                                            bottom:9,
-                                            height:25,
+                                        {
+                                            ...this.keyBoardActionContainer,
+                                            right: null,
+                                            width: 25,
+                                            bottom: 9,
+                                            height: 25,
                                             paddingTop: 3,
                                             alignItems: 'center',
                                             justifyContent: 'center',
                                             flexDirection: 'row',
-                                            left:7
+                                            left: 7
                                         }}
                                 >
                                     <Entypo
@@ -798,6 +800,7 @@ export default class ChatKeyboard extends AnimatedComponent {
                                     this.audioRecorder()
                                 }
                                 <GrowingInput
+                                    dontShowKeyboard={this.props.dontShowKeyboard}
                                     onFocus={this.resetImoji.bind(this)}
                                     _onChange={this._onChange.bind(this)}
                                     animateLayout={() =>
@@ -809,10 +812,10 @@ export default class ChatKeyboard extends AnimatedComponent {
                                     }}
                                 ></GrowingInput>
                                 {this.state.textValue.length <= 0 ? <TouchableOpacity
-                                    style={{...this.keyBoardActionContainer,bottom:15}}
+                                    style={{ ...this.keyBoardActionContainer, bottom: 15 }}
                                     onPress={() =>
                                         requestAnimationFrame(() => {
-                                            this.props.openOptions() 
+                                            this.props.openOptions()
                                         })
                                     }
                                 >
@@ -823,8 +826,8 @@ export default class ChatKeyboard extends AnimatedComponent {
                                         }}
                                         type={"Ionicons"}
                                         name={this.props.showOptions ? "ios-close" : "ios-add"}
-                                    /> 
-                                </TouchableOpacity>:null}
+                                    />
+                                </TouchableOpacity> : null}
                             </View>
                         </View>
 

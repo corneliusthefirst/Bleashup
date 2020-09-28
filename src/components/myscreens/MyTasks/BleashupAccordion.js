@@ -15,17 +15,16 @@ import ColorList from '../../colorList';
 import BleashupScrollView from '../../BleashupScrollView';
 import AntDesign  from 'react-native-vector-icons/AntDesign';
 import GState from '../../../stores/globalState';
+import AnimatedComponent from '../../AnimatedComponent';
 
-export default class AccordionModuleNative extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      expanded: false,
-    };
-
-    if (Platform.OS === 'android') {
-      UIManager.setLayoutAnimationEnabledExperimental(true);
-    }
+export default class AccordionModuleNative extends AnimatedComponent {
+ initialize(){
+   this.state = {
+     expanded: false,
+   };
+ }
+  
+  componentDidMount(){
   }
   renderItem(dataArray,key, index) {
     return <View key={key}>
@@ -44,7 +43,7 @@ export default class AccordionModuleNative extends Component {
       }}>
         {this.props._renderHeader(dataArray,index,() => {
           this.toggleExpand(dataArray);
-        },this.state.expanded)}
+        },this.state.expanded, this.props.mainIndex==index)}
         </View>
         {!this.props.hideToggler && <TouchableOpacity onPress={() => requestAnimationFrame(() => this.toggleExpand(dataArray))}>
           <View style={{ width: 30 }}>
@@ -83,15 +82,8 @@ export default class AccordionModuleNative extends Component {
      />;
   }
   toggleExpand = (item) => {
+   this.animateUI()
    !this.expanded(item) && this.props.onExpand && this.props.onExpand(item);
-    LayoutAnimation.configureNext({
-                duration: 300,
-                create: {
-                    type: LayoutAnimation.Types.easeInEaseOut,
-                  property: LayoutAnimation.Properties.scaleX,
-                },
-                update: { type: LayoutAnimation.Types.easeInEaseOut },
-            });
     this.setState({ expanded: this.props.keyExtractor ? this.state.expanded === this.props.keyExtractor(item) ? null : this.props.keyExtractor(item) : item });
   };
 }

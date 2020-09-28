@@ -6,24 +6,25 @@ import CacheImages from "../../../CacheImages";
 import ColorList from '../../../colorList';
 import rounder from "../../../../services/rounder";
 import BePureComponent from '../../../BePureComponent';
-import  AntDesign  from 'react-native-vector-icons/AntDesign';
+import AntDesign from 'react-native-vector-icons/AntDesign';
 import BeComponent from '../../../BeComponent';
 import testForURL from '../../../../services/testForURL';
+import active_types from "../../eventChat/activity_types";
 export default class ActivityProfile extends BeComponent {
     constructor(props) {
         super(props);
     }
     render() {
+        let isRelation = this.props.Event.type == active_types.relation
         return (
             <View
-                style={{ flexDirection: "row", flexWrap: "wrap", }}
+                style={{ flexDirection: "row",  alignSelf: 'flex-start', }}
             >
-                <TouchableOpacity
+                {isRelation ? null : <TouchableOpacity
                     style={{
                         alignSelf: "flex-start",
                         width: "15%",
                         alignItems: "center",
-                        paddingTop: "2%",
                     }}
                     onPress={() =>
                         this.props.Event.background &&
@@ -35,8 +36,8 @@ export default class ActivityProfile extends BeComponent {
                         style={{
                             alignSelf: "flex-start",
                             width: "100%",
+                            flexDirection: 'row',
                             alignItems: "center",
-                            paddingTop: "2%",
                         }}
                     >
                         {testForURL(this.props.Event.background) ? (
@@ -49,24 +50,24 @@ export default class ActivityProfile extends BeComponent {
 
                             ></CacheImages>
                         ) : (<View style={{
-                            ...rounder(50,ColorList.photoPlaceHolderColor)
+                            ...rounder(40, ColorList.photoPlaceHolderColor)
                         }}>
-                                <AntDesign name={"calendar"} style={{
-                                    alignSelf: 'center',
-                                    color:ColorList.bodyBackground,
-                                    fontSize: ColorList.profilePlaceHolderHeight - 10,
-                                }}/>
-                            </View>
+                            <AntDesign name={"calendar"} style={{
+                                alignSelf: 'center',
+                                color: ColorList.bodyBackground,
+                                fontSize: ColorList.profilePlaceHolderHeight - 10,
+                            }} />
+                        </View>
                             )}
                     </View>
-                </TouchableOpacity>
-
+                </TouchableOpacity>}
                 <View
                     style={{
-                        width: "75%",
-                        paddingLeft: 6,
-                        marginTop: "4.75%",
-                        paddingLeft: "3%",
+                        width: isRelation?"90%": "75%",
+                        flexDirection: 'column',
+                        height:isRelation? 50:null,
+                        justifyContent: 'center',
+                        paddingLeft: 10,
                     }}
                 >
                     <TitleView

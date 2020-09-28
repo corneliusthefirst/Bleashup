@@ -18,12 +18,13 @@ import TextContent from './TextContent';
         let user = (phone && stores.TemporalUsersStore.Users[phone]) || {}
         return <TouchableOpacity
             onPress={this.props.showProfile}
-            onPressIn={this.props.onPressIn}>
+            onPressIn={this.props.onPressIn}
+            >
             <TextContent
             searchString={this.props.searchString}
+            onPress={this.props.showProfile}
             foundString={this.props.foundString}
                 style={{
-                    marginLeft: "2%",
                     color: ColorList.iconActive,
                     maxWidth: 150,
                     fontWeight: "bold",
@@ -32,7 +33,7 @@ import TextContent from './TextContent';
                 ellipsizeMode="tail"
                 numberOfLines={1}
             >
-                {`@${user.nickname}`}
+                {this.props.reply?user.nickname:`@${user.nickname}`}
             </TextContent>
         </TouchableOpacity>
     }

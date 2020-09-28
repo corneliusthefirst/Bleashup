@@ -8,6 +8,7 @@ import colorList from "../../../colorList";
 import Toaster from "../../../../services/Toaster";
 import MaterialIconCommunity from 'react-native-vector-icons/MaterialCommunityIcons';
 import EvilIcons from 'react-native-vector-icons/EvilIcons';
+import ActivityPages from '../../eventChat/chatPages';
 
 
 export default class SwipeOutView extends Component {
@@ -30,7 +31,7 @@ export default class SwipeOutView extends Component {
             if (status) {
                 this.props.navigation.navigate("Event", {
                     Event: this.props.Event,
-                    tab: "EventChat"
+                    tab: ActivityPages.chat
                 });
             } else {
                 Toaster({
@@ -47,7 +48,7 @@ export default class SwipeOutView extends Component {
                 this.props.navigation.navigate("Event", {
                     ...this.props,
                     Event: this.props.Event,
-                    tab: "ChangeLogs"
+                    tab: ActivityPages.logs
                 })
             } else {
                 this.setState({ isDetailsModalOpened: true })
@@ -64,7 +65,7 @@ export default class SwipeOutView extends Component {
             if (status) {
                 this.props.navigation.navigate("Event", {
                     Event: this.props.Event,
-                    tab: "EventDetails"
+                    tab: ActivityPages.starts
                 });
             } else {
                 this.setState({ isDetailsModalOpened: true })

@@ -9,8 +9,9 @@ import ColorList from '../../colorList';
 import  EvilIcons from 'react-native-vector-icons/EvilIcons';
 import GState from '../../../stores/globalState';
 import TextContent from '../eventChat/TextContent';
+import BePureComponent from '../../BePureComponent';
 
-export default class ContentModal extends PureComponent {
+export default class ContentModal extends BePureComponent {
     constructor(props) {
         super(props)
         this.state = {
@@ -40,13 +41,13 @@ export default class ContentModal extends PureComponent {
                 isOpen={this.props.isOpen}
                 onClosed={() => {
                     this.props.closed()
-                    this.setState({
+                    this.setStatePure({
                         content: null
                     })
                 }}
                 onOpened={() => {
                     setTimeout(() => {
-                        this.setState({
+                        this.setStatePure({
                             content: this.props.content
                         })
                     }, 20)

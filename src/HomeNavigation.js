@@ -14,21 +14,29 @@ import PhotoViewer from './components/myscreens/event/PhotoViewer';
 import VideoViewer from './components/myscreens/highlights_details/VideoModal';
 import ActuView from './components/myscreens/settings/editActu';
 import SearchUser from './components/myscreens/Contacts/searchUser';
+import RemindDetail from './components/myscreens/eventChat/RemindDetail';
+import StarDetail from './components/myscreens/eventChat/StarDetail';
+import ReportTabModal from './components/myscreens/reminds/NewReportTab';
+import TasksCreation from './components/myscreens/reminds/TasksCreation';
 
 enableScreens()
 const HomeNavigator = createStackNavigator({
     Home: { screen: homePage },
-    QR:{screen:QRScanner},
-    Contacts:{screen:ContactView},
+    QR: { screen: QRScanner },
+    Contacts: { screen: ContactView },
+    Report: { screen: ReportTabModal },
+    TaskCreation: { screen: TasksCreation },
     PaginationView: { screen: PaginationView },
-    CreateEventView:{screen:CreateEventView},
-    SwiperComponent:{screen:SwiperComponent},
-    CameraScreen:{screen: CameraScreen},
-    SearchUser: {screen:SearchUser},
-    Profile: {screen:ProfileView},
-    Actu: {screen:ActuView},
-    PhotoViewer: {screen: PhotoViewer},
-    Video: {screen:VideoViewer},
+    CreateEventView: { screen: CreateEventView },
+    SwiperComponent: { screen: SwiperComponent },
+    CameraScreen: { screen: CameraScreen },
+    RemindDetail: { screen: RemindDetail },
+    StarDetail: { screen: StarDetail },
+    SearchUser: { screen: SearchUser },
+    Profile: { screen: ProfileView },
+    Actu: { screen: ActuView },
+    PhotoViewer: { screen: PhotoViewer },
+    Video: { screen: VideoViewer },
     Event: { screen: Event },
 }, {
     initialRouteName: "Home",

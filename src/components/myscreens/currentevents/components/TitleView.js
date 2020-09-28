@@ -4,12 +4,15 @@ import stores from "../../../../stores";
 import { find } from "lodash";
 import BeNavigator from "../../../../services/navigationServices";
 import ColorList from "../../../colorList";
-import BePureComponent from '../../../BePureComponent';
+import BePureComponent from "../../../BePureComponent";
 import emitter from "../../../../services/eventEmiter";
-import { sayTyping } from '../../eventChat/services';
-import GState from '../../../../stores/globalState/index';
-import Texts from '../../../../meta/text';
+import { sayTyping } from "../../eventChat/services";
+import GState from "../../../../stores/globalState/index";
+import Texts from "../../../../meta/text";
 import TextContent from "../../eventChat/TextContent";
+import ActivityPages from "../../eventChat/chatPages";
+import active_types from "../../eventChat/activity_types";
+import ProfileView from "../../invitations/components/ProfileView";
 export default class TitleView extends BePureComponent {
   constructor(props) {
     super(props);
@@ -19,33 +22,58 @@ export default class TitleView extends BePureComponent {
     };
     this.goToEventDetails = this.goToEventDetails.bind(this);
   }
-  componentMounting(){
-    emitter.on(`${this.props.Event.id}_typing`,(typer) => {
-    !this.sayTyping ? this.sayTyping = sayTyping.bind(this): null;
-      this.sayTyping(typer)
-    })
+  typing_event = `${this.props.Event.id}_typing`;
+  componentMounting() {
+    emitter.on(this.typing_event, (typer) => {
+      !this.sayTyping ? (this.sayTyping = sayTyping.bind(this)) : null;
+      this.sayTyping(typer);
+    });
   }
-  unmountingComponent(){
-    emitter.off(`${this.props.Event.id}_typing`)
+  unmountingComponent() {
+    emitter.off(this.typing_event);
   }
-  componentDidMount() {
-
+  componentDidMount() {}
+  renderTitleForRelation() {
+    let parts = this.props.Event.participant;
+    const user_1 = parts[0].phone;
+    const user_2 = parts[1].phone;
+    return (
+      <View
+        style={{
+          width: "100%",
+          flexDirection: "row",
+          justifyContent: "space-between",
+          alignItems: "center",
+        }}
+      >
+        <View style={{ width: "43%" }}>
+          <ProfileView hidePhoto phone={user_1}></ProfileView>
+        </View>
+        <View>
+          <Text style={{ ...GState.defaultTextStyle, fontWeight: "bold" }}>
+            {" & "}
+          </Text>
+        </View>
+        <View style={{ width: "43%" }}>
+          <ProfileView hidePhoto phone={user_2}></ProfileView>
+        </View>
+      </View>
+    );
   }
   navigateToEventDetails() {
-    stores.Events.isParticipant(
-      this.props.Event.id,
-      stores.Session.SessionStore.phone
-    ).then((status) => {
-      if (status) {
-        BeNavigator.navigateToActivity(
-          "EventChat",
-          find(stores.Events.events, { id: this.props.Event.id })
-        );
-      } else {
-        this.props.openDetail && this.props.openDetail();
-      }
-      this.props.seen && this.props.seen();
-    });
+    if (this.props.Event.type === active_types.activity) {
+      stores.Events.isParticipant(
+        this.props.Event.id,
+        stores.Session.SessionStore.phone
+      ).then((event) => {
+        if (event) {
+          BeNavigator.pushToChat(event);
+        } else {
+          this.props.openDetail && this.props.openDetail();
+        }
+        this.props.seen && this.props.seen();
+      });
+    }
   }
   goToEventDetails() {
     requestAnimationFrame(() => {
@@ -53,25 +81,40 @@ export default class TitleView extends BePureComponent {
     });
   }
   render() {
+    let isRelation = this.props.Event.type === active_types.relation;
     return (
       <View style={styles.mainContainer}>
         <TouchableOpacity
           style={styles.subContainer}
           onPress={this.goToEventDetails}
         >
-          <View style={styles.titleContainer}>
-            <TextContent
-            onPress={this.goToEventDetails}
-            numberOfLines={1}
-              adjustsFontSizeToFit={true}
-              searchString={this.props.searchString}
-              style={styles.titleTextStyles}
-              ellipsizeMode="tail">
-              {this.props.Event.about.title}
-            </TextContent>
-          </View>
-          {this.state.typing && <Text style={[GState.defaultTextStyle,{fontSize: 12,
-            color:ColorList.indicatorColor}]}>{`${this.state.typer} is ${Texts.typing}`}</Text>}
+          {isRelation ? (
+            this.renderTitleForRelation()
+          ) : (
+            <View style={styles.titleContainer}>
+              <TextContent
+                onPress={this.goToEventDetails}
+                numberOfLines={1}
+                adjustsFontSizeToFit={true}
+                searchString={this.props.searchString}
+                style={styles.titleTextStyles}
+                ellipsizeMode="tail"
+              >
+                {this.props.Event.about.title}
+              </TextContent>
+            </View>
+          )}
+          {this.state.typing && !isRelation && (
+            <Text
+              style={[
+                GState.defaultTextStyle,
+                {
+                  fontSize: 12,
+                  color: ColorList.indicatorColor,
+                },
+              ]}
+            >{`${this.state.typer} is ${Texts.typing}`}</Text>
+          )}
         </TouchableOpacity>
       </View>
     );
@@ -79,9 +122,15 @@ export default class TitleView extends BePureComponent {
 }
 
 const styles = StyleSheet.create({
-  mainContainer: { flex: 1, marginTop: "2.5%" },
+  mainContainer: {
+    flex: 1,
+    flexDirection: "column",
+    justifyContent: "center",
+  },
   subContainer: {
     height: "100%",
+    flexDirection: "column",
+    justifyContent: "center",
   },
   titleContainer: {
     flexDirection: "column",

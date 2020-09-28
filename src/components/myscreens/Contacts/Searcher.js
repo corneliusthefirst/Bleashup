@@ -68,8 +68,7 @@ import AnimatedComponent from '../../AnimatedComponent';
                         selectTextOnFocus
                         value={this.state.searchString}
                         style={{
-                            minWidth: 200,
-                            maxWidth: 250,
+                            width:200,
                             height: 35,
                             marginLeft: '2%',
                             alignSelf: "flex-start",

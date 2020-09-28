@@ -1,0 +1,305 @@
+import React, { Component, PureComponent } from "react";
+import {
+    View,
+    Dimensions,
+    Text,
+    TouchableOpacity,
+    ScrollView
+} from "react-native";
+import AnimatedComponent from "../../AnimatedComponent";
+import BeNavigator from "../../../services/navigationServices";
+import stores from "../../../stores";
+import Social from "../event/createEvent/components/Social";
+import GState from "../../../stores/globalState/index";
+import Creator from "../reminds/Creator";
+import TextContent from "./TextContent";
+import MedaiView from "../event/createEvent/components/MediaView";
+import ColorList from "../../colorList";
+import ActivityProfile from "../currentevents/components/ActivityProfile";
+import Spinner from "../../Spinner";
+import DetailsModal from "../invitations/components/DetailsModal";
+import Entypo from "react-native-vector-icons/Entypo";
+import rounder from "../../../services/rounder";
+import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
+import ShareWithYourContacts from "./ShareWithYourContacts";
+import request from "../../../services/requestObjects";
+import messagePreparer from './messagePreparer';
+import public_states from '../reminds/public_states';
+
+let { height, width } = Dimensions.get("window");
+
+export default class StarDetail extends AnimatedComponent {
+    initialize(props) {
+        this.state = {
+            updating: false,
+            deleting: false,
+            mounted: false,
+            newing: false,
+            isOpen: false,
+            check: false,
+        };
+    }
+
+    containsMedia() {
+        return this.item.url.video || this.item.url.audio || this.item.url.photo
+            ? true
+            : false;
+    }
+    loadStatesFromStar() {
+        stores.Events.loadCurrentEvent(this.star.event_id).then((event) => {
+            this.activity = event
+            this.item = {
+                ...this.star,
+                public_state: public_states.private_
+            }
+            this.refreshStates()
+        })
+    }
+    loadInitialStates() {
+        stores.Events.loadCurrentEvent(this.activity_id).then((event) => {
+            this.activity = event
+            stores.Highlights.loadHighlight(this.activity_id, this.item_id).then((item) => {
+                this.item = { ...item, public_state: public_states.private_ }
+                this.refreshStates()
+            })
+        })
+    }
+    refreshStates() {
+        this.setStatePure({
+            newing: !this.state.newing,
+            mounted: true,
+        });
+    }
+    loadStatesFromRemote() {
+        stores.Events.loadCurrentEventFromRemote(this.activity_id).then(
+            (event) => {
+                this.activity = event;
+                stores.Highlights.loadHighlightFromRemote(
+                    this.activity_id,
+                    this.item_id
+                ).then((star) => {
+                    this.item = Array.isArray(star) && star[0];
+                    stores.Messages.updateStarMessageInfoMessage(this.activity_id,
+                        this.item_id,this.item)
+                    stores.Highlights.addHighlight(this.activity_id, this.item)
+                    this.refreshStates()
+                });
+            }
+        );
+    }
+    componentDidMount() {
+        setTimeout(() => {
+            if (this.star) {
+                this.loadStatesFromStar()
+            } else {
+                this.loadInitialStates()
+                this.loadStatesFromRemote()
+            }
+        }, 50);
+    }
+    startSharing() {
+        this.setStatePure({
+            isSharing: true
+        })
+    }
+    hideSharing() {
+        this.setStatePure({
+            isSharing: false
+        })
+    }
+    getParam = (param) => this.props.navigation.getParam(param);
+    star = this.getParam("star")
+    forward = this.getParam("forward") || this.startSharing.bind(this);
+    item_id = this.getParam("post_id");
+    activity_id = this.getParam("activity_id");
+    container = {
+        width: "98%",
+        alignSelf: "center",
+        justifyContent: "center",
+        margin: "1%",
+        backgroundColor: ColorList.bodyBackground,
+        borderRadius: 5,
+        //borderBottomWidth: 0.5,
+        //borderColor: "ivory",
+    };
+    showItem(item) {
+        item.url.video
+            ? BeNavigator.openVideo(item.url.video)
+            : BeNavigator.openPhoto(item.url.photo);
+    }
+    openDetails() {
+        this.setStatePure({
+            isDetailsOpened: true,
+        });
+    }
+    goback() {
+        this.props.navigation.goBack()
+    }
+    render() {
+        return this.state.mounted ? (
+            <View>
+                <ScrollView showVerticalScrollIndicator={false}>
+                    <View
+                        style={[
+                            this.container,
+                            {
+                                backgroundColor: this.props.isPointed
+                                    ? ColorList.postTransparent
+                                    : ColorList.bodyBackground,
+                            },
+                        ]}
+                    >
+                        <View
+                            style={{
+                                width: "98%",
+                                flexDirection: 'row',
+                                alignSelf: "flex-start",
+                                hieght: 70,
+                                marginBottom: "5%",
+                                justifyContent: "space-between",
+                                alignItems: "center",
+                            }}
+                        >
+                            <TouchableOpacity onPress={this.goback.bind(this)} style={{
+                                width: 45,
+
+                            }}>
+                                <MaterialIcons name={"arrow-back"} style={{
+                                    ...GState.defaultIconSize
+                                }}>
+                                </MaterialIcons>
+                            </TouchableOpacity>
+                            <View style={{
+                                width: "70%"
+                            }}>
+                                <ActivityProfile
+                                    small
+                                    Event={this.activity}
+                                    showPhoto={(url) => BeNavigator.openPhoto(url)}
+                                    openDetails={this.openDetails.bind(this)}
+                                ></ActivityProfile>
+                            </View>
+                            {this.item.public_state == public_states.public_ ? <TouchableOpacity
+                                onPress={this.forward}
+                                style={{
+                                    ...rounder(40),
+                                    justifyContent: "center",
+                                }}
+                            >
+                                <Entypo
+                                    name={"forward"}
+                                    style={{
+                                        ...GState.defaultIconSize,
+                                        color: ColorList.indicatorColor,
+                                    }}
+                                ></Entypo>
+                            </TouchableOpacity> : null}
+                        </View>
+                        <View
+                            style={{
+                                flexDirection: "row",
+                                width: "97%",
+                                justifyContent: "center",
+                                minHeight: 70,
+                                alignSelf: "center",
+                            }}
+                        >
+                            <TextContent
+                                tags={this.item.extra && this.item.extra.tags}
+                                animate={this.props.animate}
+                                searchString={this.props.searchString}
+                                style={{
+                                    ...GState.defaultTextStyle,
+                                    fontSize: 15,
+                                    marginTop: "2%",
+
+                                    textAlign: "center",
+                                    color: ColorList.headerBlackText,
+                                    fontWeight: "bold",
+                                    //marginTop: "10%",
+                                }}
+                            //numberOfLines={3}
+                            >
+                                {this.item.title}
+                            </TextContent>
+                        </View>
+                        <MedaiView
+                            width={ColorList.containerWidth}
+                            height={250}
+                            showItem={() => this.showItem(this.item)}
+                            url={this.item.url || {}}
+                        ></MedaiView>
+                        <View
+                            style={{
+                                margin: "1%",
+                            }}
+                        >
+                            <TextContent
+                                animate={this.animateUI.bind(this)}
+                                tags={this.item.extra && this.item.extra.tags}
+                                searchString={this.props.searchString}
+                                text={this.item.description ? this.item.description : ""}
+                            ></TextContent>
+                        </View>
+                        <View
+                            style={{
+                                width: ColorList.containerWidth,
+                                alignSelf: "center",
+                                alignItems: "center",
+                                marginLeft: "3%",
+                                flexDirection: "row",
+                                justifyContent: "space-between",
+                            }}
+                        >
+                            <Creator creator={this.item.creator}></Creator>
+                            {!this.star && <Social
+                                title={this.item.title}
+                                activity_name={this.activity.about.title}
+                                creator={this.item.creator}
+                                activity_id={this.activity_id}
+                                id={this.item.id}
+                            ></Social>}
+                        </View>
+                    </View>
+                </ScrollView>
+                <DetailsModal
+                    event={this.activity}
+                    isToBeJoint
+                    isOpen={this.state.isDetailsOpened}
+                    data={{ post_id: this.item_id }}
+                    onClosed={() => {
+                        this.setStatePure({
+                            isDetailsOpened: false,
+                        });
+                    }}
+                ></DetailsModal>
+                <ShareWithYourContacts
+                    isOpen={this.state.isSharing}
+                    activity_id={this.activity_id}
+                    sender={request.Message().sender}
+                    committee_id={this.activity_id}
+                    message={{
+                        ...messagePreparer.formMessagefromStar(this.item),
+                        forwarded: true,
+                        reply: null,
+                        from_activity: this.activity,
+                        from_committee: this.activity,
+                        from: null,
+                    }}
+                    onClosed={this.hideSharing.bind(this)}
+                >
+                </ShareWithYourContacts>
+            </View>
+        ) : (
+                <View
+                    style={{
+                        ...this.container,
+                        height: "100%",
+                        justifyContent: "center",
+                    }}
+                >
+                    <Spinner></Spinner>
+                </View>
+            );
+    }
+}

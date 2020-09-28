@@ -13,6 +13,12 @@ export const frequencyType = [{
     value: 'Year(s)',
 }];
 
+export const frequencies = {
+    daily : "daily",
+    weekly: 'weekly',
+    monthly: 'monthly',
+    yearly: 'yearly'
+}
 /**
  * Alamrs Possibilities
  * Note: this is implemented as a function so that it should ensure time consistency 
@@ -215,6 +221,7 @@ const wrongDays = {
     'FR': 4,
     'SA': 5
 }
+export const timeFormat = "h:mm a"
 function daysOffseter(day) {
     if (moment().startOf('week').format("dddd, MMMM Do YYYY, h:mm:ss a").split(",")[0] === "Monday") {
         return wrongDays[day]

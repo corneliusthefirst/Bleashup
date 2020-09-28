@@ -169,6 +169,7 @@ export default class DetailsModal extends BleashupModal {
                 {testForURL(this.state.event.background) ? (
                   <CacheImages
                     thumbnails
+                    small
                     source={{ uri: this.state.event.background }}
                   ></CacheImages>
                 ) : (
@@ -265,7 +266,6 @@ const styles = StyleSheet.create({
   titleMainContainer: {
     width: "80%",
     marginLeft: 10,
-    marginTop: "5%",
   },
   titleContainer: {},
   joinButtom: {

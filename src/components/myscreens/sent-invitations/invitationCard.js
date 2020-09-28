@@ -18,6 +18,7 @@ import stores from '../../../stores';
 import { filter } from 'lodash';
 import moment from "moment"
 import testForURL from '../../../services/testForURL';
+import ActivityPages from '../eventChat/chatPages';
 
 const defaultPlaceholderObject = {
   component: ActivityIndicator,
@@ -209,7 +210,7 @@ class CardListItem extends Component {
                 let event = filter(stores.Events.events, { id: this.state.event_id })
                 this.props.navigation.navigate("Event", {
                   Event: event[0],
-                  tab: "EventDetails"
+                  tab: ActivityPages.starts
                 })
               })} >
                 <Title style={{alignSelf:'flex-start', fontWeight: 'bold', color: "#0A4E52" }}

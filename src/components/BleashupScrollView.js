@@ -28,7 +28,7 @@ export default class BleashupScrollView extends BeComponent {
     }
     scrollTo(index,delay) {
         this.setStatePure({
-            currentRender: this.props.dataSource.length-1,
+            currentRender: this.props.dataSource.length,
             endReached: true
         })
         setTimeout(() => {

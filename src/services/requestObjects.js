@@ -1,6 +1,7 @@
 import moment from "moment"
 import stores from '../stores';
 import { AlarmPatterns } from "./recurrenceConfigs";
+import public_states from '../components/myscreens/reminds/public_states';
 class Request {
     constructor() { }
 
@@ -118,7 +119,7 @@ class Request {
             },
             location: "",
             remind_url: this.URL(),
-            status: "public",
+            status: public_states.public_,
             members: [],
             donners: [],
             isDone: false,
@@ -320,6 +321,9 @@ class Request {
             updated_at: moment().format(),
             title: "",
             description: "",
+            extra : {
+
+            },
             url: this.URL()
         }
     }
@@ -666,8 +670,8 @@ class Request {
             photo: "",
             video:"",
             sender:{
-                phone:stores.LoginStore.user.phone,
-                nickame:stores.LoginStore.user.nickname
+                phone:stores.LoginStore.user.phone.replace("00","+"),
+                nickname:stores.LoginStore.user.nickname
             },
             created_at:moment().format(),
             updated_at: moment().format(),
