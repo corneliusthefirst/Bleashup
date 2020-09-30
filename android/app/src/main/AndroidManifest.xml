@@ -38,6 +38,12 @@
         <action android:name="android.intent.action.VIEW"/>
         <category android:name="android.intent.category.DEFAULT"/>
         <category android:name="android.intent.category.BROWSABLE"/>
+        <data android:scheme="https" android:host="bleashup.com" android:pathPattern=".*"/>
+      </intent-filter>
+      <intent-filter>
+        <action android:name="android.intent.action.VIEW"/>
+        <category android:name="android.intent.category.DEFAULT"/>
+        <category android:name="android.intent.category.BROWSABLE"/>
         <data android:scheme="bleashup-app" android:host="bleashup" android:pathPrefix="/tester" android:pathPattern=".*"/>
       </intent-filter>
     </activity>

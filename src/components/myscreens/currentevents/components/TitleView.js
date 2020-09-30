@@ -32,7 +32,7 @@ export default class TitleView extends BePureComponent {
   unmountingComponent() {
     emitter.off(this.typing_event);
   }
-  componentDidMount() {}
+  componentDidMount() { }
   renderTitleForRelation() {
     let parts = this.props.Event.participant;
     const user_1 = parts[0].phone;
@@ -86,24 +86,24 @@ export default class TitleView extends BePureComponent {
       <View style={styles.mainContainer}>
         <TouchableOpacity
           style={styles.subContainer}
-          onPress={this.goToEventDetails}
+          onPress={this.props.onPress || this.goToEventDetails}
         >
           {isRelation ? (
             this.renderTitleForRelation()
           ) : (
-            <View style={styles.titleContainer}>
-              <TextContent
-                onPress={this.goToEventDetails}
-                numberOfLines={1}
-                adjustsFontSizeToFit={true}
-                searchString={this.props.searchString}
-                style={styles.titleTextStyles}
-                ellipsizeMode="tail"
-              >
-                {this.props.Event.about.title}
-              </TextContent>
-            </View>
-          )}
+              <View style={styles.titleContainer}>
+                <TextContent
+                  onPress={this.props.onPress || this.goToEventDetails}
+                  numberOfLines={1}
+                  adjustsFontSizeToFit={true}
+                  searchString={this.props.searchString}
+                  style={styles.titleTextStyles}
+                  ellipsizeMode="tail"
+                >
+                  {this.props.Event.about.title}
+                </TextContent>
+              </View>
+            )}
           {this.state.typing && !isRelation && (
             <Text
               style={[

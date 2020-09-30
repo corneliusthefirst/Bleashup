@@ -158,6 +158,9 @@ export default class ChatRoomHeader extends BePureComponent {
                         }}
                     >
                        <ChatroomMenu
+                       activity_id={this.props.activity_id}
+                       getShareLink={this.props.getShareLink}
+                       isRelation={this.props.isRelation}
                        openPage={this.props.openPage}
                        settings={this.props.openSettings}
                        >

@@ -35,10 +35,10 @@ class NavigatorClass {
             } else if (data.post_id) {
                 this.gotoStarWithIndex(activity, data.post_id, true)
             } else {
-                this.pushActivity(activity)
+                this.pushToChat(activity)
             } 
         }else{
-            this.pushActivity(activity)
+            this.pushToChat(activity)
         }
     }
     push(route,params){

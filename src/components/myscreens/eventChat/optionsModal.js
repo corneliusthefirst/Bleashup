@@ -22,6 +22,7 @@ import Feather from 'react-native-vector-icons/Feather';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import Texts from '../../../meta/text';
 import { Keyboard } from 'react-native';
+import { ScrollView } from 'react-native';
 
 export default class Options extends AnimatedComponent {
 
@@ -62,7 +63,9 @@ export default class Options extends AnimatedComponent {
     addRemind = () => {
         this.waitAndAct(this.props.addRemind)
     }
-
+    addStar(){
+        this.waitAndAct(this.props.addStar)
+    }
     openFilePicker = () => {
         this.waitAndAct(this.props.openFilePicker)
     }
@@ -92,6 +95,20 @@ export default class Options extends AnimatedComponent {
         alignItems: 'center',
         width: "98%"
     }
+    gotoSelectRelation(page){
+        BeNavigator.pushTo("SelectRelation", {
+            tab: page, current: this.props.activity_id,
+            select: (item) => {
+                this.waitAndAct(() => this.props.select(item))
+            }
+        })
+    }
+    shareActivites() {
+        this.gotoSelectRelation("Activities")
+    }
+    shareRelations() {
+        this.gotoSelectRelation("Contacts")
+    }
     buttonSize = 30
     render() {
         return (
@@ -105,11 +122,13 @@ export default class Options extends AnimatedComponent {
                 width: 50,
 
             }}>
-                <View style={{
-                    height: "100%", backgroundColor: ColorList.bodyBackground,
-                    alignItems: 'center',
-                    borderRadius: 35, width: 45, ...shadower(2),
-                }}>
+                <ScrollView
+                    keyboardShouldPersistTaps={'handled'}
+                    showsVerticalScrollIndicator={false}
+                    style={{
+                        height: "100%", backgroundColor: ColorList.bodyBackground,
+                        borderRadius: 35, width: 45, ...shadower(2),
+                    }}>
 
                     <View style={{ height: "100%", flexDirection: "column", alignItems: 'center', justifyContent: 'space-between', padding: 5 }}>
 
@@ -124,13 +143,12 @@ export default class Options extends AnimatedComponent {
                                         ...rounder(this.buttonSize, '#1e90ff'),
                                     }}
                                 >
-                                    <Entypo
+                                    <MaterialCommunityIcons
                                         style={{
                                             color: 'white',
                                             fontSize: 25,
                                         }}
-                                        type={"Entypo"}
-                                        name={"bell"}
+                                        name={"bell-plus"}
                                     />
                                 </View>
                             </TouchableOpacity>
@@ -138,7 +156,29 @@ export default class Options extends AnimatedComponent {
                             <Text ellipsizeMode={"tail"} numberOfLines={1} style={styles.textStyle} >{Texts.reminder}</Text>
                         </View>
 
+                        <View style={this.mainContainerStyles}>
+                            <TouchableOpacity
+                                onPress={() => requestAnimationFrame(() => this.addStar())}
+                                style={this.viewStyle} >
+                                <View
+                                    style={{
+                                        alignItems: "center",
+                                        ...shadower(3),
+                                        ...rounder(this.buttonSize, ColorList.post),
+                                    }}
+                                >
+                                    <MaterialCommunityIcons
+                                        style={{
+                                            color: 'white',
+                                            fontSize: 25,
+                                        }}
+                                        name={"star-box"}
+                                    />
+                                </View>
+                            </TouchableOpacity>
 
+                            <Text ellipsizeMode={"tail"} numberOfLines={1} style={styles.textStyle} >{Texts.star}</Text>
+                        </View>
                         <View style={this.mainContainerStyles}>
                             <TouchableOpacity
                                 onPress={() => requestAnimationFrame(() => { this.openFilePicker(); })}
@@ -178,13 +218,13 @@ export default class Options extends AnimatedComponent {
                                         ...rounder(this.buttonSize, '#8b008b'),
                                     }}
                                 >
-                                    <Ionicons
+                                    <MaterialIcons
                                         style={{
                                             color: ColorList.bodyBackground,
                                             fontSize: 23,
                                         }}
                                         type={"Ionicons"}
-                                        name={"md-photos"}
+                                        name={"add-to-photos"}
                                     />
                                 </View>
                             </TouchableOpacity>
@@ -224,8 +264,56 @@ export default class Options extends AnimatedComponent {
                                 numberOfLines={1}
                                 style={styles.textStyle}  >Audio</Text>
                         </View>
+                        <View style={this.mainContainerStyles}>
+                            <TouchableOpacity
+                                onPress={() => requestAnimationFrame(() => this.shareActivites())}
+                                style={this.viewStyle}
+                            >
+                                    <View
+                                        style={{
+                                            alignItems: "center",
+                                            ...rounder(this.buttonSize - 5, '#6710C8'),
+                                        }}
+                                    >
+                                        <AntDesign
+                                            style={{
+                                                color: ColorList.bodyBackground,
+                                                fontSize: 20,
+                                            }}
+                                        name={"addusergroup"}
+                                        />
+                                    </View>
+                            </TouchableOpacity>
+                            <Text ellipsizeMode={"tail"}
+                                numberOfLines={1}
+                                style={styles.textStyle}  >{Texts.activity}</Text>
+                        </View>
+                        <View style={this.mainContainerStyles}>
+                            <TouchableOpacity
+                                onPress={() => requestAnimationFrame(() => this.shareRelations())}
+                                style={this.viewStyle}
+                            >
+                                    <View
+                                        style={{
+                                            alignItems: "center",
+                                            ...rounder(this.buttonSize - 5, '#0D7FAB'),
+                                        }}
+                                    >
+                                        <AntDesign
+                                            style={{
+                                                color: ColorList.bodyBackground,
+                                                fontSize: 20,
+                                            }}
+                                        name={"adduser"}
+                                        />
+                                    </View>
+                            </TouchableOpacity>
+                            <Text ellipsizeMode={"tail"}
+                                numberOfLines={1}
+                                style={styles.textStyle}  >{Texts.contacts}</Text>
+                        </View>
                     </View>
-                </View>
+                </ScrollView>
                 <View style={{
                     position: "absolute",
                     height: '100%',

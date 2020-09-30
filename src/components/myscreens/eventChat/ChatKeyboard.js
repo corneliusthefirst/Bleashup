@@ -38,6 +38,9 @@ import IDMaker from '../../../services/IdMaker';
 import AnimatedComponent from '../../AnimatedComponent';
 import Texts from '../../../meta/text';
 import request from "../../../services/requestObjects";
+import RelationMessage from "./RelationMessage";
+import message_types from './message_types';
+import Requester from './Requester';
 
 export default class ChatKeyboard extends AnimatedComponent {
     constructor(props) {
@@ -309,6 +312,14 @@ export default class ChatKeyboard extends AnimatedComponent {
     blur() {
         this._textInput.blur();
     }
+    starSendingRelation(item) {
+        this.setStatePure({
+            isSendingRelation: true,
+            item,
+            showCaption: true
+        })
+        this.focus()
+    }
     replying(replyer, color) {
         this.props.openOptions(true)
         this.setStatePure({
@@ -349,13 +360,42 @@ export default class ChatKeyboard extends AnimatedComponent {
         }, 700)
     }
     _sendCaptionMessage() {
-        if (this.state.file) {
+        if (this.state.isSendingRelation) {
+            this.sendRelationMessage()
+        } else if (this.state.file) {
             this.sendFileMessage();
         } else if (this.state.audioSouce) {
             this.sendAudioMessge(this.state.audioSouce, this.duration);
         } else {
             this.sendMedia();
         }
+    }
+    sendRelationMessage() {
+        let message = request.Message()
+        message = { ...message, ...this.state.item }
+        message.reply = this.state.replyContent
+        message.type = message_types.relation_message
+        message.created_at = moment().format()
+        message.tags = this.tags
+        message.text = this.state.textValue
+        message.sent = true
+        message.id = IDMaker.make()
+        message.updated_at = moment().format()
+        message.committee_id = this.props.roomID
+        this.props.initialzeFlatList()
+        //this.props.scrollToEnd()
+        Requester.sendMessage(message,
+            this.props.roomID,
+            this.props.roomID,
+            this.props.activity_name).then(() => {
+                this.setStatePure({
+                    isSendingRelation:false,
+                    showCaption:false,
+                    replying:false,
+                    replyContent:null,
+                    textValue:""
+                })
+            })
     }
     sendMedia() {
         this.props.scrollToEnd();
@@ -665,7 +705,44 @@ export default class ChatKeyboard extends AnimatedComponent {
         Vibrator.vibrateShort()
         Toaster({ "text": Texts.press_long_to_record })
     }
+    hideRelation(){
+        this.setStatePure({
+            isSendingRelation:false,
+            showCaption:false
+        })
+    }
+    displayRelation(){
+        return<View style={{marginHorizontal: '1%',}}>
+            <RelationMessage
+                message={this.state.item}
+                onPress={this.props.showRelation}
+            ></RelationMessage>
+            <TouchableOpacity
+                onPress={() => requestAnimationFrame(this.hideRelation.bind(this))}
+                style={{
+                    ...rounder(20, ColorList.bodyBackground),
+                    position: "absolute",
+                    marginRight: 6,
+                    marginTop: 1,
+                    alignSelf: "flex-end",
+                }}
+            >
+                <EvilIcons
+                    name={"close"}
+                    type={"EvilIcons"}
+                    style={{
+                        fontSize: 17,
+                        alignSelf: "center",
+                    }}
+                />
+            </TouchableOpacity>
+        </View>
+    }
     render() {
+        this.canUseAudio = !this.state.textValue &&
+            !this.props.showAudioRecorder &&
+            !this.state.showCaption &&
+            !this.state.isSendingRelation
         return (
             <View>
                 <View
@@ -789,7 +866,10 @@ export default class ChatKeyboard extends AnimatedComponent {
                                     //* Reply Message caption */
                                     this.state.replying ? this.replyMessageCaption() : null
                                 }
-                                {this.state.showCaption ? this.showMedia() : null}
+                                {
+                                    this.state.isSendingRelation ? this.displayRelation() : null
+                                }
+                                {this.state.showCaption && !this.state.isSendingRelation ? this.showMedia() : null}
                                 {
                                     //* Tagger component @Giles e.g *//
                                     this.state.tagging ? this.tagger() : null
@@ -839,12 +919,10 @@ export default class ChatKeyboard extends AnimatedComponent {
                                 bottom: 2,
                                 padding: "1%",
                             }}
-                            onLongPress={() => !this.state.textValue && this.showAudio()}
+                            onLongPress={() => this.canUseAudio && this.showAudio()}
                             onPress={() =>
                                 requestAnimationFrame(() => {
-                                    !this.state.textValue &&
-                                        !this.props.showAudioRecorder &&
-                                        !this.state.showCaption
+                                    this.canUseAudio
                                         ? this.attemptAudio()
                                         : this.sendMessageText(this.state.textValue);
                                 })

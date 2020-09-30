@@ -55,6 +55,11 @@ import { close_all_modals, reply_me } from '../../../meta/events';
 import EventDescription from './createEvent/components/EventDescription';
 import DescriptionModal from "../eventDetails/descriptionModal";
 import ActivityPages from '../eventChat/chatPages';
+import ShareAsLink from './ShareAsLink';
+import request from '../../../services/requestObjects';
+import ShareWithYourContacts from "../eventChat/ShareWithYourContacts";
+import message_types from '../eventChat/message_types';
+import DetailsModal from '../invitations/components/DetailsModal';
 
 const screenWidth = Math.round(Dimensions.get("window").width);
 
@@ -103,7 +108,7 @@ export default class Event extends BeComponent {
   };
 
   showRemindID(id) {
-    BeNavigator.goToRemindDetail(id,this.event.id)
+    BeNavigator.goToRemindDetail(id, this.event.id)
   }
   showHighlightID(id) {
     stores.Highlights.loadHighlight(this.event.id, id).then((High) => {
@@ -169,6 +174,55 @@ export default class Event extends BeComponent {
   showDescription() {
     this.setStatePure({ viewdetail: true })
   }
+  getShareLink(link) {
+    this.setStatePure({
+      isShareLinkModalOpened: true,
+      link
+    })
+  }
+  showSahreWithYourContact(message) {
+    this.setStatePure({
+      isShareLinkModalOpened: false,
+      isShareWithYourContactsModalOpened: true,
+      message: message
+    })
+  }
+  forwardLink(link) {
+    let message = request.Message()
+    message.forwarded = true
+    message.from_activity = this.event.id
+    message.text = link
+    message.sent = true
+    message.created_at = moment().format()
+    message.type = message_types.text
+    message.id = IDMaker.make()
+    message.committee_id = this.event.id
+    this.showSahreWithYourContact(message)
+  }
+  hideShareWithYourContacts() {
+    this.setStatePure({
+      isShareWithYourContactsModalOpened: false
+    })
+  }
+  hideShareLinkModal() {
+    this.setStatePure({
+      isShareLinkModalOpened: false
+    })
+  }
+  showDetailModal(id) {
+    this.setStatePure({
+      showEventDetail: true,
+      event_id: id
+    })
+  }
+  hideDetailModal() {
+    this.setStatePure({
+      showEventDetail: false
+    })
+  }
+  addStar(){
+    BeNavigator.pushActivity(this.event,ActivityPages.starts,{autoStar:true})
+  }
   clearIndexedRemind() {
     /*this.type = null
     this.currentRemindUser = null 
@@ -176,16 +230,20 @@ export default class Event extends BeComponent {
       newing:!this.state.newing
     })*/
   }
+  
   renderMenu(NewMessages) {
     ///console.error(this.state.currentPage)
     switch (this.state.currentPage) {
       case ActivityPages.starts:
         return (
           <EventDetails
+            showShare={this.showSahreWithYourContact.bind(this)}
+            shareLink={this.getShareLink.bind(this)}
             isRelation={this.isRelation}
             id={this.id}
             shared={false}
             star={this.getParam("star")}
+            autoStar={this.getParam('autoStar')}
             share={{
               id: "1434",
               date: moment().format(),
@@ -220,7 +278,9 @@ export default class Event extends BeComponent {
       case ActivityPages.reminds:
         return (
           <Remind
-            //shared={false}
+            //shared={false}={this.getShareLink}
+            showSharer={this.showSahreWithYourContact.bind(this)}
+            shareLink={this.getShareLink.bind(this)}
             type={this.type}
             clearIndexedRemind={this.clearIndexedRemind.bind(this)}
             currentRemindUser={this.currentRemindUser}
@@ -261,6 +321,9 @@ export default class Event extends BeComponent {
       case ActivityPages.chat:
         return (
           <EventChat
+            showDetailModal={this.showDetailModal.bind(this)}
+            showShare={this.showSahreWithYourContact.bind(this)}
+            getShareLink={this.getShareLink.bind(this)}
             openPage={this.setCurrentPage.bind(this)}
             openSettings={this.openSettingsModal.bind(this)}
             activityPhoto={this.event.background}
@@ -281,6 +344,7 @@ export default class Event extends BeComponent {
             closeMenu={() => this.closeMenu()}
             showLoader={() => this.startLoader()}
             working={this.state.working}
+            addStar={this.addStar.bind(this)}
             addRemind={(members) => this.addRemindForCommittee(this.state.roomMembers)}
             stopLoader={() => this.stopLoader()}
             showProfile={(pro) => this.showProfile(pro)}
@@ -377,7 +441,7 @@ export default class Event extends BeComponent {
     };
     let index = findIndex(stores.ChangeLogs.changes[this.event.id], (ele) => {
       return ele.updater == data.updater &&
-        ele.date == data.date 
+        ele.date == data.date
     })
     if (index >= 0) {
       BeNavigator.pushActivity(this.event, ActivityPages.logs, { index })
@@ -403,7 +467,7 @@ export default class Event extends BeComponent {
       change.updated == "highlight_restored"
     ) {
       this.showHighlightDetails(
-        change.new_value.new_value      );
+        change.new_value.new_value);
     } else if (change.updated === "highlight_url") {
       this.showHighlightDetails({
         title: change.changed,
@@ -462,7 +526,7 @@ export default class Event extends BeComponent {
     });
   }
   showRemind(remind, restoring) {
-    BeNavigator.goToRemindDetail(remind.id,this.event.id,{remind})
+    BeNavigator.goToRemindDetail(remind.id, this.event.id, { remind })
   }
   openPhoto(url) {
     this.showPhoto(url)
@@ -1629,6 +1693,30 @@ export default class Event extends BeComponent {
         isOpen={this.state.isInviteModalOpened}
         participant={this.event.participant}
       ></InviteParticipantModal> : null}
+      {this.state.isShareLinkModalOpened ? <ShareAsLink
+        onClosed={this.hideShareLinkModal.bind(this)}
+        link={this.state.link}
+        share={this.forwardLink.bind(this)}
+        isOpen={this.state.isShareLinkModalOpened}>
+
+      </ShareAsLink> : null}
+      {this.state.isShareWithYourContactsModalOpened ?
+        <ShareWithYourContacts
+          isOpen={this.state.isShareWithYourContactsModalOpened}
+          message={this.state.message}
+          activity_id={this.event.id}
+          sender={request.Message().sender}
+          committee_id={this.event.id}
+          onClosed={this.hideShareWithYourContacts.bind(this)}
+        >
+        </ShareWithYourContacts> : null}
+      {this.state.showEventDetail?<DetailsModal
+        event={{ ...request.Event(),id:this.state.event_id }}
+        isToBeJoint
+        isOpen={this.state.showEventDetail}
+        onClosed={this.hideDetailModal.bind(this)}
+        >
+        </DetailsModal>:null}
       {this.state.isManagementModalOpened ? <ManageMembersModal
         isOpen={this.state.isManagementModalOpened}
         checkActivity={(member) => this.checkActivity(member)}

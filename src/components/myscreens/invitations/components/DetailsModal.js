@@ -52,9 +52,7 @@ export default class DetailsModal extends BleashupModal {
   location = "";
   isToBeJoint = false;
   id = "";
-  componentDidMount() {
-    this.props.parent ? this.props.parent.onSeen() : null;
-  }
+ 
   formCreator() {
     return new Promise((resolve, reject) => {
       stores.TemporalUsersStore.getUser(this.props.event.creator_phone).then(
@@ -131,13 +129,13 @@ export default class DetailsModal extends BleashupModal {
   }
   onOpenModal() {
     this.url.uri = this.props.event.background;
-    this.openModalTimeout = setTimeout(
-      () => this.setEvent(this.props.event),
-      20
-    );
+      this.setEvent(this.props.event),
+      
+    setTimeout(() => {
     stores.Events.loadCurrentEventFromRemote(this.props.event.id).then((e) => {
       this.setEvent(e);
     });
+  },20)
   }
   openPhoto() {
     requestAnimationFrame(() => {

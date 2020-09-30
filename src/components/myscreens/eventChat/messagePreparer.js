@@ -9,7 +9,9 @@ class preparer {
         message.text = remind.title 
         message.sent = true
         message.type = message_types.remind_message
-        message.activity_id = remind.event_id 
+        message.activity_id = remind.event_id
+        message.forwarded = true
+        message.from_activity = remind.id
         message.remind_id = remind.id
         message.remind_date = remind.period
         message.end_date = remind.recursive_frequency.recurrence
@@ -21,6 +23,8 @@ class preparer {
         let message = request.Message()
         message.text = start.title 
         message.sent = true
+        message.forwarded = true 
+        from_activity = start.event_id
         message.type = message_types.star_message
         message.tags = start.extra && start.extra.tags
         message.activity_id = start.event_id 

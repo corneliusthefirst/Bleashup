@@ -30,6 +30,7 @@ export default class globalState {
   @observable previousCommitee = null;
   @observable socket = null;
   @observable DeepLinkURL = "http://bleashup.com/";
+  @observable DeepLinkURLs = "https://bleashup.com/";
   @observable currentRoomNewMessages;
   @observable passwordError = false;
   @observable newPasswordError = false;

@@ -100,10 +100,11 @@ class Functions {
       search = search.toLowerCase()
       let senderPhone = ele.sender && ele.sender.phone.replace && ele.sender.phone.replace("+", "00")
       let isText = (ele.text && ele.text.toLowerCase().includes(search))
+      let isName = (ele.name && ele.name.toLowerCase().includes(search))
       let user = senderPhone && senderPhone !== stores.LoginStore.user.phone &&
         stores.TemporalUsersStore.Users[senderPhone]
       let isUsername = user && user.nickname && user.nickname.toLowerCase().includes(search)
-      return isText || (!isRelation && isUsername)
+      return isText || (!isRelation && isUsername) || isName
     } else {
       return false
     }

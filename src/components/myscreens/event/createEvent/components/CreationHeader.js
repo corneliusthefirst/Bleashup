@@ -50,7 +50,9 @@ export default class CreationHeader extends Component {
               {this.props.title}
             </Text>
           </View>
-          <View style={{ minWidth: "45%", justifyContent: "flex-end" }}>
+          <View style={{ minWidth: "10%",
+          flexDirection: 'row',alignItems: 'center'
+          , justifyContent: "flex-end",marginRight: '1%', }}>
             {this.props.extra}
           </View>
         </View>

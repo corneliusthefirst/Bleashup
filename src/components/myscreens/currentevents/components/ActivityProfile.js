@@ -27,9 +27,9 @@ export default class ActivityProfile extends BeComponent {
                         alignItems: "center",
                     }}
                     onPress={() =>
-                        this.props.Event.background &&
+                       this.props.onPress||( this.props.Event.background &&
                         this.props.showPhoto &&
-                        this.props.showPhoto(this.props.Event.background)
+                        this.props.showPhoto(this.props.Event.background))
                     }
                 >
                     <View
@@ -71,6 +71,7 @@ export default class ActivityProfile extends BeComponent {
                     }}
                 >
                     <TitleView
+                        onPress={this.props.onPress}
                         searchString={this.props.searchString}
                         searching={this.props.searching}
                         Event={this.props.Event || {}}

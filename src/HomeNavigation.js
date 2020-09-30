@@ -18,6 +18,7 @@ import RemindDetail from './components/myscreens/eventChat/RemindDetail';
 import StarDetail from './components/myscreens/eventChat/StarDetail';
 import ReportTabModal from './components/myscreens/reminds/NewReportTab';
 import TasksCreation from './components/myscreens/reminds/TasksCreation';
+import SelectRelation  from './components/myscreens/eventChat/SelectRelation';
 
 enableScreens()
 const HomeNavigator = createStackNavigator({
@@ -34,6 +35,7 @@ const HomeNavigator = createStackNavigator({
     StarDetail: { screen: StarDetail },
     SearchUser: { screen: SearchUser },
     Profile: { screen: ProfileView },
+    SelectRelation: { screen: SelectRelation },
     Actu: { screen: ActuView },
     PhotoViewer: { screen: PhotoViewer },
     Video: { screen: VideoViewer },

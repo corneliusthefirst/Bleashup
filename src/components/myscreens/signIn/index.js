@@ -76,9 +76,9 @@ export default class SignInView extends Component {
     code ?
     stores.TempLoginStore.confirmCode.confirm(code).then(success => {
     this.state.password &&  this.login()
-    }).catch(err => {
+    })/*.catch(err => {
       this.sayVerificationError()
-    }):Toaster({text:Texts.enter_verification_code})
+    })*/:Toaster({text:Texts.enter_verification_code})
     globalState.loading = false
   }
   sayVerificationError(){
@@ -133,7 +133,7 @@ export default class SignInView extends Component {
       <CreationHeader title={Texts.sign_in} back={this.back.bind(this)} ></CreationHeader>
         <ScrollView style={{flex:1,width:"100%"}}  showsVerticalScrollIndicator={false}>
         <View style={{...rounder(200,ColorList.indicatorColor),marginLeft: "auto",marginRight: "auto",marginTop: "2%",}}>
-            <Image resizeMode={"cover"} source={this.loginStore.user.profile_ext}
+            <Image resizeMode={"cover"} source={this.loginStore.user.profile}
               style={{...rounder(200), }}>
         </Image>
         </View>

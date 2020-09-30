@@ -170,12 +170,12 @@ giving out a file wchich is stored drive. hence the app crashes
 
 [] make reminds intervals mentionable
 
-[] handle sharing for reminds and stars. not that this follow the current sharing strategy of the app
+[*] handle sharing for reminds and stars. not that this follow the current sharing strategy of the app
     this implementation should take into consideration sharing each items as links also
 
-[] handler share activity as message and as link.
+[*] handler share activity as message and as link.
 
-[] handle sharing of relations as links. 
+[*] handle sharing of relations as links. 
 
 [] resolve the issue of the audio slider not moving sometimes the audio is playing.
 

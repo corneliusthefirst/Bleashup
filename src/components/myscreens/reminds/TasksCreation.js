@@ -749,7 +749,7 @@ export default class TasksCreation extends BleashupModal {
                             this.setStatePure({ selectMemberState: true })
                           )
                         }
-                        style={{ flexDirection: "row" }}
+                        style={{ flexDirection: "row",marginRight: "3%", }}
                       >
                         <Ionicons
                           name="ios-people"

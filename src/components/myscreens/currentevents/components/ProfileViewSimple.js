@@ -95,7 +95,7 @@ class ProfileSimple extends BePureComponent {
         {!this.props.hidePhoto && (
           <View style={styles.containerSub}>
             {user && user.profile && testForURL(user.profile) ? (
-              <TouchableWithoutFeedback onPress={this.showProfile}>
+              <TouchableWithoutFeedback onPress={this.props.onPress||this.showProfile}>
                 <CacheImages
                   staySmall
                   small
@@ -112,9 +112,9 @@ class ProfileSimple extends BePureComponent {
             )}
           </View>
         )}
-        <TouchableOpacity onPress={this.showProfile} style={styles.textStyles}>
+        <TouchableOpacity onPress={this.props.onPress||this.showProfile} style={styles.textStyles}>
           <TextContent
-            onPress={this.showProfile}
+            onPress={this.props.onPress||this.showProfile}
             ellipsizeMode={"tail"}
             numberOfLines={1}
             style={styles.text}

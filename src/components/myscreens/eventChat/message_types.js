@@ -15,6 +15,7 @@ class types {
     date_separator = "date_separator"
     remind_message = "remind"
     star_message = "star"
+    relation_message = "relation"
 }
 const message_types = new types
 export default message_types

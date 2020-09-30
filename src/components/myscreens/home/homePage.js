@@ -146,6 +146,7 @@ class Home extends BeComponent {
   componentMounting() {
     Linking.addEventListener("url", this.handleURL);
     DeepLinking.addScheme(GState.DeepLinkURL);
+    DeepLinking.addScheme(GState.DeepLinkURLs);
     DeepLinking.addRoute("/tester", (response) => {
       console.warn("responding to this nice test", response);
     });

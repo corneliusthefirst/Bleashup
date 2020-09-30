@@ -5,13 +5,14 @@ import {
 import Menu, { MenuItem, MenuDivider } from 'react-native-material-menu';
 import colorList from "../../colorList";
 import replies from './reply_extern';
-import  Entypo  from 'react-native-vector-icons/Entypo';
+import Entypo from 'react-native-vector-icons/Entypo';
 import GState from "../../../stores/globalState";
 import ColorList from "../../colorList";
 import Texts from '../../../meta/text';
 import ActivityPages from './chatPages';
 import rounder from "../../../services/rounder";
 import BePureComponent from '../../BePureComponent';
+import { constructActivityLink } from './services';
 
 export default class ChatroomMenu extends BePureComponent {
     constructor(props) {
@@ -51,7 +52,7 @@ export default class ChatroomMenu extends BePureComponent {
         //this._menu.hide()
 
     }
-    gotToPage(page){
+    gotToPage(page) {
         this.props.openPage(page)
     }
     isGeneral = this.props.roomID == this.props.eventID
@@ -61,19 +62,19 @@ export default class ChatroomMenu extends BePureComponent {
                 <Menu
                     style={{ backgroundColor: colorList.popMenuBackground }}
                     ref={this.setMenuRef}
-                    button={<TouchableOpacity 
+                    button={<TouchableOpacity
                         style={{
-                            ...rounder(35,ColorList.bodyBackground),
+                            ...rounder(35, ColorList.bodyBackground),
                             justifyContent: 'center',
                         }}
-                        onPress={ () => 
+                        onPress={() =>
                             requestAnimationFrame(() => this.showMenu())
-                    }><Entypo style={{
-                        ...GState.defaultIconSize,
-                        color: colorList.headerIcon,
-                    }}
-                     name="dots-three-vertical">
-                    </Entypo>
+                        }><Entypo style={{
+                            ...GState.defaultIconSize,
+                            color: colorList.headerIcon,
+                        }}
+                            name="dots-three-vertical">
+                        </Entypo>
                     </TouchableOpacity>}
                 >
                     <View>
@@ -82,22 +83,28 @@ export default class ChatroomMenu extends BePureComponent {
                             this.gotToPage(ActivityPages.reminds)
                         }}>{Texts.remind}</MenuItem>
                         <MenuDivider color={ColorList.bodyText} /></View>
-                        <View><MenuItem textStyle={{ color: ColorList.bodyText}} onPress={() => {
-                            this.hideMenu()
-                            this.gotToPage(ActivityPages.starts)
-                        }}>{Texts.star}</MenuItem>
-                            <MenuDivider color={ColorList.bodyText} /></View>
-                        <View><MenuItem textStyle={{ color: ColorList.bodyText }} onPress={() => {
-                            this.hideMenu()
-                            this.gotToPage(ActivityPages.logs)
-                        }}>{Texts.logs}</MenuItem>
-                            <MenuDivider color={ColorList.bodyIcon} /></View>
-                   <View><MenuItem textStyle={{ color: ColorList.bodyText }} onPress={() => {
+                    <View><MenuItem textStyle={{ color: ColorList.bodyText }} onPress={() => {
+                        this.hideMenu()
+                        this.gotToPage(ActivityPages.starts)
+                    }}>{Texts.star}</MenuItem>
+                        <MenuDivider color={ColorList.bodyText} /></View>
+                    <View><MenuItem textStyle={{ color: ColorList.bodyText }} onPress={() => {
+                        this.hideMenu()
+                        this.gotToPage(ActivityPages.logs)
+                    }}>{Texts.logs}</MenuItem>
+                        <MenuDivider color={ColorList.bodyIcon} /></View>
+                    <View><MenuItem textStyle={{ color: ColorList.bodyText }} onPress={() => {
                         this.hideMenu()
                         this.props.settings()
                     }}>{Texts.settings}
                     </MenuItem>
                         <MenuDivider color={ColorList.bodyText} /></View>
+                    {~this.props.isRelation ? <View><MenuItem textStyle={{ color: ColorList.bodyText }} onPress={() => {
+                        this.hideMenu()
+                        this.props.getShareLink(constructActivityLink(this.props.activity_id))
+                    }}>{Texts.get_share_link}
+                    </MenuItem>
+                        <MenuDivider color={ColorList.bodyText} /></View> : null}
                 </Menu>
             </View>
         ) : <ImageActivityIndicator />;

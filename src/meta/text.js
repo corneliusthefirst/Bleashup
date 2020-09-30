@@ -721,6 +721,10 @@ class TEXTS {
         en: "Settings",
         fr: "Parametres"
     }[GState.lang]
+    get_share_link = {
+        en: "Get share link",
+        fr: "Obtenir le lien de partage"
+    }[GState.lang]
     done = {
         en: "Done",
         fr: "Fait"
@@ -800,6 +804,18 @@ class TEXTS {
     unable_to_load_data = {
         en: "Unable to load data",
         fr: "impossible de montree cette info"
+    }[GState.lang]
+    all_contacts = {
+        en: "All Your Contacts",
+        fr: "Tous Vos Contacts"
+    }[GState.lang]
+    all_activities = {
+        en: "All Your Activities",
+        fr: "Tous vos Activites"
+    }[GState.lang]
+    select_from = {
+        en: "Select From",
+        fr:"Selectioner De"
     }[GState.lang]
 }
 const Texts = new TEXTS()

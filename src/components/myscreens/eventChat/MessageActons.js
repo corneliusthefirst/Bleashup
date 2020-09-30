@@ -14,6 +14,7 @@ import FontAwesome  from 'react-native-vector-icons/FontAwesome';
 import FontAwesome5  from 'react-native-vector-icons/FontAwesome5';
 import  Entypo  from 'react-native-vector-icons/Entypo';
 import GState from "../../../stores/globalState";
+import Fontisto from "react-native-vector-icons/Fontisto"
 import Feather  from 'react-native-vector-icons/Feather';
 
 export default class MessageActions extends BleashupModal {
@@ -65,6 +66,7 @@ export default class MessageActions extends BleashupModal {
            case "MaterialCommunityIcons": return <MaterialCommunityIcons name={iconName} style={style}></MaterialCommunityIcons>;
            case "EvilIcons": return <EvilIcons name={iconName} style={style}></EvilIcons>;
            case "Ionicons": <Ionicons name={iconName} style={style}></Ionicons>;
+           case "Fontisto": <Fontisto name={iconName} style={style}></Fontisto>;
            case "Feather": return <Feather name={iconName} style={style}></Feather>;
            default: return <View><Text style={{...GState.defaultTextStyle}}>{type}</Text></View>
         }

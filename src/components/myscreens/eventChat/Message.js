@@ -41,6 +41,7 @@ import ChatUser from './ChatUser';
 import { showHighlightForScrollToIndex } from './highlightServices';
 import RemindMessage from "./RemindMessage";
 import StarMessage from "./StarMessage";
+import RelationMessage from "./RelationMessage";
 
 export default class Message extends BeComponent {
     constructor(props) {
@@ -264,6 +265,14 @@ export default class Message extends BeComponent {
                     message={data}
                 >
                 </StarMessage>
+            case message_types.relation_message:
+                return <RelationMessage
+                    onPress={this.props.showRelation}
+                    searchString={this.props.searchString}
+                    foundString={this.props.foundString}
+                    message={data}
+                >
+                </RelationMessage>
             default:
                 return null;
         }
@@ -442,9 +451,7 @@ export default class Message extends BeComponent {
             });
         }, 2000);
     }
-    placeholderStyle = this.props.message.dimensions
-        ? this.props.message.dimensions
-        : { height: 100, width: 80 };
+    
     render() {
         let showName = this.state.sender && this.state.different;
         let topMostStyle = {
@@ -486,7 +493,6 @@ export default class Message extends BeComponent {
         };
         placeholderStyle = {
             ...topMostStyle,
-            ...this.placeholderStyle,
             backgroundColor: color,
             borderBottomLeftRadius: ColorList.chatboxBorderRadius,
             borderColor: color,

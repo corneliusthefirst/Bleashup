@@ -66,8 +66,8 @@ import {
 import Spinner from "../../Spinner";
 import AnimatedPureComponent from "../../AnimatedPureComponent";
 import { returnCurrentPatterns, sendRemindAsMessage } from "./remindsServices";
-import ShareWithYourContacts from "../eventChat/ShareWithYourContacts";
 import messagePreparer from "../eventChat/messagePreparer";
+import { constructProgramLink } from '../eventChat/services';
 
 @observer
 class Reminds extends AnimatedPureComponent {
@@ -561,6 +561,10 @@ class Reminds extends AnimatedPureComponent {
       },
     });
   }
+  shareLink(){
+    this.props.shareLink && this.props.shareLink(constructProgramLink(this.props.event.id,
+      this.state.remind.id))
+  }
   actionIndex = this.state.currentIndex ? this.state.currentIndex() : {};
   remindsActions = () => [
     {
@@ -577,6 +581,14 @@ class Reminds extends AnimatedPureComponent {
       condition: () => true,
       iconName: "forward",
       iconType: "Entypo",
+      color: colorList.indicatorColor,
+    },
+    {
+      title: Texts.get_share_link,
+      callback: () => this.shareLink(),
+      condition: () => true,
+      iconName: "ios-link",
+      iconType: "Ionicons",
       color: colorList.indicatorColor,
     },
     {
@@ -664,9 +676,8 @@ class Reminds extends AnimatedPureComponent {
     this.props.clearIndexedRemind && this.props.clearIndexedRemind();
   }
   showSharer() {
-    this.setStatePure({
-      isSharing: true,
-    });
+    let message = messagePreparer.formMessageFromRemind(this.state.remind)
+    this.props.showSharer && this.props.showSharer(message)
   }
   hideSharing() {
     this.setStatePure({
@@ -792,18 +803,6 @@ class Reminds extends AnimatedPureComponent {
               });
             }}
           ></MessageActions>
-        ) : null}
-        {this.state.isSharing ? (
-          <ShareWithYourContacts
-            isOpen={this.state.isSharing}
-            activity_id={this.props.event.id}
-            sender={request.Message().sender}
-            committee_id={this.props.event.id}
-            message={{
-              ...messagePreparer.formMessageFromRemind(this.state.remind),
-            }}
-            onClosed={this.hideSharing.bind(this)}
-          ></ShareWithYourContacts>
         ) : null}
       </View>
     );

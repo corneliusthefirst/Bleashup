@@ -41,8 +41,8 @@ import Searcher from '../Contacts/Searcher';
 import { _onScroll } from '../currentevents/components/sideButtonService';
 import rounder from '../../../services/rounder';
 import { justSearch, cancelSearch, startSearching } from '../eventChat/searchServices';
-import ShareWithYourContacts from "../eventChat/ShareWithYourContacts";
 import messagePreparer from '../eventChat/messagePreparer';
+import { constructStarLink } from '../eventChat/services';
 
 let { height, width } = Dimensions.get('window');
 
@@ -85,7 +85,7 @@ let { height, width } = Dimensions.get('window');
     this.setStatePure({
       newing: !this.state.newing,
       isMounted: true,
-      EventHighlightState: this.props.star ? true : false,
+      EventHighlightState: this.props.star || this.props.autoStar ? true : false,
       participant: participant
     });
     if ((!stores.Highlights.highlights[this.props.Event.id] ||
@@ -207,13 +207,21 @@ let { height, width } = Dimensions.get('window');
     })
   }
   share() {
-    this.setStatePure({
-      isSharing: true
+    this.props.showShare && this.props.showShare({
+      ...messagePreparer.formMessagefromStar(this.state.selectedItem),
+      forwarded: true,
+      reply: null,
+      from_activity: this.props.Event.id,
+      from_committee: this.props.Event.id,
+      from: null
     })
+  }
+  shareLink(item) {
+    this.props.shareLink(constructStarLink(item.event_id, item.id))
   }
   action = () => [
     {
-      title: 'Reply',
+      title: Texts.reply,
       callback: () => this.mention(this.state.selectedItem),
       iconName: Texts.reply,
       condition: () => true,
@@ -221,12 +229,20 @@ let { height, width } = Dimensions.get('window');
       color: colorList.replyColor
     },
     {
-      title: 'Share',
+      title: Texts.share,
       callback: () => this.share(this.state.selectedItem),
       iconName: "forward",
       condition: () => true,
       iconType: "Entypo",
-      color: colorList.replyColor
+      color: colorList.indicatorColor
+    },
+    {
+      title: Texts.get_share_link,
+      callback: () => this.shareLink(this.state.selectedItem),
+      iconName: "ios-link",
+      condition: () => true,
+      iconType: "Ionicons",
+      color: colorList.indicatorColor
     },
     {
       title: Texts.update,
@@ -416,23 +432,6 @@ let { height, width } = Dimensions.get('window');
           message={Texts.are_you_sure_to_delete_this_highlight}
           deleteFunction={() => this.deleteHighlight(this.state.current_highlight)}
           isOpen={this.state.isAreYouSureModalOpened} onClosed={() => { this.setStatePure({ isAreYouSureModalOpened: false }) }} />
-
-        <ShareWithYourContacts
-          isOpen={this.state.isSharing}
-          activity_id={this.props.Event.id}
-          sender={request.Message().sender}
-          committee_id={this.props.Event.id}
-          message={{
-            ...messagePreparer.formMessagefromStar(this.state.selectedItem),
-            forwarded: true,
-            reply: null,
-            from_activity: this.props.Event.id,
-            from_committee: this.props.Event.id,
-            from: null
-          }}
-          onClosed={this.hideSharing.bind(this)}
-        >
-        </ShareWithYourContacts>
         {!this.props.isRelation && this.state.isActionButtonVisible ? <SideButton
           buttonColor={colorList.bodyBackground}
           position={"right"}

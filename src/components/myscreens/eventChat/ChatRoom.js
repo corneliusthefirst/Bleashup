@@ -11,6 +11,7 @@ import {
     ImageBackground,
     Vibration,
     Clipboard,
+    Linking,
 } from 'react-native';
 import VideoPlayer from './VideoController';
 import BleashupFlatList from '../../BleashupFlatList';
@@ -44,7 +45,6 @@ import { observer } from 'mobx-react';
 import PublishersModal from '../../PublishersModal';
 import Requester from './Requester';
 import globalFunctions from '../../globalFunctions';
-import ShareWithYourContacts from './ShareWithYourContacts';
 import MessageActions from './MessageActons';
 import replies from './reply_extern';
 import ChatKeyboard from './ChatKeyboard';
@@ -71,7 +71,7 @@ import EvilIcons from 'react-native-vector-icons/EvilIcons';
 import IDMaker from '../../../services/IdMaker';
 import FileExachange from '../../../services/FileExchange';
 import Texts from '../../../meta/text';
-import { sayTyping } from './services';
+import { sayTyping, copyText } from './services';
 import { typing } from '../../../meta/events';
 import { reply_me } from '../../../meta/events';
 import message_types from './message_types';
@@ -79,6 +79,8 @@ import Vibrator from '../../../services/Vibrator';
 import MessageInfoModal from './messageInfoModal';
 import { search, computeSearch, startSearching, cancelSearch, finish, pushSearchDown, pushSearchUp } from './searchServices';
 import messagePreparer from './messagePreparer';
+import active_types from './activity_types';
+import UserService from '../../../services/userHttpServices';
 
 const screenWidth = Math.round(Dimensions.get('window').width);
 const screenheight = Math.round(Dimensions.get('window').height);
@@ -630,9 +632,7 @@ class ChatRoom extends AnimatedComponent {
         }) : Toaster({ text: Texts.this_message_was_never_sent });
     }
     copyMessage() {
-        Clipboard.setString(this.state.currentMessage.text);
-        Vibrator.vibrateShort();
-        Toaster({ text: Texts.copied, type: 'success' });
+        copyText(this.state.currentMessage.text)
     }
     showMessageAction(message, reply, sender) {
         this.tempReply = reply
@@ -662,9 +662,7 @@ class ChatRoom extends AnimatedComponent {
         });
     }
     shareWithContacts(message) {
-        this.setStatePure({
-            isShareWithContactsOpened: true,
-        });
+        this.forwardToContacts(this.state.currentMessage)
     }
     scrollToIndex(index) {
         this.refs.bleashupSectionListOut &&
@@ -674,6 +672,11 @@ class ChatRoom extends AnimatedComponent {
                 this.refs.bleashupSectionListOut.scrollToIndex(index);
             clearTimeout(this.scrollToTimeout)
         }, 40);
+    }
+    startSendingRelation(item) {
+        this.refs.keyboard &&
+            this.refs.keyboard.starSendingRelation &&
+            this.refs.keyboard.starSendingRelation(item)
     }
     messageActions = () => [
         {
@@ -857,6 +860,9 @@ class ChatRoom extends AnimatedComponent {
                             />*/}
                             {
                                 this.state.showOptions && <Options
+                                    addStar={this.props.addStar}
+                                    activity_id={this.props.activity_id}
+                                    select={this.startSendingRelation.bind(this)}
                                     timeToDissmissKeyboard={this.timeToDissmissKeyboard}
                                     openAudioPicker={this.openAudioPicker.bind(this)}
                                     openFilePicker={this.openFilePicker.bind(this)}
@@ -869,36 +875,6 @@ class ChatRoom extends AnimatedComponent {
                                         Keyboard.dismiss()
                                     }}></Options>
                             }
-                            {this.state.isShareWithContactsOpened ? <ShareWithYourContacts
-                                activity_id={this.props.activity_id}
-                                sender={this.props.user}
-                                committee_id={this.roomID}
-                                isOpen={this.state.isShareWithContactsOpened}
-                                message={this.state.currentMessage && {
-                                    ...this.state.currentMessage,
-                                    id: IDMaker.make(),
-                                    created_at: moment().format(),
-                                    sender: this.props.user,
-                                    type: this.state.currentMessage.type === 'image' ? 'photo' :
-                                        this.state.currentMessage.type,
-                                    reply: null,
-                                    forwarded: true,
-                                    from_activity: !this.state.currentMessage.from_activity
-                                        ? this.props.activity_id
-                                        : this.state.currentMessage.from_activity,
-                                    from_committee: !this.state.currentMessage.from_committee
-                                        ? this.roomID
-                                        : this.state.currentMessage.committee_id,
-                                    from: this.state.currentMessage.from
-                                        ? this.state.currentMessage.from
-                                        : this.state.currentMessage.sender,
-                                }}
-                                onClosed={() => {
-                                    this.setStatePure({
-                                        isShareWithContactsOpened: false,
-                                    });
-                                }}
-                            /> : null}
                             {this.state.showMessageActions ? <MessageActions
                                 title={"message actions"}
                                 actions={this.messageActions}
@@ -956,12 +932,29 @@ class ChatRoom extends AnimatedComponent {
 
     }
     forwardToContacts(message) {
-        message && message.sent
-            ? this.setStatePure({
-                isShareWithContactsOpened: true,
-                currentMessage: message,
+        if (message && message.sent) {
+            this.props.showShare && this.props.showShare({
+                id: IDMaker.make(),
+                created_at: moment().format(),
+                sender: this.props.user,
+                type: message.type === 'image' ? 'photo' :
+                    message.type,
+                reply: null,
+                forwarded: true,
+                from_activity: !message.from_activity
+                    ? this.props.activity_id
+                    : message.from_activity,
+                from_committee: !message.from_committee
+                    ? this.roomID
+                    : message.committee_id,
+                from: message.from
+                    ? message.from
+                    : message.sender,
             })
-            : Toaster({ text: 'cannot forward unsent messages' });
+        } else {
+            Toaster({ text: 'cannot forward unsent messages' });
+        }
+
     }
     replyMessage() {
         this.replyTimout = setTimeout(() => {
@@ -1066,6 +1059,13 @@ class ChatRoom extends AnimatedComponent {
                 }
             case message_types.star_message:
                 return tempMessage
+            case message_types.relation_message:
+                return {
+                    ...tempMessage,
+                    text: '(' + (message.relation_type ==
+                        active_types.activity ? Texts.activity : Texts.contacts) + ') ' +
+                        message.name + '\n\n' + message.text
+                }
             default:
                 Toaster({ text: 'unable to reply for unsent messages' });
                 return null;
@@ -1201,6 +1201,7 @@ class ChatRoom extends AnimatedComponent {
 
                     return <View onLayout={e => this.setCurrentLayout(e.nativeEvent.layout, item, index)} >
                         <Message
+                            showRelation={this.showRelation.bind(this)}
                             showStarMessage={() => this.showStar(item)}
                             showRemindMessage={() => this.showRemind(item)}
                             animate={this.animateUI.bind(this)}
@@ -1226,7 +1227,7 @@ class ChatRoom extends AnimatedComponent {
                             scrolling={this.scrolling}
                             computedMaster={this.props.computedMaster}
                             activity_id={this.props.activity_id}
-                            showProfile={(pro) => this.props.showProfile(pro.replace("+", "00"))}
+                            showProfile={(pro) => pro && this.props.showProfile(pro.replace("+", "00"))}
                             delay={delay}
                             room={this.roomID}
                             PreviousMessage={
@@ -1290,9 +1291,30 @@ class ChatRoom extends AnimatedComponent {
             showAudioRecorder: !this.state.showAudioRecorder,
         });
     }
+    showRelation(item) {
+        if(item.type == active_types.activity){
+            stores.Events.isParticipant(item.item,stores.LoginStore.user.phone).then(act => {
+                if(act){
+                    BeNavigator.pushToChat(act)
+                }else{
+                    this.props.showDetailModal(item.item)
+                }
+            })
+        }else{
+            stores.TemporalUsersStore.getUser(item.item).then(user => {
+                if(user && user.nickname && !user.response){
+                    this.props.showProfile(user.phone)
+                }else{
+                    Linking.openURL(`tel:${item.item.replace("00","+")}`)
+                }
+            })
+        }
+    }
     keyboardView() {
         return (
             <ChatKeyboard
+                activity_name={this.props.activity_name}
+                showRelation={this.showRelation.bind(this)}
                 dontShowKeyboard={this.state.dontShowKeyboard}
                 openedKeyboard={() => this.openedKeyboard}
                 timeToDissmissKeyboard={this.timeToDissmissKeyboard}
@@ -1322,6 +1344,7 @@ class ChatRoom extends AnimatedComponent {
     header() {
         return (
             <ChatRoomHeader
+                getShareLink={this.props.getShareLink}
                 openPage={this.props.openPage}
                 openSettings={this.props.openSettings}
                 showActivityPhotoAction={this.props.showActivityPhotoAction}
