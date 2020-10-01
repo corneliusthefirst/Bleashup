@@ -714,6 +714,7 @@ export default class ChatKeyboard extends AnimatedComponent {
     displayRelation(){
         return<View style={{marginHorizontal: '1%',}}>
             <RelationMessage
+                compose
                 message={this.state.item}
                 onPress={this.props.showRelation}
             ></RelationMessage>

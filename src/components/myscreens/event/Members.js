@@ -83,6 +83,7 @@ export default class Members extends Component {
             return (
               <SelectableProfileWithOptions
                 closeModals={this.props.closeModals}
+                searchString={this.props.searchString}
                 simplyMembers
                 delay={this.delay}
                 toggleMaster={(member) => this.toggleMaster(member)}

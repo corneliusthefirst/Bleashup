@@ -1,5 +1,5 @@
 import React from "react";
-import { View, TouchableOpacity, Text,  } from "react-native";
+import { View, TouchableOpacity, Text, } from "react-native";
 import BleashupFlatList from "../../BleashupFlatList";
 import { findIndex, reject, uniqBy } from "lodash";
 import stores from "../../../stores";
@@ -11,6 +11,10 @@ import BleashupModal from "../../mainComponents/BleashupModal";
 import ColorList from '../../colorList';
 import CreationHeader from "./createEvent/components/CreationHeader";
 import Spinner from '../../Spinner';
+import Searcher from "../Contacts/Searcher";
+import { startSearching, cancelSearch, justSearch } from "../eventChat/searchServices";
+import Texts from '../../../meta/text';
+import globalFunctions from '../../globalFunctions';
 export default class ManageMembersModal extends BleashupModal {
     initialize() {
         this.state = {
@@ -20,6 +24,9 @@ export default class ManageMembersModal extends BleashupModal {
             event_id: null,
             selected: [],
         };
+        this.startSearching = startSearching.bind(this)
+        this.cancelSearch = cancelSearch.bind(this)
+        this.search = justSearch.bind(this)
     }
 
     toggleMaster(memberPhone) {
@@ -65,7 +72,7 @@ export default class ManageMembersModal extends BleashupModal {
         });
     }
     onOpenModal() {
-       this.openModalTimeout = setTimeout(() => {
+        this.openModalTimeout = setTimeout(() => {
             this.setStatePure({
                 contacts: uniqBy(this.props.participants, "phone").filter(
                     (ele) =>
@@ -80,8 +87,10 @@ export default class ManageMembersModal extends BleashupModal {
         }, 10);
     }
     delay = 0;
-    swipeToClose=false
+    swipeToClose = false
     modalBody() {
+        let data = this.state.contacts && this.state.contacts.filter(ele =>
+            globalFunctions.filterForRelation(ele, this.state.searchString || ""))
         return (
             <View>
                 {this.state.loaded ? (
@@ -92,37 +101,52 @@ export default class ManageMembersModal extends BleashupModal {
                                 height: ColorList.headerHeight,
                             }}
                         >
-                            <CreationHeader back={this.onClosedModal.bind(this)} title={"Remove Members"} 
-                            extra={<View style={{ 
-                                flexDirection: 'row',
-                                marginBottom: 'auto',
-                                marginTop: 'auto',
-                                alignSelf: 'flex-end',
-                            }}>
-                                {this.state.selected.length > 0 && this.props.master ? (
-                                    <TouchableOpacity
-                                        style={{ marginTop: 'auto', marginBottom: 'auto', marginRight: "2%" }}
-                                        onPress={() => requestAnimationFrame(() => this.apply())}
-                                    >
-                                        <Text style={{ color: "red", fontWeight: "bold" }}>
-                                            {"Ban"}
-                                        </Text>
-                                    </TouchableOpacity>
-                                ) : null}
-                            </View>} ></CreationHeader>
+                            <CreationHeader back={this.onClosedModal.bind(this)} 
+                            title={this.state.searching?"":Texts.remove_member}
+                                extra={<View style={{
+                                    flexDirection: 'row',
+                                    marginBottom: 'auto',
+                                    marginTop: 'auto',
+                                    alignSelf: 'flex-end',
+                                }}>
+                                    <View style={{
+                                        height: 35,
+                                        width: this.state.searching ? "90%" : 35
+                                    }}>
+                                        <Searcher
+                                            searching={this.state.searching}
+                                            searchString={this.state.searchString}
+                                            startSearching={this.startSearching}
+                                            cancelSearch={this.cancelSearch}
+                                            search={this.search}
+                                        >
+                                        </Searcher>
+                                    </View>
+                                    {this.state.selected.length > 0 && this.props.master && !this.state.searching ? (
+                                        <TouchableOpacity
+                                            style={{ marginTop: 'auto', marginBottom: 'auto', marginRight: "3%",marginLeft: "10%", }}
+                                            onPress={() => requestAnimationFrame(() => this.apply())}
+                                        >
+                                            <Text style={{ color: "red", fontWeight: "bold" }}>
+                                                {Texts.ban}
+                                            </Text>
+                                        </TouchableOpacity>
+                                    ) : null}
+                                </View>} ></CreationHeader>
                         </View>
                         <View style={{ height: "90%", margin: "2%" }}>
                             <BleashupFlatList
                                 firstIndex={0}
                                 renderPerBatch={5}
                                 initialRender={20}
-                                numberOfItems={this.state.contacts.length}
+                                numberOfItems={data.length}
                                 keyExtractor={this._keyExtractor}
-                                dataSource={this.state.contacts}
+                                dataSource={data}
                                 renderItem={(item, index) => {
                                     this.delay = this.delay >= 15 ? 0 : this.delay + 1;
                                     return (
                                         <SelectableProfileWithOptions
+                                        searchString={this.state.searchString}
                                             delay={this.delay}
                                             toggleMaster={(member) => this.toggleMaster(member)}
                                             selected={(member) => {

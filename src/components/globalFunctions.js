@@ -91,7 +91,7 @@ class Functions {
     name =
       name ||
       (stores.TemporalUsersStore.Users[ele.phone] &&
-        stores.TemporalUsersStore.Users[ele.phone].nickname);
+        stores.TemporalUsersStore.Users[ele.phone].nickname.toLowerCase());
     return name && name.includes(search.toLowerCase()) ? true : false;
   }
 

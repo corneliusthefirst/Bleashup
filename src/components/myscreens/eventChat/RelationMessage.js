@@ -22,7 +22,7 @@ export default class RelationMessage extends Component {
     choseIcon() {
         switch (this.props.message.relation_type) {
             case active_types.activity:
-                return <AntDesign name={"addusergroup"} style={this.iconStyle}/>
+                return <AntDesign name={"addusergroup"} style={this.iconStyle} />
             default:
                 return <AntDesign name={"user"} style={this.iconStyle}></AntDesign>
         }
@@ -37,8 +37,10 @@ export default class RelationMessage extends Component {
     }
     render() {
         return <View style={{
-            marginVertical:'1%',
-            minWidth: 150,
+            marginVertical: '1%',
+            flex: this.props.compose ? null : 1,
+            //width: "100%",
+            minWidth: 200,
         }}><TouchableOpacity onPress={() => {
             requestAnimationFrame(() => this.props.onPress({
                 type: this.props.message.relation_type,
@@ -49,44 +51,46 @@ export default class RelationMessage extends Component {
             borderTopRightRadius: 5,
             backgroundColor: ColorList.bottunerLighter,
         }} >
-            <View style={{
-                flexDirection: 'row',
-                alignItems: 'center',
+                <View style={{
+                    flexDirection: 'row',
+                    alignItems: 'center',
 
-            }}>
-                <View style={{ marginHorizontal: '1%', }}>{this.choseIcon()}</View>
-                <View><TextContent numberOfLines={1} style={{
-                    color: ColorList.indicatorColor,
-                    fontSize: 13,
-                    fontWeight: 'bold',
-                    fontStyle: 'italic',
-                }}>{this.choseText()}</TextContent></View>
-            </View>
-            <View style={{
-                flexDirection: 'row',
-                marginBottom: '2%',
-                alignItems: 'center',
-                //width: '98%',
-                alignSelf: 'flex-start',
-            }}>
-                {<CacheImages
-                    style={{ marginHorizontal: '2%', }}
-                    source={{ uri: this.props.message.source }}
-                    thumbnails small>
-                </CacheImages>}
-                <View><TextContent
-                    style={{
-                        ...GState.defaultTextStyle,
+                }}>
+                    <View style={{ marginHorizontal: '1%', }}>{this.choseIcon()}</View>
+                    <View><TextContent numberOfLines={1} style={{
+                        color: ColorList.indicatorColor,
+                        fontSize: 13,
                         fontWeight: 'bold',
-                    }}
-                    numberOfLines={1}
-                    searchString={this.props.searchString}
-                    foundString={this.props.foundString}
-                    tags={this.props.message.tags}
-                >
-                    {this.props.message.name}
-                </TextContent></View></View>
-        </TouchableOpacity>
+                        fontStyle: 'italic',
+                    }}>{this.choseText()}</TextContent></View>
+                </View>
+                <View style={{
+                    flexDirection: 'row',
+                    marginBottom: '2%',
+                    minHeight: 50,
+                    alignItems: 'center',
+                    //flex: 1,
+                    //width: '98%',
+                    alignSelf: 'flex-start',
+                }}>
+                    {<CacheImages
+                        style={{ marginHorizontal: '2%', }}
+                        source={{ uri: this.props.message.source }}
+                        thumbnails small>
+                    </CacheImages>}
+                    <View><TextContent
+                        style={{
+                            ...GState.defaultTextStyle,
+                            fontWeight: 'bold',
+                        }}
+                        numberOfLines={1}
+                        searchString={this.props.searchString}
+                        foundString={this.props.foundString}
+                        tags={this.props.message.tags}
+                    >
+                        {this.props.message.name}
+                    </TextContent></View></View>
+            </TouchableOpacity>
             {this.props.message.text ?
                 <TextContent
                     searchString={this.props.searchString}

@@ -165,7 +165,7 @@ export default class TextContent extends Component {
               },
               { pattern: /42/, style: styles.magicNumber },
               {
-                pattern: /\*(\w+)\*/,
+                pattern: /\*(.*?)\*/gm,
                 style: styles.boldText,
                 renderText: this.renderBoldText.bind(this),
               },

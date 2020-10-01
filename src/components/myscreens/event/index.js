@@ -17,7 +17,7 @@ import SelectableContactList from "../../SelectableContactList";
 import CreateCommiteeModal from "./CreateCommiteeModal";
 import moment from "moment";
 import stores from "../../../stores";
-import { uniqBy, findIndex, find, unionBy } from "lodash";
+import { uniqBy, findIndex, find, unionBy,reject } from "lodash";
 import Requester from "./Requester";
 import emitter from "../../../services/eventEmiter";
 import GState from "../../../stores/globalState";
@@ -775,6 +775,8 @@ export default class Event extends BeComponent {
     return {
       ...event,
       background: this.isRelation ? oponent.profile : event.background,
+      participant:[event.participant.find(ele => ele.phone == stores.LoginStore.user.phone)].
+      concat(reject(event.participant,{phone:stores.LoginStore.user.phone})),
       about: {
         ...event.about,
         title: this.isRelation ? oponent.nickname : event.about.title

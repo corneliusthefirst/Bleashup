@@ -817,6 +817,18 @@ class TEXTS {
         en: "Select From",
         fr:"Selectioner De"
     }[GState.lang]
+    remove_member = {
+        en: "Remove Members",
+        fr: "Retirer des membres"
+    }[GState.lang]
+    ban = {
+        en: "Ban",
+        fr:"Retirer"
+    }[GState.lang]
+    loading_data = {
+        en: "Loading Data",
+        fr: "Chargement des donnee"
+    }[GState.lang]
 }
 const Texts = new TEXTS()
 export default Texts

@@ -6,6 +6,7 @@ import Menu, { MenuDivider, MenuItem } from 'react-native-material-menu';
 import emitter from '../../../services/eventEmiter';
 import MaterialIcons  from 'react-native-vector-icons/MaterialIcons';
 import GState from '../../../stores/globalState/index';
+import ColorList from "../../colorList";
 export default class SelectableProfileWithOptions extends Component {
     constructor(props) {
         super(props)
@@ -48,16 +49,20 @@ export default class SelectableProfileWithOptions extends Component {
                         >
                             {!this.props.simplyMembers ? <View style={{ width: "20%",...this.margin }}>
                                 {this.props.mainMaster && this.props.contact.phone !== this.props.creator ?
-                                    <MaterialIcons style={{ ...GState.defaultIconSize ,color: '#1FABAB' }} name={this.state.checked ? "radio-button-checked" :
+                                    <MaterialIcons style={{ ...GState.defaultIconSize ,color: ColorList.indicatorColor }} name={this.state.checked ? "radio-button-checked" :
                                         "radio-button-unchecked"}/> : null
                                 }
                             </View> : null}
-                            <View style={{ width: this.props.simplyMembers ? "100%" : "80%", color: "#0A4E52",...this.margin }}>
-                                <ProfileView setContact={(con) => {
+                            <View style={{ width: this.props.simplyMembers ? "100%" : "80%", color: ColorList.bodyIcon,...this.margin }}>
+                                <ProfileView 
+                                searchString={this.props.searchString} 
+                                setContact={(con) => {
                                     this.setState({
                                         con: con
                                     })
-                                }} delay={this.props.delay} hideMe={() => {
+                                }} 
+                                delay={this.props.delay} 
+                                hideMe={() => {
                                     this.setState({
                                         hiden: true
                                     })

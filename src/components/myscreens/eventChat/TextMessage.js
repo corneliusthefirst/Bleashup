@@ -23,7 +23,7 @@ export default class TextMessage extends PureComponent {
     pattern = [1000, 0, 0]
     render() {
         return (
-            <View style={{alignSelf: "flex-start",}}>
+            <View style={{alignSelf: "flex-start",flex: 1,}}>
                 <TextContent
                 animate={this.props.animate} 
                 searchString={this.props.searchString} 

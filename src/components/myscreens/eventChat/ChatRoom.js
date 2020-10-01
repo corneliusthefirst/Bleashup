@@ -1064,7 +1064,7 @@ class ChatRoom extends AnimatedComponent {
                     ...tempMessage,
                     text: '(' + (message.relation_type ==
                         active_types.activity ? Texts.activity : Texts.contacts) + ') ' +
-                        message.name + '\n\n' + message.text
+                        message.name + (message.text ? ('\n' + message.text) : "")
                 }
             default:
                 Toaster({ text: 'unable to reply for unsent messages' });
@@ -1129,28 +1129,32 @@ class ChatRoom extends AnimatedComponent {
         })
     }
     showStar(item) {
-        stores.Events.isParticipant(item.activity_id,
-            stores.LoginStore.user.phone).then((event) => {
-                if (event) {
-                    BeNavigator.pushActivityWithIndex(event, { post_id: item.star_id }, true)
-                } else {
-                    BeNavigator.gotoStarDetail(item.star_id, item.activity_id, {
-                        forward: () => this.handleForward(item)
-                    })
-                }
-            })
+        setTimeout(() => {
+            stores.Events.isParticipant(item.activity_id,
+                stores.LoginStore.user.phone).then((event) => {
+                    if (event) {
+                        BeNavigator.pushActivityWithIndex(event, { post_id: item.star_id }, true)
+                    } else {
+                        BeNavigator.gotoStarDetail(item.star_id, item.activity_id, {
+                            forward: () => this.handleForward(item)
+                        })
+                    }
+                })
+        }, this.openedKeyboard ? 0 : this.timeToDissmissKeyboard)
     }
     showRemind(item) {
-        stores.Events.isParticipant(item.activity_id,
-            stores.LoginStore.user.phone).then(event => {
-                if (event) {
-                    BeNavigator.pushActivityWithIndex(event, { remind_id: item.remind_id })
-                } else {
-                    BeNavigator.goToRemindDetail(item.remind_id, item.activity_id, {
-                        forward: () => this.handleForward(item)
-                    })
-                }
-            })
+        setTimeout(() => {
+            stores.Events.isParticipant(item.activity_id,
+                stores.LoginStore.user.phone).then(event => {
+                    if (event) {
+                        BeNavigator.pushActivityWithIndex(event, { remind_id: item.remind_id })
+                    } else {
+                        BeNavigator.goToRemindDetail(item.remind_id, item.activity_id, {
+                            forward: () => this.handleForward(item)
+                        })
+                    }
+                })
+        }, this.openedKeyboard ? 0 : this.timeToDissmissKeyboard)
     }
     messageList() {
         this.data = stores.Messages.messages[this.roomID]
@@ -1292,20 +1296,20 @@ class ChatRoom extends AnimatedComponent {
         });
     }
     showRelation(item) {
-        if(item.type == active_types.activity){
-            stores.Events.isParticipant(item.item,stores.LoginStore.user.phone).then(act => {
-                if(act){
+        if (item.type == active_types.activity) {
+            stores.Events.isParticipant(item.item, stores.LoginStore.user.phone).then(act => {
+                if (act) {
                     BeNavigator.pushToChat(act)
-                }else{
+                } else {
                     this.props.showDetailModal(item.item)
                 }
             })
-        }else{
+        } else {
             stores.TemporalUsersStore.getUser(item.item).then(user => {
-                if(user && user.nickname && !user.response){
+                if (user && user.nickname && !user.response) {
                     this.props.showProfile(user.phone)
-                }else{
-                    Linking.openURL(`tel:${item.item.replace("00","+")}`)
+                } else {
+                    Linking.openURL(`tel:${item.item.replace("00", "+")}`)
                 }
             })
         }

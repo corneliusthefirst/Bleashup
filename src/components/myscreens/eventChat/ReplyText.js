@@ -28,6 +28,7 @@ import Feather from "react-native-vector-icons/Feather";
 import EvilIcons from "react-native-vector-icons/EvilIcons";
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import ChatUser from './ChatUser';
+import message_types from './message_types';
 export default class ReplyText extends BePureComponent {
   constructor(props) {
     super(props);
@@ -35,7 +36,7 @@ export default class ReplyText extends BePureComponent {
   }
   state = {};
   showReplyer() {
-    this.props.showProfile( this.props.reply.replyer_phone );
+    this.props.showProfile(this.props.reply.replyer_phone);
   }
   reply_font = 14;
   renderReplyIcon(type) {
@@ -143,6 +144,13 @@ export default class ReplyText extends BePureComponent {
     this.props.openReply(this.props.reply);
   }
   render() {
+    let canBeExtraSmall = this.props.reply.type === message_types.text
+      || this.props.reply.type == message_types.audio ||
+      this.props.reply.type == message_types.remind_message ||
+      this.props.reply.type == message_types.star_message ||
+      this.props.reply.type == message_types.photo || 
+      this.props.reply.type == message_types.video ||
+      this.props.reply.type == message_types.file
     return (
       <TouchableWithoutFeedback
         //onLongPress={() =>
@@ -160,9 +168,11 @@ export default class ReplyText extends BePureComponent {
             backgroundColor: ColorList.replyBackground,
             padding: 2, //margin: '1%',
             minHeight: 50,
-            maxWidth: "100%",
+            //maxWidth: "100%",
+            width: '100%',
             maxHeight: 150,
-            minWidth: 100,
+            minWidth: canBeExtraSmall
+              ? 100 : 200,
             borderTopLeftRadius: 5,
             borderTopRightRadius: 5,
           }}
@@ -182,18 +192,19 @@ export default class ReplyText extends BePureComponent {
                 <View style={{
                   flexDirection: "row",
                   alignItems: 'center',
-                  justifyContent: 'space-between',
+                  //justifyContent: 'space-between',
                 }}>
                   <View
                     style={{
                       width: !this.props.reply.type_extern ? 0 : 13,
+                      marginRight: '1%',
                     }}
                   >
                     {this.renderReplyIcon(this.props.reply.type_extern)}
                   </View>
                   <View
                     style={{
-                      width: !this.props.reply.type_extern ? "100%" : "93%",
+                      //width: !this.props.reply.type_extern ? "100%" : "93%",
                     }}
                   >
                     {this.props.reply.replyer_name ? <ChatUser
@@ -224,7 +235,7 @@ export default class ReplyText extends BePureComponent {
                     <MaterialIcons
                       style={{
                         ...GState.defaultIconSize,
-                        width: "14%",
+                        width: 40,
                         color: ColorList.indicatorColor,
                       }}
                       name={"audiotrack"}
@@ -234,7 +245,7 @@ export default class ReplyText extends BePureComponent {
                         name={"file-document-box"}
                         style={{
                           ...GState.defaultIconSize,
-                          width: "14%",
+                          width: 40,
                           color: ColorList.indicatorColor,
                         }}
                       ></MaterialCommunityIcons>
@@ -258,7 +269,7 @@ export default class ReplyText extends BePureComponent {
                       <View
                         style={{
                           marginTop: this.props.reply.audio ? "2%" : "0%",
-                          width: "83%",
+                          //width: "83%",
                         }}
                       >
                         {this.props.reply.audio ? (
@@ -332,9 +343,13 @@ export default class ReplyText extends BePureComponent {
                           });
                         }}
                         style={{
+                          flexWrap: 'wrap',
+                          flexDirection: 'row',
+                          flexShrink: 1,
+                          maxWidth: 200,
                           alignSelf: this.props.reply.rounded ? "center" : "flex-end",
                           marginLeft: this.props.reply.sourcer ? ".5%" : null,
-                          width: this.props.reply.sourcer ? "74%" : "100%",
+                           maxWidth: this.props.reply.sourcer ? "74%" : "98%",
                         }}
                       >
                         {this.props.reply.title ? (
@@ -352,7 +367,7 @@ export default class ReplyText extends BePureComponent {
                                   : 5
                                 : 7
                             }
-                            style={{ fontSize: 12, color: "#1F4237" }}
+                            style={{ fontSize: 12, color: "#1F4237", flexShrink: 1}}
                             text={
                               this.props.reply.replyer_name
                                 ? this.props.reply.title && this.props.reply.title
@@ -374,7 +389,7 @@ export default class ReplyText extends BePureComponent {
                                   : 6
                                 : 4
                             }
-                            style={{ fontSize: 12 }}
+                              style={{ fontSize: 12, flexShrink: 1, }}
                             text={this.props.reply.text}
                           ></TextContent>
                         ) : null}
