@@ -220,7 +220,7 @@ export default class ReplyText extends BePureComponent {
                         ...GState.defaultTextStyle,
                         fontWeight: "bold",
                         color: ColorList.indicatorColor,
-                        maxWidth: "100%",
+                        maxWidth: "98%",
                       }}
                     >
                         {`${this.props.reply.title && this.props.reply.title.split(": \n")[0]}`}
@@ -258,7 +258,7 @@ export default class ReplyText extends BePureComponent {
                         fontWeight: "bold",
                         fontSize: 12,
                         color: "#1F4237",
-                        width: "83%",
+                        maxWidth: "83%",
                       }}
                     >
                       {this.props.reply.replyer_name
@@ -346,7 +346,7 @@ export default class ReplyText extends BePureComponent {
                           flexWrap: 'wrap',
                           flexDirection: 'row',
                           flexShrink: 1,
-                          maxWidth: 200,
+                          //maxWidth: 200,
                           alignSelf: this.props.reply.rounded ? "center" : "flex-end",
                           marginLeft: this.props.reply.sourcer ? ".5%" : null,
                            maxWidth: this.props.reply.sourcer ? "74%" : "98%",
