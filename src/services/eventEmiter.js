@@ -12,6 +12,7 @@ class Emit {
             return tinnyEmiter.off(event, calback)
         } 
         GState.removeListener(event)
+        console.warn(GState.listeners[event]," _"+event)
 
     }
     emit(event, ...args) {

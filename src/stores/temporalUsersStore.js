@@ -73,7 +73,7 @@ export default class TemporalUsersStore {
         return new Promise((resolve, reject) => {
             this.readFromStore().then(users => {
                 newUsers.forEach(ele => {
-                    users[ele.phone] = elel
+                    users[ele.phone] = ele
                 })
                 this.setPropterties(users)
             })
@@ -83,7 +83,7 @@ export default class TemporalUsersStore {
         return 1000 * 60 * 60 * 24 * 2
     }
     getUser(phone) {
-        return new Promise((resolve, reject) => {
+        return new Promise((resolve, rejec) => {
             if (this.Users[phone] && (this.Users[phone].updated_at ||
                 (moment().format("x") - moment(this.Users[phone].updated_at).format("x")) <
                 this.towDayMillisec())) {
@@ -98,10 +98,11 @@ export default class TemporalUsersStore {
                         resolve(profile)
                     }
                 }).catch(err => {
+                    console.warn("checking user error: ",err)
                     if (this.Users[phone]){
                         resolve(this.Users[phone])
                     }else{
-                        reject()
+                        rejec()
                     }
                 })
             }

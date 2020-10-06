@@ -4,8 +4,17 @@ import replies from "../../components/myscreens/eventChat/reply_extern";
 import stores from "..";
 import Toaster from "../../services/Toaster";
 import Texts from "../../meta/text";
+import {  Dimensions,} from "react-native"
+const { height, width } = Dimensions.get('window');
 
 export default class globalState {
+  constructor(){
+    Dimensions.addEventListener('change', (e) => {
+      const { width, height } = e.window;
+      this.width = width 
+      this.height = height
+    })
+  }
   @observable scrollOuter = true;
   @observable writing = false;
   @observable eventUpdated = false;
@@ -37,6 +46,9 @@ export default class globalState {
   @observable nav = {};
   waitToReply = 100;
   nameMaxLength = 40;
+  @observable height = height
+  @observable width = width
+  @observable messageMediaWidth = width * .52
   animationsDeclared = false;
   @observable nameError = false;
   defaultIconSize = { fontSize: 30, color: ColorList.bodyIcon };
@@ -45,7 +57,7 @@ export default class globalState {
   @observable emailError = false;
   @observable generalNewMessages = [];
   @observable ageError = false;
-  currentCommitee = "Generale";
+  currentCommitee = "General";
   @observable invitationUpdated = true;
   @observable newHightlight = false;
   @observable newVote = false;

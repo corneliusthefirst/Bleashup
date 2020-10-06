@@ -14,14 +14,14 @@ import shadower from "../../shadower";
 
 @observer
 class MessageInfoModal extends TabModal {
-    initialize(){
+    initialize() {
         this.state = {
             mounted: false
         }
     }
     onOpenModal() {
         this.setStatePure({
-            mounted:true
+            mounted: true
         })
     }
     countStyle = {
@@ -41,18 +41,18 @@ class MessageInfoModal extends TabModal {
         justifyContent: 'space-between',
         borderRadius: 35,
     }
-    shouldUpdateTabs=true
+    shouldUpdateTabs = true
     returnTabs() {
-        return this.state.mounted && {
+        return {
             Received: {
                 navigationOptions: {
                     tabBarIcon: () => (
                         <TouchableOpacity style={this.containerStyles}>
-                            <View style={{ 
+                            <View style={{
                                 ...rounder(40, ColorList.bodyDarkWhite),
                                 justifyContent: 'center',
-                                
-                             }}>
+
+                            }}>
                                 <Ionicons
                                     name={"ios-checkmark-circle"}
                                     style={this.iconStyle}
@@ -85,16 +85,16 @@ class MessageInfoModal extends TabModal {
                     tabBarIcon: () => (
                         <TouchableOpacity style={
                             this.containerStyles
-                        }> 
-                        <View style={{ ...rounder(40, ColorList.bodyDarkWhite) }}>
-                            <View style={{...rounder(30,ColorList.indicatorColor)}}><Ionicons
-                                name={"ios-done-all"}
-                                style={{...this.iconStyle,color:ColorList.bodyBackground}}
-                            ></Ionicons></View>
-                        </View>
+                        }>
+                            <View style={{ ...rounder(40, ColorList.bodyDarkWhite) }}>
+                                <View style={{ ...rounder(30, ColorList.indicatorColor) }}><Ionicons
+                                    name={"ios-done-all"}
+                                    style={{ ...this.iconStyle, color: ColorList.bodyBackground }}
+                                ></Ionicons></View>
+                            </View>
                             <View
                                 style={{
-                                    ...rounder(15,ColorList.bodyDarkWhite)
+                                    ...rounder(15, ColorList.bodyDarkWhite)
                                 }}
                             >
                                 <Text
@@ -117,8 +117,8 @@ class MessageInfoModal extends TabModal {
                     Played: {
                         navigationOptions: {
                             tabBarIcon: () => (
-                                <TouchableOpacity 
-                                style={this.containerStyles}
+                                <TouchableOpacity
+                                    style={this.containerStyles}
                                 >
                                     <View
                                         style={{ ...rounder(40, ColorList.bodyDarkWhite) }}
@@ -128,10 +128,10 @@ class MessageInfoModal extends TabModal {
                                             style={this.iconStyle}
                                         ></Ionicons>
                                     </View>
-                                    <View 
-                                    style={{
-                                        ...rounder(15,ColorList.bodyDarkWhite)
-                                    }}
+                                    <View
+                                        style={{
+                                            ...rounder(15, ColorList.bodyDarkWhite)
+                                        }}
                                     >
                                         <Text
                                             style={this.countStyle}
@@ -175,5 +175,6 @@ class MessageInfoModal extends TabModal {
             }
         }
     }
+    tabs = this.returnTabs()
 }
 export default MessageInfoModal;

@@ -95,14 +95,14 @@ export default class VideoUploader extends BePureComponent {
     render() {
         return (
             <View>
-                <View style={{ padding: "1.5%" ,minWidth: 250,}}>
+                <View style={{ padding: "1.5%" ,minWidth: GState.messageMediaWidth,}}>
                     <View>
                         <TouchableOpacity //onLongPress={this.props.onLongPress} 
                         onPress={() => this.props.playVideo(this.props.message.source)}>
                             <View style={{
                                 borderRadius: 15,
                                 alignSelf: 'center',
-                                width: 250,
+                                width: "100%",
                                 height: 300,
                                 backgroundColor: 'black',
                             }}>

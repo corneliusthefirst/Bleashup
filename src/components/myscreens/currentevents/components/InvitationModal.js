@@ -195,7 +195,7 @@ export default class InvitationModal extends BleashupModal {
                       })
                     }
                     uncheck={(phone) =>
-                      this.setStatePure({ checked: reject(this.state.checked, ele => ele.phone == phone) })
+                      this.setStatePure({ checked: reject(this.state.checked, ele => ele && ele.phone == phone) })
                     }></ProfileWithCheckBox>
                   <MenuDivider color="#1FABAB" />
                 </View>)

@@ -177,7 +177,7 @@ class ProfileView extends BePureComponent {
         ) : null}
       </View>
     ) : (
-      <ProfileIdicator />
+      null
     );
   }
 }

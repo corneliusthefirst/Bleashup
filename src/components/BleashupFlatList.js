@@ -123,7 +123,7 @@ export default class BleashupFlatList extends BeComponent {
                 {this.props.marginTop ? <View style={styles.padder}></View> : null}
                 <FlatList
                     viewabilityConfig={this.viewabilityConfig}
-                    keyboardShouldPersistTaps={this.props.keyboardShouldPersistTaps}
+                    keyboardShouldPersistTaps={this.props.keyboardShouldPersistTaps||"handled"}
                     onScrollEndDrag={this.continueScroll}
                     enableEmptySections={false}
                     disableVirtualization={this.props.disableVirtualization}

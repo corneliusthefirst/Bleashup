@@ -19,7 +19,9 @@ import Texts from '../meta/text';
 import Searcher from "./myscreens/Contacts/Searcher";
 import { startSearching, cancelSearch, justSearch } from "./myscreens/eventChat/searchServices";
 import globalFunctions from './globalFunctions';
-import  MaterialIcons  from 'react-native-vector-icons/MaterialIcons';
+import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
+import Entypo  from 'react-native-vector-icons/Entypo';
+import rounder from "../services/rounder";
 
 export default class SelectableContactList extends BleashupModal {
     initialize() {
@@ -43,12 +45,12 @@ export default class SelectableContactList extends BleashupModal {
     }
     onOpenModal() {
         let members = this.props.members
-            ? this.props.members.filter((ele) => ele.phone !== this.props.phone)
+            ? this.props.members.filter((ele) => ele && ele.phone !== this.props.phone)
             : []
         this.setStatePure({
             members: members,
             checked: this.props.notcheckall
-                ? []
+                ? members.filter(ele => ele && ele.phone == this.props.firstMember)
                 : members,
             check: this.props.notcheckall ? false : true,
         });
@@ -92,8 +94,11 @@ export default class SelectableContactList extends BleashupModal {
                     back={this.onClosedModal.bind(this)}
                     extra={<View style={{ flexDirection: 'row', justifyContent: 'center', alignItems: 'center', }}>
                         {!this.state.searching ? <View
-                            style={{ marginRight: "3%", }}>
-                            <TouchableOpacity onPress={() => requestAnimationFrame(() => {
+                            style={{ marginHorizontal: "3%", }}>
+                            <TouchableOpacity style={{
+                                width:50,justifyContent: 'center',
+                                flexDirection: 'row',
+                            }} onPress={() => requestAnimationFrame(() => {
                                 this.toggleCheckedAll(allChecked)
                             })}>
                                 <MaterialIcons
@@ -129,18 +134,20 @@ export default class SelectableContactList extends BleashupModal {
                                     this.props.close();
                                 })
                             }
+                        style={{
+                            marginLeft: 20,
+                            ...rounder(35,ColorList.bodyDarkWhite),
+                            justifyContent: 'center',
+                        }}
                         >
-                            <Text
+                            <Entypo
+                                name={"arrow-bold-right"}
                                 style={{
-                                    ...GState.defaultTextStyle,
-                                    fontWeight: "bold",
-                                    color: ColorList.indicatorColor,
-                                    marginLeft: 30,
+                                    ...GState.defaultIconSize,
+                                    color:ColorList.indicatorColor,
                                     fontSize: 22
                                 }}
-                            >
-                                {"OK"}
-                            </Text>
+                            />
                         </TouchableOpacity> : null}
                     </View>}
                 ></CreationHeader>

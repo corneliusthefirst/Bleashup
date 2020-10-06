@@ -90,9 +90,10 @@ export default class SettingsTabModal extends BleashupModal {
               closeActivity={this.props.closeActivity}
             ></Settings>
           </View>
-          <View style={{ height: 600 }}>
+          <View style={{ height: 600,width:'100%' }}>
             <View style={{
-              height: ColorList.headerHeight
+              height: ColorList.headerHeight,
+              width:'100%',
             }}>{this.TabHeader()}</View>
             <View style={{ height: "80%" }}>
               {this.state.isMounted ?
@@ -117,18 +118,24 @@ export default class SettingsTabModal extends BleashupModal {
     return (
       <View style={{
         flexDirection: 'row',
+        alignSelf: 'center',
         justifyContent: 'space-between',
         marginLeft: "1%",
+        width:'97%',
         alignItems: 'center',
-        height:35,
+        height: 35,
         marginRight: "1%",
       }}>
         {!this.state.searching ? <View style={{
-          width:"60%"
-        }}><Text note>members</Text></View> : null}
+          alignSelf: 'flex-start',
+          flex: 1,
+        }}><Text style={{
+          ...GState.defaultTextStyle
+        }}>members</Text></View> : null}
         <View style={{
           height: 35,
-          width: this.state.searching ? "75%" : 35
+          flex: this.state.searhing ? 1 : null,
+          width: this.state.searching ? "60%" : 35
         }}>
           <Searcher
             searching={this.state.searching}
@@ -142,7 +149,7 @@ export default class SettingsTabModal extends BleashupModal {
           style={{
             flexDirection: "row",
             alignSelf: "flex-end",
-            width: "20%",
+            width: 70,
             justifyContent: "space-between",
           }}
         >

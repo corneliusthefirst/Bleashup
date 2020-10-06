@@ -14,7 +14,7 @@ import AnimatedComponent from '../../AnimatedComponent';
 @observer class Searcher extends AnimatedComponent {
     initialize() {
         this.state = {
-            searchString:this.props.searchString||""
+            searchString: this.props.searchString || ""
         }
     }
     animationDuration = 250
@@ -34,10 +34,10 @@ import AnimatedComponent from '../../AnimatedComponent';
     }
     debounceSearch(text) {
         this.setStatePure({
-            searchString:text
+            searchString: text
         })
         if (this.searchTimeout) clearTimeout(this.searchTimeout)
-       this.searchTimeout = setTimeout(() => {
+        this.searchTimeout = setTimeout(() => {
             this.props.search && this.props.search(text)
             this.searchTimeout = null
         }, 500)
@@ -48,60 +48,54 @@ import AnimatedComponent from '../../AnimatedComponent';
     }
     render() {
         return <View style={{
-            flexDirection: 'column',
-            ...shadower(1),
+            //...shadower(1),
             height: "100%",
             backgroundColor: ColorList.bodyBackground,
-            margin: '1%',
-            borderRadius: 35,
+            //borderRadius: 30,
+            borderBottomWidth: this.props.searching ? 1 : 0,
         }}>
             {this.props.searching ? <View style={{
-                width: '100%',
                 flexDirection: 'row',
                 alignItems: 'center',
-                height: "100%",
+                height: 30,
+                flex: 1,
                 justifyContent: 'space-between',
             }}>
-                <View>
-                    <TextInput
-                        autoCapitalize={"none"}
-                        selectTextOnFocus
-                        value={this.state.searchString}
-                        style={{
-                            width:200,
-                            height: 35,
-                            marginLeft: '2%',
-                            alignSelf: "flex-start",
-                        }}
-                        autoFocus
-                        placeholder={Texts.enter_your_search}
-                        onChangeText={this.onChangeText.bind(this)}
-                    >
-                    </TextInput>
-                </View>
-                <View>
-                    <TouchableOpacity
-                        onPress={() => {
-                            //this.animationDuration = 800
-                            setTimeout(() => {
-                                //this.animateUI()
-                                this.props.cancelSearch && this.props.cancelSearch()
-                                this.animationDuration = this.defaultAnimationDuration
-                            })
-                        }
-                        }
-                        style={{
-                            marginTop: "-40%",
-                            alignSelf: 'center',
-                            justifyContent: 'center',
-                        }}
+                <TextInput
+                    autoCapitalize={"none"}
+                    selectTextOnFocus
+                    value={this.state.searchString}
+                    style={{
+                        flex: 1,
+                        height: 35,
+                        marginLeft: '2%',
+                        alignSelf: "flex-start",
+                    }}
+                    autoFocus
+                    placeholder={Texts.enter_your_search}
+                    onChangeText={this.onChangeText.bind(this)}
                 >
-                        <EvilIcons style={{
-                            ...GState.defaultIconSize
-                        }} name={"close"}>
-                        </EvilIcons>
-                    </TouchableOpacity>
-                </View>
+                </TextInput>
+                <TouchableOpacity
+                    onPress={() => {
+                        //this.animationDuration = 800
+                        setTimeout(() => {
+                            //this.animateUI()
+                            this.props.cancelSearch && this.props.cancelSearch()
+                            this.animationDuration = this.defaultAnimationDuration
+                        })
+                    }
+                    }
+                    style={{
+                        ...rounder(30, ColorList.bodyDarkWhite),
+                        justifyContent: 'center',
+                    }}
+                >
+                    <EvilIcons style={{
+                        ...GState.defaultIconSize
+                    }} name={"close"}>
+                    </EvilIcons>
+                </TouchableOpacity>
             </View> :
                 <TouchableOpacity
                     style={{

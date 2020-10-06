@@ -204,7 +204,7 @@ export default class AudioUploader extends BePureComponent {
         return (
             <View>
             <TouchableOpacity //onLongPress={this.props.onLongPress} 
-            style={{ disply: 'flex', flexDirection: 'row', width: 300, }}>
+            style={{ disply: 'flex', flexDirection: 'row', flex: 1, }}>
                 <View style={textStyle}>
                     <View><Slider value={this.state.currentPosition} onValueChange={(value) => {
                         this.player.setCurrentTime(value * this.props.message.duration)

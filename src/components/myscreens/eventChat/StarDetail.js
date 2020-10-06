@@ -25,6 +25,8 @@ import ShareWithYourContacts from "./ShareWithYourContacts";
 import request from "../../../services/requestObjects";
 import messagePreparer from './messagePreparer';
 import public_states from '../reminds/public_states';
+import BeMenu from "../../Menu";
+import Texts from "../../../meta/text";
 
 let { height, width } = Dimensions.get("window");
 
@@ -80,7 +82,7 @@ export default class StarDetail extends AnimatedComponent {
                 ).then((star) => {
                     this.item = Array.isArray(star) && star[0];
                     stores.Messages.updateStarMessageInfoMessage(this.activity_id,
-                        this.item_id,this.item)
+                        this.item_id, this.item)
                     stores.Highlights.addHighlight(this.activity_id, this.item)
                     this.refreshStates()
                 });
@@ -111,6 +113,9 @@ export default class StarDetail extends AnimatedComponent {
     star = this.getParam("star")
     forward = this.getParam("forward") || this.startSharing.bind(this);
     item_id = this.getParam("post_id");
+    reply = this.getParam("reply")
+    roomID = this.getParam("room")
+    reply_privately = this.getParam("reply_privately")
     activity_id = this.getParam("activity_id");
     container = {
         width: "98%",
@@ -122,6 +127,22 @@ export default class StarDetail extends AnimatedComponent {
         //borderBottomWidth: 0.5,
         //borderColor: "ivory",
     };
+    formReply() {
+        let reply = GState.prepareStarForMention(this.item)
+        reply.from_activity = this.item.event_id
+        reply.activity_id = this.roomID
+        reply.activity_name = this.activity.about.title
+        return reply
+    }
+    startReply() {
+        GState.reply = this.formReply()
+        this.reply()
+        this.goback()
+    }
+    startPrivateReply() {
+        GState.reply = this.formReply()
+        this.reply_privately([], this.item.creator)
+    }
     showItem(item) {
         item.url.video
             ? BeNavigator.openVideo(item.url.video)
@@ -134,6 +155,20 @@ export default class StarDetail extends AnimatedComponent {
     }
     goback() {
         this.props.navigation.goBack()
+    }
+    items() {
+        return [
+            {
+                title: Texts.reply,
+                action: this.startReply.bind(this),
+                condition: this.roomID
+            },
+            {
+                title: Texts.reply_privately,
+                action: this.startPrivateReply.bind(this),
+                condition: this.roomID
+            }
+        ]
     }
     render() {
         return this.state.mounted ? (
@@ -170,7 +205,7 @@ export default class StarDetail extends AnimatedComponent {
                                 </MaterialIcons>
                             </TouchableOpacity>
                             <View style={{
-                                width: "70%"
+                                flex: 1,
                             }}>
                                 <ActivityProfile
                                     small
@@ -179,21 +214,32 @@ export default class StarDetail extends AnimatedComponent {
                                     openDetails={this.openDetails.bind(this)}
                                 ></ActivityProfile>
                             </View>
-                            {this.item.public_state == public_states.public_ ? <TouchableOpacity
-                                onPress={this.forward}
-                                style={{
-                                    ...rounder(40),
-                                    justifyContent: "center",
-                                }}
-                            >
-                                <Entypo
-                                    name={"forward"}
+                            <View style={{
+                                flexDirection: 'row',
+                                alignItems: 'center',
+                            }}>
+                                {this.item.public_state == public_states.public_ ? <TouchableOpacity
+                                    onPress={this.forward}
                                     style={{
-                                        ...GState.defaultIconSize,
-                                        color: ColorList.indicatorColor,
+                                        ...rounder(40),
+                                        justifyContent: "center",
                                     }}
-                                ></Entypo>
-                            </TouchableOpacity> : null}
+                                >
+                                    <Entypo
+                                        name={"forward"}
+                                        style={{
+                                            ...GState.defaultIconSize,
+                                            color: ColorList.indicatorColor,
+                                        }}
+                                    ></Entypo>
+                                </TouchableOpacity> : null}
+                                <View style={{
+                                    marginRight: "5%",
+                                }}>
+                                    <BeMenu items={this.items.bind(this)}>
+                                    </BeMenu>
+                                </View>
+                            </View>
                         </View>
                         <View
                             style={{

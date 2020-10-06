@@ -451,7 +451,59 @@ export default class Message extends BeComponent {
             });
         }, 2000);
     }
-    
+    rendermessageState(color) {
+        return this.props.message.sent ? (
+            this.props.received ? (
+                this.props.seen ? (
+                    <View
+                        style={{
+                            ...rounder(12, ColorList.indicatorColor),
+                            justifyContent: "center",
+                        }}
+                    >
+                        <Ionicons
+                            style={{
+                                ...this.iconStyles,
+                                color: ColorList.bodyBackground,
+                                marginLeft: 0,
+                                fontSize: 14,
+                                marginBottom: 0,
+                                paddingTop: 0,
+                            }}
+                            type="Ionicons"
+                            name="ios-done-all"
+                        />
+                    </View>
+                ) : (
+                        <Ionicons
+                            style={this.iconStyles}
+                            type="Ionicons"
+                            name="ios-checkmark-circle"
+                        />
+                    )
+            ) : (
+                    <View style={{
+                        ...rounder(14, color), justifyContent: 'center',
+                    }}
+                    ><EvilIcons
+                            style={this.iconStyles}
+                            type={"EvilIcons"}
+                            name="check"
+                        />
+                    </View>
+                )
+        ) : (
+                <MaterialIconCommunity
+                    style={{
+                        ...this.iconStyles,
+                        color: ColorList.darkGrayText,
+                    }}
+                    type="MaterialCommunityIcons"
+                    name="progress-check"
+                />
+            )
+
+    }
     render() {
         let showName = this.state.sender && this.state.different;
         let topMostStyle = {
@@ -466,7 +518,7 @@ export default class Message extends BeComponent {
             ? ColorList.receivedBox
             : ColorList.senTBoxColor[ColorList.sendRand()];
         let GeneralMessageBoxStyle = {
-            maxWidth: 300,
+            maxWidth: GState.width*.78,
             flexDirection: "column",
             minWidth: 60,
             minHeight: 20,
@@ -610,58 +662,7 @@ export default class Message extends BeComponent {
                                                             justifyContent: "center",
                                                         }}
                                                     >
-                                                        <View>
-                                                            {this.props.message.sent ? (
-                                                                this.props.received ? (
-                                                                    this.props.seen ? (
-                                                                        <View
-                                                                            style={{
-                                                                                ...rounder(12, ColorList.indicatorColor),
-                                                                                justifyContent: "center",
-                                                                            }}
-                                                                        >
-                                                                            <Ionicons
-                                                                                style={{
-                                                                                    ...this.iconStyles,
-                                                                                    color: ColorList.bodyBackground,
-                                                                                    marginLeft: 0,
-                                                                                    fontSize: 14,
-                                                                                    marginBottom: 0,
-                                                                                    paddingTop: 0,
-                                                                                }}
-                                                                                type="Ionicons"
-                                                                                name="ios-done-all"
-                                                                            />
-                                                                        </View>
-                                                                    ) : (
-                                                                            <Ionicons
-                                                                                style={this.iconStyles}
-                                                                                type="Ionicons"
-                                                                                name="ios-checkmark-circle"
-                                                                            />
-                                                                        )
-                                                                ) : (
-                                                                        <View style={{
-                                                                            ...rounder(14, color), justifyContent: 'center',
-                                                                        }}
-                                                                        ><EvilIcons
-                                                                                style={this.iconStyles}
-                                                                                type={"EvilIcons"}
-                                                                                name="check"
-                                                                            />
-                                                                        </View>
-                                                                    )
-                                                            ) : (
-                                                                    <MaterialIconCommunity
-                                                                        style={{
-                                                                            ...this.iconStyles,
-                                                                            color: ColorList.darkGrayText,
-                                                                        }}
-                                                                        type="MaterialCommunityIcons"
-                                                                        name="progress-check"
-                                                                    />
-                                                                )}
-                                                        </View>
+                                                     {this.rendermessageState(color)}  
                                                     </View>
                                                 ) : null}
                                                 <View style={GeneralMessageBoxStyle}>
@@ -703,18 +704,7 @@ export default class Message extends BeComponent {
                                                                         alignItems: "center",
                                                                         alignSelf: "center",
                                                                         marginTop: ".4%",
-                                                                        width:
-                                                                            this.props.message &&
-                                                                                (this.props.message.type ==
-                                                                                    message_types.photo ||
-                                                                                    this.props.message.type ==
-                                                                                    message_types.video ||
-                                                                                    this.props.message.type ==
-                                                                                    message_types.video_sender ||
-                                                                                    this.props.message.type ==
-                                                                                    message_types.photo_sender)
-                                                                                ? 248
-                                                                                : "99%",
+                                                                        width: "99%",
                                                                     }}
                                                                 >
                                                                     <ReplyText
@@ -809,7 +799,7 @@ export default class Message extends BeComponent {
                                         <View
                                             style={{
                                                 position: "absolute",
-                                                width: 300,
+                                                width: GState.width*.90,
                                                 alignSelf: "center",
                                                 height: this.state.containerDims
                                                     ? this.state.containerDims.height + 10

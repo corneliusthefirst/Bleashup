@@ -13,6 +13,8 @@ import MedaiView from '../event/createEvent/components/MediaView';
 import shadower from '../../shadower';
 import CreateButton from '../event/createEvent/components/ActionButton';
 import Creator from './Creator';
+import rounder from "../../../services/rounder";
+import replies from '../eventChat/reply_extern';
 
 
 export function remindTime() {
@@ -143,6 +145,7 @@ export function remindMembers() {
         marginTop: "1%",
     }}>
         <TextContent
+            onPress={this.showMembers.bind(this)}
             searchString={this.props.searchString}
             style={{
                 color: ColorList.indicatorColor,
@@ -187,6 +190,14 @@ export function remindActons() {
         )
     ) : this.hasDoneForThisInterval ? (
         this.status ? (
+            <TouchableOpacity onPress={() => {
+                requestAnimationFrame(() => {
+                    this.showMembers(replies.confirmed)
+                })
+            }} style={{
+                ...rounder(40,ColorList.bodyDarkWhite),
+                justifyContent: 'center',
+            }}>
             <MaterialCommunityIcons
                 type="MaterialCommunityIcons"
                 name="check-all"
@@ -195,15 +206,27 @@ export function remindActons() {
                     color: "#54F5CA",
                 }}
             ></MaterialCommunityIcons>
+                </TouchableOpacity>
         ) : (
-                <AntDesign
-                    type="AntDesign"
-                    name="check"
-                    style={{
-                        ...GState.defaultIconSize,
-                        color: ColorList.indicatorColor,
-                    }}
-                ></AntDesign>
+            <TouchableOpacity 
+                        onPress={() => {
+                            requestAnimationFrame(() => {
+                                this.showMembers(replies.done)
+                            })
+                        }} style={{
+                            ...rounder(40, ColorList.bodyDarkWhite),
+                            justifyContent: 'center',
+                        }}
+            >
+                        <AntDesign
+                            type="AntDesign"
+                            name="check"
+                            style={{
+                                ...GState.defaultIconSize,
+                                color: ColorList.indicatorColor,
+                            }}
+                        ></AntDesign>
+            </TouchableOpacity>
             )
     ) : this.missed ? null :
                 this.canBeDone ? (

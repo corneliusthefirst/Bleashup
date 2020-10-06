@@ -115,6 +115,7 @@ export default class Options extends AnimatedComponent {
             <View style={{
                 position: "absolute",
                 flexDirection: 'row',
+                paddingRight: 6,
                 height: this.state.full ? 300 : 50,
                 justifyContent: 'center',
                 marginBottom: "2%",
@@ -127,7 +128,7 @@ export default class Options extends AnimatedComponent {
                     showsVerticalScrollIndicator={false}
                     style={{
                         height: "100%", backgroundColor: ColorList.bodyBackground,
-                        borderRadius: 35, width: 45, ...shadower(2),
+                        borderRadius: 40, width: 45, ...shadower(2),
                     }}>
 
                     <View style={{ height: "100%", flexDirection: "column", alignItems: 'center', justifyContent: 'space-between', padding: 5 }}>
@@ -350,7 +351,7 @@ const styles = StyleSheet.create({
         backgroundColor: 'transparent',
         borderLeftColor: 'transparent',
         borderRightColor: 'transparent',
-        borderTopColor: ColorList.bodyBackground,
+        borderTopColor: ColorList.bodyDarkWhite,
         marginRight: '70%',
         marginBottom: "27%",
 

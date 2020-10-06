@@ -348,7 +348,7 @@ class Request {
     invite(members, event_id) {
         return new Promise((resolve, reject) => {
             let invitees = members.map(ele => {
-                return {
+                return ele && {
                     invitee: ele.phone,
                     host: ele.host,
                     invitation: {

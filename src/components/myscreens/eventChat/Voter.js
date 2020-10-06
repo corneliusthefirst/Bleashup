@@ -63,12 +63,12 @@ export default class Voter extends BeComponent {
     }
     creator = stores.LoginStore.user.phone === this.props.message.vote.creator
     hasVoted() {
-        return findIndex(this.props.message.vote.voter, (ele) => ele.phone === stores.LoginStore.user.phone) < 0
+        return findIndex(this.props.message.vote.voter, (ele) => ele && ele.phone === stores.LoginStore.user.phone) < 0
     }
     returnOptionCount(index) {
         return (this.props.message.vote && 
             this.props.message.vote.voter && 
-            this.props.message.vote.voter.filter(ele => ele.index === index).length) || 0
+            this.props.message.vote.voter.filter(ele => ele && ele.index === index).length) || 0
     }
     returnOptionWithCount(item, index) {
         let optionCount = this.returnOptionCount(index);

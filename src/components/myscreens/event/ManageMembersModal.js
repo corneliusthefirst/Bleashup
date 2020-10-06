@@ -31,7 +31,7 @@ export default class ManageMembersModal extends BleashupModal {
 
     toggleMaster(memberPhone) {
         this.setStatePure({
-            selected: this.state.selected.map((ele) =>
+            selected: this.state.selected.map((ele) => ele &&
                 ele.phone === memberPhone ? { ...ele, master: !ele.master } : ele
             ),
         });
@@ -75,7 +75,7 @@ export default class ManageMembersModal extends BleashupModal {
         this.openModalTimeout = setTimeout(() => {
             this.setStatePure({
                 contacts: uniqBy(this.props.participants, "phone").filter(
-                    (ele) =>
+                    (ele) => ele &&
                         !Array.isArray(ele) &&
                         ele &&
                         ele.phone !== stores.LoginStore.user.phone

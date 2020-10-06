@@ -918,7 +918,7 @@ export default class TasksCreation extends BleashupModal {
                     <Text
                       style={{ ...GState.defaultTextStyle, fontWeight: "bold" }}
                     >
-                      {Texts.repeat}
+                      {Texts.advanced_config}
                     </Text>
                   </TouchableOpacity>
                 </View>

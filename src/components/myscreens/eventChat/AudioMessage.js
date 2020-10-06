@@ -251,7 +251,7 @@ export default class AudioMessage extends BePureComponent {
     }
     haveIPLayed(){
         return this.props.message && this.props.message.played && 
-        this.props.message.played.findIndex(ele => ele.phone == stores.LoginStore.user.phone) >= 0
+        this.props.message.played.findIndex(ele => ele && ele.phone == stores.LoginStore.user.phone) >= 0
     }
     cancelDownLoad(url) {
         if (this.exchanger.task !== null) {
@@ -281,7 +281,7 @@ export default class AudioMessage extends BePureComponent {
                 style={{
                     flexDirection: "column",
                     alignItems: "center",
-                    width: 290,
+                    flex: 1,
                 }}
             >
                 <TouchableOpacity

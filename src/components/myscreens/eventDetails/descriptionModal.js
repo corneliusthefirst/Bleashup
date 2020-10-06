@@ -29,6 +29,7 @@ export default class DescriptionModal extends BleashupModal {
   position = "center";
   modalWidth = "80%";
   modalHeight = 310;
+  modalMinHieight = 50
   borderRadius = 20;
   borderTopLeftRadius = 20;
   borderTopRightRadius = 20;
@@ -129,19 +130,6 @@ export default class DescriptionModal extends BleashupModal {
             marginRight: "2%",
           }}
         >
-          <View
-            style={{
-              flexDirection: "row",
-              justifyContent: "center",
-              marginTop: "auto",
-              marginBottom: "auto",
-            }}
-          >
-            <QRDisplayer
-              code={this.props.Event.id}
-              title={this.props.Event.about.title}
-            ></QRDisplayer>
-          </View>
           <View style={{ marginTop: "22%", width: "5%" }}>
             <Creator
               color={colorList.bodyBackground}

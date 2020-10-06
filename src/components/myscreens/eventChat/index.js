@@ -211,6 +211,7 @@ There are also Erlang plugins for other code editors Vim (vim-erlang) , Atom , E
       open={() => this.props.open()}
       goback={this.props.goback}
       showShare={this.props.showShare}
+      replyPrivately={this.props.replyPrivately}
       getShareLink={this.props.getShareLink}
       addMembers={() => this.props.addMembers()}
       removeMembers={() => this.props.removeMembers()}

@@ -9,6 +9,7 @@ import shadower from "../../../shadower";
 import  Feather  from 'react-native-vector-icons/Feather';
 import GState from '../../../../stores/globalState/index';
 import BeNavigator from '../../../../services/navigationServices';
+import Texts from '../../../../meta/text';
 
 export default class CreateEvent extends Component {
   constructor(props) {
@@ -59,7 +60,7 @@ export default class CreateEvent extends Component {
       >
         <ActionButton.Item
           buttonColor="#3D90E3"
-          title="Relation" onPress={this.onClickNewContact}
+          title={Texts.relation} onPress={this.onClickNewContact}
           size={75}
         >
         
@@ -74,7 +75,7 @@ export default class CreateEvent extends Component {
 
         <ActionButton.Item
           buttonColor="#663399"
-          title=" New Activity  "
+          title={Texts.new_activity}
           onPress={this.onClickNewEvent}
           size={65}
         >
@@ -86,7 +87,7 @@ export default class CreateEvent extends Component {
 
         <ActionButton.Item
           buttonColor="#cd5c5c"
-          title="Join activity through QR" onPress={this.navigateToQRScanner}
+          title={Texts.join_activity_or_program_via_qr} onPress={this.navigateToQRScanner}
           size={55}
         >
           <Icon

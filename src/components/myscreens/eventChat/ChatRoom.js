@@ -107,6 +107,10 @@ class ChatRoom extends AnimatedComponent {
         this.finish = finish.bind(this)
         this.pushSearchDown = pushSearchDown.bind(this)
         this.pushSearchUp = pushSearchUp.bind(this)
+        this.renderMessage = this.renderMessage.bind(this)
+        this.keyExtractor = this.keyExtractor.bind(this)
+        this.onScroll = this.onScroll.bind(this)
+        this.getItemLayout = this.getItemLayout.bind(this)
     }
     saveNotificationToken() {
         firebase
@@ -160,12 +164,6 @@ class ChatRoom extends AnimatedComponent {
     fireRef = null;
     newMessages = [];
     roomID = this.props.firebaseRoom;
-    informRemote(newMessage, newKey, received) {
-        firebase
-            .database()
-            .ref(`${this.props.firebaseRoom}/${newKey}/received`)
-            .set(received);
-    }
 
     insetDateSeparator(messages, newMessage) {
         return new Promise((resolve, reject) => {
@@ -261,11 +259,13 @@ class ChatRoom extends AnimatedComponent {
                 this.initTimeout = setTimeout(() => {
                     this.setStatePure({
                         loaded: true,
+                    }, () => {
+                        this.checkForReply()
+                        this.adjutRoomDisplay();
+                        this.scrollToMessage()
                     });
-                    this.checkForReply()
-                    this.adjutRoomDisplay();
                     clearTimeout(this.initTimeout)
-                }, 100);
+                });
                 if (this.props.newMessages.length > 0) {
                     stores.Messages.insertBulkMessages(
                         this.roomID,
@@ -288,7 +288,6 @@ class ChatRoom extends AnimatedComponent {
         GState.currentRoom = this.props.firebaseRoom;
         this.saveNotificationToken();
         this.initializeNewMessageForRoom()
-        this.scrollToMessage()
     }
     scrollToMessage() {
         if (this.props.id) {
@@ -298,7 +297,7 @@ class ChatRoom extends AnimatedComponent {
                 if (index >= 0) {
                     setTimeout(() => {
                         this.scrollToIndex(index)
-                    }, 1000)
+                    })
                 }
             })
         }
@@ -356,10 +355,10 @@ class ChatRoom extends AnimatedComponent {
         } else if (this.refs.keyboard && this.refs.keyboard.state.showCaption) {
             this.refs.keyboard.hideCaption()
             return true
-        } else if (this.refs.keyboard && this.refs.keyboard.state.replying) {
-            this.refs.keyboard.cancleReply()
+        } /*else if (this.refs.keyboard && this.refs.keyboard.state.replying) {
+            //this.refs.keyboard.cancleReply()
             return true
-        } else {
+        }*/ else {
             return false
         }
     }
@@ -368,8 +367,6 @@ class ChatRoom extends AnimatedComponent {
         this.keyboardDidShowSub = Keyboard.addListener('keyboardDidShow', this.handleKeyboardDidShow.bind(this));
         this.keyboardDidHideSub = Keyboard.addListener('keyboardDidHide', this.handleKeyboardDidHide.bind(this));
         BackHandler.addEventListener("hardwareBackPress", this.handleBackButton.bind(this));
-        GState.addEventListners(this.reply_me_event)
-        GState.addEventListners(this.hide_keyboard_event)
         emitter.on(this.reply_me_event, (rep) => {
             this.props.closeMenu && this.props.closeMenu()
             this.replying(rep, null)
@@ -379,13 +376,12 @@ class ChatRoom extends AnimatedComponent {
                 clearTimeout(this.focusInputTimeout)
             }, 400)
         })
-        GState.addEventListners(this.typing_event)
         emitter.on(this.typing_event, (typer) => {
             this.showTypingToast(typer);
         })
         this.props.isComment ? (stores.Messages.messages[this.roomID] = []) : null;
     }
-    reply_me_event = reply_me + this.props.activity_id
+    reply_me_event = reply_me
     typing_event = typing(this.typingListener)
     hide_keyboard_event = "hide_keyboard"
     unmountingComponent() {
@@ -667,11 +663,8 @@ class ChatRoom extends AnimatedComponent {
     scrollToIndex(index) {
         this.refs.bleashupSectionListOut &&
             this.refs.bleashupSectionListOut.scrollToIndex(index);
-        this.scrollToTimeout = setTimeout(() => {
-            this.refs.bleashupSectionListOut &&
-                this.refs.bleashupSectionListOut.scrollToIndex(index);
-            clearTimeout(this.scrollToTimeout)
-        }, 40);
+        this.refs.bleashupSectionListOut &&
+            this.refs.bleashupSectionListOut.scrollToIndex(index);
     }
     startSendingRelation(item) {
         this.refs.keyboard &&
@@ -693,6 +686,13 @@ class ChatRoom extends AnimatedComponent {
             condition: () => true,
             iconType: "Entypo",
             callback: () => this.replyMessage()
+        },
+        {
+            title: Texts.reply_privately,
+            iconName: "reply",
+            condition: () => !this.props.isRelation || this.props.members.length > 1,
+            iconType: "Entypo",
+            callback: () => this.replyPrivately()
         },
         {
             title: Texts.share,
@@ -963,6 +963,17 @@ class ChatRoom extends AnimatedComponent {
             clearTimeout(this.replyTimout)
         }, 50);
     }
+    replyPrivately() {
+        if (this.tempReply) {
+            GState.reply = this.tempReply
+            GState.reply.private = true
+            GState.reply.activity_name = this.props.activity_name
+            GState.reply.from_activity = this.props.activity_id
+            this.props.replyPrivately && this.props.
+                replyPrivately(null, this.state.currentMessage.sender &&
+                    this.state.currentMessage.sender.phone.replace("+", "00"))
+        }
+    }
     remindThis(message) {
         const star = messagePreparer.formRemindFromMessage(message, this.props.activity_id)
         this.props.remindThis(star);
@@ -1089,10 +1100,25 @@ class ChatRoom extends AnimatedComponent {
     handleReply(replyer) {
         this.cancelSearch()
         setTimeout(() => {
-            GState.toggleCurrentIndex(replyer.id, 4000)
-            let index = findIndex(stores.Messages.messages[this.roomID], { id: replyer.id });
-            index >= 0 && this.scrollToIndex(index);
-        })
+            if (replyer.from_activity && replyer.from_activity !== this.props.activity_id) {
+                stores.Events.isParticipant(replyer.from_activity,
+                    stores.LoginStore.user.phone).then((act) => {
+                        if (act) {
+                            BeNavigator.goToChatWithIndex(act, replyer.id)
+                        } else {
+                            this.props.showDetailModal(replyer.from_activity,
+                                { message_id: replyer.id })
+                        }
+                    })
+            } else {
+                this.handleReplyLocal(replyer)
+            }
+        }, this.timeToDissmissKeyboard)
+    }
+    handleReplyLocal(replyer) {
+        GState.toggleCurrentIndex(replyer.id, 4000)
+        let index = findIndex(stores.Messages.messages[this.roomID], { id: replyer.id });
+        index >= 0 && this.scrollToIndex(index);
     }
     toggleDownScroller(val) {
         this.setStatePure({
@@ -1136,7 +1162,11 @@ class ChatRoom extends AnimatedComponent {
                         BeNavigator.pushActivityWithIndex(event, { post_id: item.star_id }, true)
                     } else {
                         BeNavigator.gotoStarDetail(item.star_id, item.activity_id, {
-                            forward: () => this.handleForward(item)
+                            forward: () => this.handleForward(item), 
+                            room: this.roomID,
+                            reply: () => this.checkForReply(),
+                            reply_privately: (members, creator) => this.props.replyPrivately([...members,
+                            ...this.props.members], creator)
                         })
                     }
                 })
@@ -1147,23 +1177,117 @@ class ChatRoom extends AnimatedComponent {
             stores.Events.isParticipant(item.activity_id,
                 stores.LoginStore.user.phone).then(event => {
                     if (event) {
-                        BeNavigator.pushActivityWithIndex(event, { remind_id: item.remind_id })
+                        BeNavigator.pushActivityWithIndex(event, { remind_id: item.remind_id }, true)
                     } else {
                         BeNavigator.goToRemindDetail(item.remind_id, item.activity_id, {
-                            forward: () => this.handleForward(item)
+                            forward: () => this.handleForward(item),
+                            room: this.roomID,
+                            reply: () => this.checkForReply(),
+                            reply_privately: (members, creator) => this.props.replyPrivately([...members,
+                            ...this.props.members], creator)
                         })
                     }
                 })
         }, this.openedKeyboard ? 0 : this.timeToDissmissKeyboard)
     }
+    renderMessage(item, index) {
+        const lastIndex = this.lastIndex
+        let delay =
+            delay >= 20 || (item && !item.sent) ? 0 : delay + 1;
+        let played = item.type == message_types.audio
+            && item.played && item.played.length >=
+            this.props.members.length
+        let recieved =
+            item.receive && this.props.members
+                ? item.receive.length >= this.props.members.length
+                : false
+        let seen = item.seen && this.props.members &&
+            item.seen.length >= this.props.members.length ? true : false
+        let sent = item.sent
+        let pointed = item.id === GState.currentID
+        let found = this.state.foundIndex == index ? true : false
+        let isFirst = index === 0
+        let state = Number(found) +
+            Number(recieved) +
+            Number(played) +
+            Number(sent) +
+            Number(pointed) +
+            Number(isFirst) +
+            Number(seen) + moment(item.updated_at).format("x") +
+            this.state.searchString.length
+
+        return <View onLayout={e => this.setCurrentLayout(e.nativeEvent.layout, item, index)} >
+            <Message
+                showRelation={this.showRelation.bind(this)}
+                showStarMessage={() => this.showStar(item)}
+                showRemindMessage={() => this.showRemind(item)}
+                animate={this.animateUI.bind(this)}
+                searchString={this.state.searchString}
+                foundString={found ? this.state.searchString : null}
+                state={state}
+                seen={seen}
+                isPointed={pointed}
+                isfirst={isFirst}
+                received={recieved}
+                allplayed={played}
+                key={item.id}
+                isRelation={this.props.isRelation}
+                react={this.reactToMessage.bind(this)}
+                showReacters={this.showReacters.bind(this)}
+                messagelayouts={this.messagelayouts}
+                forwardMessage={() => {
+                    this.forwardToContacts(item);
+                }}
+                newCount={this.props.newMessages.length}
+                index={index}
+                key={item.id}
+                scrolling={this.scrolling}
+                computedMaster={this.props.computedMaster}
+                activity_id={this.props.activity_id}
+                showProfile={(pro) => pro && this.props.showProfile(pro.replace("+", "00"))}
+                delay={delay}
+                room={this.roomID}
+                PreviousMessage={
+                    stores.Messages.messages[this.roomID] &&
+                    stores.Messages.messages[this.roomID][index >= lastIndex ? lastIndex : index + 1]
+                }
+                showActions={(message, reply, sender) => this.showMessageAction(message, reply, sender)}
+                firebaseRoom={this.props.firebaseRoom}
+                roomName={this.props.roomName}
+                sendMessage={(message) => this.sendTextMessage(message)}
+                replaceMessageVideo={(data) => this.replaceMessageVideo(data)}
+                showPhoto={(photo) => this.showPhoto(photo, item)}
+                replying={(replyer, color) => {
+                    this.initReply(replyer);
+                }}
+                choseReply={this.choseReply}
+                replaceMessage={(data) => this.replaceMessage(data)}
+                replaceAudioMessage={(data) => this.replaceAudioMessage(data)}
+                handleReplyExtern={(reply) => {
+                    this.handleReplyExtern(reply);
+                }}
+                message={item}
+                openReply={(replyer) => {
+                    this.handleReply(replyer);
+                }}
+                user={this.props.user.phone}
+                creator={this.props.creator}
+                replaceMessageFile={(data) => this.replaceMessageFile(data)}
+                playVideo={(source) => this.playVideo(source, item, index)}
+            />
+        </View>
+    }
+    keyExtractor(item, index) {
+        return item ? item.id : index.toString()
+    }
     messageList() {
         this.data = stores.Messages.messages[this.roomID]
             ? stores.Messages.messages[this.roomID] : []
-        let lastIndex = this.data ?
+        this.lastIndex = this.data ?
             (this.data.length - 1) : 0
         return (
             <BleashupFlatList
-                onScroll={this.onScroll.bind(this)}
+                onScroll={this.onScroll}
                 windowSize={21}
                 //notOptimized={this.state.searchString && this.state.searching}
                 backgroundColor={'transparent'}
@@ -1172,98 +1296,13 @@ class ChatRoom extends AnimatedComponent {
                 firstIndex={0}
                 ref="bleashupSectionListOut"
                 inverted={true}
-                loadMoreFromRemote={() => this.props.isComment && this.loadComments()}
+                //loadMoreFromRemote={() => this.props.isComment && this.loadComments()}
                 renderPerBatch={20}
                 initialRender={30}
                 numberOfItems={this.data.length}
-                getItemLayout={this.getItemLayout.bind(this)}
-                keyExtractor={(item, index) => (item ? item.id : index.toString())}
-                renderItem={(item, index) => {
-                    let delay =
-                        delay >= 20 || (item && !item.sent) ? 0 : delay + 1;
-                    let played = item.type == message_types.audio
-                        && item.played && item.played.length >=
-                        this.props.members.length
-                    let recieved =
-                        item.receive && this.props.members
-                            ? item.receive.length >= this.props.members.length
-                            : false
-                    let seen = item.seen && this.props.members &&
-                        item.seen.length >= this.props.members.length ? true : false
-                    let sent = item.sent
-                    let pointed = item.id === GState.currentID
-                    let found = this.state.foundIndex == index ? true : false
-                    let isFirst = index === 0
-                    let state = Number(found) +
-                        Number(recieved) +
-                        Number(played) +
-                        Number(sent) +
-                        Number(pointed) +
-                        Number(isFirst) +
-                        Number(seen) + moment(item.updated_at).format("x") +
-                        this.state.searchString.length
-
-                    return <View onLayout={e => this.setCurrentLayout(e.nativeEvent.layout, item, index)} >
-                        <Message
-                            showRelation={this.showRelation.bind(this)}
-                            showStarMessage={() => this.showStar(item)}
-                            showRemindMessage={() => this.showRemind(item)}
-                            animate={this.animateUI.bind(this)}
-                            searchString={this.state.searchString}
-                            foundString={found ? this.state.searchString : null}
-                            state={state}
-                            seen={seen}
-                            isPointed={pointed}
-                            isfirst={isFirst}
-                            received={recieved}
-                            allplayed={played}
-                            key={item.id}
-                            isRelation={this.props.isRelation}
-                            react={this.reactToMessage.bind(this)}
-                            showReacters={this.showReacters.bind(this)}
-                            messagelayouts={this.messagelayouts}
-                            forwardMessage={() => {
-                                this.forwardToContacts(item);
-                            }}
-                            newCount={this.props.newMessages.length}
-                            index={index}
-                            key={item.id}
-                            scrolling={this.scrolling}
-                            computedMaster={this.props.computedMaster}
-                            activity_id={this.props.activity_id}
-                            showProfile={(pro) => pro && this.props.showProfile(pro.replace("+", "00"))}
-                            delay={delay}
-                            room={this.roomID}
-                            PreviousMessage={
-                                stores.Messages.messages[this.roomID] &&
-                                stores.Messages.messages[this.roomID][index >= lastIndex ? lastIndex : index + 1]
-                            }
-                            showActions={(message, reply, sender) => this.showMessageAction(message, reply, sender)}
-                            firebaseRoom={this.props.firebaseRoom}
-                            roomName={this.props.roomName}
-                            sendMessage={(message) => this.sendTextMessage(message)}
-                            replaceMessageVideo={(data) => this.replaceMessageVideo(data)}
-                            showPhoto={(photo) => this.showPhoto(photo, item)}
-                            replying={(replyer, color) => {
-                                this.initReply(replyer);
-                            }}
-                            choseReply={this.choseReply}
-                            replaceMessage={(data) => this.replaceMessage(data)}
-                            replaceAudioMessage={(data) => this.replaceAudioMessage(data)}
-                            handleReplyExtern={(reply) => {
-                                this.handleReplyExtern(reply);
-                            }}
-                            message={item}
-                            openReply={(replyer) => {
-                                this.handleReply(replyer);
-                            }}
-                            user={this.props.user.phone}
-                            creator={this.props.creator}
-                            replaceMessageFile={(data) => this.replaceMessageFile(data)}
-                            playVideo={(source) => this.playVideo(source, item, index)}
-                        />
-                    </View>
-                }}
+                getItemLayout={this.getItemLayout}
+                keyExtractor={this.keyExtractor}
+                renderItem={this.renderMessage}
                 dataSource={this.data}
                 newData={this.showMessage}
                 newDataLength={this.showMessage.length}
@@ -1295,6 +1334,9 @@ class ChatRoom extends AnimatedComponent {
             showAudioRecorder: !this.state.showAudioRecorder,
         });
     }
+    openPhone(phone) {
+        return Linking.openURL(`tel:${phone.replace("00", "+")}`)
+    }
     showRelation(item) {
         if (item.type == active_types.activity) {
             stores.Events.isParticipant(item.item, stores.LoginStore.user.phone).then(act => {
@@ -1309,8 +1351,10 @@ class ChatRoom extends AnimatedComponent {
                 if (user && user.nickname && !user.response) {
                     this.props.showProfile(user.phone)
                 } else {
-                    Linking.openURL(`tel:${item.item.replace("00", "+")}`)
+                    this.openPhone(item.item)
                 }
+            }).catch(() => {
+                this.openPhone(item.item)
             })
         }
     }

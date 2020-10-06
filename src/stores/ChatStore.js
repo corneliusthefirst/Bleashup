@@ -150,7 +150,7 @@ class ChatStore {
     }
     haveIseen(message, phone) {
         return message.seen &&
-            message.seen.findIndex(ele => ele.phone === phone) >= 0 ?
+            message.seen.findIndex(ele => ele && ele.phone === phone) >= 0 ?
             true : false
     }
     @action reactToMessage(roomID, messageID, reaction) {

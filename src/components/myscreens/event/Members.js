@@ -25,7 +25,7 @@ export default class Members extends Component {
     setTimeout(() => {
       this.setState({
         contacts: uniqBy(this.props.participants, "phone").filter(
-          (ele) =>
+          (ele) => ele &&
             !Array.isArray(ele) &&
             ele &&
             ele.phone !== stores.LoginStore.user.phone
@@ -38,7 +38,7 @@ export default class Members extends Component {
   }
   toggleMaster(memberPhone) {
     this.setState({
-      selected: this.state.selected.map((ele) =>
+      selected: this.state.selected.map((ele) => ele &&
         ele.phone === memberPhone ? { ...ele, master: !ele.master } : ele
       ),
     });

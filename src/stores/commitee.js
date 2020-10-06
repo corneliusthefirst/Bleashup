@@ -140,7 +140,7 @@ export default class commitee {
         commitees[eventID][index].updated_at = this.currentDate();
         commitees[eventID][index].member = reject(
           commitees[eventID][index].member,
-          (ele) => findIndex(phones, (phone) => phone === ele.phone) >= 0
+          (ele) => ele && findIndex(phones, (phone) => phone === ele.phone) >= 0
         );
         this.addToStore(commitees).then(() => {
           resolve(commitees[eventID][index]);

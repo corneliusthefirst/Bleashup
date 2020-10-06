@@ -36,9 +36,9 @@ export function loadStates(isThisProgram, fresh) {
                 currentDateIntervals,
                 correspondingDateInterval
             ).then(() => {
+                this.currentDateIntervals = currentDateIntervals 
+                this.correspondingDateInterval = correspondingDateInterval
                 this.setStatePure({
-                    correspondingDateInterval,
-                    currentDateIntervals,
                     mounted: true,
                     newing: !this.state.newing,
                 });
@@ -47,24 +47,31 @@ export function loadStates(isThisProgram, fresh) {
     );
 }
 export function loadIntervals(canCheck, fresh) {
-    //console.error("loading intervals")
+    this.item = this.item || this.props.item
     return new Promise((resolve, reject) => {
-        stores.Reminds.getRemindsIntervals(this.item || this.props.item, fresh).then(
-            ({ currentDateIntervals }) => {
-                getCurrentDateInterval(
+        const callback = (currentDateIntervals, correspondingDateInterval) => {
+            canCheck &&
+                this.showActions(
                     currentDateIntervals,
-                    moment().format(format)
-                ).then((correspondingDateInterval) => {
-                    canCheck &&
-                        this.showActions(
-                            currentDateIntervals,
-                            correspondingDateInterval,
-                            true
-                        );
-                    canCheck && this.props.showReport &&
-                        this.props.showReport(currentDateIntervals, correspondingDateInterval);
-                    resolve({ currentDateIntervals, correspondingDateInterval });
-                });
+                    correspondingDateInterval,
+                    true
+                );
+            canCheck && this.props.showReport &&
+                this.props.showReport(currentDateIntervals, correspondingDateInterval);
+            resolve({ currentDateIntervals, correspondingDateInterval });
+        }
+        stores.Reminds.getRemindsIntervals(this.item, fresh).then(
+            ({ currentDateIntervals, correspondingDateInterval }) => {
+                if(correspondingDateInterval){
+                    callback(currentDateIntervals,correspondingDateInterval)
+                }else{
+                    stores.Reminds.getCurrentInterval(
+                        this.item,
+                        currentDateIntervals,
+                    ).then(({correspondingDateInterval}) => {
+                        callback(currentDateIntervals,correspondingDateInterval)
+                    });
+                }
             }
         );
     });

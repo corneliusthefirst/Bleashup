@@ -176,7 +176,7 @@ export default class ContactView extends BeComponent {
 
   render() {
     let data = this.state.contacts
-    data = data.filter(ele => ele.phone && globalFunctions.filterForRelation(ele, this.state.searchString))
+    data = data.filter(ele => ele && ele.phone && globalFunctions.filterForRelation(ele, this.state.searchString))
     return (
       <View
         style={{

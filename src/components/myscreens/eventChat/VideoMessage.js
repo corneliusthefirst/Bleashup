@@ -134,7 +134,7 @@ export default class VideoMessage extends BePureComponent {
     videoPlayer = null
     duration = 10
     pattern = [1000, 0, 0]
-    messageWidth=250
+    messageWidth = "100%" 
     render() {
         return (
             <View>
@@ -142,7 +142,7 @@ export default class VideoMessage extends BePureComponent {
                 }  
                 //onLongPress={() => this.props.handleLongPress ? this.props.handleLongPress() : null}
                 >
-                    <View style={{width:this.messageWidth}}>
+                    <View style={{width:this.messageWidth,minWidth: GState.messageMediaWidth,}}>
                         <View>
                             <CacheImages thumbnails square style={{
                                 marginTop: "2%",

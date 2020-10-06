@@ -11,7 +11,7 @@ export function mapper(ele) {
 }
 
 export function confirmedChecker(ele,phone,correspondingDate){
-    return ele.phone === phone &&
+    return ele && ele.phone === phone &&
         moment(ele.status.date).format('X') >
         moment(correspondingDate.start, format).format('X') &&
         moment(ele.status.date).format('X') <=

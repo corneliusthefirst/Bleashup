@@ -19,11 +19,6 @@ export default class ActionsMenu extends Component {
         }
     }
 
-    componentWillReceiveProps(nextProps) {
-        if (nextProps.hide) {
-            this._menu.hide()
-        }
-    }
     _menu = null;
 
     setMenuRef = ref => {

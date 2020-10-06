@@ -17,13 +17,12 @@ import SelectableContactList from "../../SelectableContactList";
 import CreateCommiteeModal from "./CreateCommiteeModal";
 import moment from "moment";
 import stores from "../../../stores";
-import { uniqBy, findIndex, find, unionBy,reject } from "lodash";
+import { uniqBy, findIndex, find, unionBy, reject } from "lodash";
 import Requester from "./Requester";
 import emitter from "../../../services/eventEmiter";
 import GState from "../../../stores/globalState";
 import firebase from "react-native-firebase";
 import NotificationModal from "./NotificationModal";
-import ContactListModal from "./ContactListModal";
 import ContentModal from "./ContentModal";
 import InviteParticipantModal from "./InviteParticipantModal";
 import ManageMembersModal from "./ManageMembersModal";
@@ -46,20 +45,22 @@ import SettingsTabModal from "./SettingTabModal";
 import BeNavigator from "../../../services/navigationServices";
 import replies from "../eventChat/reply_extern";
 import Toaster from "../../../services/Toaster";
-import Spinner from '../../Spinner';
-import IDMaker from '../../../services/IdMaker';
+import Spinner from "../../Spinner";
+import IDMaker from "../../../services/IdMaker";
 import SetAlarmPatternModal from "./SetAlarmPatternModal";
-import BeComponent from '../../BeComponent';
-import Texts from '../../../meta/text';
-import { close_all_modals, reply_me } from '../../../meta/events';
-import EventDescription from './createEvent/components/EventDescription';
+import BeComponent from "../../BeComponent";
+import Texts from "../../../meta/text";
+import { close_all_modals, reply_me } from "../../../meta/events";
+import EventDescription from "./createEvent/components/EventDescription";
 import DescriptionModal from "../eventDetails/descriptionModal";
-import ActivityPages from '../eventChat/chatPages';
-import ShareAsLink from './ShareAsLink';
-import request from '../../../services/requestObjects';
+import ActivityPages from "../eventChat/chatPages";
+import ShareAsLink from "./ShareAsLink";
+import request from "../../../services/requestObjects";
 import ShareWithYourContacts from "../eventChat/ShareWithYourContacts";
-import message_types from '../eventChat/message_types';
-import DetailsModal from '../invitations/components/DetailsModal';
+import message_types from "../eventChat/message_types";
+import DetailsModal from "../invitations/components/DetailsModal";
+import PrivateReplyModal from "../eventChat/PrivateReplyModal";
+import getRelation from "../Contacts/Relationer";
 
 const screenWidth = Math.round(Dimensions.get("window").width);
 
@@ -108,7 +109,7 @@ export default class Event extends BeComponent {
   };
 
   showRemindID(id) {
-    BeNavigator.goToRemindDetail(id, this.event.id)
+    BeNavigator.goToRemindDetail(id, this.event.id);
   }
   showHighlightID(id) {
     stores.Highlights.loadHighlight(this.event.id, id).then((High) => {
@@ -118,13 +119,16 @@ export default class Event extends BeComponent {
     });
   }
   showHighlightDetails(H, restoring, play) {
-    play ? (H.url.video ?
-      this.showVideo(H.url.video) :
-      this.showPhoto(H.url.photo)) :
-      BeNavigator.gotoStarDetail(H.id, H.event_id, { star: H })
+    play
+      ? H.url.video
+        ? this.showVideo(H.url.video)
+        : this.showPhoto(H.url.photo)
+      : BeNavigator.gotoStarDetail(H.id, H.event_id, { star: H });
   }
   addRemindForCommittee(members) {
-    BeNavigator.pushActivity(this.event, ActivityPages.reminds, { currentRemindMembers: members })
+    BeNavigator.pushActivity(this.event, ActivityPages.reminds, {
+      currentRemindMembers: members,
+    });
   }
   applystate() {
     this.setStatePure({
@@ -133,95 +137,140 @@ export default class Event extends BeComponent {
   }
   openMenu() {
     this.isOpen = !this.isOpen;
-    this.applystate()
+    this.applystate();
   }
   closeMenu() {
-    this.isOpen = false
-    this.applystate()
+    this.isOpen = false;
+    this.applystate();
   }
-  editCommiteeName() {
-
-  }
+  editCommiteeName() { }
   startThis(star) {
-    BeNavigator.pushActivity(this.event, ActivityPages.starts, { star })
+    BeNavigator.pushActivity(this.event, ActivityPages.starts, { star });
   }
   remindThis(remind) {
-    BeNavigator.pushActivity(this.event, ActivityPages.reminds, { remind })
+    BeNavigator.pushActivity(this.event, ActivityPages.reminds, { remind });
   }
   currentWidth = 0.5;
   isOpen = false;
 
-  type = this.getParam("type")
-  currentRemindUser = this.type && this.getParam(this.type)
-  handleReplyExtern =
-    (reply) => {
-      if (reply.type_extern == replies.activity_photo) {
-        this.openPhotoSelectorModal()
-      } else if (reply.type_extern.includes(replies.description)) {
-        this.showDescription()
-      } else if (reply.type_extern.toLowerCase().includes("remind")) {
-        reply.id ? BeNavigator.gotoRemindsWithIndex(this.event, reply.id, null,
-          {
-            [reply.type_extern]: reply[reply.type_extern],
-            type: reply.type_extern
-          }) : null;
-      } else if (reply.type_extern.toLowerCase().includes("post")) {
-        reply.id ? BeNavigator.gotoStarWithIndex(this.event, reply.id) : null;
-      } else {
-        reply.id ? this.showChanges(reply) : null;
-      }
+  replies_options() {
+    return {
+      room: this.event.id,
+      reply: () => emitter.emit(reply_me, GState.reply),
+      reply_privately:
+        (members, creator) => this.showPrivateReply([...members, ...this.event.participant], creator)
     }
-  showDescription() {
-    this.setStatePure({ viewdetail: true })
   }
-  getShareLink(link) {
+  type = this.getParam("type")
+  currentRemindUser = this.type && this.getParam(this.type);
+  handleReplyExtern = (reply) => {
+    const calculateReply = (forwardReply, data, fallback) => {
+      if (reply.from_activity && reply_me.from_activity !== this.event.id) {
+        stores.Events.isParticipant(
+          reply.from_activity,
+          stores.LoginStore.user.phone
+        ).then((act) => {
+          if (act) {
+            forwardReply(act, data);
+          } else {
+            fallback();
+          }
+        });
+      } else {
+        forwardReply(this.event, data);
+      }
+    };
+    if (reply.type_extern == replies.activity_photo) {
+      this.openPhotoSelectorModal();
+    } else if (reply.type_extern.includes(replies.description)) {
+      this.showDescription();
+    } else if (reply.type_extern.toLowerCase().includes("remind")) {
+      const reply_options = {
+        [reply.type_extern]: reply[reply.type_extern],
+        type: reply.type_extern,
+      };
+      const forwardReply = (act, data) => {
+        reply.id
+          ? BeNavigator.gotoRemindsWithIndex(act, reply.id, false, data)
+          : null;
+      };
+      calculateReply(
+        forwardReply,
+        {
+          remind_id: reply.id,
+          ...reply_options,
+        },
+        () => {
+          BeNavigator.goToRemindDetail(reply.id, reply.from_activity, this.replies_options());
+        }
+      );
+    } else if (reply.type_extern.toLowerCase().includes("post")) {
+      const forwardReply = (act) => {
+        reply.id ? BeNavigator.gotoStarWithIndex(act, reply.id, false) : null;
+      };
+      calculateReply(forwardReply, { post_id: reply.id }, () =>
+        BeNavigator.gotoStarDetail(reply.id, reply.from_activity, this.replies_options())
+      );
+    } else {
+      reply.id ? this.showChanges(reply) : null;
+    }
+  };
+  showDescription() {
+    this.setStatePure({ viewdetail: true });
+  }
+  getShareLink(link, extra, title,dontShowCode) {
     this.setStatePure({
       isShareLinkModalOpened: true,
-      link
-    })
+      link,
+      qrCode: !dontShowCode && JSON.stringify({ activity_id: this.event.id, ...extra }),
+      qrTitle: !dontShowCode && (title || this.event.about.title)
+    });
   }
   showSahreWithYourContact(message) {
     this.setStatePure({
       isShareLinkModalOpened: false,
       isShareWithYourContactsModalOpened: true,
-      message: message
-    })
+      message: message,
+    });
   }
   forwardLink(link) {
-    let message = request.Message()
-    message.forwarded = true
-    message.from_activity = this.event.id
-    message.text = link
-    message.sent = true
-    message.created_at = moment().format()
-    message.type = message_types.text
-    message.id = IDMaker.make()
-    message.committee_id = this.event.id
-    this.showSahreWithYourContact(message)
+    let message = request.Message();
+    message.forwarded = true;
+    message.from_activity = this.event.id;
+    message.text = link;
+    message.sent = true;
+    message.created_at = moment().format();
+    message.type = message_types.text;
+    message.id = IDMaker.make();
+    message.committee_id = this.event.id;
+    this.showSahreWithYourContact(message);
   }
   hideShareWithYourContacts() {
     this.setStatePure({
-      isShareWithYourContactsModalOpened: false
-    })
+      isShareWithYourContactsModalOpened: false,
+    });
   }
   hideShareLinkModal() {
     this.setStatePure({
-      isShareLinkModalOpened: false
-    })
+      isShareLinkModalOpened: false,
+    });
   }
-  showDetailModal(id) {
+  showDetailModal(id, message_id) {
     this.setStatePure({
       showEventDetail: true,
-      event_id: id
-    })
+      event_id: id,
+      scrollData: message_id,
+    });
   }
   hideDetailModal() {
     this.setStatePure({
-      showEventDetail: false
-    })
+      showEventDetail: false,
+    });
   }
-  addStar(){
-    BeNavigator.pushActivity(this.event,ActivityPages.starts,{autoStar:true})
+  addStar() {
+    BeNavigator.pushActivity(this.event, ActivityPages.starts, {
+      autoStar: true,
+    });
   }
   clearIndexedRemind() {
     /*this.type = null
@@ -230,7 +279,7 @@ export default class Event extends BeComponent {
       newing:!this.state.newing
     })*/
   }
-  
+
   renderMenu(NewMessages) {
     ///console.error(this.state.currentPage)
     switch (this.state.currentPage) {
@@ -243,7 +292,7 @@ export default class Event extends BeComponent {
             id={this.id}
             shared={false}
             star={this.getParam("star")}
-            autoStar={this.getParam('autoStar')}
+            autoStar={this.getParam("autoStar")}
             share={{
               id: "1434",
               date: moment().format(),
@@ -260,6 +309,7 @@ export default class Event extends BeComponent {
               this.openMenu();
             }}
             mention={(data) => this.mentionPost(data)}
+            mentionPrivately={this.mentionPostPrivately.bind(this)}
             updateLocation={(loc) => this.updateActivityLocation(loc)}
             showDescription={() => this.showDescription()}
             master={this.master}
@@ -279,6 +329,7 @@ export default class Event extends BeComponent {
         return (
           <Remind
             //shared={false}={this.getShareLink}
+            replyPrivately={this.showPrivateReply.bind(this)}
             showSharer={this.showSahreWithYourContact.bind(this)}
             shareLink={this.getShareLink.bind(this)}
             type={this.type}
@@ -306,7 +357,7 @@ export default class Event extends BeComponent {
             }}
             openMenu={() => this.openMenu()}
             clearCurrentMembers={() => {
-              this.goback()
+              this.goback();
             }}
             goback={this.goback.bind(this)}
             currentMembers={this.state.currentRemindMembers}
@@ -321,6 +372,7 @@ export default class Event extends BeComponent {
       case ActivityPages.chat:
         return (
           <EventChat
+            replyPrivately={this.showPrivateReply.bind(this)}
             showDetailModal={this.showDetailModal.bind(this)}
             showShare={this.showSahreWithYourContact.bind(this)}
             getShareLink={this.getShareLink.bind(this)}
@@ -345,7 +397,9 @@ export default class Event extends BeComponent {
             showLoader={() => this.startLoader()}
             working={this.state.working}
             addStar={this.addStar.bind(this)}
-            addRemind={(members) => this.addRemindForCommittee(this.state.roomMembers)}
+            addRemind={(members) =>
+              this.addRemindForCommittee(this.state.roomMembers)
+            }
             stopLoader={() => this.stopLoader()}
             showProfile={(pro) => this.showProfile(pro)}
             roomName={this.state.roomName}
@@ -379,24 +433,15 @@ export default class Event extends BeComponent {
               let thisMember = find(this.event.participant, {
                 phone: stores.LoginStore.user.phone,
               });
-              this.setStatePure({
-                showMembers: true,
-                partimembers: unionBy(
-                  this.state.roomMembers,
-                  [thisMember],
-                  "phone"
-                ),
-              });
+              this.showContacts(unionBy(
+                this.state.roomMembers,
+                [thisMember],
+                "phone"
+              ), Texts.members)
             }}
             goback={this.goback.bind(this)}
             {...this.props}
-            showContacts={(conctacts, title) => {
-              this.setStatePure({
-                isContactListOpened: true,
-                title: title,
-                contactList: conctacts,
-              });
-            }}
+            showContacts={this.showContacts.bind(this)}
           ></EventChat>
         );
       case ActivityPages.logs:
@@ -412,7 +457,9 @@ export default class Event extends BeComponent {
             openPhoto={(url) => this.openPhoto(url)}
             master={this.master}
             isM={this.getParam("isMe") || this.state.isMe}
-            activeMember={this.getParam("activeMember") || this.state.activeMember}
+            activeMember={
+              this.getParam("activeMember") || this.state.activeMember
+            }
             forMember={this.getParam("forMember") || this.state.forMember}
             event_id={this.event.id}
             navigatePage={(page) => {
@@ -440,11 +487,10 @@ export default class Event extends BeComponent {
       new_value: data.new_value,
     };
     let index = findIndex(stores.ChangeLogs.changes[this.event.id], (ele) => {
-      return ele.updater == data.updater &&
-        ele.date == data.date
-    })
+      return ele.updater == data.updater && ele.date == data.date;
+    });
     if (index >= 0) {
-      BeNavigator.pushActivity(this.event, ActivityPages.logs, { index })
+      BeNavigator.pushActivity(this.event, ActivityPages.logs, { index });
     } else {
       this.propcessAndFoward(change);
     }
@@ -466,8 +512,7 @@ export default class Event extends BeComponent {
       change.updated === "highlight_delete" ||
       change.updated == "highlight_restored"
     ) {
-      this.showHighlightDetails(
-        change.new_value.new_value);
+      this.showHighlightDetails(change.new_value.new_value);
     } else if (change.updated === "highlight_url") {
       this.showHighlightDetails({
         title: change.changed,
@@ -478,8 +523,8 @@ export default class Event extends BeComponent {
     } else if (change.updated === "remind_alarms") {
       this.setStatePure({
         showAlarms: true,
-        alarms: change.new_value.new_value.alarms
-      })
+        alarms: change.new_value.new_value.alarms,
+      });
     } else if (
       Array.isArray(change.new_value.new_value) &&
       change.new_value.new_value[0] &&
@@ -519,17 +564,13 @@ export default class Event extends BeComponent {
     }
   }
   showMember(members) {
-    this.setStatePure({
-      showMembers: true,
-      partimembers: members,
-      hideTitle: true,
-    });
+    this.showContacts(members, "members")
   }
   showRemind(remind, restoring) {
-    BeNavigator.goToRemindDetail(remind.id, this.event.id, { remind })
+    BeNavigator.goToRemindDetail(remind.id, this.event.id, { remind });
   }
   openPhoto(url) {
-    this.showPhoto(url)
+    this.showPhoto(url);
   }
   showContent(content) {
     this.setStatePure({
@@ -537,11 +578,19 @@ export default class Event extends BeComponent {
       isContentModalOpened: true,
     });
   }
-  showContacts(contacts) {
-    this.setStatePure({
-      contactList: contacts,
-      isContactListOpened: true,
-    });
+  showContacts(contacts, title) {
+    if (contacts && contacts[0] && contacts[0].phone) {
+      contacts = contacts
+    } else {
+      if (contacts && contacts[0]) {
+        contacts = contacts.map(ele => {
+          return { phone: ele }
+        })
+      } else {
+        contacts = []
+      }
+    }
+    BeNavigator.gotoContactList(contacts, title)
   }
   bandMember(members) {
     if (!this.state.working) {
@@ -671,8 +720,10 @@ export default class Event extends BeComponent {
       this.member = member ? true : false;
       this.setStatePure({
         working: false,
-        roomMembers: GState.currentCommitee === this.event.id ?
-          this.event.participant : this.state.roomMembers
+        roomMembers:
+          GState.currentCommitee === this.event.id
+            ? this.event.participant
+            : this.state.roomMembers,
       });
     });
   }
@@ -690,18 +741,20 @@ export default class Event extends BeComponent {
   mention(data) {
     GState.reply = {
       ...data,
-      activity_id: this.event.id
+      activity_id: this.event.id,
     };
     Vibration.vibrate(this.duration);
-    let reply = this.getParam("reply")
+    let reply = this.getParam("reply");
     if (this.refs[ActivityPages.chat]) {
-      this.directReply(data)
+      this.directReply(data);
     } else if (reply) {
-      reply(data)
-      this.goback()
+      reply(data);
+      this.goback();
     } else {
-      emitter.emit(reply_me + this.event.id, GState.reply);
-      this.goback()
+      GState.reply.from_activity = this.event.id
+      GState.reply.activity_name = this.event.about.title
+      emitter.emit(reply_me, GState.reply);
+      this.goback();
     }
   }
   startLoader() {
@@ -747,49 +800,56 @@ export default class Event extends BeComponent {
     }
   }
   master = false;
-  leave_route_event = "leave_route"
+  leave_route_event = "leave_route";
   componentMounting() {
     emitter.on(this.leave_route_event, () => {
-      this.goback()
-    })
+      this.goback();
+    });
     emitter.on(this.event_to_be_listen, (change, newValue) => {
       this.handleActivityUpdates(change, newValue);
-    })
+    });
     this.initializeMaster();
   }
   getParam(key) {
-    return this.props.navigation.getParam(key)
+    return this.props.navigation.getParam(key);
   }
   getOponent(participant) {
-    let user = participant && participant.find(ele => ele.phone !== stores.LoginStore.user.phone)
+    let user =
+      participant &&
+      participant.find((ele) => ele && ele.phone !== stores.LoginStore.user.phone);
     if (user && user.phone) {
-      return stores.TemporalUsersStore.Users[user.phone]
+      return stores.TemporalUsersStore.Users[user.phone];
     } else {
-      return {}
+      return {};
     }
   }
   returnRealEvent(event) {
-    let oponent = this.getOponent(event.participant) || {}
-    this.oponent = oponent
-    this.isRelation = event.type === "relation"
+    let oponent = this.getOponent(event.participant) || {};
+    this.oponent = oponent;
+    this.isRelation = event.type === "relation";
     return {
       ...event,
       background: this.isRelation ? oponent.profile : event.background,
-      participant:[event.participant.find(ele => ele.phone == stores.LoginStore.user.phone)].
-      concat(reject(event.participant,{phone:stores.LoginStore.user.phone})),
+      participant: [
+        event.participant.find(
+          (ele) => ele && ele.phone == stores.LoginStore.user.phone
+        ),
+      ].concat(
+        reject(event.participant, { phone: stores.LoginStore.user.phone })
+      ),
       about: {
         ...event.about,
-        title: this.isRelation ? oponent.nickname : event.about.title
-      }
-    }
+        title: this.isRelation ? oponent.nickname : event.about.title,
+      },
+    };
   }
-  id = this.getParam("id")
-  index = this.getParam("index")
-  currentTab = this.getParam("tab")
+  id = this.getParam("id");
+  index = this.getParam("index");
+  currentTab = this.getParam("tab");
   user = null;
   isOpen = true;
-  event = this.returnRealEvent(this.getParam("Event"))
-  currentRemindMembers = this.getParam("currentRemindMembers")
+  event = this.returnRealEvent(this.getParam("Event"));
+  currentRemindMembers = this.getParam("currentRemindMembers");
   componentDidMount() {
     let page = this.currentTab;
     let isEventCurrentPage = this.isChat(page);
@@ -800,7 +860,7 @@ export default class Event extends BeComponent {
       currentRemindMembers: this.currentRemindMembers,
       mounted: true,
     });
-    this.isOpen = false // isEventCurrentPage ? true : false;
+    this.isOpen = false; // isEventCurrentPage ? true : false;
 
     this.refreshePage();
   }
@@ -841,17 +901,18 @@ export default class Event extends BeComponent {
     }
   }
   isChat(currentPage) {
-    return currentPage === ActivityPages.chat
+    return currentPage === ActivityPages.chat;
   }
 
-
-  event_to_be_listen = `event_updated_${this.event.id}`
+  event_to_be_listen = `event_updated_${this.event.id}`;
   unInitialize() {
     Pickers.CleanAll();
-    emitter.off(this.leave_route_event)
+    emitter.off(this.leave_route_event);
     emitter.off(this.event_to_be_listen);
 
-    this.isChat(this.state.currentPage) ? GState.currentCommitee = null : null;
+    this.isChat(this.state.currentPage)
+      ? (GState.currentCommitee = null)
+      : null;
   }
   unmountingComponent() {
     this.unInitialize();
@@ -1297,15 +1358,15 @@ export default class Event extends BeComponent {
     });
   }
   hideDescription() {
-    this.setStatePure({ viewdetail: false })
+    this.setStatePure({ viewdetail: false });
   }
   checkActivity(member) {
-    this.closeSettingModal()
+    this.closeSettingModal();
     BeNavigator.gotoChangeLogs(this.event, {
       isMe: member.phone === stores.LoginStore.user.phone ? true : false,
       activeMember: member.phone,
-      forMember: member.nickname
-    })
+      forMember: member.nickname,
+    });
   }
   openSettingsModal() {
     this.isOpen = false;
@@ -1426,16 +1487,53 @@ export default class Event extends BeComponent {
       });
   }
   showPhoto(photo) {
-    BeNavigator.openPhoto(photo)
+    BeNavigator.openPhoto(photo);
   }
   showVideo(url) {
-    BeNavigator.openVideo(url)
+    BeNavigator.openVideo(url);
   }
   mentionPost(replyer) {
     this.mention(GState.prepareStarForMention(replyer));
   }
+  mentionPostPrivately(item) {
+    let reply = GState.prepareStarForMention(item);
+    reply.from_activity = this.event.id;
+    reply.activity_name = this.event.about.title;
+    GState.reply = reply;
+    this.showPrivateReply(null, item.creator);
+  }
   setCurrentPage(page, data) {
     BeNavigator.pushActivity(this.event, page);
+  }
+  replyWith(phone) {
+    getRelation(phone).then((relation) => {
+      GState.reply.activity_id = relation.id;
+      BeNavigator.pushToChat(relation);
+    });
+  }
+  authorFirstWithouMe(members, author) {
+    members = reject(
+      [find(members, { phone: author }), ...reject(members, { phone: author })],
+      { phone: stores.LoginStore.user.phone }
+    );
+    return members;
+  }
+  showPrivateReply(members, author) {
+    members = this.authorFirstWithouMe(
+      members || this.event.participant,
+      author
+    );
+    this.setStatePure({
+      replyMembers: members,
+      author,
+      showPrivateReply: true,
+    });
+  }
+  hideReply() {
+    GState.reply = null;
+    this.setStatePure({
+      showPrivateReply: false,
+    });
   }
   preleaveActivity() {
     this.isOpen = false;
@@ -1449,35 +1547,42 @@ export default class Event extends BeComponent {
       : Toaster({ text: Texts.not_member_anymore });
   }
   hideEditDescription() {
-    this.setStatePure({ EventDescriptionState: false })
+    this.setStatePure({ EventDescriptionState: false });
   }
   showEditDescription() {
-    this.setStatePure({ EventDescriptionState: true })
+    this.setStatePure({ EventDescriptionState: true });
   }
   replyDescription() {
-    this.hideDescription()
+    this.hideDescription();
     setTimeout(() => {
-      this.mention(GState.prepareDescriptionForMention(
-        this.event.about.description,
-        this.event.id,
-        this.event.creator_phone))
-    }, 200)
+      this.mention(
+        GState.prepareDescriptionForMention(
+          this.event.about.description,
+          this.event.id,
+          this.event.creator_phone
+        )
+      );
+    }, 200);
   }
   hidePhotoIput() {
     this.setStatePure({
       isSelectPhotoInputMethodModal: false,
-    })
+    });
   }
   directReply(reply) {
-    this.refs[ActivityPages.chat] && this.refs[ActivityPages.chat].initReply(reply)
+    this.refs[ActivityPages.chat] &&
+      this.refs[ActivityPages.chat].initReply(reply);
   }
   replyToPhoto() {
-    this.hidePhotoIput()
+    this.hidePhotoIput();
     setTimeout(() => {
-      let reply = GState.prepareActivityPhotoForMention(this.event.background,
-        this.event.id, this.event.creator_phone)
-      this.mention(reply)
-    }, 100)
+      let reply = GState.prepareActivityPhotoForMention(
+        this.event.background,
+        this.event.id,
+        this.event.creator_phone
+      );
+      this.mention(reply);
+    }, 100);
   }
   closeSettingModal() {
     this.setStatePure({
@@ -1489,8 +1594,7 @@ export default class Event extends BeComponent {
     this.computedMaster || this.event.public
       ? this.inviteContacts(adding)
       : Toaster({
-        text:
-          Texts.unable_to_perform_request,
+        text: Texts.unable_to_perform_request,
         duration: 4000,
       });
   }
@@ -1506,305 +1610,343 @@ export default class Event extends BeComponent {
     this.props.navigation.goBack();
   }
   renderExtra() {
-    return <View>
-      <View
-        style={{
-          position: "absolute",
-          width: "100%",
-          hight: 300,
-          marginRight: "3%",
-          marginTop: "12%",
-        }}
-      >
-        {this.state.showNotifiation ? <NotificationModal
-          change={this.state.change || {}}
-          onPress={() => {
-            this.setStatePure({
-              showNotifiation: false,
-              currentPage: ActivityPages.logs,
-              forMember: !this.state.forMember,
-            });
-            this.resetSelectedCommitee();
-          }}
-          close={() => {
-            this.setStatePure({
-              showNotifiation: false,
-            });
-          }}
-          isOpen={this.state.showNotifiation}
-        ></NotificationModal> : false}
+    return (
+      <View>
         <View
           style={{
-            marginRight: "95%",
+            position: "absolute",
             width: "100%",
-            marginBottom: "5%",
+            hight: 300,
+            marginRight: "3%",
+            marginTop: "12%",
           }}
         >
+          {this.state.showNotifiation ? (
+            <NotificationModal
+              change={this.state.change || {}}
+              onPress={() => {
+                this.setStatePure({
+                  showNotifiation: false,
+                  currentPage: ActivityPages.logs,
+                  forMember: !this.state.forMember,
+                });
+                this.resetSelectedCommitee();
+              }}
+              close={() => {
+                this.setStatePure({
+                  showNotifiation: false,
+                });
+              }}
+              isOpen={this.state.showNotifiation}
+            ></NotificationModal>
+          ) : (
+              false
+            )}
+          <View
+            style={{
+              marginRight: "95%",
+              width: "100%",
+              marginBottom: "5%",
+            }}
+          ></View>
         </View>
+        {this.state.working ? (
+          <View style={{ position: "absolute", marginTop: "-8%" }}>
+            <Spinner size={"small"}></Spinner>
+          </View>
+        ) : null}
+        {this.state.showMembers ? (
+          <ParticipantModal
+            hideTitle={this.state.hideTitle}
+            master={this.master}
+            creator={this.event.creator_phone}
+            participants={
+              this.state.partimembers
+                ? uniqBy(
+                  this.state.partimembers.filter(
+                    (ele) => ele !== null && !Array.isArray(ele)
+                  ),
+                  (ele) => ele && ele.phone
+                )
+                : []
+            }
+            isOpen={this.state.showMembers}
+            onClosed={() => {
+              this.setStatePure({
+                showMembers: false,
+                partimembers: null,
+                hideTitle: false,
+              });
+            }}
+            event_id={this.event.id}
+          ></ParticipantModal>
+        ) : null}
+        {this.state.showAlarms ? (
+          <SetAlarmPatternModal
+            isOpen={this.state.showAlarms}
+            dontSet
+            pattern={this.state.alarms}
+            closed={() => {
+              this.setStatePure({
+                showAlarms: false,
+              });
+            }}
+          ></SetAlarmPatternModal>
+        ) : null}
+        {this.state.isSelectableListOpened ? (
+          <SelectableContactList
+            removing={this.state.removing}
+            notcheckall={this.state.notcheckall}
+            saveRemoved={(mem) => this.saveRemoved(mem)}
+            adding={this.state.adding}
+            title={this.state.title}
+            phone={stores.LoginStore.user.phone}
+            addMembers={(members) => {
+              this.saveCommiteeMembers(members);
+            }}
+            members={
+              this.state.members !== null && this.state.members
+                ? uniqBy(
+                  this.state.members.filter(
+                    (ele) =>
+                      ele !== null &&
+                      !Array.isArray(ele) &&
+                      ele.phone !== this.event.creator_phone
+                  ),
+                  (ele) => ele.phone
+                )
+                : []
+            }
+            close={() => {
+              this.setStatePure({
+                adding: false,
+                removing: false,
+                members: null,
+                notcheckall: false,
+                isSelectableListOpened: false,
+              });
+            }}
+            isOpen={this.state.isSelectableListOpened}
+            takecheckedResult={(data) => this.createCommitee(data)}
+          ></SelectableContactList>
+        ) : null}
+        {this.state.isCommiteeModalOpened ? (
+          <CreateCommiteeModal
+            isOpen={this.state.isCommiteeModalOpened}
+            createCommitee={(data) => this.processResult(data)}
+            close={() =>
+              this.setStatePure({
+                isCommiteeModalOpened: false,
+              })
+            }
+          ></CreateCommiteeModal>
+        ) : null}
+        {this.state.viewdetail ? (
+          <DescriptionModal
+            Event={this.event}
+            isOpen={this.state.viewdetail}
+            onClosed={this.hideDescription.bind(this)}
+            computedMaster={this.computedMaster}
+            replyDescription={this.replyDescription.bind(this)}
+            showEditDescription={this.showEditDescription.bind(this)}
+          ></DescriptionModal>
+        ) : null}
+
+        {this.state.EventDescriptionState ? (
+          <EventDescription
+            updateDesc={(newDesc) => {
+              this.updateActivityDescription(newDesc);
+            }}
+            event={this.event || {}}
+            isOpen={this.state.EventDescriptionState}
+            onClosed={this.hideEditDescription.bind(this)}
+            ref={"description_ref"}
+            eventId={this.event.id}
+          />
+        ) : null}
+
+        {this.state.isContentModalOpened ? (
+          <ContentModal
+            content={this.state.textContent}
+            isOpen={this.state.isContentModalOpened}
+            closed={() => {
+              this.setStatePure({
+                isContentModalOpened: false,
+                textContent: null,
+              });
+            }}
+          ></ContentModal>
+        ) : null}
+        {this.state.isAreYouSureModalOpened ? (
+          <AreYouSure
+            isOpen={this.state.isAreYouSureModalOpened}
+            title={this.state.warnTitle}
+            closed={() => {
+              this.setStatePure({
+                isAreYouSureModalOpened: false,
+                warnDescription: null,
+                warnTitle: null,
+                callback: null,
+              });
+            }}
+            callback={() => this.state.callback()}
+            ok={this.state.okButtonText}
+            message={this.state.warnDescription}
+          ></AreYouSure>
+        ) : null}
+        {this.state.isInviteModalOpened ? (
+          <InviteParticipantModal
+            adding={this.state.adding}
+            invite={(members) => this.invite(members)}
+            onClosed={() => {
+              this.setStatePure({
+                isInviteModalOpened: false,
+              });
+            }}
+            master={this.master}
+            isOpen={this.state.isInviteModalOpened}
+            participant={this.event.participant}
+          ></InviteParticipantModal>
+        ) : null}
+        {this.state.isShareLinkModalOpened ? (
+          <ShareAsLink
+            qrCode={this.state.qrCode}
+            qrTitle={this.state.qrTitle}
+            onClosed={this.hideShareLinkModal.bind(this)}
+            link={this.state.link}
+            share={this.forwardLink.bind(this)}
+            isOpen={this.state.isShareLinkModalOpened}
+          ></ShareAsLink>
+        ) : null}
+        {this.state.isShareWithYourContactsModalOpened ? (
+          <ShareWithYourContacts
+            isOpen={this.state.isShareWithYourContactsModalOpened}
+            message={this.state.message}
+            activity_id={this.event.id}
+            sender={request.Message().sender}
+            committee_id={this.event.id}
+            onClosed={this.hideShareWithYourContacts.bind(this)}
+          ></ShareWithYourContacts>
+        ) : null}
+        {this.state.showEventDetail ? (
+          <DetailsModal
+            event={{ ...request.Event(), id: this.state.event_id }}
+            isToBeJoint
+            data={this.state.scrollData}
+            isOpen={this.state.showEventDetail}
+            onClosed={this.hideDetailModal.bind(this)}
+          ></DetailsModal>
+        ) : null}
+        {this.state.showPrivateReply ? (
+          <PrivateReplyModal
+            isOpen={this.state.showPrivateReply}
+            author={this.state.author}
+            members={this.state.replyMembers}
+            onClosed={this.hideReply.bind(this)}
+            replyWith={(phone) => this.replyWith(phone)}
+          ></PrivateReplyModal>
+        ) : null}
+        {this.state.isManagementModalOpened ? (
+          <ManageMembersModal
+            isOpen={this.state.isManagementModalOpened}
+            checkActivity={(member) => this.checkActivity(member)}
+            creator={this.event.creator_phone}
+            participants={this.event.participant}
+            master={this.master}
+            changeMasterState={(newState) =>
+              this.changeEventMasterState(newState)
+            }
+            bandMembers={(selected) => this.bandMember(selected)}
+            onClosed={() => {
+              this.setStatePure({
+                isManagementModalOpened: false,
+              });
+            }}
+          ></ManageMembersModal>
+        ) : null}
+        {this.state.isSelectPhotoInputMethodModal ? (
+          <PhotoInputModal
+            replyToPhoto={this.replyToPhoto.bind(this)}
+            isRelation={!this.computedMaster || this.isRelation}
+            saveBackground={(url) => this.saveBackground(url)}
+            photo={this.event.background}
+            showActivityPhoto={() => {
+              this.event.background && this.showPhoto(this.event.background);
+            }}
+            isOpen={this.state.isSelectPhotoInputMethodModal}
+            closed={this.hidePhotoIput.bind(this)}
+          ></PhotoInputModal>
+        ) : null}
+        {this.state.isProfileModalOpened ? (
+          <ProfileModal
+            profile={this.state.profile}
+            isOpen={this.state.isProfileModalOpened}
+            onClosed={() => {
+              this.setStatePure({
+                isProfileModalOpened: false,
+              });
+            }}
+          ></ProfileModal>
+        ) : null}
+        {this.state.isSettingsModalOpened ? (
+          <SettingsTabModal
+            addMembers={() => this.startInvitation(true)}
+            invite={() => this.startInvitation()}
+            remove={() => this.showMembers()}
+            isOpen={this.state.isSettingsModalOpened}
+            currentPhone={this.user.phone}
+            leaveActivity={() => this.preleaveActivity()}
+            changeMasterState={(newState) =>
+              this.changeEventMasterState(newState)
+            }
+            bandMembers={(selected) => this.bandMember(selected)}
+            checkActivity={(member) => this.checkActivity(member)}
+            closeActivity={() => {
+              this.event.closed
+                ? this.closeActivity()
+                : this.setStatePure({
+                  isAreYouSureModalOpened: true,
+                  callback: () => this.closeActivity(),
+                  warnDescription: Texts.are_you_sure_to_close,
+                  warnTitle: Texts.close_activity,
+                  okButtonText: Texts.close,
+                });
+            }}
+            creator={this.event.creator_phone === this.user.phone}
+            computedMaster={this.computedMaster}
+            master={this.master}
+            event={this.event}
+            saveSettings={(original, newSettings) => {
+              this.saveSettings(original, newSettings);
+            }}
+            closed={this.closeSettingModal.bind(this)}
+          ></SettingsTabModal>
+        ) : null}
       </View>
-      {this.state.working ? (
-        <View style={{ position: "absolute", marginTop: "-8%" }}>
-          <Spinner size={"small"}></Spinner>
-        </View>
-      ) : null}
-      {this.state.showMembers ? <ParticipantModal
-        hideTitle={this.state.hideTitle}
-        master={this.master}
-        creator={this.event.creator_phone}
-        participants={
-          this.state.partimembers
-            ? uniqBy(
-              this.state.partimembers.filter(
-                (ele) => ele !== null && !Array.isArray(ele)
-              ),
-              (ele) => ele.phone
-            )
-            : []
-        }
-        isOpen={this.state.showMembers}
-        onClosed={() => {
-          this.setStatePure({
-            showMembers: false,
-            partimembers: null,
-            hideTitle: false,
-          });
-        }}
-        event_id={this.event.id}
-      ></ParticipantModal> : null}
-      {this.state.showAlarms ? <SetAlarmPatternModal
-        isOpen={this.state.showAlarms}
-        dontSet
-        pattern={this.state.alarms}
-        closed={() => {
-          this.setStatePure({
-            showAlarms: false
-          })
-        }}
-      >
-      </SetAlarmPatternModal> : null}
-      {this.state.isSelectableListOpened ? <SelectableContactList
-        removing={this.state.removing}
-        notcheckall={this.state.notcheckall}
-        saveRemoved={(mem) => this.saveRemoved(mem)}
-        adding={this.state.adding}
-        title={this.state.title}
-        phone={stores.LoginStore.user.phone}
-        addMembers={(members) => {
-          this.saveCommiteeMembers(members);
-        }}
-        members={
-          this.state.members !== null && this.state.members
-            ? uniqBy(
-              this.state.members.filter(
-                (ele) =>
-                  ele !== null &&
-                  !Array.isArray(ele) &&
-                  ele.phone !== this.event.creator_phone
-              ),
-              (ele) => ele.phone
-            )
-            : []
-        }
-        close={() => {
-          this.setStatePure({
-            adding: false,
-            removing: false,
-            members: null,
-            notcheckall: false,
-            isSelectableListOpened: false,
-          });
-        }}
-        isOpen={this.state.isSelectableListOpened}
-        takecheckedResult={(data) => this.createCommitee(data)}
-      ></SelectableContactList> : null}
-      {this.state.isCommiteeModalOpened ? <CreateCommiteeModal
-        isOpen={this.state.isCommiteeModalOpened}
-        createCommitee={(data) => this.processResult(data)}
-        close={() =>
-          this.setStatePure({
-            isCommiteeModalOpened: false,
-          })
-        }
-      ></CreateCommiteeModal> : null}
-      {this.state.isContactListOpened ? <ContactListModal
-        contacts={this.state.contactList}
-        title={this.state.title}
-        isOpen={this.state.isContactListOpened}
-        onClosed={() => {
-          this.setStatePure({
-            isContactListOpened: false,
-            contactList: [],
-          });
-        }}
-      ></ContactListModal> : null}
-      {this.state.viewdetail ? <DescriptionModal
-        Event={this.event}
-        isOpen={this.state.viewdetail}
-        onClosed={this.hideDescription.bind(this)}
-        computedMaster={this.computedMaster}
-        replyDescription={this.replyDescription.bind(this)}
-        showEditDescription={this.showEditDescription.bind(this)}
-      >
-      </DescriptionModal> : null}
-
-      {this.state.EventDescriptionState ? <EventDescription
-        updateDesc={(newDesc) => {
-          this.updateActivityDescription(newDesc)
-        }}
-        event={this.event || {}}
-        isOpen={this.state.EventDescriptionState}
-        onClosed={this.hideEditDescription.bind(this)}
-        ref={"description_ref"}
-        eventId={this.event.id} /> : null}
-
-
-      {this.state.isContentModalOpened ? <ContentModal
-        content={this.state.textContent}
-        isOpen={this.state.isContentModalOpened}
-        closed={() => {
-          this.setStatePure({
-            isContentModalOpened: false,
-            textContent: null,
-          });
-        }}
-      ></ContentModal> : null}
-      {this.state.isAreYouSureModalOpened ? <AreYouSure
-        isOpen={this.state.isAreYouSureModalOpened}
-        title={this.state.warnTitle}
-        closed={() => {
-          this.setStatePure({
-            isAreYouSureModalOpened: false,
-            warnDescription: null,
-            warnTitle: null,
-            callback: null,
-          });
-        }}
-        callback={() => this.state.callback()}
-        ok={this.state.okButtonText}
-        message={this.state.warnDescription}
-      ></AreYouSure> : null}
-      {this.state.isInviteModalOpened ? <InviteParticipantModal
-        adding={this.state.adding}
-        invite={(members) => this.invite(members)}
-        onClosed={() => {
-          this.setStatePure({
-            isInviteModalOpened: false,
-          });
-        }}
-        master={this.master}
-        isOpen={this.state.isInviteModalOpened}
-        participant={this.event.participant}
-      ></InviteParticipantModal> : null}
-      {this.state.isShareLinkModalOpened ? <ShareAsLink
-        onClosed={this.hideShareLinkModal.bind(this)}
-        link={this.state.link}
-        share={this.forwardLink.bind(this)}
-        isOpen={this.state.isShareLinkModalOpened}>
-
-      </ShareAsLink> : null}
-      {this.state.isShareWithYourContactsModalOpened ?
-        <ShareWithYourContacts
-          isOpen={this.state.isShareWithYourContactsModalOpened}
-          message={this.state.message}
-          activity_id={this.event.id}
-          sender={request.Message().sender}
-          committee_id={this.event.id}
-          onClosed={this.hideShareWithYourContacts.bind(this)}
-        >
-        </ShareWithYourContacts> : null}
-      {this.state.showEventDetail?<DetailsModal
-        event={{ ...request.Event(),id:this.state.event_id }}
-        isToBeJoint
-        isOpen={this.state.showEventDetail}
-        onClosed={this.hideDetailModal.bind(this)}
-        >
-        </DetailsModal>:null}
-      {this.state.isManagementModalOpened ? <ManageMembersModal
-        isOpen={this.state.isManagementModalOpened}
-        checkActivity={(member) => this.checkActivity(member)}
-        creator={this.event.creator_phone}
-        participants={this.event.participant}
-        master={this.master}
-        changeMasterState={(newState) =>
-          this.changeEventMasterState(newState)
-        }
-        bandMembers={(selected) => this.bandMember(selected)}
-        onClosed={() => {
-          this.setStatePure({
-            isManagementModalOpened: false,
-          });
-        }}
-      ></ManageMembersModal> : null}
-      {this.state.isSelectPhotoInputMethodModal ? <PhotoInputModal
-        replyToPhoto={this.replyToPhoto.bind(this)}
-        isRelation={!this.computedMaster || this.isRelation}
-        saveBackground={(url) => this.saveBackground(url)}
-        photo={this.event.background}
-        showActivityPhoto={() => {
-          this.event.background && this.showPhoto(this.event.background);
-        }}
-        isOpen={this.state.isSelectPhotoInputMethodModal}
-        closed={this.hidePhotoIput.bind(this)}
-      ></PhotoInputModal> : null}
-      {this.state.isProfileModalOpened ? <ProfileModal
-        profile={this.state.profile}
-        isOpen={this.state.isProfileModalOpened}
-        onClosed={() => {
-          this.setStatePure({
-            isProfileModalOpened: false,
-          });
-        }}
-      ></ProfileModal> : null}
-      {this.state.isSettingsModalOpened ? <SettingsTabModal
-        addMembers={() => this.startInvitation(true)}
-        invite={() => this.startInvitation()}
-        remove={() => this.showMembers()}
-        isOpen={this.state.isSettingsModalOpened}
-        currentPhone={this.user.phone}
-        leaveActivity={() => this.preleaveActivity()}
-        changeMasterState={(newState) =>
-          this.changeEventMasterState(newState)
-        }
-        bandMembers={(selected) => this.bandMember(selected)}
-        checkActivity={(member) => this.checkActivity(member)}
-        closeActivity={() => {
-          this.event.closed
-            ? this.closeActivity()
-            : this.setStatePure({
-              isAreYouSureModalOpened: true,
-              callback: () => this.closeActivity(),
-              warnDescription: Texts.are_you_sure_to_close,
-              warnTitle: Texts.close_activity,
-              okButtonText: Texts.close,
-            });
-        }}
-        creator={this.event.creator_phone === this.user.phone}
-        computedMaster={this.computedMaster}
-        master={this.master}
-        event={this.event}
-        saveSettings={(original, newSettings) => {
-          this.saveSettings(original, newSettings);
-        }}
-        closed={this.closeSettingModal.bind(this)}
-      ></SettingsTabModal> : null}
-    </View>
+    );
   }
   render() {
     StatusBar.setHidden(false, true);
-    return !this.state.mounted ? null : (!this.isChat(this.state.currentPage) ? <View style={{ height: '100%' }}>{this.renderMenu()}
-      {this.renderExtra()}
-    </View> : <View>
-        {this.state.fresh ? (
-          <View
-            style={{
-              height: "100%",
-              width: "100%",
-              backgroundColor: colorList.bodyBackground,
-            }}
-          ></View>
-        ) : this.renderMenu()}
+    return !this.state.mounted ? null : !this.isChat(this.state.currentPage) ? (
+      <View style={{ height: "100%" }}>
+        {this.renderMenu()}
         {this.renderExtra()}
       </View>
-    )
+    ) : (
+        <View>
+          {this.state.fresh ? (
+            <View
+              style={{
+                height: "100%",
+                width: "100%",
+                backgroundColor: colorList.bodyBackground,
+              }}
+            ></View>
+          ) : (
+              this.renderMenu()
+            )}
+          {this.renderExtra()}
+        </View>
+      );
   }
 }

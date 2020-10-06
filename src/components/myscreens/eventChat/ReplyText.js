@@ -144,13 +144,7 @@ export default class ReplyText extends BePureComponent {
     this.props.openReply(this.props.reply);
   }
   render() {
-    let canBeExtraSmall = this.props.reply.type === message_types.text
-      || this.props.reply.type == message_types.audio ||
-      this.props.reply.type == message_types.remind_message ||
-      this.props.reply.type == message_types.star_message ||
-      this.props.reply.type == message_types.photo || 
-      this.props.reply.type == message_types.video ||
-      this.props.reply.type == message_types.file
+    let cannotBeExtraSmall = this.props.reply.type === message_types.relation_message
     return (
       <TouchableWithoutFeedback
         //onLongPress={() =>
@@ -171,8 +165,8 @@ export default class ReplyText extends BePureComponent {
             //maxWidth: "100%",
             width: '100%',
             maxHeight: 150,
-            minWidth: canBeExtraSmall
-              ? 100 : 200,
+            minWidth: cannotBeExtraSmall
+              ? 200 : 100,
             borderTopLeftRadius: 5,
             borderTopRightRadius: 5,
           }}
@@ -204,27 +198,33 @@ export default class ReplyText extends BePureComponent {
                   </View>
                   <View
                     style={{
-                      //width: !this.props.reply.type_extern ? "100%" : "93%",
+                      flexDirection: 'row',
+                      //flex: 1,
+                      //width: !this.props.reply.type_extern ? "100%" : "95%",
                     }}
                   >
                     {this.props.reply.replyer_name ? <ChatUser
+                      activity_name={this.props.reply.activity_name}
                       reply
                       phone={this.props.reply.replyer_phone}
                       showProfile={this.showReplyer.bind(this)}
                     >
-                    </ChatUser> : <Text
+                    </ChatUser> : <TextContent
                       note
                       ellipsizeMode={"tail"}
                       numberOfLines={1}
                       style={{
                         ...GState.defaultTextStyle,
                         fontWeight: "bold",
+                        flexShrink: 1,
+                        flexWrap: 'wrap',
                         color: ColorList.indicatorColor,
-                        maxWidth: "98%",
+                        maxWidth: "99%",
                       }}
                     >
-                        {`${this.props.reply.title && this.props.reply.title.split(": \n")[0]}`}
-                      </Text>}
+                        {`${(this.props.reply.activity_name ? 
+                          ("("+this.props.reply.activity_name + ") ") : "")}${this.props.reply.title && this.props.reply.title.split(": \n")[0]}`}
+                      </TextContent>}
                   </View>
                 </View>
               </View>
@@ -349,7 +349,7 @@ export default class ReplyText extends BePureComponent {
                           //maxWidth: 200,
                           alignSelf: this.props.reply.rounded ? "center" : "flex-end",
                           marginLeft: this.props.reply.sourcer ? ".5%" : null,
-                           maxWidth: this.props.reply.sourcer ? "74%" : "98%",
+                          maxWidth: this.props.reply.sourcer ? "74%" : "98%",
                         }}
                       >
                         {this.props.reply.title ? (
@@ -367,7 +367,7 @@ export default class ReplyText extends BePureComponent {
                                   : 5
                                 : 7
                             }
-                            style={{ fontSize: 12, color: "#1F4237", flexShrink: 1}}
+                            style={{ fontSize: 12, color: "#1F4237", flexShrink: 1 }}
                             text={
                               this.props.reply.replyer_name
                                 ? this.props.reply.title && this.props.reply.title
@@ -389,7 +389,7 @@ export default class ReplyText extends BePureComponent {
                                   : 6
                                 : 4
                             }
-                              style={{ fontSize: 12, flexShrink: 1, }}
+                            style={{ fontSize: 12, flexShrink: 1, }}
                             text={this.props.reply.text}
                           ></TextContent>
                         ) : null}

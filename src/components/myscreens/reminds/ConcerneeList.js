@@ -10,14 +10,28 @@ import ColorList from '../../colorList';
 import { format } from '../../../services/recurrenceConfigs';
 import moment from 'moment';
 import Spinner from '../../Spinner';
+import Texts from '../../../meta/text';
+import MessageActions from '../eventChat/MessageActons';
+import Vibrator from '../../../services/Vibrator';
+import SideButton from '../../sideButton';
+import AntDesign from 'react-native-vector-icons/AntDesign';
+import GState from '../../../stores/globalState';
+import rounder from '../../../services/rounder';
+import shadower from '../../shadower';
+import { _onScroll } from '../currentevents/components/sideButtonService';
+import emitter from '../../../services/eventEmiter';
+import { members_updated } from '../../../meta/events';
 
 
 export default class ConcerneeList extends BeComponent {
     constructor(props) {
         super(props)
+        this.onScroll = _onScroll.bind(this)
     }
     state = {
         index: null,
+        newing:false,
+        isActionButtonVisible: true,
         mounted: false
     }
     _keyExtractor = (item, index) => index.toString()
@@ -26,37 +40,91 @@ export default class ConcerneeList extends BeComponent {
         return { length: 60, offset: index * 60, index }
     }
     highlightItem(index) {
+        this.setStatePure({
+            index,
+        })
+        setTimeout(() => {
             this.setStatePure({
-                index,
+                index: null,
             })
-            setTimeout(() => {
-                this.setStatePure({
-                    index: null,
-                })
-            }, 2000)
+        }, 2000)
+    }
+    refreshList() {
+        this.setStatePure({
+            newing: !this.state.newing
+        })
     }
     componentDidMount() {
         setTimeout(() => {
             if (this.props.currentRemindUser) {
-                let index = this.props.contacts.findIndex(ele => ele === this.props.currentRemindUser.phone)
-                index>= 0 && this.refs.flatlist && this.refs.flatlist.scrollToIndex(index)
+                let index = this.getMembers().findIndex(ele => ele === this.props.currentRemindUser.phone)
+                index >= 0 && this.refs.flatlist && this.refs.flatlist.scrollToIndex(index)
             }
             this.setStatePure({
                 mounted: true
             })
+            emitter.on(members_updated, () => {
+               this.mounted && this.refreshList()
+            })
         })
     }
+    returnDataForRepply(item) {
+        return { phone: item, type: this.props.type, status: { date: moment(this.props.initDate, format).format() } }
+    }
+    showAction(item) {
+        this.setStatePure({
+            showAction: true,
+            item
+        })
+    }
+    unmountingComponent(){
+        emitter.off(members_updated)
+    }
+    MembersAction = () => [
+        {
+            title: Texts.reply,
+            callback: () => this.props.reply(this.state.item),
+            iconName: "reply",
+            condition: () => true,
+            iconType: "Entypo",
+            color: ColorList.replyColor,
+        },
+        {
+            title: Texts.reply_privately,
+            callback: () => this.props.replyPrivate(this.state.item),
+            iconName: "reply",
+            condition: () => !this.props.isRelation,
+            iconType: "Entypo",
+            color: ColorList.replyColor,
+        }, {
+            title: Texts.unassign,
+            callback: () => this.props.removeMember(this.state.item),
+            iconName: "deleteusergroup",
+            condition: () => this.props.master,
+            iconType: "AntDesign",
+            color: "orange",
+        }]
+    hideAction() {
+        this.setStatePure({
+            showAction: false
+        })
+    }
+    getMembers(){
+        return (this.props.getMembers && this.props.getMembers()).map(ele => ele && ele.phone) || this.props.contacts
+    }
     render() {
+        let data = this.getMembers()
         return this.state.mounted ? <View>
             <BleashupFlatList
+                onScroll={this.onScroll}
                 firstIndex={0}
                 ref={"flatlist"}
                 renderPerBatch={5}
                 initialRender={20}
                 getItemLayout={this.getItemLayout.bind(this)}
-                numberOfItems={this.props.contacts.length}
+                numberOfItems={data.length}
                 keyExtractor={this._keyExtractor}
-                dataSource={this.props.contacts}
+                dataSource={data}
                 renderItem={(item, index) => {
                     let isCurrentIndex = index == this.state.index
                     this.delay = this.delay >= 20 ? 0 : this.delay + 1
@@ -67,7 +135,7 @@ export default class ConcerneeList extends BeComponent {
                                 item.to === this.props.actualInterval.end}
                             first={index === 0 ? true : false}
                             from={item.from}>
-                            </IntervalSeparator> :
+                        </IntervalSeparator> :
                             <View style={{
                                 width: '90%',
                                 alignSelf: 'center',
@@ -93,13 +161,16 @@ export default class ConcerneeList extends BeComponent {
                                 padding: "1%",
                                 backgroundColor: isCurrentIndex ? ColorList.remindsTransparent : ColorList.bodyBackground,
                                 borderRadius: 15,
+                                alignItems: 'center',
                                 flexDirection: 'row',
                                 width: "90%"
                             }}
-                            key={index.toString()}><Swipeout swipeRight={() => {
-                                this.props.reply({ phone: item, type: this.props.type, status: { date: moment(this.props.initDate, format).format() } })
-                            }}
-                                disableLeftSwipe={true}>
+                            key={index.toString()}><Swipeout onLongPress={() => {
+                                Vibrator.vibrateShort()
+                                this.showAction(this.returnDataForRepply(item))
+                            }} swipeRight={() => {
+                                this.props.reply(this.returnDataForRepply(item))
+                            }}>
                                 <View
                                     style={{
                                         margin: '2%',
@@ -109,12 +180,41 @@ export default class ConcerneeList extends BeComponent {
                                         showHighlighter={() => this.props.currentRemindUser &&
                                             this.props.currentRemindUser.phone == item &&
                                             this.highlightItem(index)}
-                                    delay={this.delay} phone={item}></ProfileView>
+                                        delay={this.delay} phone={item}></ProfileView>
                                 </View>
                             </Swipeout></View>)
 
                 }}
             />
+            {this.state.isActionButtonVisible ? <SideButton
+                buttonColor={ColorList.transparent}
+                renderIcon={() => {
+                    return <TouchableOpacity
+                        onPress={this.props.addMembers}
+                        style={{
+                            ...rounder(50, ColorList.bodyBackground),
+                            justifyContent: 'center',
+                            ...shadower(2)
+                        }}
+                    >
+                        <AntDesign
+                            name={"addusergroup"}
+                            style={{
+                                ...GState.defaultIconSize,
+                                color: ColorList.indicatorColor
+                            }}
+                        >
+                        </AntDesign>
+                    </TouchableOpacity>
+                }}
+            >
+            </SideButton> : null}
+            {this.state.showAction ? <MessageActions
+                title={Texts.remind_member_action}
+                actions={this.MembersAction}
+                isOpen={this.state.showAction}
+                onClosed={this.hideAction.bind(this)}
+            ></MessageActions> : null}
         </View> : <Spinner></Spinner>
     }
 }

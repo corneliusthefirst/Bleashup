@@ -87,21 +87,21 @@ let { height, width } = Dimensions.get('window');
       isMounted: true,
       EventHighlightState: this.props.star || this.props.autoStar ? true : false,
       participant: participant
+    }, () => {
+      if ((!stores.Highlights.highlights[this.props.Event.id] ||
+        stores.Highlights.highlights[this.props.Event.id].length <= 1)) {
+        stores.Highlights.fetchHighlights(this.props.Event.id).then(() => {
+
+        })
+      }
+      if (this.props.id) {
+        let arr = stores.Highlights.highlights[this.props.Event.id].
+          filter(el => globalFunctions.filterStars(el, this.state.searchString || ""))
+        let scrollIndex = findIndex(arr, { id: this.props.id })
+        if (scrollIndex >= 0)
+          this.refs.postList && this.refs.postList.scrollToIndex(scrollIndex)
+      }
     });
-    if ((!stores.Highlights.highlights[this.props.Event.id] ||
-      stores.Highlights.highlights[this.props.Event.id].length <= 1)) {
-      stores.Highlights.fetchHighlights(this.props.Event.id).then(() => {
-
-      })
-    }
-    if (this.props.id) this.waitToScroll = setTimeout(() => {
-      let arr = stores.Highlights.highlights[this.props.Event.id].
-        filter(el => globalFunctions.filterStars(el, this.state.searchString || ""))
-      let scrollIndex = findIndex(arr, { id: this.props.id })
-      if (scrollIndex >= 0)
-        this.refs.postList && this.refs.postList.scrollToIndex(scrollIndex)
-
-    }, 100)
   }
   initialScrollIndexer = 2
   incrementer = 2
@@ -182,6 +182,9 @@ let { height, width } = Dimensions.get('window');
   mention(replyer) {
     this.props.mention(replyer)
   }
+  mentionPrivately(item) {
+    this.props.mentionPrivately(item)
+  }
   delay = 1
   sorter = (a, b) => (a.created_at > b.created_at ? -1 :
     a.created_at < b.created_at ? 1 : 0)
@@ -217,7 +220,7 @@ let { height, width } = Dimensions.get('window');
     })
   }
   shareLink(item) {
-    this.props.shareLink(constructStarLink(item.event_id, item.id))
+    this.props.shareLink(constructStarLink(item.event_id, item.id),{},null,true)
   }
   action = () => [
     {
@@ -225,6 +228,14 @@ let { height, width } = Dimensions.get('window');
       callback: () => this.mention(this.state.selectedItem),
       iconName: Texts.reply,
       condition: () => true,
+      iconType: "Entypo",
+      color: colorList.replyColor
+    },
+    {
+      title: Texts.reply_privately,
+      callback: () => this.mentionPrivately(this.state.selectedItem),
+      iconName: 'reply',
+      condition: () => !this.props.isRelation || this.props.Event.participant.length > 1,
       iconType: "Entypo",
       color: colorList.replyColor
     },
@@ -287,18 +298,21 @@ let { height, width } = Dimensions.get('window');
           <View style={{
             flex: 1,
             justifyContent: 'space-between',
-            marginRight: '3%',
+            marginHorizontal: '1%',
             backgroundColor: colorList.headerBackground,
             flexDirection: "row",
             alignItems: "center",
           }}>
-            <TouchableOpacity onPress={() => requestAnimationFrame(this.props.goback)} style={{ width: "10%", paddingLeft: "3%" }} >
+            <TouchableOpacity onPress={() => requestAnimationFrame(this.props.goback)} style={{ 
+              width: 30,
+              marginRight:'2%', 
+            }} >
               <MaterialIcons
                 style={{ ...GState.defaultIconSize, color: colorList.headerIcon, }} type={"MaterialIcons"}
                 name={"arrow-back"} />
             </TouchableOpacity>
 
-            {!this.state.searching ? <View style={{ width: '69%', justifyContent: "center" }}>
+            {!this.state.searching ? <View style={{ flex: 1, justifyContent: "center" }}>
               <Text style={{
                 color: colorList.headerText, fontWeight: 'bold',
                 alignSelf: 'flex-start',
@@ -309,7 +323,8 @@ let { height, width } = Dimensions.get('window');
             <View style={{
               flexDirection: 'column',
               justifyContent: 'center',
-              width: this.state.searching ? "90%" : 35,
+              flex: this.state.searching ? 1 : null,
+              width: this.state.searching ? null : 35,
               height: 35
             }}>
               <Searcher

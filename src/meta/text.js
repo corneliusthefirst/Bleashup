@@ -57,10 +57,6 @@ class TEXTS {
         en: "Go Back",
         fr: "Retoure"
     }[GState.lang]
-    join_via_qr = {
-        en: "Join activity through QR Code",
-        fr: "Rejoindre par QR"
-    }[GState.lang]
     confirm_password = {
         en: "Please confirm password",
         fr: "Confirmez votre mots de pass"
@@ -828,6 +824,54 @@ class TEXTS {
     loading_data = {
         en: "Loading Data",
         fr: "Chargement des donnee"
+    }[GState.lang]
+    reply_privately_to = {
+        en: "Reply privately to",
+        fr: "Repondre en privee a"
+    }[GState.lang]
+    author = {
+        en:"Author",
+        fr: "Auteur"
+    }[GState.lang]
+    reply_privately = {
+        en: "Reply privately",
+        fr: "Repondre en privee"
+    }[GState.lang]
+    remind_member_action = {
+        en: "remind member action",
+        fr: 'action sure les members'
+    }[GState.lang]
+    add_report = {
+        en: "Add Report",
+        fr: "Ajouter un raport"
+    }[GState.lang]
+    advanced_config={
+        en: "Advanced Configurations",
+        fr: "Configuration Avancee"
+    }[GState.lang]
+    latest_update = {
+        en: "Recently updated: ",
+        fr: "Recement mis a jour "
+    }[GState.lang]
+    upddated_ = {
+        en :"Updated ",
+        fr: "Mis a jours "
+    }[GState.lang]
+    times = {
+        en: "Times",
+        fr: "Fois"
+    }[GState.lang]
+    program_members = {
+        en: "Program Members",
+        fr: "Membres du program"
+    }[GState.lang]
+    join_activity_or_program_via_qr = {
+        en: "Join an activity or program through QR",
+        fr: "Rejoindre une activitee ou un program par code QR"
+    }[GState.lang]
+    relation = {
+        en: "Relation",
+        fr: "Relation"
     }[GState.lang]
 }
 const Texts = new TEXTS()

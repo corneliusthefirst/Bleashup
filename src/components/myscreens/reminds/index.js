@@ -67,10 +67,11 @@ import Spinner from "../../Spinner";
 import AnimatedPureComponent from "../../AnimatedPureComponent";
 import { returnCurrentPatterns, sendRemindAsMessage } from "./remindsServices";
 import messagePreparer from "../eventChat/messagePreparer";
-import { constructProgramLink } from '../eventChat/services';
+import { constructProgramLink } from "../eventChat/services";
+import { members_updated } from "../../../meta/events";
 
 @observer
-class Reminds extends AnimatedPureComponent {
+class Reminds extends AnimatedComponent {
   initialize() {
     this.state = {
       eventRemindData: [],
@@ -85,6 +86,9 @@ class Reminds extends AnimatedPureComponent {
     this.cancelSearch = cancelSearch.bind(this);
     this.startSearching = startSearching.bind(this);
     this.search = justSearch.bind(this);
+    this.renderItem = this.renderItem.bind(this);
+    this.getItemLayout = this.getItemLayout.bind(this);
+    this.editReport = this.editReport.bind(this)
   }
   addMembers(currentMembers, item) {
     this.setStatePure({
@@ -104,7 +108,7 @@ class Reminds extends AnimatedPureComponent {
     } else {
       let newMembers = members.filter(
         (ele) =>
-          findIndex(this.state.currentTask.members, { phone: ele.phone }) < 0
+          ele && findIndex(this.state.currentTask.members, { phone: ele.phone }) < 0
       );
       if (newMembers.length > 0) {
         this.props.startLoader();
@@ -149,25 +153,25 @@ class Reminds extends AnimatedPureComponent {
       stores.Reminds.loadReminds(this.props.event_id).then((reminds) => { });
     }
     if (this.props.currentMembers || this.props.remind) {
-      BeNavigator.pushTo("TaskCreation", this.returnTaskCreationOptions())
+      BeNavigator.pushTo("TaskCreation", this.returnTaskCreationOptions());
     }
     setTimeout(() => {
-      this.setStatePure({
-        mounted: true,
-        //RemindCreationState:
-        //  this.props.currentMembers || this.props.remind ? true : false,
-      });
-    }, 5);
-    if (this.props.id)
-      this.waitToScroll = setTimeout(() => {
-        let scrollIndex = findIndex(this.getRemindData(), {
-          id: this.props.id,
-        });
-        scrollIndex >= 0 &&
-          this.refs.RemindsList &&
-          this.refs.RemindsList.scrollToIndex(scrollIndex);
-        clearTimeout(this.waitToScroll);
-      }, 5);
+      this.setStatePure(
+        {
+          mounted: true,
+        },
+        () => {
+          if (this.props.id) {
+            let scrollIndex = findIndex(this.getRemindData(), {
+              id: this.props.id,
+            });
+            scrollIndex >= 0 &&
+              this.refs.RemindsList &&
+              this.refs.RemindsList.scrollToIndex(scrollIndex);
+          }
+        }
+      );
+    });
   }
   saveRemoved(members) {
     if (this.props.working) {
@@ -175,7 +179,7 @@ class Reminds extends AnimatedPureComponent {
     } else {
       this.props.startLoader();
       RemindRequest.removeMembers(
-        members.map((ele) => ele.phone),
+        members.map((ele) => ele && ele.phone),
         this.state.currentTask.id,
         this.state.currentTask.event_id
       )
@@ -201,12 +205,7 @@ class Reminds extends AnimatedPureComponent {
         duration: 4000,
       });
     } else {
-      BeNavigator.pushTo("TaskCreation", this.returnTaskCreationOptions())
-      /*this.setStatePure({
-        RemindCreationState: true,
-        update: false,
-        newing: !this.state.newing,
-      });*/
+      BeNavigator.pushTo("TaskCreation", this.returnTaskCreationOptions());
     }
   }
   sendUpdate() {
@@ -224,12 +223,17 @@ class Reminds extends AnimatedPureComponent {
   }
   refreshReminds() {
     this.animateUI();
-    this.setStatePure({
-      newing: !this.state.newing,
-      currentTask:
-        this.state.currentTask &&
-        find(this.getRemindData(), { id: this.state.currentTask.id }),
-    });
+    this.setStatePure(
+      {
+        newing: !this.state.newing,
+        currentTask:
+          this.state.currentTask &&
+          find(this.getRemindData(), { id: this.state.currentTask.id }),
+      },
+      () => {
+        emitter.emit(members_updated);
+      }
+    );
   }
 
   updateRemind(data) {
@@ -240,7 +244,10 @@ class Reminds extends AnimatedPureComponent {
       newing: !this.state.newing,
       remind_id: data.id,
     });
-    BeNavigator.pushTo("TaskCreation", this.returnTaskCreationOptions(data.id, true))
+    BeNavigator.pushTo(
+      "TaskCreation",
+      this.returnTaskCreationOptions(data.id, true)
+    );
   }
 
   back() {
@@ -301,8 +308,8 @@ class Reminds extends AnimatedPureComponent {
       if (
         findIndex(this.state.currentTask.confirmed, (ele) =>
           confirmedChecker(ele, user.phone, {
-            start: interval.start,
-            end: interval.end,
+            start: interval && interval.start,
+            end: interval && interval.end,
           })
         ) >= 0
       ) {
@@ -339,11 +346,13 @@ class Reminds extends AnimatedPureComponent {
       RemindRequest.markAsDone(
         [
           {
-            ...member,
+            ...(this.state.currentDonner || member),
             status: {
-              report: report,
               date: moment().format(),
               status: member.status,
+              ...(this.state.currentDonner && this.state.currentDonner.status),
+              latest_edit: this.state.currentDonner && moment().format(),
+              report: report,
             },
           },
         ],
@@ -434,7 +443,6 @@ class Reminds extends AnimatedPureComponent {
     return this.flatterarray(array, result, i + 1);
   }
   filterDonners(interval) {
-    //console.warn(interval)
     let donners = this.state.currentTask.donners.filter((ele) =>
       this.intervalFilterFunc(ele, interval)
     );
@@ -443,8 +451,8 @@ class Reminds extends AnimatedPureComponent {
   intervalFilterFunc(el, ele) {
     return (
       moment(el.status.date).format("x") >
-      moment(ele.start, format).format("x") &&
-      moment(el.status.date).format("x") <= moment(ele.end, format).format("x")
+      (ele && moment(ele.start, format).format("x")) &&
+      moment(el.status.date).format("x") <= (ele && moment(ele.end, format).format("x"))
     );
   }
   filterConfirmed(interval) {
@@ -452,25 +460,40 @@ class Reminds extends AnimatedPureComponent {
       this.intervalFilterFunc(ele, interval)
     );
   }
-  returnRouteActions(members, currentTask,
-    actualInterval, intervals) {
+  editReport(donner) {
+    this.setStatePure({
+      currentDonner: donner,
+      currentReport: donner.status.report,
+      showReportModal: true,
+      reportEditing: true
+    })
+  }
+  returnRouteActions(members, currentTask, actualInterval, intervals, type) {
     return {
-      type: this.props.type,
+      type: type || this.props.type,
+      editReport: this.editReport,
+      removeMember: (firstMem) => {
+        this.callRemoveMembers(firstMem.phone);
+      },
+      addMembers: () => {
+        this.callAddMembers();
+      },
+      getMembers: () => this.state.currentTask.members,
       currentRemindUser: this.props.currentRemindUser,
       concernees: members,
       reply: this.reply.bind(this),
       confirmed: this.filterConfirmed.bind(this),
+      replyPrivate: this.replyPrivate.bind(this),
       donners: this.filterDonners.bind(this),
       intervals: intervals,
+      isRelation:
+        this.props.isRelation && this.props.event.participant.length > 1,
       confirm: this.confirm.bind(this),
       master:
-        currentTask &&
-        stores.LoginStore.user.phone === currentTask.creator,
-      must_report:
-        currentTask && currentTask.must_report,
+        currentTask && stores.LoginStore.user.phone === currentTask.creator,
+      must_report: currentTask && currentTask.must_report,
       actualInterval: actualInterval,
-
-    }
+    };
   }
   returnTaskCreationOptions(remind_id, update) {
     return {
@@ -481,8 +504,7 @@ class Reminds extends AnimatedPureComponent {
           isExtra: true,
           TaskCreationExtra: true,
         });
-      }
-      ,
+      },
       starRemind: this.props.remind,
       master: this.props.master,
       event_id: this.props.event_id,
@@ -495,19 +517,25 @@ class Reminds extends AnimatedPureComponent {
           TaskCreationExtra: true,
           isExtra: true,
           RemindCreationState: false,
-        })
+        });
       },
       currentMembers: this.props.currentMembers,
-      event: this.props.event
-    }
+      event: this.props.event,
+    };
   }
-  showReport(intervals, thisInterval) {
+  showReport(intervals, thisInterval, type) {
     let item = this.state.remind;
-    let members = uniq(item.members.map((ele) => ele.phone));
-    BeNavigator.pushTo("Report", this.returnRouteActions(members,
-      item,
-      thisInterval,
-      intervals))
+    let members = uniq(item.members.map((ele) => ele && ele.phone));
+    BeNavigator.pushTo(
+      "Report",
+      this.returnRouteActions(
+        members,
+        item,
+        thisInterval || this.state.actualInterval,
+        intervals || this.state.intervals,
+        type
+      )
+    );
     this.setStatePure({
       members: this.members,
       currentTask: item,
@@ -561,9 +589,31 @@ class Reminds extends AnimatedPureComponent {
       },
     });
   }
-  shareLink(){
-    this.props.shareLink && this.props.shareLink(constructProgramLink(this.props.event.id,
-      this.state.remind.id))
+  callRemoveMembers(current) {
+    this.removeMembers(
+      uniqBy(
+        (this.state.currentTask || this.state.remind).members.filter(
+          (ele) =>
+            this.state.creator || (ele && ele.phone === stores.LoginStore.user.phone)
+        )
+      ),
+      this.state.remind,
+      current
+    );
+  }
+  callAddMembers() {
+    this.addMembers(
+      uniqBy((this.state.currentTask || this.state.remind).members, "phone"),
+      this.state.remind
+    );
+  }
+  shareLink() {
+    this.props.shareLink &&
+      this.props.shareLink(
+        constructProgramLink(this.props.event.id, this.state.remind.id),
+        { remind_id: this.state.remind.id },
+        this.state.remind.title
+      );
   }
   actionIndex = this.state.currentIndex ? this.state.currentIndex() : {};
   remindsActions = () => [
@@ -572,6 +622,15 @@ class Reminds extends AnimatedPureComponent {
       callback: () => this.mention(this.state.remind),
       iconName: "reply",
       condition: () => true,
+      iconType: "Entypo",
+      color: colorList.replyColor,
+    },
+    {
+      title: Texts.reply_privately,
+      callback: () => this.mentionPrivate(this.state.remind),
+      iconName: "reply",
+      condition: () =>
+        !this.props.isRelation || this.props.event.participant.length > 1,
       iconType: "Entypo",
       color: colorList.replyColor,
     },
@@ -593,8 +652,8 @@ class Reminds extends AnimatedPureComponent {
     },
     {
       title: Texts.members,
-      callback: () => this.showReport(this.state.intervals,
-        this.state.actualInterval),
+      callback: () =>
+        this.showReport(this.state.intervals, this.state.actualInterval),
       condition: () => true,
       iconName: "ios-people",
       iconType: "Ionicons",
@@ -613,11 +672,7 @@ class Reminds extends AnimatedPureComponent {
       title: Texts.assign,
       condition: () =>
         globalFunctions.isMe(this.state.creator) || this.props.master,
-      callback: () =>
-        this.addMembers(
-          uniqBy(this.state.remind.members, "phone"),
-          this.state.remind
-        ),
+      callback: () => this.callAddMembers(),
       iconName: "addusergroup",
       iconType: "AntDesign",
       color: colorList.indicatorColor,
@@ -626,16 +681,7 @@ class Reminds extends AnimatedPureComponent {
       title: Texts.unassign,
       condition: () =>
         globalFunctions.isMe(this.state.creator) || this.props.master,
-      callback: () =>
-        this.removeMembers(
-          uniqBy(
-            this.state.remind.members.filter(
-              (ele) =>
-                this.state.creator || ele.phone === stores.LoginStore.user.phone
-            )
-          ),
-          this.state.remind
-        ),
+      callback: () => this.callRemoveMembers(),
       iconName: "deleteusergroup",
       iconType: "AntDesign",
       color: "orange",
@@ -660,13 +706,29 @@ class Reminds extends AnimatedPureComponent {
     });
   }
   reply(item) {
-    this.hideReportModal();
-    setTimeout(() => {
-      let reply = GState.prepareMentionForRemindsMembers(
-        item,
-        this.state.currentTask
-      );
-      this.props.mention(reply);
+    //this.hideReportModal();
+    ///setTimeout(() => {
+    let reply = GState.prepareMentionForRemindsMembers(
+      item,
+      this.state.currentTask
+    );
+    this.props.mention(reply);
+    // });
+  }
+  replyPrivate(item) {
+    let reply = GState.prepareMentionForRemindsMembers(
+      item,
+      this.state.currentTask
+    );
+    reply.from_activity = this.props.event.id;
+    reply.activity_name = this.props.event.about.title;
+    let members = this.getMembersForPrivateMwntion(this.state.currentTask);
+    GState.reply = reply;
+    this.props.replyPrivately(members, item.phone);
+  }
+  hideAction() {
+    this.setStatePure({
+      showRemindActions: false,
     });
   }
   hideReportModal() {
@@ -676,8 +738,8 @@ class Reminds extends AnimatedPureComponent {
     this.props.clearIndexedRemind && this.props.clearIndexedRemind();
   }
   showSharer() {
-    let message = messagePreparer.formMessageFromRemind(this.state.remind)
-    this.props.showSharer && this.props.showSharer(message)
+    let message = messagePreparer.formMessageFromRemind(this.state.remind);
+    this.props.showSharer && this.props.showSharer(message);
   }
   hideSharing() {
     this.setStatePure({
@@ -724,21 +786,21 @@ class Reminds extends AnimatedPureComponent {
             }}
           />
         ) : null}
-        {this.state.showReportModal ? (
-          <AddReport
-            report={(report) => {
-              this.markAsDoneWithReport(report);
-            }}
-            onClosed={() => {
-              this.setStatePure({
-                showReportModal: false,
-              });
-            }}
-            isOpen={this.state.showReportModal}
-          />
-        ) : null}
+        <AddReport
+          currentReport={this.state.currentReport || ""}
+          report={(report) => {
+            this.markAsDoneWithReport(report);
+          }}
+          onClosed={() => {
+            this.setStatePure({
+              showReportModal: false,
+            });
+          }}
+          isOpen={this.state.showReportModal}
+        />
         {this.state.isSelectableContactsModalOpened ? (
           <SelectableContactList
+            firstMember={this.state.firstMember}
             adding={this.state.adding}
             removing={this.state.removing}
             addMembers={(members) => {
@@ -797,11 +859,7 @@ class Reminds extends AnimatedPureComponent {
             title={Texts.remind_action}
             actions={this.remindsActions}
             isOpen={this.state.showRemindActions}
-            onClosed={() => {
-              this.setStatePure({
-                showRemindActions: false,
-              });
-            }}
+            onClosed={this.hideAction.bind(this)}
           ></MessageActions>
         ) : null}
       </View>
@@ -809,6 +867,17 @@ class Reminds extends AnimatedPureComponent {
   }
   mention(itemer) {
     this.props.mention(GState.prepareRemindsForMetion(itemer));
+  }
+  getMembersForPrivateMwntion(item) {
+    return uniqBy([...this.props.event.participant, ...item.members], "phone");
+  }
+  mentionPrivate(item) {
+    let reply = GState.prepareRemindsForMetion(item);
+    reply.from_activity = this.props.event_id;
+    reply.activity_name = this.props.event.about.title;
+    GState.reply = reply;
+    let members = this.getMembersForPrivateMwntion(item);
+    this.props.replyPrivately(members, item.creator);
   }
   showMedia = (url) => {
     if (url.video) {
@@ -826,10 +895,11 @@ class Reminds extends AnimatedPureComponent {
       complexReport: false,
     });
   };
-  removeMembers = (currentMembers, item) => {
+  removeMembers = (currentMembers, item, firstMember) => {
     this.setStatePure({
       isSelectableContactsModalOpened: true,
       currentTask: item,
+      firstMember,
       contacts: currentMembers,
       adding: false,
       removing: true,
@@ -845,8 +915,88 @@ class Reminds extends AnimatedPureComponent {
   share() {
     this.showSharer();
   }
+  renderItem(item, index) {
+    this.delay = index >= 5 ? 0 : this.delay + 1;
+    let isPointed = item.id === GState.currentID;
+    let update_state =
+      moment(item.updated_at).format("x") +
+      Number(isPointed) +
+      (this.state.searchString ? this.state.searchString.length : 0);
+    let membersState =
+      item.members.length + item.donners.length + item.confirmed.length;
+    return (
+      <TasksCard
+        members_state={membersState}
+        intervals_updated_at={
+          stores.Reminds.remindsIntervals[item.event_id] &&
+          stores.Reminds.remindsIntervals[item.event_id][item.id] &&
+          stores.Reminds.remindsIntervals[item.event_id][item.id].updated_at
+        }
+        update_state={update_state}
+        searchString={this.state.searchString}
+        showReport={this.showReport.bind(this)}
+        pointed_id={this.props.id}
+        type={this.props.type}
+        currentRemindUser={this.props.currentRemindUser}
+        isPointed={isPointed}
+        onLayout={(layout) =>
+          GState.itemDebounce(
+            item,
+            () => {
+              index = findIndex(stores.Reminds.Reminds[item.event_id], {
+                id: item.id,
+              });
+              stores.Reminds.persistDimenssion(index, item.event_id, layout);
+            },
+            500
+          )
+        }
+        showRemindActions={(
+          intervals,
+          thisInterval,
+          creator,
+          date,
+          showModal
+        ) => {
+          !showModal && Vibrator.vibrateShort();
+          this.showRemindActions(
+            { ...item, current_date: date },
+            intervals,
+            thisInterval,
+            creator,
+            showModal
+          );
+        }}
+        animate={this.animateUI}
+        showMedia={this.showMedia.bind(this)}
+        isLast={index === this.data.length - 1}
+        phone={stores.LoginStore.user.phone}
+        mention={(itemer) => {
+          this.mention(itemer);
+        }}
+        master={this.props.master}
+        markAsDone={(item) => this.markAsDone(item)}
+        assignToMe={(item) => this.assignToMe(item)}
+        calendar_id={this.props.event.calendar_id}
+        delay={this.delay}
+        addMembers={(currentMembers, item) =>
+          this.addMembers(currentMembers, item)
+        }
+        showMembers={this.showMembers.bind(this)}
+        showReport={this.showReport.bind(this)}
+        removeMembers={this.removeMembers}
+        updateRemind={(item) => this.updateRemind(item)}
+        update={(data) => this.updateRemind(data)}
+        deleteRemind={this.removeRemind.bind(this)}
+        item={item}
+      />
+    );
+  }
+  getItemLayout(item, index) {
+    return GState.getItemLayout(item, index, this.data, 70, 0);
+  }
   renderReminds() {
-    let data = this.getRemindData();
+    this.data = this.getRemindData();
     return (
       <View style={{ width: "100%", height: "100%" }}>
         {this.props.removeHeader ? null : (
@@ -869,7 +1019,7 @@ class Reminds extends AnimatedPureComponent {
               <TouchableOpacity
                 onPress={() => requestAnimationFrame(() => this.props.goback())}
                 style={{
-                  width: "10%",
+                  width: 60,
                   paddingLeft: "3%",
                   height: "100%",
                   justifyContent: "center",
@@ -888,9 +1038,8 @@ class Reminds extends AnimatedPureComponent {
               {!this.state.searching ? (
                 <View
                   style={{
-                    width: "80%",
-                    paddingLeft: "9%",
-                    justifyContent: "center",
+                    flex: 1,
+                    justifyContent: "flex-start",
                     height: "100%",
                     justifyContent: "center",
                   }}
@@ -910,7 +1059,9 @@ class Reminds extends AnimatedPureComponent {
               <View
                 style={{
                   height: 35,
-                  width: this.state.searching ? "90%" : 35,
+                  flex: this.state.searching ? 1 : null,
+                  width: this.state.searching ? null : 35,
+                  marginRight: 5,
                 }}
               >
                 <Searcher
@@ -930,104 +1081,16 @@ class Reminds extends AnimatedPureComponent {
             <BleashupFlatList
               onScroll={this.onScroll}
               fit={this.props.fit}
-              getItemLayout={(item, index) =>
-                GState.getItemLayout(item, index, data, 70, 0)
-              }
+              getItemLayout={this.getItemLayout}
               initialRender={6}
               ref="RemindsList"
               renderPerBatch={10}
               firstIndex={0}
               //showVerticalScrollIndicator={false}
-              keyExtractor={(item, index) => item.id}
-              dataSource={data}
-              renderItem={(item, index) => {
-                this.delay = index >= 5 ? 0 : this.delay + 1;
-                let isPointed = item.id === GState.currentID;
-                let update_state =
-                  moment(item.updated_at).format("x") +
-                  Number(isPointed) +
-                  (this.state.searchString
-                    ? this.state.searchString.length
-                    : 0);
-                let membersState =
-                  item.members.length +
-                  item.donners.length +
-                  item.confirmed.length;
-                return (
-                  <TasksCard
-                    members_state={membersState}
-                    intervals_updated_at={
-                      stores.Reminds.remindsIntervals[item.event_id] &&
-                      stores.Reminds.remindsIntervals[item.event_id][item.id] &&
-                      stores.Reminds.remindsIntervals[item.event_id][item.id]
-                        .updated_at
-                    }
-                    update_state={update_state}
-                    searchString={this.state.searchString}
-                    showReport={this.showReport.bind(this)}
-                    pointed_id={this.props.id}
-                    type={this.props.type}
-                    currentRemindUser={this.props.currentRemindUser}
-                    isPointed={isPointed}
-                    onLayout={(layout) =>
-                      GState.itemDebounce(
-                        item,
-                        () => {
-                          index = findIndex(
-                            stores.Reminds.Reminds[item.event_id],
-                            { id: item.id }
-                          );
-                          stores.Reminds.persistDimenssion(
-                            index,
-                            item.event_id,
-                            layout
-                          );
-                        },
-                        500
-                      )
-                    }
-                    showRemindActions={(
-                      intervals,
-                      thisInterval,
-                      creator,
-                      date,
-                      showModal
-                    ) => {
-                      !showModal && Vibrator.vibrateShort();
-                      this.showRemindActions(
-                        { ...item, current_date: date },
-                        intervals,
-                        thisInterval,
-                        creator,
-                        showModal
-                      );
-                    }}
-                    animate={this.animateUI}
-                    showMedia={this.showMedia.bind(this)}
-                    isLast={index === this.getRemindData().length - 1}
-                    phone={stores.LoginStore.user.phone}
-                    mention={(itemer) => {
-                      this.mention(itemer);
-                    }}
-                    master={this.props.master}
-                    markAsDone={(item) => this.markAsDone(item)}
-                    assignToMe={(item) => this.assignToMe(item)}
-                    calendar_id={this.props.event.calendar_id}
-                    delay={this.delay}
-                    addMembers={(currentMembers, item) =>
-                      this.addMembers(currentMembers, item)
-                    }
-                    showMembers={this.showMembers.bind(this)}
-                    showReport={this.showReport.bind(this)}
-                    removeMembers={this.removeMembers}
-                    updateRemind={(item) => this.updateRemind(item)}
-                    update={(data) => this.updateRemind(data)}
-                    deleteRemind={this.removeRemind.bind(this)}
-                    item={item}
-                  />
-                );
-              }}
-              numberOfItems={this.getRemindData().length}
+              keyExtractor={this._keyExtractor}
+              dataSource={this.data}
+              renderItem={this.renderItem}
+              numberOfItems={this.data}
             />
           ) : (
               <Spinner></Spinner>

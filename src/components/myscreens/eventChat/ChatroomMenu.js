@@ -25,10 +25,8 @@ export default class ChatroomMenu extends BePureComponent {
             isPublisherModalOpened: false
         }
     }
-    componentWillReceiveProps(nextProps) {
-        if (nextProps.hide) {
-            this._menu.hide()
-        }
+    shouldComponentUpdate(){
+        return false
     }
     _menu = null;
 

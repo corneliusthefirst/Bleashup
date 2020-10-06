@@ -48,7 +48,7 @@ export default class RemindMembers extends BleashupModal {
                         this.state.adding
                             ? this.props.participants.filter(
                                 (ele) =>
-                                    this.props.currentMembers.findIndex(
+                                    ele && this.props.currentMembers.findIndex(
                                         (e) => e.phone === ele.phone
                                     ) < 0
                             )
@@ -63,7 +63,7 @@ export default class RemindMembers extends BleashupModal {
                             ])
                             : this.props.takecheckedResult(
                                 this.props.currentMembers.filter(
-                                    (ele) => members.findIndex((e) => e.phone === ele.phone) < 0
+                                    (ele) => ele && members.findIndex((e) => e.phone === ele.phone) < 0
                                 )
                             )
                     }

@@ -32,6 +32,7 @@ export default class CurrentEvents extends AnimatedComponent {
         this.hideDetails = this.hideDetails.bind(this)
         this.goToActivity = this.goToActivity.bind(this)
         this._onScroll = _onScroll.bind(this)
+        this.renderItem = this.renderItem.bind(this)
     }
 
 
@@ -64,6 +65,29 @@ export default class CurrentEvents extends AnimatedComponent {
     goToActivity() {
         BeNavigator.navigateToActivity(ActivityPages.starts, this.state.event);
     }
+    renderItem(item, index) {
+        this.delay = index % this.renderPerbatch == 0 ? 0 : this.delay + 1
+        return item.type && item.type == active_types.relation ? <Relation
+            searchString={this.props.searchString}
+            key={item.id}
+            openDetails={this.openDetails}
+            renderDelay={this.delay * 25}
+            showPhoto={this.showPhoto} key={item.id} Event={item} />
+            : <PublicEvent
+                searchString={this.props.searchString}
+                key={item.id}
+                openDetails={this.openDetails}
+                renderDelay={this.delay * 5}
+                showPhoto={this.showPhoto}
+                key={item.id} Event={item} />
+
+    }
+    keyExtractor(item, index) {
+        return item.id
+    }
+    getItemLayout(item, index) {
+        return { length: 70, index, offset: 70 * index }
+    }
     render() {
         let data = this.props.data && this.props.data.filter((ele) =>
             globalFunctions.filterAllActivityAndRelation(ele, this.props.searchString || ""))
@@ -72,25 +96,12 @@ export default class CurrentEvents extends AnimatedComponent {
             <View style={styles.container}>
                 <BleashupFlatList
                     //backgroundColor={"white"} 
-                    keyExtractor={(item, index) => item.id}
+                    keyExtractor={this.keyExtractor}
                     dataSource={data || []}
                     onScroll={this._onScroll}
-                    renderItem={(item, index) => {
-                        this.delay = index % this.renderPerbatch == 0 ? 0 : this.delay + 1
-                        return item.type && item.type == active_types.relation ? <Relation
-                            searchString={this.props.searchString}
-                            key={item.id}
-                            openDetails={this.openDetails}
-                            renderDelay={this.delay * 25}
-                            showPhoto={this.showPhoto} key={item.id} Event={item} />
-                            : <PublicEvent
-                                searchString={this.props.searchString}
-                                key={item.id}
-                                openDetails={this.openDetails}
-                                renderDelay={this.delay * 5}
-                                showPhoto={this.showPhoto} key={item.id} Event={item} />
-                    }}
+                    renderItem={this.renderItem}
                     firstIndex={0}
+                    getItemLayout={this.getItemLayout}
                     renderPerBatch={this.renderPerbatch}
                     initialRender={20}
                     numberOfItems={(data && data.length) || 0}

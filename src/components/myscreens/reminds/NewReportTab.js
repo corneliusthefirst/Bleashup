@@ -17,6 +17,8 @@ import replies from '../eventChat/reply_extern';
 import { format } from "../../../services/recurrenceConfigs";
 import moment from 'moment';
 import Spinner from "../../Spinner";
+import MessageActions from "../eventChat/MessageActons";
+import Texts from '../../../meta/text';
 const screenheight = Math.round(Dimensions.get("window").height);
 export default class ReportTabModal extends TabModal {
   initialize() {
@@ -36,7 +38,7 @@ export default class ReportTabModal extends TabModal {
   }
   backdropPressToClose = false
   shouldComponentUpdate(prevprops, prevState) {
-    return (prevState.mounted !== this.state.mounted ||
+    return (prevState.mounted !== this.state.mounted || 
       this.props.isOpen !== prevprops.isOpen)
       ? true : false
   }
@@ -73,12 +75,20 @@ export default class ReportTabModal extends TabModal {
   currentRemindUser = this.getParam("currentRemindUser") || this.props.currentRemindUser
   master = this.getParam("master") || this.props.master
   confirm = this.getParam("confirm") || this.props.confirm
+  editReport = this.getParam("editReport") || this.props.editReport
   reply = this.getParam("reply") || this.props.reply
+  addMembers = this.getParam("addMembers") || this.props.addMembers
+  removeMember = this.getParam("removeMember") || this.props.removeMember
+  getMembers = this.getParam("getMembers") || this.props.getMembers
+  isRelation = this.getParam("isRelation") || this.props.isRelation
+  replyPrivate = this.getParam("replyPrivate") || this.props.replyPrivate
   confirmed = this.getParam("confirmed") || this.props.confirmed
   must_report = this.getParam("must_report") || this.props.must_report
   concernees = this.getParam("concernees") || this.props.concernees
   donners = this.getParam("donners") || this.props.donners
   inialPage = this.mapInitialRoute(this.type)
+ 
+  
   tabs = {
     Members: {
       navigationOptions: {
@@ -94,6 +104,12 @@ export default class ReportTabModal extends TabModal {
       screen: () => (
         this.state.mounted ? <View style={{ height: "100%" }}>
           <ConcerneeList
+            master={this.master}
+            getMembers={this.getMembers}
+            removeMember={this.removeMember}
+            addMembers={this.addMembers}
+            replyPrivate={this.replyPrivate.bind(this)}
+            isRelation={this.isRelation}
             initDate={this.actualInterval ? this.actualInterval.start : moment().format(format)}
             reply={this.reply}
             type={replies.member}
@@ -119,11 +135,15 @@ export default class ReportTabModal extends TabModal {
       screen: () => (
         this.state.mounted ? <View style={{ height: "100%" }}>
           <DonnersList
+            editReport={this.editReport}
+            replyPrivate={this.replyPrivate.bind(this)}
+            isRelation={this.isRelation}
             currentRemindUser={this.currentRemindUser}
             type={replies.done}
             reply={this.reply}
             intervals={this.intervals}
             donners={this.donners}
+            confirmed={this.confirmed}
             master={this.master}
             actualInterval={this.actualInterval}
             confirm={this.confirm}
@@ -145,6 +165,9 @@ export default class ReportTabModal extends TabModal {
       screen: () => (
         this.state.mounted ? <View style={{ height: "100%" }}>
           <DonnersList
+           editReport={this.editReport}
+            replyPrivate={this.replyPrivate.bind(this)}
+            isRelation={this.isRelation}
             currentRemindUser={this.currentRemindUser}
             type={replies.confirmed}
             reply={this.reply}

@@ -294,7 +294,7 @@ export function returnAllIntervals(period, interval, frequency, daysOfWeek) {
                 },
                 i > 0 ? calculatePreviousWeekIntervalEndDate(dates[dates.length - 1]) :
                     formatedDate)
-            let filteredDatesIntervals = dateIntervals.filter(ele =>
+            let filteredDatesIntervals = dateIntervals.filter(ele => ele &&
                 moment(ele.start, format).format("x") >= moment(period.start, format).format("x") &&
                 moment(ele.start, format).format("x") < moment(period.end, format).format("x")
             )
@@ -378,7 +378,7 @@ export function cleanupResult(datesInterval, final) {
         let lastIndex = datesInterval.length - 1
         let lastWeeksPeriodIndex = datesInterval[lastIndex].weeks_interval.length - 1
         datesInterval[0].weeks_interval = datesInterval[0].weeks_interval.map(ele => {
-            temp = moment(ele.end, format).format("x") < moment(ele.start, format).format("x") &&
+            temp = ele && moment(ele.end, format).format("x") < moment(ele.start, format).format("x") &&
                 datesInterval[0].weeks_interval.length <= 1 ?
                 {
                     start: ele.start,

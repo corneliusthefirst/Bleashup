@@ -92,7 +92,9 @@ export default class TextContent extends Component {
         }}
         onPress={() =>
           this.props.onPress
-            ? this.props.onPress()
+            ? requestAnimationFrame(() => {
+              this.props.onPress()
+            })
             : this.showAll()
         }
       >
@@ -147,7 +149,7 @@ export default class TextContent extends Component {
               this.props.tags
                 ? {
                     pattern: this.String_toRegExp(
-                      this.props.tags.map((ele) => ele.nickname).join("|")
+                      this.props.tags.map((ele) => ele && ele.nickname).join("|")
                     ),
                     style: styles.name,
                     onPress: this.handleNamePress.bind(this),
@@ -227,6 +229,7 @@ const styles = StyleSheet.create({
   },
   emoji_only: {
     fontSize: 60,
+    textAlign:'center'
   },
   text: {
     color: "black",

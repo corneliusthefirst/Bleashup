@@ -52,7 +52,7 @@ class Functions {
   }
   returnOponent(event) {
     return event && event.participant && event.participant.
-      find(ele => ele.phone !== stores.LoginStore.user.phone).phone
+      find(ele => ele && ele.phone !== stores.LoginStore.user.phone).phone
   }
   filterAllActivityAndRelation(event, text) {
     if (event) {
@@ -87,10 +87,10 @@ class Functions {
     });
   };
   filterForRelation(ele, search) {
-    let name = ele.nickname && ele.nickname.toLowerCase();
+    let name = ele && ele.nickname && ele.nickname.toLowerCase();
     name =
       name ||
-      (stores.TemporalUsersStore.Users[ele.phone] &&
+      (ele && stores.TemporalUsersStore.Users[ele.phone] &&
         stores.TemporalUsersStore.Users[ele.phone].nickname.toLowerCase());
     return name && name.includes(search.toLowerCase()) ? true : false;
   }
@@ -113,7 +113,7 @@ class Functions {
     search = search ? search.toLowerCase() : ""
     return (ele.title && ele.title.toLowerCase().includes(search) ||
       ele.description && ele.description.toLowerCase().includes(search)) ||
-      (ele.location && ele.location.toLowerCase().includes(search))||
+      (ele.location && ele.location.toLowerCase().includes(search)) ||
       (ele.members && ele.members.length && search.includes(ele.members.length.toString()))
   }
   filterStars(ele, search) {

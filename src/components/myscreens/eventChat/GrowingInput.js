@@ -46,11 +46,11 @@ export default class GrowingInput extends BePureComponent {
                     onFocus={this.props.onFocus}
                     style={{
                         alignSelf: "flex-start",
-                        marginLeft: 33,
+                        marginHorizontal: 33,
                         maxHeight: 100,
                         left: 0,
                         right: 0,
-                        width: "90%",
+                        width: "88%",
                        height: this.state.height,
                         //marginLeft: "1%",
                     }}

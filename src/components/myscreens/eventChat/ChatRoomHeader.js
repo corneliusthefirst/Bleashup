@@ -20,6 +20,7 @@ import searchToolsParts from './searchToolsPart';
 import CacheImages from '../../CacheImages';
 import testForURL from '../../../services/testForURL';
 import shadower from '../../shadower';
+import TextContent from './TextContent';
 
 export default class ChatRoomHeader extends BePureComponent {
     constructor(props) {
@@ -61,7 +62,7 @@ export default class ChatRoomHeader extends BePureComponent {
                     flexDirection: 'row',
                 }}
             >
-               <TouchableOpacity style={{
+                <TouchableOpacity style={{
                     width: '10%',
                     alignItems: 'center',
                 }} onPress={() => requestAnimationFrame(() => this.props.goback())} >
@@ -106,11 +107,13 @@ export default class ChatRoomHeader extends BePureComponent {
                     requestAnimationFrame(this.props.openSettings)
                 }} style={{
                     flexDirection: 'column',
-                    width: "60%",
+                    flex: 1,
                     alignItems: 'flex-start',
                 }}>
                     <View>
-                        <Text
+                        <TextContent
+                            numberOfLines={1}
+                            onPress={this.props.openSettings}
                             style={{
                                 alignSelf: 'center',
                                 color: ColorList.headerText,
@@ -119,7 +122,7 @@ export default class ChatRoomHeader extends BePureComponent {
                             }}
                         >
                             {this.props.roomID === this.props.activity_id ? this.props.activity_name : this.props.roomName}
-                        </Text>
+                        </TextContent>
                         <View style={{ height: 10, position: 'absolute' }}>
                             {this.props.typing ? <TypingIndicator /> : null}
                         </View>
@@ -130,7 +133,8 @@ export default class ChatRoomHeader extends BePureComponent {
                 </TouchableOpacity>}
                 <View style={{
                     marginHorizontal: '1%',
-                    width: this.props.searching ? "65%" : 35,
+                    flex: this.props.searching ? 1 : null,
+                    width: this.props.searching ? null : 35,
                     height: 35,
                     justifyContent: 'center',
                     alignSelf: 'center',
@@ -152,19 +156,19 @@ export default class ChatRoomHeader extends BePureComponent {
                             alignSelf: 'flex-end',
                             alignItems: 'center',
                             flexDirection: 'row',
-                            paddingRight: '2%',
+                            paddingHorizontal: 10,
                             justifyContent: 'flex-end',
                             height: 50,
                         }}
                     >
-                       <ChatroomMenu
-                       activity_id={this.props.activity_id}
-                       getShareLink={this.props.getShareLink}
-                       isRelation={this.props.isRelation}
-                       openPage={this.props.openPage}
-                       settings={this.props.openSettings}
-                       >
-                       </ChatroomMenu>
+                        <ChatroomMenu
+                            activity_id={this.props.activity_id}
+                            getShareLink={this.props.getShareLink}
+                            isRelation={this.props.isRelation}
+                            openPage={this.props.openPage}
+                            settings={this.props.openSettings}
+                        >
+                        </ChatroomMenu>
                     </View>}
 
             </View>

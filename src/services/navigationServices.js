@@ -26,14 +26,14 @@ class NavigatorClass {
     waitAfterPush(key){
         this.pushTimeoutRef[key] = setTimeout(() => this.resetPushingState(key), this.pushWaite)
     }
-    pushActivityWithIndex(activity,data){
+    pushActivityWithIndex(activity,data,noreply){
         if(data){
             if (data.message_id) {
                 this.goToChatWithIndex(activity, data.message_id)
             } else if (data.remind_id) {
-                this.gotoRemindsWithIndex(activity, data.remind_id, true)
+                this.gotoRemindsWithIndex(activity, data.remind_id, !noreply)
             } else if (data.post_id) {
-                this.gotoStarWithIndex(activity, data.post_id, true)
+                this.gotoStarWithIndex(activity, data.post_id, !noreply)
             } else {
                 this.pushToChat(activity)
             } 
@@ -88,7 +88,7 @@ class NavigatorClass {
     goToChatWithIndex(event,id){
         //GState.toggleCurrentIndex(id,5000)
         GState.setPointedID(id)
-        this.pushToChat(event,ActivityPages.chat,{id})
+        this.pushToChat(event,{id})
     }
     sayCloseAllModals(){
         emitter.emit(close_all_modals)
@@ -137,6 +137,9 @@ class NavigatorClass {
     }
     goBack() {
         GState.nav.goBack()
+    }
+    gotoContactList(contacts,title){
+        this.pushTo("ContactsList",{contacts,title})
     }
 }
 const BeNavigator = new NavigatorClass()

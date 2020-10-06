@@ -34,7 +34,7 @@ export default class ShareWithYourContacts extends TabModal {
   onOpenModal() {
     stores.Contacts.getContacts().then((contacts) => {
       stores.TemporalUsersStore.getUsers(
-        contacts.map((ele) => ele.phone),
+        contacts.map((ele) => ele && ele.phone),
         [],
         (users) => {
           setTimeout(() => {

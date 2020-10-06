@@ -191,7 +191,7 @@ export default class ChatKeyboard extends AnimatedComponent {
     }
     formSerachableMembers() {
         stores.TemporalUsersStore.getUsers(
-            this.props.members ? this.props.members.map((ele) => ele.phone) : [],
+            this.props.members ? this.props.members.map((ele) => ele && ele.phone) : [],
             [],
             (users) => {
                 this.searchableMembers = users;
@@ -224,7 +224,7 @@ export default class ChatKeyboard extends AnimatedComponent {
                     firstIndex={0}
                     renderPerBatch={20}
                     initialRender={7}
-                    keyExtractor={(ele) => ele.phone}
+                    keyExtractor={(ele) => ele && ele.phone}
                     dataSource={globalFunctions.returnUserSearch(
                         this.searchableMembers,
                         this.state.textValue && this.state.textValue.split("@").length > 1
@@ -321,6 +321,7 @@ export default class ChatKeyboard extends AnimatedComponent {
         this.focus()
     }
     replying(replyer, color) {
+        replyer.activity_name = replyer.from_activity == this.props.roomID ? null : replyer.activity_name
         this.props.openOptions(true)
         this.setStatePure({
             loaded: true,
@@ -389,11 +390,11 @@ export default class ChatKeyboard extends AnimatedComponent {
             this.props.roomID,
             this.props.activity_name).then(() => {
                 this.setStatePure({
-                    isSendingRelation:false,
-                    showCaption:false,
-                    replying:false,
-                    replyContent:null,
-                    textValue:""
+                    isSendingRelation: false,
+                    showCaption: false,
+                    replying: false,
+                    replyContent: null,
+                    textValue: ""
                 })
             })
     }
@@ -705,14 +706,14 @@ export default class ChatKeyboard extends AnimatedComponent {
         Vibrator.vibrateShort()
         Toaster({ "text": Texts.press_long_to_record })
     }
-    hideRelation(){
+    hideRelation() {
         this.setStatePure({
-            isSendingRelation:false,
-            showCaption:false
+            isSendingRelation: false,
+            showCaption: false
         })
     }
-    displayRelation(){
-        return<View style={{marginHorizontal: '1%',}}>
+    displayRelation() {
+        return <View style={{ marginHorizontal: '1%', }}>
             <RelationMessage
                 compose
                 message={this.state.item}
@@ -780,39 +781,36 @@ export default class ChatKeyboard extends AnimatedComponent {
                                 borderRadius: 10,
                             }}
                         >
-                            {//this.state.textValue.length <= 0 ?
-                                <TouchableOpacity
-                                    onPress={() => requestAnimationFrame(() => this.showSnapper() //this.openCamera()
-                                    )}
+                            <TouchableOpacity
+                                onPress={() => requestAnimationFrame(() => this.showSnapper() //this.openCamera()
+                                )}
+                                style={{
+                                    width: 35,
+                                    alignSelf: "flex-end",
+                                    bottom: 2,
+                                }}
+                            >
+                                <View
                                     style={{
-                                        width: "12%",
-                                        alignSelf: "flex-end",
-                                        bottom: 2,
-                                        padding: "1%",
+                                        alignItems: "center",
+                                        ...rounder(30, ColorList.bodyBackground),
                                     }}
                                 >
-                                    <View
+                                    <MaterialIconCommunity
                                         style={{
-                                            alignItems: "center",
-                                            ...rounder(30, ColorList.bodyBackground),
+                                            color: ColorList.indicatorColor,
+                                            fontSize: 20,
                                         }}
-                                    >
-                                        <MaterialIconCommunity
-                                            style={{
-                                                color: ColorList.indicatorColor,
-                                                fontSize: 20,
-                                            }}
-                                            type={"MaterialCommunityIcons"}
-                                            name={"camera"}
-                                        />
-                                    </View>
-                                </TouchableOpacity>//:null
-                            }
-
+                                        type={"MaterialCommunityIcons"}
+                                        name={"camera"}
+                                    />
+                                </View>
+                            </TouchableOpacity>
                             <View
                                 style={{
-                                    width: //this.state.textValue.length <= 0 ? 
-                                        "88%" //: "88%"
+                                    flex: 1
+                                    // width: //this.state.textValue.length <= 0 ? 
+                                    //"88%" //: "88%"
                                     ,
                                     flexDirection: "column",
                                     borderRadius: 35,
@@ -914,11 +912,10 @@ export default class ChatKeyboard extends AnimatedComponent {
 
                         <TouchableOpacity
                             style={{
-                                width: "12%",
+                                width: 35,
                                 alignSelf: "flex-end",
                                 alignItems: "center",
                                 bottom: 2,
-                                padding: "1%",
                             }}
                             onLongPress={() => this.canUseAudio && this.showAudio()}
                             onPress={() =>

@@ -69,9 +69,9 @@ export default class ChangeLogs extends BeComponent {
         newThing: !this.state.newThing,
         loaded: true
       })
-      if(this.props.activeMember){
+      if (this.props.activeMember) {
         this.setStatePure({
-          searching:true,
+          searching: true,
         })
         this.search(stores.TemporalUsersStore.Users[this.props.activeMember].nickname)
       }
@@ -81,12 +81,12 @@ export default class ChangeLogs extends BeComponent {
   renderDetail(item, sectionID, rowID) {
     return (<View><Text>{item.changed}</Text></View>)
   }
-  scrollToIndex(index){
+  scrollToIndex(index) {
     this.refs.timeline && this.refs.timeline.scrollToIndex(index)
   }
   render() {
     this.data = (stores.ChangeLogs.changes &&
-      stores.ChangeLogs.changes[this.props.event_id])||[]
+      stores.ChangeLogs.changes[this.props.event_id]) || []
     return (!this.state.loaded ? <View style={{
       width: '100%', height: '100%',
       backgroundColor: colorList.bodyBackground,
@@ -129,20 +129,20 @@ export default class ChangeLogs extends BeComponent {
         </View>
 
         {this.state.hideHeader ? null :
-          <View style={{ 
-          height: colorList.headerHeight, 
-          width: "100%", 
-          backgroundColor: colorList.headerBackground, 
-          position: "absolute" 
-        }}>
+          <View style={{
+            height: colorList.headerHeight,
+            width: "100%",
+            backgroundColor: colorList.headerBackground,
+            position: "absolute"
+          }}>
             <View style={{
-              flex: 1, 
-              ...bleashupHeaderStyle, 
-              paddingLeft: '1%', 
-              paddingRight: '1%', 
+              flex: 1,
+              ...bleashupHeaderStyle,
+              paddingLeft: '1%',
+              paddingRight: '1%',
               backgroundColor: colorList.headerBackground,
               justifyContent: 'space-between',
-              flexDirection: "row", 
+              flexDirection: "row",
               alignItems: "center"
             }}>
               <View style={{ width: "10%", paddingLeft: "1%" }} >
@@ -153,7 +153,7 @@ export default class ChangeLogs extends BeComponent {
                   </MaterialIcons>
                 </TouchableOpacity>
               </View>
-              {!this.state.searching ? <View style={{ width: '70%', paddingLeft: '2%', justifyContent: "center" }}>
+              {!this.state.searching ? <View style={{ flex: 1, paddingLeft: '2%', justifyContent: "center" }}>
                 <Text style={{
                   color: colorList.headerText,
                   fontSize: colorList.headerFontSize,
@@ -165,7 +165,8 @@ export default class ChangeLogs extends BeComponent {
               <View style={{
                 paddingLeft: '1%',
                 marginRight: "2%",
-                height: 35, width: this.state.searching ? "67%" : 35
+                flex: this.state.searching ? 1 : null,
+                height: 35, width: this.state.searching ? null : 35
               }}>
                 <Searcher
                   searching={this.state.searching}
@@ -176,7 +177,7 @@ export default class ChangeLogs extends BeComponent {
                 >
                 </Searcher>
               </View>
-              {this.state.searching && this.state.searchResult && this.state.searchResult.length > 0?this.searchToolsParts():null}
+              {this.state.searching && this.state.searchResult && this.state.searchResult.length > 0 ? this.searchToolsParts() : null}
             </View>
           </View>}
 

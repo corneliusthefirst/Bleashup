@@ -1,33 +1,46 @@
 import React, { PureComponent } from "react"
 import Contacts from './Contacts';
+import {View} from "react-native"
 import BleashupModal from './mainComponents/BleashupModal';
+import Texts from "../meta/text";
 export default class ContactsModal extends BleashupModal {
- 
-    initialize(){
+
+    initialize() {
         this.state = {
             isOpen: false,
             contacts: []
         };
     }
-    onClosedModal(){
-        this.props.onClosed()
+    onClosedModal() {
+        this.isRoute ? this.goback() : this.props.onClosed()
     }
     state = {}
     componentDidMount() {
 
     }
-    onOpenModal(){
+    goback() {
+        this.props.navigation.goBack()
+    }
+    getParam = (param) => this.props.navigation && this.props.navigation.getParam(param)
+    isRoute = this.props.navigation && true
+    contacts = this.getParam("contacts") || this.props.contacts
+    title = this.getParam("title") || this.props.title
+
+    onOpenModal() {
         this.setStatePure({
             contacts: this.props.contacts
         })
     }
+    render() {
+        return this.isRoute ? this.modalBody() : this.modal()
+    }
     modalBody() {
         return <View>
-                    <Contacts 
-                    close={this.onClosedModal.bind(this)} 
-                    contacts={(this.props.contacts && this.props.contacts) || []} 
-                    title={this.props.title ? this.props.title : "Seen By ..."}
-                    ></Contacts>
-                </View>
+            <Contacts
+                close={this.onClosedModal.bind(this)}
+                contacts={this.contacts || []}
+                title={this.title || Texts.members}
+            ></Contacts>
+        </View>
     }
 }

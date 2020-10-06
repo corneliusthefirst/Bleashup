@@ -16,14 +16,16 @@ import TextContent from './TextContent';
     render() {
         let phone = this.props.phone && this.props.phone.replace && this.props.phone.replace("+", "00")
         let user = (phone && stores.TemporalUsersStore.Users[phone]) || {}
+        let isMe = stores.LoginStore.user.phone == phone
+        user = { ...user, nickname: isMe ? "You " : user.nickname }
         return <TouchableOpacity
             onPress={this.props.showProfile}
             onPressIn={this.props.onPressIn}
-            >
+        >
             <TextContent
-            searchString={this.props.searchString}
-            onPress={this.props.showProfile}
-            foundString={this.props.foundString}
+                searchString={this.props.searchString}
+                onPress={this.props.showProfile}
+                foundString={this.props.foundString}
                 style={{
                     color: ColorList.iconActive,
                     maxWidth: 150,
@@ -33,7 +35,7 @@ import TextContent from './TextContent';
                 ellipsizeMode="tail"
                 numberOfLines={1}
             >
-                {this.props.reply?user.nickname:`@${user.nickname}`}
+                {this.props.activity_name ? `${user.nickname} @ ${this.props.activity_name}` : `${user.nickname}`}
             </TextContent>
         </TouchableOpacity>
     }

@@ -42,7 +42,7 @@ export default class EventTasksCard extends BeComponent {
       newing: false,
       showAll: false,
       correspondingDateInterval: {},
-      mounted: true,
+      mounted: false,
       currentDateIntervals: [],
       assignToMe: false,
     };
@@ -60,8 +60,14 @@ export default class EventTasksCard extends BeComponent {
     this.remindTimeDetail = remindTimeDetail.bind(this)
     this.remindActions = remindActons.bind(this)
     this.remindCreator = remindCreator.bind(this)
+    this.correspondingDateInterval = this.returnStoredIntervalsKey("correspondingDateInterval");
+    this.currentDateIntervals = this.returnStoredIntervalsKey("currentDateIntervals")
+    //console.error(this.correspondingDateInterval)
   }
-
+returnStoredIntervalsKey(key){
+  this.item = this.item || this.props.item
+ return stores.Reminds.remindsIntervals[this.item.event_id][this.item.id] && stores.Reminds.remindsIntervals[this.item.event_id][this.item.id][key]
+}
   componentDidMount() {
     this.mountTimeout = setTimeout(() => {
       const showHighlighted = showHighlightForScrollToIndex.bind(this)
@@ -80,6 +86,12 @@ export default class EventTasksCard extends BeComponent {
 
   update() {
     this.props.update(this.props.item);
+  }
+  showMembers(type){
+    this.showActions(this.currentDateIntervals,this.correspondingDateInterval,true)
+    setTimeout(() => {
+      this.props.showReport && this.props.showReport(null,null,type)
+    })
   }
 
   assignToMe() {
@@ -108,8 +120,8 @@ export default class EventTasksCard extends BeComponent {
     currentDateIntervals,
     correspondingDateInterval,
     dontShowModal) {
-    currentDateIntervals = currentDateIntervals || this.state.currentDateIntervals,
-      correspondingDateInterval = correspondingDateInterval || this.state.correspondingDateInterval,
+    currentDateIntervals = currentDateIntervals || this.currentDateIntervals,
+      correspondingDateInterval = correspondingDateInterval || this.correspondingDateInterval,
       this.props.showRemindActions(
         currentDateIntervals,
         correspondingDateInterval,
@@ -132,25 +144,24 @@ export default class EventTasksCard extends BeComponent {
   showMedia(url){
     this.props.showMedia(url)
   }
+  canLoadFirst(){
+    return this.currentDateIntervals  && !this.state.mounted
+  }
   render() {
     console.warn("rendering: ", this.props.item.id)
-    return !this.state.mounted ? (
-      <View
-        style={{
-          ...this.container,
-          height: 100,
-          ...this.props.item.dimensions,
-        }}
-      ></View>
-    ) : (
+    if(this.canLoadFirst()){
+      //console.error("loading first")
+      this.calculateCurrentStates(this.currentDateIntervals,this.correspondingDateInterval)
+    }
+    return  (
         <Swipeout
           onLongPress={this.showActions.bind(this)}
           disabled={false}
           swipeRight={() => {
             this.props.mention({
               ...this.props.item,
-              current_date: this.returnActualDatesIntervals(this.state.currentDateIntervals,
-                this.state.correspondingDateInterval).period,
+              current_date: this.returnActualDatesIntervals(this.currentDateIntervals,
+                this.correspondingDateInterval).period,
             });
           }}
         >
@@ -184,7 +195,7 @@ export default class EventTasksCard extends BeComponent {
                 }}
               >
                 <View style={{
-                  width: "60%"
+                  flex: 1,
                 }}>
                   {this.remindTimeDetail()}
                 </View>

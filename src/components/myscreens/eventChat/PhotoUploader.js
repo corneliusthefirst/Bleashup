@@ -97,10 +97,10 @@ export default class PhotoUploader extends BePureComponent {
             })
         })
     }
-    messageWidth=250
+    messageWidth="100%"
     render() {
         return (
-            <View style={{width:this.messageWidth}}>
+            <View style={{width:this.messageWidth,minWidth: GState.messageMediaWidth,}}>
                 <View>
                     <View>
                         <TouchableOpacity

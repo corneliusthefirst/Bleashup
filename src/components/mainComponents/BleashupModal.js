@@ -72,11 +72,13 @@ export default class BleashupModal extends AnimatedComponent {
                 position={this.position || "bottom"}
                 swipeToClose={this.swipeToClose || false}
                 onOpened={() => {
-                    this.onOpenModal()
+                    !this.opened && this.onOpenModal()
+                    this.opened = true
                 }}
                 entry={this.entry || 'bottom'}
                 onClosed={() => {
                     this.onClosedModal()
+                    this.opened = false
                 }}
                 isOpen={this.props.isOpen ? true : this.props.open ? true : false}
                 coverScreen={this.coverScreen}

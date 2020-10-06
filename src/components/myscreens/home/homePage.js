@@ -81,7 +81,7 @@ class Home extends BeComponent {
     this.handleNotif(data);
   }
   isMember = (event) => event && event.participant &&
-    event.participant.findIndex(ele => ele.phone === stores.LoginStore.user.phone) >= 0
+    event.participant.findIndex(ele => ele && ele.phone === stores.LoginStore.user.phone) >= 0
   handleNotif(data) {
     stores.Events.loadCurrentEvent(data.activity_id).then(activity => {
       if (this.isMember(activity)) {
@@ -137,9 +137,9 @@ class Home extends BeComponent {
         console.warn(notification);
       });
   }
-  navigateToEventDetails(id, remind_id) {
+  navigateToEventDetails(id, remind_id,post_id) {
     data = {
-      activity_id: id, remind_id
+      activity_id: id, remind_id,post_id
     }
     this.handleNotifications(data)
   }
@@ -155,6 +155,9 @@ class Home extends BeComponent {
     });
     DeepLinking.addRoute("/event/:id/reminds/:remind_id", (response) => {
       this.navigateToEventDetails(response.id, response.remind_id);
+    });
+    DeepLinking.addRoute("/event/:id/stars/:post_id", (response) => {
+      this.navigateToEventDetails(response.id, null,response.post_id);
     });
     Linking.getInitialURL()
       .then((url) => {
@@ -316,6 +319,7 @@ const styles = StyleSheet.create({
     ...bleashupHeaderStyle,
     backgroundColor: colorList.headerBackground,
     flexDirection: "row",
+    alignItems: 'center',
     justifyContent: "space-between",
     width: "100%",
   },
@@ -333,6 +337,8 @@ const styles = StyleSheet.create({
     alignSelf: "flex-end",
     display: "flex",
     flexDirection: "row",
+    justifyContent: 'space-between',
+    alignItems: 'center',
     marginRight: "2%",
   },
   settingsIconStyleContainerSub: {

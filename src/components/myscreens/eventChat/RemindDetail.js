@@ -50,6 +50,7 @@ import active_types from './activity_types';
 import { remindTitle, remindDescription, remindLocation, remindMembers, remindMedia, remindTimeDetail, remindActons, remindCreator, UnAssignAction } from '../reminds/taskCardParts';
 import { remindTime } from '../reminds/taskCardParts';
 import public_states from '../reminds/public_states';
+import BeMenu from "../../Menu";
 
 let { height, width } = Dimensions.get("window");
 
@@ -80,6 +81,11 @@ export default class RemindDetail extends AnimatedPureComponent {
       newing: !this.state.newing,
       mounted: true
     })
+  }
+  showMembers() {
+    BeNavigator.gotoContactList(
+      this.item.members,
+      Texts.program_members)
   }
   loadInitialStates() {
     stores.Events.loadCurrentEvent(this.activity_id).then(eve => {
@@ -206,7 +212,7 @@ export default class RemindDetail extends AnimatedPureComponent {
   unAssignToMe() {
     let members = [stores.LoginStore.user.phone]
     RemindRequest.removeMembers(members, this.item.id, this.activity.id).then(() => {
-      this.item.members = this.item.members.filter(ele => ele.phone !== members[0])
+      this.item.members = this.item.members.filter(ele => ele && ele.phone !== members[0])
       this.loadStates()
     })
   }
@@ -221,10 +227,18 @@ export default class RemindDetail extends AnimatedPureComponent {
   getParam = (param) => this.props.navigation.getParam(param);
   item_id = this.getParam("remind_id");
   message_id = this.getParam("message_id")
+  roomID = this.getParam("room")
   remind = this.getParam("remind")
+  reply = this.getParam("reply")
+  reply_privately = this.getParam("reply_privately") 
   forward = this.getParam("forward") || this.startSharing.bind(this)
   activity_id = this.getParam("activity_id");
+  handleReply() {
 
+  }
+  handlePrivateReply() {
+
+  }
   saveAlarms(alarms, date) {
     let member = {
       ...request.Participant(),
@@ -283,6 +297,41 @@ export default class RemindDetail extends AnimatedPureComponent {
       isSharing: false
     })
   }
+  formReply(){
+    let reply = GState.prepareRemindsForMetion(this.item)
+    reply.from_activity = this.item.event_id
+    reply.activity_id  = this.roomID
+    reply.activity_name = this.activity.about.title
+    return reply
+  }
+  startReply() {
+    GState.reply = this.formReply()
+    this.reply()
+    this.goback()
+  }
+  startPrivateReply() {
+    GState.reply = this.formReply()
+    this.reply_privately(this.item.members,this.item.creator)
+  }
+  items() {
+    return [
+      {
+        title: Texts.reply,
+        condition: this.roomID,
+        action: this.startReply.bind(this)
+      },
+      {
+        title: Texts.reply_privately,
+        condition: this.roomID,
+        action: this.startPrivateReply.bind(this)
+      },
+      {
+        condition: this.member,
+        title: Texts.un_assign_to_me,
+        action: this.unAssignToMe.bind(this)
+      }
+    ]
+  }
   showItem(url) {
     url.video ? BeNavigator.openVideo(url.video) : BeNavigator.openPhoto(url.photo)
   }
@@ -314,6 +363,7 @@ export default class RemindDetail extends AnimatedPureComponent {
               width: "100%",
               justifyContent: 'space-between',
               height: 60,
+              alignSelf: 'center',
               marginBottom: "5%",
               flexDirection: 'row',
               alignItems: 'center',
@@ -328,7 +378,7 @@ export default class RemindDetail extends AnimatedPureComponent {
                 </MaterialIcons>
               </TouchableOpacity>
               <View style={{
-                width: "70%"
+                flex: 1,
               }}>
                 <ActivityProfile
                   small
@@ -337,7 +387,12 @@ export default class RemindDetail extends AnimatedPureComponent {
                   openDetails={this.showDetails.bind(this)}
                 ></ActivityProfile>
               </View>
-              <View>
+              <View style={{
+                maxWidth: 100,
+                flexDirection: 'row',
+                justifyContent: 'space-between',
+                alignItems: 'center',
+              }}>
                 {this.canShare ? <TouchableOpacity onPress={this.forward} style={{
                   ...rounder(40),
                   justifyContent: 'center',
@@ -348,6 +403,11 @@ export default class RemindDetail extends AnimatedPureComponent {
                   }}>
                   </Entypo>
                 </TouchableOpacity> : null}
+                <View style={{
+                  marginHorizontal: '4%',
+                }}>
+                  <BeMenu items={this.items.bind(this)}></BeMenu>
+                </View>
               </View>
             </View>
             <View>
@@ -369,7 +429,7 @@ export default class RemindDetail extends AnimatedPureComponent {
                 }}
               >
                 <View style={{
-                  width: "60%"
+                  flex: 1,
                 }}>
                   {this.remindTimeDetail()}
                 </View>
@@ -377,7 +437,6 @@ export default class RemindDetail extends AnimatedPureComponent {
                   {!this.remind && this.remindActions()}
                 </View>
               </View>
-              {!this.remind && this.unAssignAction()}
               {this.remindCreator()}
             </View>
           </View>

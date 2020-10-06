@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { View, Text, TouchableOpacity, Image, StyleSheet } from "react-native";
+import { View, Text, TouchableOpacity, Image, StyleSheet, ScrollView } from "react-native";
 import EvilIcons from "react-native-vector-icons/EvilIcons";
 import CacheImages from "../../../CacheImages";
 import shadower from "../../../shadower";
@@ -23,7 +23,7 @@ import PhotoViewer from "../../event/PhotoViewer";
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import { already_a_contact } from "../../../../stores/contacts";
 import Toaster from "../../../../services/Toaster";
-import  Entypo  from 'react-native-vector-icons/Entypo';
+import Entypo from 'react-native-vector-icons/Entypo';
 import TextContent from '../../eventChat/TextContent';
 
 @observer class ProfileModal extends BleashupModal {
@@ -66,9 +66,9 @@ import TextContent from '../../eventChat/TextContent';
     this.onClosedModal()
     this.props.profile ? getRelation(this.props.profile).then(relation => {
       Vibrator.vibrateShort()
-      if(rems){
-        BeNavigator.goToRemind(relation,true)
-      }else{
+      if (rems) {
+        BeNavigator.goToRemind(relation, true)
+      } else {
         BeNavigator.pushToChat(relation)
       }
     }) : GState.considerIvite()
@@ -82,6 +82,7 @@ import TextContent from '../../eventChat/TextContent';
   }
   swipeToClose = true
   modalHeight = "70%"
+  //modalMinHieight = "70%"
   modalWidth = "97%"
   placeHolder = GState.profilePlaceHolder;
   addAsContact() {
@@ -89,7 +90,7 @@ import TextContent from '../../eventChat/TextContent';
       stores.Contacts.addContact({ phone: this.user.phone, host: this.user.current_host }).then(res => {
         if (res == already_a_contact) {
           Toaster({ text: Texts.already_a_contact })
-        }else{
+        } else {
           BeNavigator.navigateToContacts()
         }
       })
@@ -103,85 +104,86 @@ import TextContent from '../../eventChat/TextContent';
       <View>
         <View style={styles.child1}>
           <View style={styles.child1Sub}>
-            <TouchableOpacity style={{...rounder(40),justifyContent: 'center',}} onPress={this.props.onClosed} transparent>
+            <TouchableOpacity style={{ ...rounder(40), justifyContent: 'center', }} onPress={this.props.onClosed} transparent>
               <EvilIcons
                 style={styles.Child1SubIconStyle}
                 name="close"
               />
             </TouchableOpacity>
           </View>
-
-          <View style={styles.child2}>
-            <View style={{
-              flexDirection: 'row',
-              alignItems: 'center',
-              width: "95%",
-              justifyContent: 'space-between',
-              margin: '2%',
-            }}>
+          <ScrollView showsVerticalScrollIndicator={false}>
+            <View style={styles.child2}>
               <View style={{
-                Width: "80%",
+                flexDirection: 'row',
+                alignItems: 'center',
+                width: "95%",
+                justifyContent: 'space-between',
+                margin: '2%',
               }}>
-                <TextContent 
-                ellipsizeMode={"tail"}
-                numberOfLines={1} 
-                 style={[GState.defaultTextStyle, styles.child2Text]}>
-                  {this.user.nickname}
-                </TextContent>
-                {this.showTyper()}
-                {this.onlinePart && this.onlinePart()}
+                <View style={{
+                flex: 1,
+                }}>
+                  <TextContent
+                    ellipsizeMode={"tail"}
+                    numberOfLines={1}
+                    style={[GState.defaultTextStyle, styles.child2Text]}>
+                    {this.user.nickname}
+                  </TextContent>
+                  {this.showTyper()}
+                  {this.onlinePart && this.onlinePart()}
+                </View>
+                <TouchableOpacity style={{
+                  flexDirection: 'column',
+                  marginHorizontal: '2%',
+                  ...rounder(40, ColorList.bodyDarkWhite),
+                  ...shadower(2),
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                }} onPress={() => this.goToRelation()}>
+                  <MaterialIcons style={{
+                    ...GState.defaultIconSize,
+                    color: ColorList.indicatorColor
+                  }} name="chat-bubble">
+                  </MaterialIcons>
+                </TouchableOpacity>
+                <TouchableOpacity style={{
+                  flexDirection: 'column',
+                  ...rounder(40, ColorList.bodyDarkWhite),
+                  ...shadower(2),
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                }} onPress={() => this.goToRelation(true)}>
+                  <Entypo style={{
+                    ...GState.defaultIconSize,
+                    color: ColorList.indicatorColor
+                  }} name="bell">
+                  </Entypo>
+                </TouchableOpacity>
               </View>
-              <TouchableOpacity style={{
-                flexDirection: 'column',
-                ...rounder(40, ColorList.bodyDarkWhite),
-                ...shadower(2),
-                alignItems: 'center',
-                justifyContent: 'center',
-              }} onPress={() => this.goToRelation()}>
-                <MaterialIcons style={{
-                  ...GState.defaultIconSize,
-                  color: ColorList.indicatorColor
-                }} name="chat-bubble">
-                </MaterialIcons>
-              </TouchableOpacity>
-              <TouchableOpacity style={{
-                flexDirection: 'column',
-                ...rounder(40, ColorList.bodyDarkWhite),
-                ...shadower(2),
-                alignItems: 'center',
-                justifyContent: 'center',
-              }} onPress={() => this.goToRelation(true)}>
-                <Entypo style={{
-                  ...GState.defaultIconSize,
-                  color: ColorList.indicatorColor
-                }} name="bell">
-                </Entypo>
+            </View>
+            <View style={styles.child3}>
+              <TouchableOpacity onPress={() => this.enlargeImage(this.user.profile)}>
+                {this.user.profile &&
+                  testForURL(this.user.profile) ? (
+                    <CacheImages
+                      thumbnails
+                      source={{
+                        uri: this.user && this.user.profile,
+                      }}
+                      style={styles.child3cacheImages}
+                    />
+                  ) : (
+                    <Image
+                      resizeMode={"cover"}
+                      style={styles.child3placeHolder}
+                      source={this.placeHolder}
+                    ></Image>
+                  )}
               </TouchableOpacity>
             </View>
-          </View>
-          <View style={styles.child3}>
-            <TouchableOpacity onPress={() => this.enlargeImage(this.user.profile)}>
-              {this.user.profile &&
-                testForURL(this.user.profile) ? (
-                  <CacheImages
-                    thumbnails
-                    source={{
-                      uri: this.user && this.user.profile,
-                    }}
-                    style={styles.child3cacheImages}
-                  />
-                ) : (
-                  <Image
-                    resizeMode={"cover"}
-                    style={styles.child3placeHolder}
-                    source={this.placeHolder}
-                  ></Image>
-                )}
-            </TouchableOpacity>
-          </View>
-          <View style={styles.child4}>
-            <View style={{ width: "70%" }}>
-              {!GState.isUndefined(this.user.status) ? (
+            <View style={styles.child4}>
+              <View style={{ width: "70%" }}>
+                {!GState.isUndefined(this.user.status) ? (
                   <TextContent
                     ellipsizeMode={"tail"}
                     numberOfLines={2}
@@ -189,22 +191,23 @@ import TextContent from '../../eventChat/TextContent';
                     {this.user.status}
                   </TextContent>
                 ) : null}
+              </View>
+              {this.user ? !stores.Contacts.isAContact(this.user.phone) ? <TouchableOpacity style={{
+                flexDirection: 'column',
+                ...rounder(40),
+                backgroundColor: ColorList.bodyDarkWhite,
+                ...shadower(2),
+                alignItems: 'center',
+                justifyContent: 'center',
+              }} onPress={this.addAsContact.bind(this)}>
+                <AntDesign style={{
+                  ...GState.defaultIconSize,
+                  color: ColorList.indicatorColor
+                }} name="adduser">
+                </AntDesign>
+              </TouchableOpacity> : null : null}
             </View>
-            {this.user ? !stores.Contacts.isAContact(this.user.phone) ? <TouchableOpacity style={{
-              flexDirection: 'column',
-              ...rounder(40),
-              backgroundColor: ColorList.bodyDarkWhite,
-              ...shadower(2),
-              alignItems: 'center',
-              justifyContent: 'center',
-            }} onPress={this.addAsContact.bind(this)}>
-              <AntDesign style={{
-                ...GState.defaultIconSize,
-                color: ColorList.indicatorColor
-              }} name="adduser">
-              </AntDesign>
-            </TouchableOpacity> : null : null}
-          </View>
+          </ScrollView>
         </View>
         {this.state.showPhoto ? <PhotoViewer
           open={this.state.showPhoto}

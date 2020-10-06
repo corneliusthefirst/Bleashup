@@ -179,9 +179,9 @@ giving out a file wchich is stored drive. hence the app crashes
 
 [] resolve the issue of the audio slider not moving sometimes the audio is playing.
 
-[] handle private reply of message. here a user in an activity can privately reply to any members of the activity 
+[*] handle private reply of message. here a user in an activity can privately reply to any members of the activity 
     about a message discussed in the activity. 
-[] add the new star Option of the Options in the chatroom. 
+[*] add the new star Option of the Options in the chatroom. 
 
 [] apply rules on message actions reminds actions start actions 
 

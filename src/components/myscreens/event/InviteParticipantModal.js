@@ -30,7 +30,7 @@ export default class InviteParticipantModal extends BleashupModal {
   }
   toggleMaster(memberPhone) {
     this.setStatePure({
-      selected: this.state.selected.map((ele) =>
+      selected: this.state.selected.map((ele) => ele &&
         ele.phone === memberPhone ? { ...ele, master: !ele.master } : ele
       ),
     });
@@ -91,7 +91,7 @@ export default class InviteParticipantModal extends BleashupModal {
           <TouchableOpacity onPress={() => requestAnimationFrame(() => this.onClosedModal())} style={{
             marginBottom: 'auto',
             marginTop: 'auto',
-            marginLeft: '2%',
+            marginHorizontal: '2%',
             justifyContent: 'flex-start',
             flexDirection: 'row',
             width: 70
@@ -100,13 +100,13 @@ export default class InviteParticipantModal extends BleashupModal {
           </TouchableOpacity>
           <View
             style={{
-              width: '82%',
+              flex: 1,
               height: '100%',
               flexDirection: "row",
               justifyContent: 'space-between',
             }}
           >
-            {this.state.searching ? null : <View style={{ flexDirection: "column" }}>
+            {this.state.searching ? null : <View style={{ flexDirection: "column", flex: 1, }}>
               <Text
                 style={{
                   ...GState.defaultTextStyle,
@@ -148,6 +148,7 @@ export default class InviteParticipantModal extends BleashupModal {
             </View>}
             <View
               style={{
+                flex: this.state.searching ? 1 : null,
                 width: this.state.searching ? "100%" : 35,
                 height: 35
               }}
@@ -173,7 +174,7 @@ export default class InviteParticipantModal extends BleashupModal {
             keyExtractor={this._keyExtractor}
             dataSource={data}
             renderItem={(item, index) => {
-              let me = this.state.selected.find(ele => ele.phone === item.phone)
+              let me = this.state.selected.find(ele => ele && ele.phone === item.phone)
               this.delay = this.delay >= 15 ? 0 : this.delay + 1;
               return (
                 <SelectableContactsMaster

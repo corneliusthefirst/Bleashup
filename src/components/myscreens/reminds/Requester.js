@@ -559,7 +559,7 @@ class Requester {
             (response) => {
               resolve();
             }
-          );
+          ).catch(err => reject(err));
         });
     });
   }
@@ -612,7 +612,11 @@ class Requester {
           EventListener.sendRequest(JSONData, remindID + "_remove_members")
             .then(() => {
               resolve()
+            }).catch((err) => {
+              reject(err)
             })
+        }).catch(err => {
+          reject(err)
         })
     })
   }
@@ -813,6 +817,8 @@ class Requester {
           EventListener.sendRequest(JSONData, remind.id + "_mark_as_done")
             .then((response) => {
               resolve("ok")
+            }).catch(error => {
+              reject(error)
             })
         })
     })

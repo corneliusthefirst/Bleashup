@@ -23,7 +23,7 @@ export default class ActivityProfile extends BeComponent {
                 {isRelation ? null : <TouchableOpacity
                     style={{
                         alignSelf: "flex-start",
-                        width: "15%",
+                        width: 50,
                         alignItems: "center",
                     }}
                     onPress={() =>
@@ -63,11 +63,11 @@ export default class ActivityProfile extends BeComponent {
                 </TouchableOpacity>}
                 <View
                     style={{
-                        width: isRelation?"90%": "75%",
+                        flex: 1,
                         flexDirection: 'column',
                         height:isRelation? 50:null,
                         justifyContent: 'center',
-                        paddingLeft: 10,
+                        marginLeft: 10,
                     }}
                 >
                     <TitleView

@@ -12,7 +12,6 @@ export default function searchToolsParts() {
         maxWidth: 150,
         flexDirection: "row",
         marginRight: "2%",
-        flex: 1,
         justifyContent: "space-between",
         alignItems: "center",
       }}
