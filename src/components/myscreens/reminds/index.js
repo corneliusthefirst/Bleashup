@@ -486,8 +486,7 @@ class Reminds extends AnimatedComponent {
       replyPrivate: this.replyPrivate.bind(this),
       donners: this.filterDonners.bind(this),
       intervals: intervals,
-      isRelation:
-        this.props.isRelation && this.props.event.participant.length > 1,
+      isRelation: false,
       confirm: this.confirm.bind(this),
       master:
         currentTask && stores.LoginStore.user.phone === currentTask.creator,
@@ -508,8 +507,8 @@ class Reminds extends AnimatedComponent {
       starRemind: this.props.remind,
       master: this.props.master,
       event_id: this.props.event_id,
-      update: update || this.state.update,
-      remind_id: remind_id || this.state.remind_id,
+      update: update || false,
+      remind_id: remind_id || null,
       updateRemind: (remind) => {
         //console.error(remind)
         this.setStatePure({
@@ -629,8 +628,7 @@ class Reminds extends AnimatedComponent {
       title: Texts.reply_privately,
       callback: () => this.mentionPrivate(this.state.remind),
       iconName: "reply",
-      condition: () =>
-        !this.props.isRelation || this.props.event.participant.length > 1,
+      condition: () => true,
       iconType: "Entypo",
       color: colorList.replyColor,
     },
@@ -923,15 +921,14 @@ class Reminds extends AnimatedComponent {
       Number(isPointed) +
       (this.state.searchString ? this.state.searchString.length : 0);
     let membersState =
-      item.members.length + item.donners.length + item.confirmed.length;
+      item.members.length + item.donners.length + item.confirmed.length + item.status.length;
+    let intervel_updated = stores.Reminds.remindsIntervals[item.event_id] &&
+      stores.Reminds.remindsIntervals[item.event_id][item.id] &&
+      stores.Reminds.remindsIntervals[item.event_id][item.id].updated_at
     return (
       <TasksCard
         members_state={membersState}
-        intervals_updated_at={
-          stores.Reminds.remindsIntervals[item.event_id] &&
-          stores.Reminds.remindsIntervals[item.event_id][item.id] &&
-          stores.Reminds.remindsIntervals[item.event_id][item.id].updated_at
-        }
+        intervals_updated_at={intervel_updated}
         update_state={update_state}
         searchString={this.state.searchString}
         showReport={this.showReport.bind(this)}

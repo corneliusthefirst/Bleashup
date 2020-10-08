@@ -144,7 +144,7 @@ export function calculateCurrentStates(currentDateIntervals, correspondingDateIn
                 recurrence: correspondingDateInterval
                     ? moment(correspondingDateInterval.end, format).format()
                     : (this.item.recursive_frequency.recurrence
-                        || this.props.item.period),
+                        || this.item.period),
             }) > 0 || this.item.status === public_states.private_;
         this.member =
             findIndex(this.item.members, {

@@ -1,7 +1,6 @@
 import React, { PureComponent } from "react";
 import { SwipeRow } from "react-native-swipe-list-view";
-import { View } from "react-native";
-import { TouchableOpacity } from "react-native-gesture-handler";
+import { View, TouchableOpacity,TouchableWithoutFeedback } from "react-native";
 import BePureComponent from '../../BePureComponent';
 
 export default class Swipeout extends BePureComponent {
@@ -11,7 +10,7 @@ export default class Swipeout extends BePureComponent {
 
   render() {
     return (
-      <TouchableOpacity onLongPress={this.props.onLongPress}>
+      <TouchableWithoutFeedback onLongPress={this.props.onLongPress}>
         <SwipeRow
           disableRightSwipe={this.props.disabled}
           disableLeftSwipe={this.props.disableLeftSwipe}
@@ -39,7 +38,7 @@ export default class Swipeout extends BePureComponent {
           ></View>
           {this.props.children}
         </SwipeRow>
-      </TouchableOpacity>
+      </TouchableWithoutFeedback>
     );
   }
 }

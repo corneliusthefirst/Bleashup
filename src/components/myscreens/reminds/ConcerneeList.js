@@ -160,7 +160,7 @@ export default class ConcerneeList extends BeComponent {
                                 minHeight: 53,
                                 padding: "1%",
                                 backgroundColor: isCurrentIndex ? ColorList.remindsTransparent : ColorList.bodyBackground,
-                                borderRadius: 15,
+                                borderRadius: 5,
                                 alignItems: 'center',
                                 flexDirection: 'row',
                                 width: "90%"

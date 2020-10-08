@@ -124,7 +124,8 @@ export default class QRScanner extends BePureComponent {
             {this.state.isDetailModalOpened ? <DetailsModal
                 onClosed={() => {
                     this.setStatePure({
-                        isDetailModalOpened: false
+                        isDetailModalOpened: false,
+                        loading:false
                     })
                     this.scanner.reactivate()
                 }}

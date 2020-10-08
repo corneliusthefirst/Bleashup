@@ -177,12 +177,12 @@ export function remindActons() {
                 style={{
                     borderWidth: 0,
                     borderRadius: 10,
-                    width: 135,
+                    maxWidth: 135,
                     alignSelf: "flex-end",
                     height: 35,
                     alignItems: "center",
                     justifyContent: "center",
-                    ...shadower(3),
+                    ...shadower(1),
                     backgroundColor: ColorList.bodyDarkWhite,
                 }}
                 action={this.assignToMe.bind(this)}

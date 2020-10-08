@@ -12,6 +12,9 @@ class ChatStore {
     constructor() {
         //storage.remove({key:this.key})
         this.initializeStore();
+        this.startSaver()
+    }
+    startSaver() {
         this.saveInterval = setInterval(() => {
             this.previousModif !== this.currentModif ? this.saver() : null;
         }, this.timer);
@@ -418,7 +421,7 @@ class ChatStore {
     }
     updateStarMessageInfoMessage(roomID, id, star) {
         return new Promise((resolve, reject) => {
-                star = messagePreparer.formMessagefromStar(star)
+            star = messagePreparer.formMessagefromStar(star)
             return new Promise((resolve, reject) => {
                 this.readFromStore().then(messages => {
                     const index = findIndex(messages[roomID], { id })

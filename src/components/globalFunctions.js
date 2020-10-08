@@ -124,7 +124,7 @@ class Functions {
     return ele && ele.id !== request.Remind().id && this.byTitleAndDesc(ele, search)
   }
   filterHistory(ele, search) {
-    if (ele && search) {
+    if (ele && search && ele.type !== message_types.date_separator) {
       search = search.toLowerCase()
       let updater = typeof ele.updater == "object" ? stores.TemporalUsersStore.Users[ele.updater.phone] :
         stores.TemporalUsersStore.Users[ele.updater]

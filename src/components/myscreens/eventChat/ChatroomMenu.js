@@ -11,10 +11,10 @@ import ColorList from "../../colorList";
 import Texts from '../../../meta/text';
 import ActivityPages from './chatPages';
 import rounder from "../../../services/rounder";
-import BePureComponent from '../../BePureComponent';
 import { constructActivityLink } from './services';
+import BeComponent from '../../BeComponent';
 
-export default class ChatroomMenu extends BePureComponent {
+export default class ChatroomMenu extends BeComponent {
     constructor(props) {
         super(props)
         this.state = {

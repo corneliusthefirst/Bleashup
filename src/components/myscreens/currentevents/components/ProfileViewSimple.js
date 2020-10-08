@@ -49,16 +49,16 @@ class ProfileSimple extends BePureComponent {
   }
   typing_event = typing(this.props.profile.phone)
   componentMounting() {
-    if(this.props.profile){
+    if (this.props.profile) {
       emitter.on(this.typing_event, (typer) => {
         !this.sayTyping ? (this.sayTyping = sayTyping.bind(this)) : null;
         this.sayTyping(typer);
       });
     }
   }
-  unmountingComponent(){
+  unmountingComponent() {
     emitter.off(this.typing_event)
-    
+
   }
   showTyper() {
     return (
@@ -95,7 +95,7 @@ class ProfileSimple extends BePureComponent {
         {!this.props.hidePhoto && (
           <View style={styles.containerSub}>
             {user && user.profile && testForURL(user.profile) ? (
-              <TouchableWithoutFeedback onPress={this.props.onPress||this.showProfile}>
+              <TouchableWithoutFeedback onPress={this.props.onPress || this.showProfile}>
                 <CacheImages
                   staySmall
                   small
@@ -105,16 +105,16 @@ class ProfileSimple extends BePureComponent {
                 />
               </TouchableWithoutFeedback>
             ) : (
-              <FontAwesome
-                style={styles.iconPlaceHolder}
-                name={"user-circle"}
-              ></FontAwesome>
-            )}
+                <FontAwesome
+                  style={styles.iconPlaceHolder}
+                  name={"user-circle"}
+                ></FontAwesome>
+              )}
           </View>
         )}
-        <TouchableOpacity onPress={this.props.onPress||this.showProfile} style={styles.textStyles}>
+        <TouchableOpacity onPress={this.props.onPress || this.showProfile} style={styles.textStyles}>
           <TextContent
-            onPress={this.props.onPress||this.showProfile}
+            onPress={this.props.onPress || this.showProfile}
             ellipsizeMode={"tail"}
             numberOfLines={1}
             style={styles.text}
@@ -132,7 +132,7 @@ class ProfileSimple extends BePureComponent {
             </TouchableWithoutFeedback>
           </View>
         ) : null}
-        {
+        {this.state.isModalOpened ?
           <ProfileModal
             isOpen={this.state.isModalOpened}
             hasJoin={this.props.hasJoin}
@@ -141,7 +141,7 @@ class ProfileSimple extends BePureComponent {
             parent={this}
             onClosed={this.closeProfileModal}
             profile={user}
-          ></ProfileModal>
+          ></ProfileModal> : null
         }
       </View>
     );

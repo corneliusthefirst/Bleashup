@@ -2,7 +2,7 @@ import tcpRequest from "../../../services/tcpRequestData";
 import EventListener from "../../../services/severEventListener";
 import stores from "../../../stores";
 import request from "../../../services/requestObjects";
-import { isEqual, differenceWith } from "lodash";
+import { isEqual, differenceWith, uniqBy } from "lodash";
 import moment from "moment";
 import { findIndex } from "lodash";
 import CalendarServe from "../../../services/CalendarService";
@@ -534,7 +534,7 @@ class Requester {
       }
     });
   }
-  addMembersToRemote(remind, alarms, activity_name) {
+  addMembersToRemote(remind, activity_name, persist) {
     this.yourName = toTitleCase(stores.LoginStore.user.nickname);
     this.shortName = this.yourName.split(" ")[0];
     return new Promise((resolve, reject) => {
@@ -548,14 +548,19 @@ class Requester {
       notif.data.activity_id = remind.event_id;
       notif.data.remind_id = remind.id;
       newRemindName.action = "add_members";
+      const id = remind.id + "_add_members"
+      if (stores.States.requestExists(id) && persist) {
+        const data = EventListener.returnRequestData(stores.States.getRequest(id)).data
+        reminds.members = uniqBy([...data, ...reminsd.members], "phone");
+      }
       newRemindName.data = remind.members;
       newRemindName.event_id = remind.event_id;
       newRemindName.remind_id = remind.id;
       newRemindName.notif = notif;
       tcpRequest
-        .updateRemind(newRemindName, remind.id + "_add_members")
+        .updateRemind(newRemindName, id)
         .then((JSONData) => {
-          EventListener.sendRequest(JSONData, remind.id + "_add_members").then(
+          EventListener.sendRequest(JSONData, id, persist).then(
             (response) => {
               resolve();
             }
@@ -563,53 +568,75 @@ class Requester {
         });
     });
   }
+  concludeAddMembers(remind, alarms) {
+    return new Promise((resolve, reject) => {
+      stores.Reminds.addMembers(
+        remind.event_id,
+        {
+          members: remind.members,
+          remind_id: remind.id,
+        },
+        true
+      ).then((oldRemind) => {
+        let Change = {
+          id: IDMaker.make(),
+          title: `Updates On ${oldRemind.title} Remind`,
+          updated: `remind_member_added`,
+          updater: stores.LoginStore.user.phone,
+          event_id: remind.event_id,
+          changed: "Assigned The Remind To ...",
+          new_value: { data: remind.id, new_value: remind.members },
+          date: moment().format(),
+          time: null,
+        };
+        this.saveToCanlendar(remind.event_id, remind, alarms);
+        stores.ChangeLogs.addChanges(Change).then(() => { });
+        resolve("ok");
+      });
+    })
+  }
   addMembers(remind, alarms, activity_name) {
     this.yourName = toTitleCase(stores.LoginStore.user.nickname);
     this.shortName = this.yourName.split(" ")[0];
     return new Promise((resolve, reject) => {
-      this.addMembersToRemote(remind, alarms, activity_name).then((res) => {
-        stores.Reminds.addMembers(
-          remind.event_id,
-          {
-            members: remind.members,
-            remind_id: remind.id,
-          },
-          true
-        ).then((oldRemind) => {
-          let Change = {
-            id: IDMaker.make(),
-            title: `Updates On ${oldRemind.title} Remind`,
-            updated: `remind_member_added`,
-            updater: stores.LoginStore.user.phone,
-            event_id: remind.event_id,
-            changed: "Assigned The Remind To ...",
-            new_value: { data: remind.id, new_value: remind.members },
-            date: moment().format(),
-            time: null,
-          };
-          this.saveToCanlendar(remind.event_id, remind, alarms);
-          stores.ChangeLogs.addChanges(Change).then(() => { });
-          resolve("ok");
-        });
-      })
-        .catch((error) => {
+      const canPersistRequest = remind.members.length == 1 &&
+        remind.members[0].phone == stores.LoginStore.user.phone
+      if (canPersistRequest) {
+        this.addMembersToRemote(remind, activity_name, true)
+        this.concludeAddMembers(remind, alarms).then(() => {
+          resolve()
+        })
+      } else {
+        this.addMembersToRemote(remind, alarms, activity_name, false).then(() => {
+          this.concludeAddMembers(remind, alarms).then(() => {
+            resolve()
+          })
+        }).catch((error) => {
           Toaster({ text: Texts.unable_to_perform_request });
           console.warn(error);
           reject(error);
         });
-    });
+      }
+    })
   }
-  removeMembersRemote(members, remindID, eventID) {
+  removeMembersRemote(members, remindID, eventID, perist) {
     return new Promise((resolve, reject) => {
+      const id = remindID + "_remove_members"
+      if (stores.States.requestExists(id)) {
+        console.warn("concatinating members to be removed")
+        const oldMembers = EventListener.returnRequestData(stores.States.states.requests[id]).data
+        members = uniq([...oldMembers, ...members])
+        console.warn(members)
+      }
       let newRemindName = request.RemindUdate();
       newRemindName.action = "remove_members";
       newRemindName.data = members;
       newRemindName.event_id = eventID;
       newRemindName.remind_id = remindID;
       tcpRequest
-        .updateRemind(newRemindName, remindID + "_remove_members")
+        .updateRemind(newRemindName, id)
         .then((JSONData) => {
-          EventListener.sendRequest(JSONData, remindID + "_remove_members")
+          EventListener.sendRequest(JSONData, id, perist)
             .then(() => {
               resolve()
             }).catch((err) => {
@@ -620,64 +647,78 @@ class Requester {
         })
     })
   }
+  concludeRemoveMembers(members, remindID, eventID) {
+    return new Promise((resolve, reject) => {
+      stores.Reminds.removeMember(
+        eventID,
+        {
+          members: members,
+          remind_id: remindID,
+        },
+        true
+      ).then((oldRemind) => {
+        let Change = {
+          id: IDMaker.make(),
+          title: `Updates On ${oldRemind.title} Remind`,
+          updated: `remind_member_removed`,
+          updater: stores.LoginStore.user.phone,
+          event_id: eventID,
+          changed: "Unassigned This Task / Remind From ",
+          new_value: {
+            data: remindID,
+            new_value: members.map((ele) => {
+              return { phone: ele };
+            }),
+          },
+          date: moment().format(),
+          time: null,
+        };
+        if (
+          oldRemind.calendar_id &&
+          findIndex(
+            members,
+            (ele) => ele === stores.LoginStore.user.phone
+          ) >= 0
+        ) {
+          CalendarServe.saveEvent(
+            { ...oldRemind, period: null },
+            null,
+            "reminds",
+            true
+          ).then(() => {
+            stores.Reminds.updateCalendarID(eventID, {
+              remind_id: oldRemind.id,
+              calendar_id: undefined,
+            }).then(() => {
+              console.warn("calendar_id successfully removed");
+            });
+          });
+        }
+        resolve("ok");
+        stores.ChangeLogs.addChanges(Change).then(() => { });
+      });
+    })
+  }
   removeMembers(members, remindID, eventID) {
     return new Promise((resolve, reject) => {
-      this.removeMembersRemote(members, remindID, eventID).then(() => {
-        stores.Reminds.removeMember(
-          eventID,
-          {
-            members: members,
-            remind_id: remindID,
-          },
-          true
-        ).then((oldRemind) => {
-          let Change = {
-            id: IDMaker.make(),
-            title: `Updates On ${oldRemind.title} Remind`,
-            updated: `remind_member_removed`,
-            updater: stores.LoginStore.user.phone,
-            event_id: eventID,
-            changed: "Unassigned This Task / Remind From ",
-            new_value: {
-              data: remindID,
-              new_value: members.map((ele) => {
-                return { phone: ele };
-              }),
-            },
-            date: moment().format(),
-            time: null,
-          };
-          if (
-            oldRemind.calendar_id &&
-            findIndex(
-              members,
-              (ele) => ele === stores.LoginStore.user.phone
-            ) >= 0
-          ) {
-            CalendarServe.saveEvent(
-              { ...oldRemind, period: null },
-              null,
-              "reminds",
-              true
-            ).then(() => {
-              stores.Reminds.updateCalendarID(eventID, {
-                remind_id: oldRemind.id,
-                calendar_id: undefined,
-              }).then(() => {
-                console.warn("calendar_id successfully removed");
-              });
-            });
-          }
-          resolve("ok");
-          stores.ChangeLogs.addChanges(Change).then(() => { });
-        });
-      })
-        .catch((error) => {
+      const canPersistRequest = members.length == 1 && members[0] === stores.LoginStore.user.phone
+      if (canPersistRequest) {
+        this.removeMembersRemote(members, remindID, eventID, true)
+        this.concludeRemoveMembers(members, remindID, eventID).then(() => {
+          resolve()
+        })
+      } else {
+        this.removeMembersRemote(members, remindID, eventID, false).then(() => {
+          this.concludeRemoveMembers(members, remindID, eventID).then(() => {
+            resolve()
+          })
+        }).catch((error) => {
           Toaster({ text: Texts.unable_to_perform_request });
           console.warn(error);
           reject(error);
-        });
-    });
+        })
+      }
+    })
   }
   performAllUpdates(previousRemind, newRemind) {
     return new Promise((resolve, reject) => {
@@ -811,10 +852,11 @@ class Requester {
       newRemindName.event_id = remind.event_id;
       newRemindName.remind_id = remind.id;
       newRemindName.notif = notif;
+      const id = remind.id + '_' + member[0].status.date + '_' + "_mark_as_done"
       tcpRequest
-        .updateRemind(newRemindName, remind.id + "_mark_as_done")
+        .updateRemind(newRemindName, id)
         .then((JSONData) => {
-          EventListener.sendRequest(JSONData, remind.id + "_mark_as_done")
+          EventListener.sendRequest(JSONData, id, true)
             .then((response) => {
               resolve("ok")
             }).catch(error => {
@@ -827,43 +869,41 @@ class Requester {
     this.yourName = toTitleCase(stores.LoginStore.user.nickname);
     this.shortName = this.yourName.split(" ")[0];
     return new Promise((resolve, reject) => {
-      this.markAsDoneRemote(member, remind, activity_name).then(response => {
-        stores.Reminds.makeAsDone(
-          remind.event_id,
-          {
-            donners: member,
-            remind_id: remind.id,
-          },
-          true
-        ).then((oldRemind) => {
-          let Change = {
-            id: IDMaker.make(),
-            title: `Updates On ${oldRemind.title} Remind`,
-            updated: `remind_marked_as_done`,
-            updater: stores.LoginStore.user.phone,
-            event_id: remind.event_id,
-            changed: "Marked The Remind As Done",
-            new_value: { data: remind.id, new_value: member },
-            date: moment().format(),
-            time: null,
-          };
-          if (oldRemind.calendar_id) {
-            //CalendarServe.saveEvent({ ...oldRemind, period: null }, null, 'reminds',false).then(() => {
-            //   stores.Reminds.updateCalendarID({ remind_id: oldRemind.id, calendar_id: undefined }).then(() => {
-            console.warn("calendar_id successfully removed");
-            //  })
-            //  })
-          }
-          resolve("ok");
-          stores.ChangeLogs.addChanges(Change).then(() => { });
-          resolve("ok");
-        });
-      })
-        .catch((e) => {
-          Toaster({ text: Texts.unable_to_perform_request });
-          reject();
-        });
-    });
+      this.markAsDoneRemote(member, remind, activity_name)
+      stores.Reminds.makeAsDone(
+        remind.event_id,
+        {
+          donners: member,
+          remind_id: remind.id,
+        },
+        true
+      ).then((oldRemind) => {
+        let Change = {
+          id: IDMaker.make(),
+          title: `Updates On ${oldRemind.title} Remind`,
+          updated: `remind_marked_as_done`,
+          updater: stores.LoginStore.user.phone,
+          event_id: remind.event_id,
+          changed: "Marked The Remind As Done",
+          new_value: { data: remind.id, new_value: member },
+          date: moment().format(),
+          time: null,
+        };
+        if (oldRemind.calendar_id) {
+          //CalendarServe.saveEvent({ ...oldRemind, period: null }, null, 'reminds',false).then(() => {
+          //   stores.Reminds.updateCalendarID({ remind_id: oldRemind.id, calendar_id: undefined }).then(() => {
+          //console.warn("calendar_id successfully removed");
+          //  })
+          //  })
+        }
+        resolve("ok");
+        stores.ChangeLogs.addChanges(Change).then(() => { });
+      });
+    })
+      .catch((e) => {
+        Toaster({ text: Texts.unable_to_perform_request });
+        reject();
+      });
   }
   deleteRemind(remindID, eventID) {
     return new Promise((resolve, reject) => {

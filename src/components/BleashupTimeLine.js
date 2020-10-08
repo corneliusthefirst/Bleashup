@@ -20,6 +20,7 @@ import testForURL from "../services/testForURL";
 import GState from "../stores/globalState/index";
 import TextContent from './myscreens/eventChat/TextContent';
 import BeComponent from './BeComponent';
+import message_types from './myscreens/eventChat/message_types';
 
 const defaultCircleSize = 16;
 const defaultCircleColor = "#007AFF";
@@ -32,7 +33,8 @@ const defaultInnerCircle = "none";
 export default class BleashupTimeLine extends BeComponent {
   constructor(props, context) {
     super(props, context);
-
+    this.renderItemMain = this.renderItemMain.bind(this)
+    this.keyExtractor = this.keyExtractor.bind(this)
     this._renderItem = this._renderItem.bind(this);
     this.renderTime = (this.props.renderTime
       ? this.props.renderTime
@@ -70,13 +72,22 @@ export default class BleashupTimeLine extends BeComponent {
   componentDidMount() {
     this.props.index || this.props.index >= 0 &&
       setTimeout(() => {
-      this.scrollToIndex(this.props.index)
-      }, 1000);
+        this.scrollToIndex(this.props.index)
+      }, 20);
   }
   delayer = 0;
-  scrollToIndex(index){
+  scrollToIndex(index) {
     this.refs.changeList && this.refs.changeList.scrollToIndex(index);
   }
+  renderItemMain = (rowData, index) => {
+    this.delayer = this.delayer + 1;
+    if (this.delayer >= 6) this.delayer = 0;
+    return (
+      <View onLayout={(e) => this.takeNewLayout(e.nativeEvent.layout,
+        rowData, index)}>{this._renderItem(rowData, index, this.delayer)}</View>
+    );
+  }
+  keyExtractor = (rowData, index) => rowData.id || index.toString()
   render() {
     return (
       <View style={[styles.container, this.props.style]}>
@@ -92,15 +103,8 @@ export default class BleashupTimeLine extends BeComponent {
           initialRender={10}
           numberOfItems={this.props.data.length}
           //extraData={this.state}
-          renderItem={(rowData, index) => {
-            this.delayer = this.delayer + 1;
-            if (this.delayer >= 6) this.delayer = 0;
-            return (
-              <View onLayout={(e) => this.takeNewLayout(e.nativeEvent.layout, 
-                rowData, index)}>{this._renderItem(rowData, index, this.delayer)}</View>
-            );
-          }}
-          keyExtractor={(rowData, index) => rowData.id || index.toString()}
+          renderItem={this.renderItemMain}
+          keyExtractor={this.keyExtractor}
           {...this.props.options}
         />
         <MessageActions
@@ -120,7 +124,7 @@ export default class BleashupTimeLine extends BeComponent {
   _renderItem(rowData, index, delay) {
     let content = null;
     switch (rowData.type) {
-      case "date_separator":
+      case message_types.date_separator:
         content = (
           <View style={[styles.rowContainer, this.props.rowContainerStyle]}>
             {this.renderTimeSeparator(rowData)}
@@ -152,23 +156,23 @@ export default class BleashupTimeLine extends BeComponent {
           case "two-column":
             content =
               (rowData.position && rowData.position == "right") ||
-              (!rowData.position && index % 2 == 0) ? (
-                <View
-                  style={[styles.rowContainer, this.props.rowContainerStyle]}
-                >
-                  {this.renderTime(rowData, index)}
-                  {this.renderEvent(rowData, index, delay)}
-                  {this.renderCircle(rowData, index)}
-                </View>
-              ) : (
-                <View
-                  style={[styles.rowContainer, this.props.rowContainerStyle]}
-                >
-                  {this.renderEvent(rowData, index, delay)}
-                  {this.renderTime(rowData, index)}
-                  {this.renderCircle(rowData, index)}
-                </View>
-              );
+                (!rowData.position && index % 2 == 0) ? (
+                  <View
+                    style={[styles.rowContainer, this.props.rowContainerStyle]}
+                  >
+                    {this.renderTime(rowData, index)}
+                    {this.renderEvent(rowData, index, delay)}
+                    {this.renderCircle(rowData, index)}
+                  </View>
+                ) : (
+                  <View
+                    style={[styles.rowContainer, this.props.rowContainerStyle]}
+                  >
+                    {this.renderEvent(rowData, index, delay)}
+                    {this.renderTime(rowData, index)}
+                    {this.renderCircle(rowData, index)}
+                  </View>
+                );
             break;
         }
     }
@@ -203,7 +207,7 @@ export default class BleashupTimeLine extends BeComponent {
           flex: 1,
           alignItems:
             (rowData.position && rowData.position == "right") ||
-            (!rowData.position && rowID % 2 == 0)
+              (!rowData.position && rowID % 2 == 0)
               ? "flex-end"
               : "flex-start",
         };
@@ -230,8 +234,8 @@ export default class BleashupTimeLine extends BeComponent {
     const lineColor = isLast
       ? "rgba(0,0,0,0)"
       : rowData.lineColor
-      ? rowData.lineColor
-      : this.props.lineColor;
+        ? rowData.lineColor
+        : this.props.lineColor;
     let opStyle = null;
 
     switch (this.props.columnFormat) {
@@ -256,21 +260,21 @@ export default class BleashupTimeLine extends BeComponent {
       case "two-column":
         opStyle =
           (rowData.position && rowData.position == "right") ||
-          (!rowData.position && rowID % 2 == 0)
+            (!rowData.position && rowID % 2 == 0)
             ? {
-                borderColor: lineColor,
-                borderLeftWidth: lineWidth,
-                borderRightWidth: 0,
-                marginLeft: 20,
-                paddingLeft: 20,
-              }
+              borderColor: lineColor,
+              borderLeftWidth: lineWidth,
+              borderRightWidth: 0,
+              marginLeft: 20,
+              paddingLeft: 20,
+            }
             : {
-                borderColor: lineColor,
-                borderLeftWidth: 0,
-                borderRightWidth: lineWidth,
-                marginRight: 20,
-                paddingRight: 20,
-              };
+              borderColor: lineColor,
+              borderLeftWidth: 0,
+              borderRightWidth: lineWidth,
+              marginRight: 20,
+              paddingRight: 20,
+            };
         break;
     }
 
@@ -323,16 +327,16 @@ export default class BleashupTimeLine extends BeComponent {
       changer,
     });
   }
-  mention(change,changer) {
-    let newChanger = changer||this.state.changer
+  mention(change, changer) {
+    let newChanger = changer || this.state.changer
     this.props.mention({
       id: change.id,
       title: `${newChanger.nickname}  ${change.changed} :\n ${
         typeof change.new_value.new_value == "string" &&
-        !testForURL(change.new_value.new_value)
+          !testForURL(change.new_value.new_value)
           ? change.new_value.new_value
           : ""
-      }`,
+        }`,
       type_extern: newChanger.nickname,
       new_value: change.new_value,
       updated: change.updated,
@@ -348,23 +352,23 @@ export default class BleashupTimeLine extends BeComponent {
           onPress={() => this.props.onEventPress(rowData)}
           numberOfLines={2}
           searchString={this.props.searchString}
-          foundString={this.props.foundIndex == index?this.props.searchString:null}
+          foundString={this.props.foundIndex == index ? this.props.searchString : null}
           ellipsizeMode={"tail"}
           style={[GState.defaultTextStyle, styles.title, this.props.titleStyle]}
         >
           {rowData.title}
         </TextContent>
         <ChangeBox
-        onPress={() => this.props.onEventPress(rowData)}
-        searchString={this.props.searchString}
-        foundString={this.props.foundIndex == index?this.props.searchString:null}
+          onPress={() => this.props.onEventPress(rowData)}
+          searchString={this.props.searchString}
+          foundString={this.props.foundIndex == index ? this.props.searchString : null}
           onLongPress={(changer) => {
             this.selectItem(rowData, changer);
           }}
           master={this.props.master}
           showPhoto={(url) => this.props.showPhoto(url)}
           restore={(data) => this.props.restore(data)}
-          mention={(data,changer) => this.mention(data,changer)}
+          mention={(data, changer) => this.mention(data, changer)}
           delayer={delay}
           change={rowData}
         ></ChangeBox>
@@ -372,31 +376,31 @@ export default class BleashupTimeLine extends BeComponent {
     );
     return <View style={styles.container}>{title}</View>;
   }
-  takeNewLayout = (layout,rowData,index) => {
-  GState.itemDebounce(
-    rowData,
-    () => {
-      this.storesLayouts(rowData.event_id, layout, index);
-    },
-    500
-  );
-}
+  takeNewLayout = (layout, rowData, index) => {
+    GState.itemDebounce(
+      rowData,
+      () => {
+        this.storesLayouts(rowData.event_id, layout, index);
+      },
+      500
+    );
+  }
   _renderCircle(rowData, rowID) {
     var circleSize = rowData.circleSize
       ? rowData.circleSize
       : this.props.circleSize
-      ? this.props.circleSize
-      : defaultCircleSize;
+        ? this.props.circleSize
+        : defaultCircleSize;
     var circleColor = rowData.circleColor
       ? rowData.circleColor
       : this.props.circleColor
-      ? this.props.circleColor
-      : defaultCircleColor;
+        ? this.props.circleColor
+        : defaultCircleColor;
     var lineWidth = rowData.lineWidth
       ? rowData.lineWidth
       : this.props.lineWidth
-      ? this.props.lineWidth
-      : defaultLineWidth;
+        ? this.props.lineWidth
+        : defaultLineWidth;
 
     var circleStyle = null;
 
@@ -462,8 +466,8 @@ export default class BleashupTimeLine extends BeComponent {
           backgroundColor: rowData.dotColor
             ? rowData.dotColor
             : this.props.dotColor
-            ? this.props.dotColor
-            : defaultDotColor,
+              ? this.props.dotColor
+              : defaultDotColor,
         };
         innerCircle = <View style={[styles.dot, dotStyle]} />;
         break;

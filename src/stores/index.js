@@ -18,6 +18,7 @@ import  StoriesStore from './StoriesStore';
 import  StatusStore from './StatusStore';
 import comments from './comments';
 import PrivacyStore from './PrivacyStore';
+import States from './states';
 
 export default { 
 
@@ -40,6 +41,7 @@ export default {
   CommiteeStore : new commitee(),
   StoriesStore: new   StoriesStore(),
   Privacy:new PrivacyStore(),
+  States: new States(),
   Messages : new ChatStore(),
   StatusStore : new StatusStore()
 

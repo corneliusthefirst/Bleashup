@@ -8,7 +8,7 @@ import ColorList from '../../colorList';
 import BeComponent from '../../BeComponent';
 import TextContent from './TextContent';
 
-@observer class ChatUser extends BePureComponent {
+@observer class ChatUser extends BeComponent {
     constructor(props) {
         super(props)
     }

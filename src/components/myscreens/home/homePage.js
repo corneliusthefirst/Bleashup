@@ -85,7 +85,8 @@ class Home extends BeComponent {
   handleNotif(data) {
     stores.Events.loadCurrentEvent(data.activity_id).then(activity => {
       if (this.isMember(activity)) {
-        BeNavigator.pushActivityWithIndex(activity, data)
+        BeNavigator.pushActivityWithIndex(activity, data, 
+          GState.currentRoom && true)
       } else {
         this.showDetailModal(activity, data)
       }
@@ -137,9 +138,9 @@ class Home extends BeComponent {
         console.warn(notification);
       });
   }
-  navigateToEventDetails(id, remind_id,post_id) {
+  navigateToEventDetails(id, remind_id, post_id) {
     data = {
-      activity_id: id, remind_id,post_id
+      activity_id: id, remind_id, post_id
     }
     this.handleNotifications(data)
   }
@@ -157,7 +158,7 @@ class Home extends BeComponent {
       this.navigateToEventDetails(response.id, response.remind_id);
     });
     DeepLinking.addRoute("/event/:id/stars/:post_id", (response) => {
-      this.navigateToEventDetails(response.id, null,response.post_id);
+      this.navigateToEventDetails(response.id, null, response.post_id);
     });
     Linking.getInitialURL()
       .then((url) => {

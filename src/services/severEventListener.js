@@ -72,6 +72,16 @@ class ServerEventListener {
       });
     }
   }
+  returnReqeustFromString(data) {
+    let request = JSON.parse(data.
+      replace(this.splitter.start, "").
+      replace(this.splitter.end, ""))
+    return request
+  }
+  returnRequestData(data) {
+    const request = this.returnReqeustFromString(data)
+    return request.data
+  }
   infoDispatched = false
   updatesDispatched = false
   invitationsDispatched = false
@@ -90,8 +100,15 @@ class ServerEventListener {
           break;
         case this.responseCases.cleared:
           console.warn("clearing.....");
+          if (stores.States.requestsExists()) {
+            console.warn("persisted request existing")
+            Object.keys(stores.States.states.requests).forEach(ele => {
+              this.writeToSocketFresh(stores.States.getRequest(ele), ele)
+            })
+          }
           emitter.emit(this.events.cleared, data.data);
           this.informWaiters();
+
           break;
         case this.responseCases.all_updates:
           let sorter = (a, b) =>
@@ -335,19 +352,19 @@ class ServerEventListener {
         this.clearRetriesFinal(id)
         reject(dataError);
       });
-      console.warn(this.requestUnprocessed[id])
+      //console.warn(this.requestUnprocessed[id])
       this.startDataSending(data, id, reject)
     });
   }
-  startDataSending(data, id, reject) {
+  startDataSending(data, id, reject, persist) {
     if (!this.requestUnprocessed[id]) {
       this.writeToSocket(data);
-      if (this.shouldReconnect){
+      if (this.shouldReconnect) {
         this.startRetryer(data, id, reject)
         this.shouldReconnect = false
       }
-      this.startClearListener(id, data)
       this.requestUnprocessed[id] = true;
+      this.startClearListener(id, data, persist)
     }
   }
   writeToSocket(data, init) {
@@ -356,12 +373,23 @@ class ServerEventListener {
       this.socket.write(data);
     }
   }
-  writeToSocketFresh(data) {
+  writeToSocketFresh(data, id) {
     let request = JSON.parse(data.
       replace(this.splitter.start, "").
       replace(this.splitter.end, ""))
     tcpRequest.sendData(request.action, request.data, request.id).then(JSONData => {
+      if (id) {
+        this.startClearPersistedRequest(id)
+      }
       this.writeToSocket(JSONData)
+    })
+  }
+  startClearPersistedRequest(id) {
+    emitter.once(this.events.successful_ + id, () => {
+      stores.States.unPersistRequest(id)
+    })
+    emitter.once(this.events.unsuccessful_ + id, () => {
+      stores.States.unPersistRequest(id)
     })
   }
   connectionCheck() { }
@@ -393,8 +421,8 @@ class ServerEventListener {
   collectRetries = null
   working = false;
   unsentRequest = {};
-  sendRequest(data, id) {
-    console.warn("sending ...", data)
+  sendRequest(data, id, persist) {
+    //console.warn("sending ...", data)
     return new Promise((resolve, reject) => {
       emitter.once(this.events.successful_ + id, (response) => {
         this.clearRetriesFinal(id)
@@ -406,13 +434,17 @@ class ServerEventListener {
         console.warn("unsuccessful, " + response);
         reject(response);
       });
-      this.startDataSending(data, id, reject)
+      this.startDataSending(data, id, reject, persist)
     });
   }
-  startClearListener(id, data) {
-    emitter.once(this.events.cleared_ + id, () => {
-      this.requestUnprocessed[id] && this.handleRerequest(data, id)
-    });
+  startClearListener(id, data, persist) {
+    if (persist) {
+      stores.States.PersistRequest(data, id)
+    } else {
+      emitter.once(this.events.cleared_ + id, () => {
+        this.requestUnprocessed[id] && this.handleRerequest(data, id)
+      });
+    }
   }
   clearRetries(id) {
     clearInterval(this.retries[id]);
@@ -420,6 +452,7 @@ class ServerEventListener {
   }
   clearRetriesFinal(id) {
     this.clearRetries(id);
+    stores.States.unPersistRequest(id)
     this.shouldReconnect = true
     emitter.off(this.events.cleared_ + id)
     delete this.retries[id];

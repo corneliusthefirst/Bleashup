@@ -28,7 +28,7 @@ export default class DescriptionModal extends BleashupModal {
   swipeToClose = false;
   position = "center";
   modalWidth = "80%";
-  modalHeight = 310;
+  modalHeight = 250;
   modalMinHieight = 50
   borderRadius = 20;
   borderTopLeftRadius = 20;
@@ -46,7 +46,7 @@ export default class DescriptionModal extends BleashupModal {
       >
         <View
           style={{
-            height: "70%",
+            height: 250*.90,
             width: "98%",
             padding: "2%",
             margin: "1%",
@@ -123,14 +123,13 @@ export default class DescriptionModal extends BleashupModal {
 
         <View
           style={{
-            height: "30%",
             flexDirection: "row",
             justifyContent: "space-between",
             marginLeft: "2%",
             marginRight: "2%",
           }}
         >
-          <View style={{ marginTop: "22%", width: "5%" }}>
+          <View style={{width: "5%" }}>
             <Creator
               color={colorList.bodyBackground}
               creator={this.props.Event.creator_phone}
