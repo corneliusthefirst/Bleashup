@@ -214,6 +214,7 @@ export default class highlights {
         let RemindIndex = findIndex(Highlights[EventID], {
           id: NewHighlight.id,
         });
+        console.warn("updating heighlight url")
         Highlights[EventID][RemindIndex].url = NewHighlight.url;
         Highlights[EventID][RemindIndex].updated_date = moment().format();
         Highlights[EventID][RemindIndex].url_updated = inform;

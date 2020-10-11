@@ -22,6 +22,7 @@ import GState from "../../../stores/globalState";
 import EvilIcons  from 'react-native-vector-icons/EvilIcons';
 import Spinner from '../../Spinner';
 import  FontAwesome5  from 'react-native-vector-icons/FontAwesome5';
+import Texts from "../../../meta/text";
 
 var event = null;
 export default class Settings extends Component {
@@ -192,13 +193,12 @@ export default class Settings extends Component {
     ) : (
       <View>
         <ScrollView
-          style={{ height: "90%" }}
           showsVerticalScrollIndicator={false}
         >
           <View style={{ marginLeft: "4%", flexDirection: "column" }}>
             {this.state.emptyNameError ? (
               <Text style={{ color: colorList.errorColor }} note>
-                {"name cannot be empty"}
+                {Texts.name_cannot_be_empty}
               </Text>
             ) : null}
             {this.state.tooLongNameError ? (
@@ -356,8 +356,8 @@ export default class Settings extends Component {
               width: 150,
               flexDirection: "row",
               margin: "2%",
-              paddingTop: "-5%",
-              height: "10%",
+              marginTop: '4%',
+              height: 35,
             }}
           >
             <EvilIcons

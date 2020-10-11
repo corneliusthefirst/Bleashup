@@ -372,6 +372,7 @@ export default class Event extends BeComponent {
       case ActivityPages.chat:
         return (
           <EventChat
+            openDescription={this.showDescription.bind(this)}
             replyPrivately={this.showPrivateReply.bind(this)}
             showDetailModal={this.showDetailModal.bind(this)}
             showShare={this.showSahreWithYourContact.bind(this)}

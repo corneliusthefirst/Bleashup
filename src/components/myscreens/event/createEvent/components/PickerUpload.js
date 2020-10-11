@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import PickersMenu from "./PickerMenu";
 import FileExachange from "../../../../../services/FileExchange";
-import { RNFFmpeg, RNFFprobe} from "react-native-ffmpeg";
+import { RNFFmpeg, RNFFprobe } from "react-native-ffmpeg";
 import { View, TouchableOpacity } from "react-native";
 import Pickers from "../../../../../services/Picker";
 import { AnimatedCircularProgress } from "react-native-circular-progress";
@@ -10,18 +10,20 @@ import ColorList from "../../../../colorList";
 import SearchImage from "./SearchImage";
 import rnFetchBlob from "rn-fetch-blob";
 import BeComponent from '../../../../BeComponent';
-import EvilIcons  from 'react-native-vector-icons/EvilIcons';
+import EvilIcons from 'react-native-vector-icons/EvilIcons';
 import BeNavigator from '../../../../../services/navigationServices';
 import rounder from "../../../../../services/rounder";
 import BleashupAlert from "./BleashupAlert";
 import Texts from '../../../../../meta/text';
+import AudioRecorder from '../../../eventChat/AudioRecorder';
+import IDMaker from '../../../../../services/IdMaker';
 
 export default class PickersUpload extends BeComponent {
   constructor(props) {
     super(props);
     this.state = {
       downloadProgess: 0,
-      newing:false,
+      newing: false,
     };
   }
   componentDidMount() {
@@ -46,17 +48,63 @@ export default class PickersUpload extends BeComponent {
       this.exchanger.task &&
       this.exchanger.task.cancel &&
       this.exchanger.task.cancel();
-   !stop && this.setStatePure({
-      uploading: false
-    })
+    !stop && this.hideProgress()
   }
   handleProgress = (reveived, total) => {
     this.setStatePure({
       downloadProgess: reveived / total,
     });
   };
-  upload(snaper,isVideo){
-    console.warn(snaper,isVideo)
+  deleteFile(file) {
+    let deleter = new FileExachange()
+    console.warn("deleting: ", file)
+    deleter.deleteFile(file, true)
+    this.resetPreviousVal()
+  }
+  resetPreviousVal() {
+    this.previousAudio = null
+    this.previousFile = null
+    this.previousPhoto = null
+    this.previousVideo = null
+  }
+  cleanMedia() {
+    this.deletePreviousVals()
+    this.cancelAllUploads()
+  }
+  cancelAllUploads() {
+    this.clearAudio()
+    this.clearFile()
+    this.cleanMedia()
+  }
+  deletePreviousVals() {
+    if (this.previousPhoto) {
+      this.deleteFile(this.previousPhoto)
+    }
+    if (this.previousVideo) {
+      this.deleteFile(this.previousVideo)
+    }
+    if (this.previousAudio) {
+      this.deleteFile(this.previousAudio)
+    }
+    if (this.previousFile)
+      this.deleteFile(this.previousFile)
+  }
+  unlinkNewDir(newDir) {
+    rnFetchBlob.fs.unlink(newDir)
+  }
+  compressVideoAndSend(path, filename, baseURL) {
+    RNFFprobe.getMediaInformation(path).then((info) => {
+      let photoVid = baseURL + filename.split(".")[0] + "_thumbnail.jpeg"
+      this.props.saveMedia({
+        photo: photoVid,
+        video: path,
+        video_duration: Math.ceil(info.duration / 1000),
+      });
+      this.previousPhoto = photoVid
+      this.previousVideo = path
+    });
+  }
+  upload(snaper, isVideo) {
     this.exchanger = new FileExachange(
       snaper.source,
       isVideo ? "/Video/" : "/Photo/",
@@ -64,43 +112,17 @@ export default class PickersUpload extends BeComponent {
       0,
       this.handleProgress,
       (newDir, path, filename, baseURL) => {
-        rnFetchBlob.fs.unlink(newDir).then(() => {
-        });
-        if (this.previousPhoto) {
-          let deleter = new FileExachange()
-          deleter.deleteFile(this.previousPhoto, true).then(() => {
-
-          })
-        }
-        if (this.previousVideo) {
-          let deleter = new FileExachange()
-          deleter.deleteFile(this.previousVideo, true)
-        }
+        this.unlinkNewDir(newDir)
+        this.deletePreviousVals()
         if (isVideo) {
-          RNFFprobe.getMediaInformation(path).then((info) => {
-            let photoVid = baseURL + filename.split(".")[0] + "_thumbnail.jpeg"
-            this.props.saveMedia({
-              ...this.props.currentURL,
-              photo: isVideo
-                ? photoVid
-                : path,
-              video: isVideo && path,
-              video_duration: Math.ceil(info.duration / 1000),
-            });
-            this.previousPhoto = photoVid
-            this.previousVideo = path
-          });
+          this.compressVideoAndSend(path, filename, baseURL)
         } else {
           this.props.saveMedia({
-            ...this.props.currentURL,
             photo: path,
-            video: isVideo && path,
           });
         }
         this.previousPhoto = path
-        this.setStatePure({
-          uploading: false,
-        });
+        this.hideProgress()
       },
       null,
       (error) => {
@@ -116,14 +138,14 @@ export default class PickersUpload extends BeComponent {
     );
     this.exchanger.upload();
   }
-  openCamera(){
+  openCamera() {
     BeNavigator.pushTo("CameraScreen", {
       callback: (souce) => setTimeout(() => this.concludePicking(souce)),
       directReturn: false,
-      noVideo:true
+      noVideo: true
     })
   }
-  concludePicking(snaper){
+  concludePicking(snaper) {
     console.warn(snaper, "oooo")
     this.setStatePure({
       newing: !this.state.newing,
@@ -152,72 +174,93 @@ export default class PickersUpload extends BeComponent {
       this.audioExchanger.task.cancel &&
       this.audioExchanger.task.cancel();
   }
-  takeFile(){
+  clearFile() {
+    this.fileExchange &&
+      this.fileExchange.task &&
+      this.fileExchange.task.cancel &&
+      this.fileExchange.task.cancel()
+  }
+  takeFile() {
     Pickers.TakeFile().then(file => {
-      if(file){
+      if (file) {
         console.warn(file)
         this.setStatePure({
-          newing:!this.state.newing,
-          uploading:true,
+          newing: !this.state.newing,
+          uploading: true,
         })
-        this.fileExchange = new FileExachange("file://" + file.uri,'/Others/',0,0,
-        this.handleProgress,
-        (newDir,path,filename) => {
-
-          },null, (error) => {
+        this.clearFile()
+        this.cancelUploadError()
+        this.fileExchange = new FileExachange("file://" + file.uri, '/Others/', 0, 0,
+          this.handleProgress,
+          (newDir, path, filename) => {
+            console.warn("uploaded file: ", path)
+            this.unlinkNewDir(newDir)
+            this.deletePreviousVals()
+            this.props.saveMedia({
+              source: path,
+              file_name: file.name,
+              total: file.size
+            })
+            this.previousFile = path
+            this.hideProgress()
+          }, null, (error) => {
             this.sayUploadError();
-          },file.type,file.name,'/others')
+          }, file.type, file.name, '/other')
+        this.fileExchange.upload()
       }
     })
+  }
+  hideProgress() {
+    this.setStatePure({
+      uploading: false,
+    });
   }
   takeAudio() {
     Pickers.TakeAudio().then((audio) => {
       if (audio) {
         console.warn(audio);
-        this.setStatePure({
-          newing: !this.state.newing,
-          uploading: true,
-        });
         this.clearAudio();
         this.cancelUploadError();
-        this.audioExchanger = new FileExachange(
-          "file://" + audio.uri,
-          "/Sound/",
-          0,
-          0,
-          this.handleProgress,
-          (newDir, path, filename) => {
-            RNFFprobe.getMediaInformation(path).then((info) => {
-              rnFetchBlob.fs.unlink(newDir).then(() => { });
-              if (this.previousAudio) {
-                let deleter = new FileExachange()
-                deleter.deleteFile(this.previousAudio, true).then(() => {
-
-                })
-              }
-              this.props.saveMedia({
-                ...this.props.currentURL,
-                audio: path,
-                duration: Math.ceil(info.duration / 1000),
-              });
-              this.previousAudio = path
-              this.setStatePure({
-                uploading: false,
-              });
-            });
-          },
-          null,
-          (error) => {
-            this.sayUploadError();
-          },
-          audio.type,
-          audio.name,
-          "/sound"
-        );
-        this.audioExchanger.upload();
+        this.uplaodAudio(audio)
       }
     });
   }
+  uplaodAudio(audio) {
+    this.setStatePure({
+      newing: !this.state.newing,
+      uploading: true,
+    });
+    this.audioExchanger = new FileExachange(
+      "file://" + audio.uri,
+      "/Sound/",
+      0,
+      0,
+      this.handleProgress,
+      (newDir, path, filename) => {
+        RNFFprobe.getMediaInformation(path).then((info) => {
+          console.warn("sound duration is: ", info.duration, path)
+          this.unlinkNewDir(newDir)
+          this.deletePreviousVals()
+          this.props.saveMedia({
+            source: path,
+            id: audio.name,
+            duration: Math.ceil(info.duration / 1000),
+          });
+          this.previousAudio = path
+          this.hideProgress()
+        });
+      },
+      null,
+      (error) => {
+        this.sayUploadError();
+      },
+      audio.type,
+      audio.name,
+      "/sound"
+    );
+    this.audioExchanger.upload();
+  }
+
   sayUploadError() {
     this.setStatePure({
       uploadError: true,
@@ -240,46 +283,94 @@ export default class PickersUpload extends BeComponent {
     marginTop: "auto",
     marginBottom: "auto",
   }
-  hideAlert(){
+  hideAlert() {
     this.setStatePure({
-      showAlert:false
+      showAlert: false
     })
   }
-  showAlert(){
+  showAlert() {
     this.setStatePure({
-      alert:{
+      alert: {
         title: "Remove Photo",
         message: "Are you sure want to remove this photo"
       },
-      showAlert:true
+      showAlert: true
     })
+  }
+  toggleAudio() {
+    this.setStatePure({
+      showAudioRecorder: !this.state.showAudioRecorder,
+    });
+  }
+  toggleAudioRecorder() {
+    this.toggleAudio()
+    this.toggleAudioTimeout = setTimeout(() => {
+      if (!this.state.showAudioRecorder) {
+        this.refs.AudioRecorder && this.refs.AudioRecorder.stopRecordSimple();
+      } else {
+        this.refs.AudioRecorder && this.refs.AudioRecorder.startRecorder();
+      }
+      clearTimeout(this.toggleAudioTimeout)
+    }, 50);
+  }
+  sendAudioFile(filename, duration, dontsend) {
+    this.toggleAudio()
+    if (!dontsend) {
+      this.uplaodAudio({
+        uri: filename,
+        type: "audio/mp3",
+        name: IDMaker.make()
+      })
+    }
+  }
+  hideRecorder() {
+    this.setStatePure({
+      showAudioRecorder: false,
+    });
+  }
+  audioRecorder() {
+    return (
+      <View style={{
+        margin: 2,
+        flex: 1,
+      }}>
+        <AudioRecorder
+          justHideMe={this.hideRecorder.bind(this)}
+          showAudioRecorder={this.state.showAudioRecorder}
+          sendAudioMessge={this.sendAudioFile.bind(this)}
+          ref={"AudioRecorder"}
+          toggleAudioRecorder={this.toggleAudioRecorder.bind(this)}
+        ></AudioRecorder>
+      </View>
+    );
   }
   render() {
     return (
 
-      <View style={{ 
-        flexDirection: 'row', 
+      <View style={{
+        flexDirection: 'row',
         alignSelf: 'flex-start',
         alignItems: 'center',
         ...this.props.withTrash || this.state.uploading ? {
           justifyContent: 'space-between',
-          width: '100%'}:null 
+          width: '100%'
+        } : null
       }}>
 
 
-        <View style={{ width: 35,...this.center }}>
+        <View style={{ width: 35, ...this.center }}>
           <PickersMenu
             color={this.props.color}
             fontSize={this.props.fontSize}
             menu={[
               {
-                title:'Camera',
-                condition:true,
-                callback:() => this.openCamera()
+                title: Texts.camera,
+                condition: this.props.notCamera ? false : true,
+                callback: () => this.openCamera()
               },
               {
-                title: "Gallery",
-                condition: true,
+                title: Texts.galery,
+                condition: this.props.notGalery ? false : true,
                 callback: () => this.TakePhotoFromLibrary(false),
               },
             ]}
@@ -289,27 +380,36 @@ export default class PickersUpload extends BeComponent {
             }}
           ></PickersMenu>
         </View>
-
-        {!this.props.onlyPhotos && <View style={{ width: 35,...this.center }}>
+        {!this.props.onlyPhotos && <View style={{ width: 35, ...this.center }}>
           <PickersMenu
             menu={[
               {
-                title: "Take Photo from the Internet",
-                condition: true,
+                title: Texts.take_photo_from_internet,
+                condition: this.props.notInternet ? false : true,
                 callback: () =>
                   this.setStatePure({
                     searchImageState: true,
                   }),
               },
               {
-                title: "Video",
+                title: Texts.add_video,
                 condition: this.props.notVideo ? false : true,
                 callback: () => this.TakePhotoFromLibrary(true),
               },
               {
-                title: "Add Audio",
+                title: Texts.add_audio,
                 condition: this.props.notAudio ? false : true,
                 callback: () => this.takeAudio(),
+              },
+              {
+                title: Texts.record_audio,
+                condition: this.props.notAudio ? false : true,
+                callback: () => this.toggleAudioRecorder()
+              },
+              {
+                title: Texts.add_file,
+                condition: this.props.notFile ? false : true,
+                callback: () => this.takeFile(),
               }
             ]}
             icon={{
@@ -318,11 +418,11 @@ export default class PickersUpload extends BeComponent {
             }}
           ></PickersMenu>
         </View>}
-
-        {!this.state.uploading ? null: (
-          <View style={{ ...rounder((this.props.fontSize||26)||5,ColorList.bodyBackground) }}>
+        {this.state.showAudioRecorder ? this.audioRecorder() : null}
+        {!this.state.uploading ? null : (
+          <View style={{ ...rounder((this.props.fontSize || 26) || 5, ColorList.bodyBackground) }}>
             <AnimatedCircularProgress
-              size={this.props.fontSize|| 26}
+              size={this.props.fontSize || 26}
               width={2}
               backgroundColor={ColorList.indicatorInverted}
               tintColor={
@@ -344,12 +444,12 @@ export default class PickersUpload extends BeComponent {
             </AnimatedCircularProgress>
           </View>
         )}
-        {this.props.withTrash ? <TouchableOpacity 
+        {this.props.withTrash ? <TouchableOpacity
           onPress={this.showAlert.bind(this)}
-          style={{...rounder((this.props.fontSize||30)+5),justifyContent: 'center',}} >
-          <EvilIcons style={{ color: 'red', fontSize: this.props.fontSize|| 30 }}
+          style={{ ...rounder((this.props.fontSize || 30) + 5), justifyContent: 'center', }} >
+          <EvilIcons style={{ color: 'red', fontSize: this.props.fontSize || 30 }}
             name="trash" transparent type="EvilIcons" />
-          </TouchableOpacity>:null}
+        </TouchableOpacity> : null}
 
         {this.state.searchImageState ? <SearchImage
           openPicker={() => {
@@ -362,24 +462,24 @@ export default class PickersUpload extends BeComponent {
               searchImageState: false,
             });
           }}
-        />:null}
+        /> : null}
         {
           this.state.showAlert ? <BleashupAlert isOpen={this.state.showAlert}
-          title={this.state.alert.title}
-          message={this.state.alert.message}
-          refuse={Texts.cancel}
-          deleteFunction={() => {
-            this.props.saveMedia({
-              photo:"",
-              video:"",
-              audio:""
-            })
-            this.hideAlert()
-          }}
-          accept={Texts.remove}
-          onClosed={this.hideAlert.bind(this)}
+            title={this.state.alert.title}
+            message={this.state.alert.message}
+            refuse={Texts.cancel}
+            deleteFunction={() => {
+              this.props.saveMedia({
+                photo: "",
+                video: "",
+                audio: ""
+              })
+              this.hideAlert()
+            }}
+            accept={Texts.remove}
+            onClosed={this.hideAlert.bind(this)}
           >
-          </BleashupAlert>:null
+          </BleashupAlert> : null
         }
       </View>
 

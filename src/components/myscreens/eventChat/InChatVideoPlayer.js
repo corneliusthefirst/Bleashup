@@ -1,13 +1,13 @@
 import React, { Component } from "react"
-import { View } from "react-native"
+import { View, StatusBar } from "react-native"
 import ColorList from '../../colorList';
 import VideoController from './VideoController';
 import rounder from "../../../services/rounder";
 import { TouchableOpacity } from 'react-native-gesture-handler';
 import BeComponent from '../../BeComponent';
-import  Entypo  from 'react-native-vector-icons/Entypo';
+import Entypo from 'react-native-vector-icons/Entypo';
 import AntDesign from 'react-native-vector-icons/AntDesign';
-import MaterialIcons  from 'react-native-vector-icons/MaterialIcons';
+import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import GState from "../../../stores/globalState";
 export default class InChatVideoPlayer extends BeComponent {
     constructor(props) {
@@ -32,9 +32,9 @@ export default class InChatVideoPlayer extends BeComponent {
         marginRight: 3,
         justifyContent: 'center',
     }
-    enterFullscreen(){
+    enterFullscreen() {
         this.props.enterFullscreen(true)
-        
+
     }
     showReactionModal() {
         this.setStatePure({
@@ -45,18 +45,29 @@ export default class InChatVideoPlayer extends BeComponent {
         })
 
     }
+    darkStatus = () => (
+        <StatusBar
+            //hidden={this.state.hideStatusBar}
+            animated={true}
+            barStyle="light-content"
+            backgroundColor="#000"
+        />
+    );
     render() {
+
         return <View
             style={{
                 height: this.props.fullScreen
                     ? "100%"
                     : "40%",
-                margin: this.props.fullScreen?'1%':"3%",
+                backgroundColor: this.props.fullScreen ? 'black' : null,
+                marginTop: this.props.fullScreen ? null : "3%",
                 alignSelf: 'center',
                 width: this.props.fullScreen ? "100%" : "98%",
                 position: "absolute",
             }}
         >
+            {this.props.fullScreen ? this.darkStatus() : null}
             <VideoController
                 source={{ uri: this.props.video }} // Can be a URL or a local file.
                 ref={(ref) => {
@@ -75,34 +86,34 @@ export default class InChatVideoPlayer extends BeComponent {
                             this.props.enterFullscreen(true)
                             this.props.reply(this.props.message)
                         })} style={this.containerStyle}>
-                            <Entypo name={"reply"} style={this.iconStyles} type={"Entypo"}/>
+                            <Entypo name={"reply"} style={this.iconStyles} type={"Entypo"} />
                         </TouchableOpacity>
                         <TouchableOpacity onPress={() => requestAnimationFrame(() => {
                             this.videoPlayer._pausePlayer()
                             this.enterFullscreen(true)
                             this.props.forward(this.props.message)
                         })} style={this.containerStyle}>
-                        <Entypo name="forward" style={this.iconStyles} type={"Entypo"}/>
+                            <Entypo name="forward" style={this.iconStyles} type={"Entypo"} />
                         </TouchableOpacity>
                         <TouchableOpacity onPress={() => requestAnimationFrame(() => {
                             this.videoPlayer._pausePlayer()
                             //this.enterFullscreen(true)
                             this.props.starThis(this.props.message)
                         })} style={this.containerStyle}>
-                            <AntDesign name={"star"} style={this.iconStyles} type={"AntDesign"}/>
+                            <AntDesign name={"star"} style={this.iconStyles} type={"AntDesign"} />
                         </TouchableOpacity>
                         <TouchableOpacity onPress={() => requestAnimationFrame(() => {
                             this.videoPlayer._pausePlayer()
                             //this.enterFullscreen(true)
                             this.props.remindThis(this.props.message)
                         })} style={this.containerStyle}>
-                            <Entypo name="bell" style={this.iconStyles} type={"Entypo"}/>
+                            <Entypo name="bell" style={this.iconStyles} type={"Entypo"} />
                         </TouchableOpacity>
                         <TouchableOpacity onPress={() => requestAnimationFrame(() => {
                             //this.videoPlayer._pausePlayer()
                             this.props.enterFullscreen()
                         })} style={{ ...this.containerStyle }}>
-                            <MaterialIcons style={{ ...GState.defaultIconSize, color: ColorList.bodyBackground, marginBottom: 'auto', marginTop: 'auto', }} type="MaterialIcons" name="fullscreen"/>
+                            <MaterialIcons style={{ ...GState.defaultIconSize, color: ColorList.bodyBackground, marginBottom: 'auto', marginTop: 'auto', }} type="MaterialIcons" name="fullscreen" />
                         </TouchableOpacity>
                     </View>
                 </View>}
@@ -110,6 +121,7 @@ export default class InChatVideoPlayer extends BeComponent {
                 onError={(error) => {
                     console.error(error);
                 }}
+                fScreen={this.props.fullScreen}
                 expandContainerStyle={this.containerStyle}
                 toggleResizeModeOnFullscreen={false}
                 //pictureInPicture={true}

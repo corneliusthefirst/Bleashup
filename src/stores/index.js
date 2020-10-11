@@ -1,49 +1,32 @@
 import Highlights from "./highlights"
-import Contributions from "./contributions"
 import Session from "./session"
-import Votes from "./votes"
 import Contacts from "./contacts"
 import Likes from "./likes"
-import Invitations from "./Invitations"
 import Events from "./events"
 import LoginStore from "./LoginStore"
 import TempLoginStore from "./TempLoginStore"
 import ChatStore from "./ChatStore"
 import ChangeLogs from "./changelogs"
 import Reminds from "./reminds"
-import Publishers from "./publishers"
 import TemporalUsersStore from "./temporalUsersStore"
-import commitee from './commitee';
-import  StoriesStore from './StoriesStore';
-import  StatusStore from './StatusStore';
-import comments from './comments';
 import PrivacyStore from './PrivacyStore';
 import States from './states';
 
 export default { 
 
-  //ChatStore: new ChatStore(),
   Reminds: new Reminds(),
   LoginStore: new LoginStore(),
   TempLoginStore: new TempLoginStore(),
   Highlights: new Highlights(),
   Events: new Events(),
-  Contributions: new Contributions(),
   Session: new Session(),
   Contacts: new Contacts(),
-  Votes: new Votes(),
-  Invitations: new Invitations(),
   ChangeLogs: new ChangeLogs(),
   Likes: new Likes(),
-  Publishers: new Publishers(),
-  comments: new comments(),
   TemporalUsersStore: new TemporalUsersStore(),
-  CommiteeStore : new commitee(),
-  StoriesStore: new   StoriesStore(),
   Privacy:new PrivacyStore(),
   States: new States(),
   Messages : new ChatStore(),
-  StatusStore : new StatusStore()
 
 
 };

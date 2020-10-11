@@ -298,6 +298,8 @@ class ChatRoom extends AnimatedComponent {
                     setTimeout(() => {
                         this.scrollToIndex(index)
                     })
+                } else {
+                    Toaster({ text: Texts.not_found_item })
                 }
             })
         }
@@ -1162,7 +1164,7 @@ class ChatRoom extends AnimatedComponent {
                         BeNavigator.pushActivityWithIndex(event, { post_id: item.star_id }, true)
                     } else {
                         BeNavigator.gotoStarDetail(item.star_id, item.activity_id, {
-                            forward: () => this.handleForward(item), 
+                            forward: () => this.handleForward(item),
                             room: this.roomID,
                             reply: () => this.checkForReply(),
                             reply_privately: (members, creator) => this.props.replyPrivately([...members,
@@ -1392,6 +1394,7 @@ class ChatRoom extends AnimatedComponent {
     header() {
         return (
             <ChatRoomHeader
+                openDescription={this.props.openDescription}
                 getShareLink={this.props.getShareLink}
                 openPage={this.props.openPage}
                 openSettings={this.props.openSettings}
@@ -1419,14 +1422,6 @@ class ChatRoom extends AnimatedComponent {
     }
 
     duration = 10;
-    darkStatus = () => (
-        <StatusBar
-            hidden={this.state.hideStatusBar}
-            animated={true}
-            barStyle="light-content"
-            backgroundColor="#000"
-        />
-    );
     VideoShower() {
         return (
             <InChatVideoPlayer

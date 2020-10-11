@@ -18,6 +18,9 @@ import Texts from "../../../meta/text";
 import TextContent from "../eventChat/TextContent";
 import Entypo from "react-native-vector-icons/Entypo";
 import shadower from "../../shadower";
+import rounder from "../../../services/rounder";
+import ColorList from "../../colorList";
+import BeMenu from "../../Menu";
 
 export default class DescriptionModal extends BleashupModal {
   onClosedModal() {
@@ -33,7 +36,18 @@ export default class DescriptionModal extends BleashupModal {
   borderRadius = 20;
   borderTopLeftRadius = 20;
   borderTopRightRadius = 20;
-
+  items = () => [
+    {
+      title: Texts.reply,
+      condition: true,
+      action: () => requestAnimationFrame(this.props.replyDescription)
+    },
+    {
+      title: Texts.edit,
+      condition:  this.props.computedMaster,
+      action: () => requestAnimationFrame(this.props.showEditDescription)
+    }
+  ]
   modalBody() {
     return (
       <View
@@ -46,13 +60,13 @@ export default class DescriptionModal extends BleashupModal {
       >
         <View
           style={{
-            height: 250*.90,
+            height: 250 * .90,
             width: "98%",
             padding: "2%",
             margin: "1%",
             alignSelf: "center",
             borderRadius: 20,
-            backgroundColor: "mintcream",
+            backgroundColor: ColorList.descriptionBody,
             ...shadower(1),
           }}
         >
@@ -72,30 +86,8 @@ export default class DescriptionModal extends BleashupModal {
             >
               {`@${Texts.activity_description}`}
             </TextContent>
-            <TouchableOpacity
-              onPress={() => requestAnimationFrame(this.props.replyDescription)}
-            >
-              <Entypo
-                name={"reply"}
-                style={{
-                  ...GState.defaultIconSize,
-                  color: colorList.indicatorColor,
-                }}
-              ></Entypo>
-            </TouchableOpacity>
-            {this.props.computedMaster ? (
-              <TouchableOpacity
-                onPress={() =>
-                  requestAnimationFrame(this.props.showEditDescription)
-                }
-              >
-                <EvilIcons
-                  style={{ ...GState.defaultIconSize }}
-                  name={"pencil"}
-                  type={"EvilIcons"}
-                />
-              </TouchableOpacity>
-            ) : null}
+            <BeMenu size={35} items={this.items}>
+            </BeMenu>
           </View>
 
           <ScrollView
@@ -129,7 +121,7 @@ export default class DescriptionModal extends BleashupModal {
             marginRight: "2%",
           }}
         >
-          <View style={{width: "5%" }}>
+          <View style={{ width: "5%" }}>
             <Creator
               color={colorList.bodyBackground}
               creator={this.props.Event.creator_phone}

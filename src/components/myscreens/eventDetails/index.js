@@ -9,7 +9,6 @@ import stores from '../../../stores/index';
 //import { observer } from 'mobx-react'
 import { find, findIndex, reject, } from "lodash";
 import request from "../../../services/requestObjects";
-import EventHighlights from "../event/createEvent/components/EventHighlights";
 import moment from 'moment';
 import shadower from "../../shadower";
 import BleashupFlatList from '../../BleashupFlatList';
@@ -43,6 +42,8 @@ import rounder from '../../../services/rounder';
 import { justSearch, cancelSearch, startSearching } from '../eventChat/searchServices';
 import messagePreparer from '../eventChat/messagePreparer';
 import { constructStarLink } from '../eventChat/services';
+import MessageRequester from '../eventChat/Requester';
+import Spinner from "../../Spinner";
 
 let { height, width } = Dimensions.get('window');
 
@@ -77,31 +78,39 @@ let { height, width } = Dimensions.get('window');
     this.search = justSearch.bind(this)
     this.cancleSearch = cancelSearch.bind(this)
     this.startSearching = startSearching.bind(this)
+    this.newHighlight = this.newHighlight.bind(this)
+    this.renderItem = this.renderItem.bind(this)
   }
   scrolled = 0
   initializer() {
     let participant = find(this.props.Event.participant, { phone: stores.LoginStore.user.phone });
     this.animateUI()
-    this.setStatePure({
-      newing: !this.state.newing,
-      isMounted: true,
-      EventHighlightState: this.props.star || this.props.autoStar ? true : false,
-      participant: participant
-    }, () => {
-      if ((!stores.Highlights.highlights[this.props.Event.id] ||
-        stores.Highlights.highlights[this.props.Event.id].length <= 1)) {
-        stores.Highlights.fetchHighlights(this.props.Event.id).then(() => {
+    setTimeout(() => {
+      this.setStatePure({
+        newing: !this.state.newing,
+        isMounted: true,
+        EventHighlightState: this.props.star || this.props.autoStar ? true : false,
+        participant: participant
+      }, () => {
+        this.concludeInitialization()
+      });
+    })
+  }
+  concludeInitialization() {
+    if ((!stores.Highlights.highlights[this.props.Event.id] ||
+      stores.Highlights.highlights[this.props.Event.id].length <= 1)) {
+      stores.Highlights.fetchHighlights(this.props.Event.id).then(() => {
 
-        })
-      }
-      if (this.props.id) {
-        let arr = stores.Highlights.highlights[this.props.Event.id].
-          filter(el => globalFunctions.filterStars(el, this.state.searchString || ""))
-        let scrollIndex = findIndex(arr, { id: this.props.id })
-        if (scrollIndex >= 0)
-          this.refs.postList && this.refs.postList.scrollToIndex(scrollIndex)
-      }
-    });
+      })
+    }
+    if (this.props.id) {
+      let arr = stores.Highlights.highlights[this.props.Event.id].
+        filter(el => globalFunctions.filterStars(el, this.state.searchString || ""))
+      let scrollIndex = findIndex(arr, { id: this.props.id })
+      if (scrollIndex >= 0)
+        this.refs.postList && this.refs.postList.scrollToIndex(scrollIndex)
+      else Toaster({ text: Texts.not_found_item })
+    }
   }
   initialScrollIndexer = 2
   incrementer = 2
@@ -119,7 +128,7 @@ let { height, width } = Dimensions.get('window');
     clearTimeout(this.closeTeporary)
   }
   componentDidMount() {
-    this.initializer();
+    this.init();
   }
   init() {
     this.initializer()
@@ -176,8 +185,7 @@ let { height, width } = Dimensions.get('window');
     //emitter.emit(`refresh-highlights_${this.props.Event.id}`)
   }
   newHighlight() {
-    this.props.computedMaster ? this.setStatePure({ EventHighlightState: true }) :
-      Toaster({ text: Texts.not_enough_previledges_to_perform_action, duration: 4000 })
+    BeNavigator.gotoCreateStar(this.prepareRouteActions())
   }
   mention(replyer) {
     this.props.mention(replyer)
@@ -203,11 +211,24 @@ let { height, width } = Dimensions.get('window');
     })
   }
   preUpdate = (hid) => {
-    this.setStatePure({
-      EventHighlightState: true,
-      update: true,
-      highlight_id: hid
-    })
+    BeNavigator.gotoCreateStar(this.prepareRouteActions(hid, true))
+  }
+  createStar(newHighlight) {
+    Requester.createHighlight(newHighlight, this.props.isRelation ? false : this.props.Event.about.title)
+      .then(() => {
+        MessageRequester.sendMessage(messagePreparer.formMessagefromStar(newHighlight),
+          this.props.Event.id, this.props.Event.id,
+          true,
+          this.props.Event.about.title)
+        this.resetHighlight();
+        stores.Highlights.removeHighlight(newHighlight.event_id, request.Highlight().id).then(() => {
+          this.props.stopLoader();
+
+        });
+      })
+      .catch(() => {
+        this.props.stopLoader();
+      });
   }
   share() {
     this.props.showShare && this.props.showShare({
@@ -220,13 +241,24 @@ let { height, width } = Dimensions.get('window');
     })
   }
   shareLink(item) {
-    this.props.shareLink(constructStarLink(item.event_id, item.id),{},null,true)
+    this.props.shareLink(constructStarLink(item.event_id, item.id), {}, null, true)
+  }
+  prepareRouteActions(h_id, update) {
+    return {
+      isRelation: this.props.isRelation,
+      updateState: update,
+      highlight_id: h_id,
+      star: this.props.star,
+      createStar: this.createStar.bind(this),
+      update: this.updateHighlight.bind(this),
+      event_id: this.props.Event.id,
+    }
   }
   action = () => [
     {
       title: Texts.reply,
       callback: () => this.mention(this.state.selectedItem),
-      iconName: Texts.reply,
+      iconName: "reply",
       condition: () => true,
       iconType: "Entypo",
       color: colorList.replyColor
@@ -277,14 +309,45 @@ let { height, width } = Dimensions.get('window');
       isSharing: false
     })
   }
+  renderItem(item, index) {
+    this.delay = index >= 5 ? 0 : this.delay + 1
+    let updateState = moment(item.update).format("x")
+    return (<HighlightCard
+      updateState={updateState}
+      searchString={this.state.searchString}
+      isPointed={item.id === GState.currentID}
+      onLayout={(layout) => {
+        GState.itemDebounce(item, () => {
+          index = findIndex(stores.Highlights.highlights[item.event_id], { id: item.id })
+          stores.Highlights.persistDimenssion(index, item.event_id, layout)
+        })
+      }}
+      showActions={() => this.showActions(item)}
+      animate={this.animateUI.bind(this)}
+      height={colorList.containerHeight * .45}
+      phone={stores.LoginStore.user.phone}
+      activity_id={this.props.Event.id}
+      mention={this.mention.bind(this)}
+      activity_name={this.props.Event.about.title}
+      delay={this.delay}
+      computedMaster={this.props.computedMaster}
+      showItem={this.props.showHighlight}
+      participant={this.state.participant}
+      item={item}
+    />
+    );
+  }
+  getItemLayout = (item, index) => GState.getItemLayout(item, index, this.data, 70, 0)
   renderPosts() {
-    let data = (stores.Highlights.highlights[this.props.Event.id] || []).
+    this.data = (stores.Highlights.highlights[this.props.Event.id] || []).
       filter((ele) => globalFunctions.filterStars(ele, this.state.searchString || ""));
     return (!this.state.isMounted ? <View style={{
       height: colorList.containerHeight,
       backgroundColor: colorList.bodyBackground,
       width: '100%'
-    }}></View> :
+    }}>
+      <Spinner></Spinner>
+    </View> :
       <View style={{ flex: 1, width: "100%" }}>
         <View
           style={{
@@ -303,9 +366,9 @@ let { height, width } = Dimensions.get('window');
             flexDirection: "row",
             alignItems: "center",
           }}>
-            <TouchableOpacity onPress={() => requestAnimationFrame(this.props.goback)} style={{ 
+            <TouchableOpacity onPress={() => requestAnimationFrame(this.props.goback)} style={{
               width: 30,
-              marginRight:'2%', 
+              marginRight: '2%',
             }} >
               <MaterialIcons
                 style={{ ...GState.defaultIconSize, color: colorList.headerIcon, }} type={"MaterialIcons"}
@@ -337,144 +400,47 @@ let { height, width } = Dimensions.get('window');
               </Searcher></View>
           </View>
         </View>
+          <View style={{
+            flex: 1,
+            width: "100%", alignSelf: 'center',
+            justifyContent: 'center',
+            alignItems: 'center',
+          }} >
 
-
-
-        <ScrollView showsVerticalScrollIndicator={false} nestedScrollEnabled>
-          <View style={{ minHeight: colorList.containerHeight - colorList.headerHeight, flexDirection: "column", width: "100%", justifyContent: 'center', }} >
-            <View style={{
-              height: colorList.containerHeight - colorList.headerHeight,
-              width: "100%", alignSelf: 'center',
-              justifyContent: 'center',
-              alignItems: 'center',
-            }} >
-
-              <BleashupFlatList
-                initialRender={9}
-                onScroll={this.onScroll}
-                ref={"postList"}
-                horizontal={false}
-                renderPerBatch={10}
-                firstIndex={0}
-                getItemLayout={(item, index) => GState.getItemLayout(item, index, data, 70, 0)}
-                refHorizontal={(ref) => { this.detail_flatlistRef = ref }}
-                keyExtractor={this._keyExtractor}
-                dataSource={data}
-                numberOfItems={data.length}
-                parentComponent={this}
-                renderItem={(item, index) => {
-                  this.delay = index >= 5 ? 0 : this.delay + 1
-                  return (<HighlightCard
-                    searchString={this.state.searchString}
-                    isPointed={item.id === GState.currentID}
-                    onLayout={(layout) => {
-                      GState.itemDebounce(item, () => {
-                        index = findIndex(stores.Highlights.highlights[item.event_id], { id: item.id })
-                        stores.Highlights.persistDimenssion(index, item.event_id, layout)
-                      })
-                    }}
-                    showActions={() => this.showActions(item)}
-                    animate={this.animateUI.bind(this)}
-                    height={colorList.containerHeight * .45}
-                    phone={stores.LoginStore.user.phone}
-                    activity_id={this.props.Event.id}
-                    mention={this.mention.bind(this)}
-                    activity_name={this.props.Event.about.title}
-                    delay={this.delay}
-                    computedMaster={this.props.computedMaster}
-                    showItem={this.props.showHighlight}
-                    participant={this.state.participant}
-                    parentComponent={this}
-                    item={item}
-                  />
-                  );
-                }}
-              >
-              </BleashupFlatList>
-            </View>
-
-
+            <BleashupFlatList
+              initialRender={9}
+              onScroll={this.onScroll}
+              ref={"postList"}
+              horizontal={false}
+              renderPerBatch={10}
+              firstIndex={0}
+              getItemLayout={this.getItemLayout}
+              keyExtractor={this._keyExtractor}
+              dataSource={this.data}
+              numberOfItems={this.data.length}
+              renderItem={this.renderItem}
+            >
+            </BleashupFlatList>
           </View>
-
-        </ScrollView>
-
-        <EventHighlights
-          isRelation={this.props.isRelation}
-          closeTeporary={() => {
-            this.setStatePure({
-              EventHighlightState: false,
-            })
-            this.closeTeporary = setTimeout(() => {
-              this.setStatePure({
-                EventHighlightState: true
-              })
-            }, 600)
-          }}
-          startLoader={() => {
-            this.props.startLoader()
-          }} stopLoader={() => {
-            this.props.stopLoader()
-          }}
-          updateState={this.state.update}
-          highlight_id={this.state.highlight_id}
-          reinitializeHighlightsList={(newHighlight) => {
-            this.reinitializeHighlightsList(newHighlight)
-          }}
-          star={this.props.star}
-          isOpen={this.state.EventHighlightState}
-          onClosed={(staring) => {
-            this.setStatePure({
-              EventHighlightState: false,
-              update: false,
-              highlight_id: null
-            })
-          }}
-          update={(newHighlight) => this.updateHighlight(newHighlight)}
-          participant={this.state.participant}
-          parentComponent={this}
-          ref={"highlights"}
-          event={this.props.Event}
-          event_id={this.props.Event.id} />
-
-        <MessageActions title={"star actions"} actions={this.action} onClosed={() => {
+        {this.state.showActions ? <MessageActions title={"star actions"} actions={this.action} onClosed={() => {
           this.setStatePure({
             showActions: false
           })
-        }} isOpen={this.state.showActions}></MessageActions>
-        <BleashupAlert
+        }} isOpen={this.state.showActions}></MessageActions> : null}
+        {this.props.isAreYouSureModalOpened ? <BleashupAlert
           title={Texts.delete_highlight}
           accept={Texts.yes} refuse={Texts.no}
           message={Texts.are_you_sure_to_delete_this_highlight}
           deleteFunction={() => this.deleteHighlight(this.state.current_highlight)}
-          isOpen={this.state.isAreYouSureModalOpened} onClosed={() => { this.setStatePure({ isAreYouSureModalOpened: false }) }} />
-        {!this.props.isRelation && this.state.isActionButtonVisible ? <SideButton
-          buttonColor={colorList.bodyBackground}
-          position={"right"}
-          //text={"D"}
-          renderIcon={() => {
-            return <TouchableOpacity
-              onPress={() => requestAnimationFrame(this.props.showDescription)}
-              style={{
-                ...rounder(50, ColorList.bodyBackground),
-                ...shadower(4)
-              }}>
-              <Feather name="file-text" type="Feather" style={{
-                ...GState.defaultIconSize,
-                color: ColorList.bodyIcon
-              }} />
-            </TouchableOpacity>
-          }}
-          offsetY={30}
-        /> : null}
-
-        {this.state.isActionButtonVisible ? <SideButton
+          isOpen={this.state.isAreYouSureModalOpened} onClosed={() => { this.setStatePure({ isAreYouSureModalOpened: false }) }} /> : null}
+        {this.state.isActionButtonVisible && this.props.computedMaster ? <SideButton
           buttonColor={ColorList.transparent}
           position={"right"}
           //text={"+"}
           buttonTextStyle={{ color: ColorList.transparent }}
           renderIcon={() => {
             return <TouchableOpacity
-              onPress={() => requestAnimationFrame(() => this.newHighlight())}
+              onPress={this.newHighlight}
               style={{
                 backgroundColor: ColorList.bodyBackground,
                 ...rounder(50, ColorList.bodyBackground),
@@ -486,12 +452,8 @@ let { height, width } = Dimensions.get('window');
               }} />
             </TouchableOpacity>
           }}
-          offsetY={90}
 
         /> : null}
-
-
-
       </View>
     )
   }

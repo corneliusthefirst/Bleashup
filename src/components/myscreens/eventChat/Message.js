@@ -82,200 +82,166 @@ export default class Message extends BeComponent {
         };
     }
     chooseComponent(data, index, sender) {
-        switch (data.type) {
-            case message_types.text:
-                return (
-                    <TextMessage
-                        //handleLongPress={() => this.handLongPress()}
-                        animate={this.props.animate}
-                        searchString={this.props.searchString}
-                        foundString={this.props.foundString}
-                        pressingIn={() => {
-                            this.handlePressIn();
-                            this.replying = true;
-                        }}
-                        firebaseRoom={this.props.firebaseRoom}
-                        user={2}
-                        sender={sender}
-                        index={index}
-                        creator={2}
-                        message={data}
-                    ></TextMessage>
-                );
-            case message_types.text_sender:
-                return (
-                    <TextMessageSnder
-                        animate={this.props.animate}
-                        searchString={this.props.searchString}
-                        foundString={this.props.foundString}
-                        //onLongPress={this.handLongPress.bind(this)}
-                        sendMessage={(message) => this.props.sendMessage(message)}
-                        firebaseRoom={this.props.firebaseRoom}
-                        user={2}
-                        sender={sender}
-                        index={index}
-                        creator={3}
-                        message={data}
-                    ></TextMessageSnder>
-                );
-            case message_types.photo:
-                return (
-                    <PhotoMessage
-                        animate={this.props.animate}
-                        room={this.props.room}
-                        searchString={this.props.searchString}
-                        foundString={this.props.foundString}
-                        //handleLongPress={() => this.handLongPress()}
-                        pressingIn={() => {
-                            this.replying = true;
-                            this.handlePressIn();
-                        }}
-                        firebaseRoom={this.props.firebaseRoom}
-                        showPhoto={(url) => this.props.showPhoto(url)}
-                        user={2}
-                        sender={sender}
-                        index={index}
-                        creator={2}
-                        message={data}
-                    ></PhotoMessage>
-                );
-            case message_types.audio:
-                return (
-                    <AudioMessage
-                        animate={this.props.animate}
-                        searchString={this.props.searchString}
-                        foundString={this.props.foundString}
-                        //handleLongPress={() => this.handLongPress()}
-                        allplayed={this.props.allplayed}
-                        room={this.props.room}
-                        pressingIn={() => {
-                            this.replying = true;
-                            this.handlePressIn();
-                        }}
-                        activity_id={this.props.activity_id}
-                        index={index}
-                        sender={sender}
-                        message={data}
-                    ></AudioMessage>
-                );
-            case message_types.video:
-                return (
-                    <VideoMessage
-                        animate={this.props.animate}
-                        searchString={this.props.searchString}
-                        foundString={this.props.foundString}
-                        //handleLongPress={() => this.handLongPress()}
-                        pressingIn={() => {
-                            this.replying = true;
-                            this.handlePressIn();
-                        }}
-                        room={this.props.room}
-                        index={index}
-                        sender={sender}
-                        playVideo={(video) => {
-                            this.props.playVideo(video);
-                        }}
-                        message={data}
-                    ></VideoMessage>
-                );
-            case message_types.file:
-                return (
-                    <FileAttarchementMessaege
-                        animate={this.props.animate}
-                        searchString={this.props.searchString}
-                        foundString={this.props.foundString}
-                        pressingIn={() => {
-                            this.handlePressIn();
-                        }}
-                        //handleLongPress={() => this.handLongPress()}
-                        room={this.props.room}
-                        sender={sender}
-                        index={index}
-                        message={data}
-                    ></FileAttarchementMessaege>
-                );
-            case message_types.photo_sender:
-                return (
-                    <PhotoUploader
-                        animate={this.props.animate}
-                        searchString={this.props.searchString}
-                        foundString={this.props.foundString}
-                        room={this.props.room}
-                        //onLongPress={this.handLongPress.bind(this)}
-                        showPhoto={(photo) => this.props.showPhoto(photo)}
-                        replaceMessage={(data) => this.props.replaceMessage(data)}
-                        sender={false}
-                        index={index}
-                        message={data}
-                    ></PhotoUploader>
-                );
-            case message_types.video_sender:
-                return (
-                    <VideoUploader
-                        animate={this.props.animate}
-                        searchString={this.props.searchString}
-                        foundString={this.props.foundString}
-                        //onLongPress={this.handLongPress.bind(this)}
-                        playVideo={(video) => this.props.playVideo(video)}
-                        replaceMessage={(data) => this.props.replaceMessageVideo(data)}
-                        message={data}
-                        playVideo={(video) => this.props.playVideo(video)}
-                        index={index}
-                        sender={false}
-                    ></VideoUploader>
-                );
-            case message_types.filesender:
-                return (
-                    <FileAttarchementUploader
-                        animate={this.props.animate}
-                        searchString={this.props.searchString}
-                        foundString={this.props.foundString}
-                        room={this.props.room}
-                        index={index}
-                        //onLongPress={this.handLongPress.bind(this)}
-                        message={data}
-                        replaceMessage={(data) => this.props.replaceMessageFile(data)}
-                    ></FileAttarchementUploader>
-                );
-            case message_types.audio_sender:
-                return (
-                    <AudioUploader
-                        animate={this.props.animate}
-                        searchString={this.props.searchString}
-                        foundString={this.props.foundString}
-                        //onLongPress={this.handLongPress.bind(this)}
-                        room={this.props.room}
-                        message={data}
-                        index={data.id}
-                        replaceMessage={(data) => this.props.replaceAudioMessage(data)}
-                    ></AudioUploader>
-                );
-            case message_types.remind_message:
-                return <RemindMessage
-                    onPress={this.props.showRemindMessage}
-                    searchString={this.props.searchString}
-                    foundString={this.props.foundString}
-                    message={data}>
-                </RemindMessage>;
-            case message_types.star_message:
-                return <StarMessage
-                    onPress={this.props.showStarMessage}
-                    searchString={this.props.searchString}
-                    foundString={this.props.foundString}
-                    message={data}
-                >
-                </StarMessage>
-            case message_types.relation_message:
-                return <RelationMessage
-                    onPress={this.props.showRelation}
-                    searchString={this.props.searchString}
-                    foundString={this.props.foundString}
-                    message={data}
-                >
-                </RelationMessage>
-            default:
-                return null;
+        const types = {
+            [message_types.text]: <TextMessage
+                //handleLongPress={() => this.handLongPress()}
+                animate={this.props.animate}
+                searchString={this.props.searchString}
+                foundString={this.props.foundString}
+                pressingIn={() => {
+                    this.handlePressIn();
+                    this.replying = true;
+                }}
+                firebaseRoom={this.props.firebaseRoom}
+                user={2}
+                sender={sender}
+                index={index}
+                creator={2}
+                message={data}
+            ></TextMessage>,
+            [message_types.text_sender]: <TextMessageSnder
+                animate={this.props.animate}
+                searchString={this.props.searchString}
+                foundString={this.props.foundString}
+                //onLongPress={this.handLongPress.bind(this)}
+                sendMessage={(message) => this.props.sendMessage(message)}
+                firebaseRoom={this.props.firebaseRoom}
+                user={2}
+                sender={sender}
+                index={index}
+                creator={3}
+                message={data}
+            ></TextMessageSnder>,
+            [message_types.photo]: <PhotoMessage
+                animate={this.props.animate}
+                room={this.props.room}
+                searchString={this.props.searchString}
+                foundString={this.props.foundString}
+                //handleLongPress={() => this.handLongPress()}
+                pressingIn={() => {
+                    this.replying = true;
+                    this.handlePressIn();
+                }}
+                firebaseRoom={this.props.firebaseRoom}
+                showPhoto={(url) => this.props.showPhoto(url)}
+                user={2}
+                sender={sender}
+                index={index}
+                creator={2}
+                message={data}
+            ></PhotoMessage>,
+            [message_types.audio]: <AudioMessage
+                animate={this.props.animate}
+                searchString={this.props.searchString}
+                foundString={this.props.foundString}
+                //handleLongPress={() => this.handLongPress()}
+                allplayed={this.props.allplayed}
+                room={this.props.room}
+                pressingIn={() => {
+                    this.replying = true;
+                    this.handlePressIn();
+                }}
+                activity_id={this.props.activity_id}
+                index={index}
+                sender={sender}
+                message={data}
+            ></AudioMessage>,
+            [message_types.video]: <VideoMessage
+                animate={this.props.animate}
+                searchString={this.props.searchString}
+                foundString={this.props.foundString}
+                //handleLongPress={() => this.handLongPress()}
+                pressingIn={() => {
+                    this.replying = true;
+                    this.handlePressIn();
+                }}
+                room={this.props.room}
+                index={index}
+                sender={sender}
+                playVideo={(video) => {
+                    this.props.playVideo(video);
+                }}
+                message={data}
+            ></VideoMessage>,
+            [message_types.file]: <FileAttarchementMessaege
+                animate={this.props.animate}
+                searchString={this.props.searchString}
+                foundString={this.props.foundString}
+                pressingIn={() => {
+                    this.handlePressIn();
+                }}
+                //handleLongPress={() => this.handLongPress()}
+                room={this.props.room}
+                sender={sender}
+                index={index}
+                message={data}
+            ></FileAttarchementMessaege>,
+            [message_types.photo_sender]: <PhotoUploader
+                animate={this.props.animate}
+                searchString={this.props.searchString}
+                foundString={this.props.foundString}
+                room={this.props.room}
+                //onLongPress={this.handLongPress.bind(this)}
+                showPhoto={(photo) => this.props.showPhoto(photo)}
+                replaceMessage={(data) => this.props.replaceMessage(data)}
+                sender={false}
+                index={index}
+                message={data}
+            ></PhotoUploader>,
+            [message_types.video_sender]: <VideoUploader
+                animate={this.props.animate}
+                searchString={this.props.searchString}
+                foundString={this.props.foundString}
+                //onLongPress={this.handLongPress.bind(this)}
+                playVideo={(video) => this.props.playVideo(video)}
+                replaceMessage={(data) => this.props.replaceMessageVideo(data)}
+                message={data}
+                playVideo={(video) => this.props.playVideo(video)}
+                index={index}
+                sender={false}
+            ></VideoUploader>,
+            [message_types.filesender]: <FileAttarchementUploader
+                animate={this.props.animate}
+                searchString={this.props.searchString}
+                foundString={this.props.foundString}
+                room={this.props.room}
+                index={index}
+                //onLongPress={this.handLongPress.bind(this)}
+                message={data}
+                replaceMessage={(data) => this.props.replaceMessageFile(data)}
+            ></FileAttarchementUploader>,
+            [message_types.audio_sender]: <AudioUploader
+                animate={this.props.animate}
+                searchString={this.props.searchString}
+                foundString={this.props.foundString}
+                //onLongPress={this.handLongPress.bind(this)}
+                room={this.props.room}
+                message={data}
+                index={data.id}
+                replaceMessage={(data) => this.props.replaceAudioMessage(data)}
+            ></AudioUploader>,
+            [message_types.remind_message]: <RemindMessage
+                onPress={this.props.showRemindMessage}
+                searchString={this.props.searchString}
+                foundString={this.props.foundString}
+                message={data}>
+            </RemindMessage>,
+            [message_types.star_message]: <StarMessage
+                onPress={this.props.showStarMessage}
+                searchString={this.props.searchString}
+                foundString={this.props.foundString}
+                message={data}
+            >
+            </StarMessage>,
+            [message_types.relation_message]: <RelationMessage
+                onPress={this.props.showRelation}
+                searchString={this.props.searchString}
+                foundString={this.props.foundString}
+                message={data}
+            >
+            </RelationMessage>
         }
+       return types[data.type]
     }
 
     voteCreator = null;

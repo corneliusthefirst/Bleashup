@@ -34,7 +34,7 @@ export default class ShareAsLink extends BleashupModal {
     borderRadius = 20;
     copy() {
         copyText(this.props.link);
-        this.onClosedModal();
+        //this.onClosedModal();
     }
     share() {
         this.props.share(this.props.link);

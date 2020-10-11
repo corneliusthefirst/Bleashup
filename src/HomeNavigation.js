@@ -20,6 +20,7 @@ import ReportTabModal from './components/myscreens/reminds/NewReportTab';
 import TasksCreation from './components/myscreens/reminds/TasksCreation';
 import SelectRelation  from './components/myscreens/eventChat/SelectRelation';
 import ContactsModal from './components/ContactsModal';
+import EventHighlights from './components/myscreens/event/createEvent/components/EventHighlights';
 
 enableScreens()
 const HomeNavigator = createStackNavigator({
@@ -28,6 +29,7 @@ const HomeNavigator = createStackNavigator({
     Contacts: { screen: ContactView },
     Report: { screen: ReportTabModal },
     TaskCreation: { screen: TasksCreation },
+    StarCreation : {screen:EventHighlights},
     PaginationView: { screen: PaginationView },
     CreateEventView: { screen: CreateEventView },
     SwiperComponent: { screen: SwiperComponent },

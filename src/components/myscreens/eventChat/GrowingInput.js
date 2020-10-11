@@ -14,10 +14,11 @@ export default class GrowingInput extends BePureComponent {
     }
     updateSize = (heigh) => {
         this.setStatePure({
-            height: heigh >= 100 ? 100 : heigh,
+            height: heigh >= this.maxHeight ? this.maxHeight : heigh,
         });
         // this.props.animateLayout()
-    };
+    };  
+    maxHeight = 100
     clear() {
         this._textInput.clear();
     }
@@ -47,10 +48,11 @@ export default class GrowingInput extends BePureComponent {
                     style={{
                         alignSelf: "flex-start",
                         marginHorizontal: 33,
-                        maxHeight: 100,
+                        maxHeight: this.maxHeight,
                         left: 0,
                         right: 0,
                         width: "88%",
+                        //minHeight: 20,
                        height: this.state.height,
                         //marginLeft: "1%",
                     }}

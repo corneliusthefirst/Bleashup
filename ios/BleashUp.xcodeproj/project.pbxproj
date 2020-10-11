@@ -51,7 +51,6 @@
 		853F658D85784BBFA215872F /* libRNFS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 64F113A1ACC64448ACD53B81 /* libRNFS.a */; };
 		A454C190C23244E0AB5AC8AB /* libRNAudioRecord.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 64217D3FB3EA47069813BF89 /* libRNAudioRecord.a */; };
 		8B9DC851441944CC939DB86E /* libReactNativeAudioToolkit.a in Frameworks */ = {isa = PBXBuildFile; fileRef = EC8AE26D25334D33B7A9FAB9 /* libReactNativeAudioToolkit.a */; };
-		A102FF359BBF4397A38DA639 /* libRNCSlider.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 33BA6410A126493F9E321E89 /* libRNCSlider.a */; };
 		F3EAE8FFB95D43DAB4294D37 /* libRNSound.a in Frameworks */ = {isa = PBXBuildFile; fileRef = D07BB142E7D54F2E92D0107C /* libRNSound.a */; };
 		9F9BDCCFC42E4A11B118D73C /* libRNCNetInfo.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 2561ECD966D3481F848808F4 /* libRNCNetInfo.a */; };
 		494A2F5D5B404F98B9C1769B /* libRNCNetInfo-tvOS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = F4733E6FB40C435C815139D6 /* libRNCNetInfo-tvOS.a */; };
@@ -413,8 +412,6 @@
 		64217D3FB3EA47069813BF89 /* libRNAudioRecord.a */ = {isa = PBXFileReference; name = "libRNAudioRecord.a"; path = "libRNAudioRecord.a"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = archive.ar; explicitFileType = undefined; includeInIndex = 0; };
 		F1201B33A80C4E46BCFF63FE /* ReactNativeAudioToolkit.xcodeproj */ = {isa = PBXFileReference; name = "ReactNativeAudioToolkit.xcodeproj"; path = "../node_modules/@react-native-community/audio-toolkit/ios/ReactNativeAudioToolkit/ReactNativeAudioToolkit.xcodeproj"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = wrapper.pb-project; explicitFileType = undefined; includeInIndex = 0; };
 		EC8AE26D25334D33B7A9FAB9 /* libReactNativeAudioToolkit.a */ = {isa = PBXFileReference; name = "libReactNativeAudioToolkit.a"; path = "libReactNativeAudioToolkit.a"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = archive.ar; explicitFileType = undefined; includeInIndex = 0; };
-		91419354F1A048D8BB3ECCBB /* RNCSlider.xcodeproj */ = {isa = PBXFileReference; name = "RNCSlider.xcodeproj"; path = "../node_modules/@react-native-community/slider/ios/RNCSlider.xcodeproj"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = wrapper.pb-project; explicitFileType = undefined; includeInIndex = 0; };
-		33BA6410A126493F9E321E89 /* libRNCSlider.a */ = {isa = PBXFileReference; name = "libRNCSlider.a"; path = "libRNCSlider.a"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = archive.ar; explicitFileType = undefined; includeInIndex = 0; };
 		7F8FC713019B49318AA5A2C0 /* RNSound.xcodeproj */ = {isa = PBXFileReference; name = "RNSound.xcodeproj"; path = "../node_modules/react-native-sound/RNSound.xcodeproj"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = wrapper.pb-project; explicitFileType = undefined; includeInIndex = 0; };
 		D07BB142E7D54F2E92D0107C /* libRNSound.a */ = {isa = PBXFileReference; name = "libRNSound.a"; path = "libRNSound.a"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = archive.ar; explicitFileType = undefined; includeInIndex = 0; };
 		E9945B1BCBC444A4BB9D0909 /* RNCNetInfo.xcodeproj */ = {isa = PBXFileReference; name = "RNCNetInfo.xcodeproj"; path = "../node_modules/@react-native-community/netinfo/ios/RNCNetInfo.xcodeproj"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = wrapper.pb-project; explicitFileType = undefined; includeInIndex = 0; };
@@ -513,7 +510,6 @@
 				853F658D85784BBFA215872F /* libRNFS.a in Frameworks */,
 				A454C190C23244E0AB5AC8AB /* libRNAudioRecord.a in Frameworks */,
 				8B9DC851441944CC939DB86E /* libReactNativeAudioToolkit.a in Frameworks */,
-				A102FF359BBF4397A38DA639 /* libRNCSlider.a in Frameworks */,
 				F3EAE8FFB95D43DAB4294D37 /* libRNSound.a in Frameworks */,
 				9F9BDCCFC42E4A11B118D73C /* libRNCNetInfo.a in Frameworks */,
 				750E269BAA9745D192D5777D /* libAutoGrowTextInput.a in Frameworks */,
@@ -748,7 +744,6 @@
 				43C12165A0AB4F9D8BA478A7 /* RNFS.xcodeproj */,
 				373CBF2F4E2148B8BEBC1250 /* RNAudioRecord.xcodeproj */,
 				F1201B33A80C4E46BCFF63FE /* ReactNativeAudioToolkit.xcodeproj */,
-				91419354F1A048D8BB3ECCBB /* RNCSlider.xcodeproj */,
 				7F8FC713019B49318AA5A2C0 /* RNSound.xcodeproj */,
 				E9945B1BCBC444A4BB9D0909 /* RNCNetInfo.xcodeproj */,
 				9F7EC4F948AA4204A0C22359 /* AutoGrowTextInput.xcodeproj */,
@@ -1415,7 +1410,6 @@
 					"$(SRCROOT)/../node_modules/react-native-fs/**",
 					"$(SRCROOT)/../node_modules/react-native-audio-record/ios",
 					"$(SRCROOT)/../node_modules/@react-native-community/audio-toolkit/ios/ReactNativeAudioToolkit/ReactNativeAudioToolkit",
-					"$(SRCROOT)/../node_modules/@react-native-community/slider/ios",
 					"$(SRCROOT)/../node_modules/react-native-sound/RNSound",
 					"$(SRCROOT)/../node_modules/@react-native-community/netinfo/ios",
 					"$(SRCROOT)/../node_modules/react-native-autogrow-textinput/ios",
@@ -1475,7 +1469,6 @@
 					"$(SRCROOT)/../node_modules/react-native-fs/**",
 					"$(SRCROOT)/../node_modules/react-native-audio-record/ios",
 					"$(SRCROOT)/../node_modules/@react-native-community/audio-toolkit/ios/ReactNativeAudioToolkit/ReactNativeAudioToolkit",
-					"$(SRCROOT)/../node_modules/@react-native-community/slider/ios",
 					"$(SRCROOT)/../node_modules/react-native-sound/RNSound",
 					"$(SRCROOT)/../node_modules/@react-native-community/netinfo/ios",
 					"$(SRCROOT)/../node_modules/react-native-autogrow-textinput/ios",
@@ -1533,7 +1526,6 @@
 					"$(SRCROOT)/../node_modules/react-native-fs/**",
 					"$(SRCROOT)/../node_modules/react-native-audio-record/ios",
 					"$(SRCROOT)/../node_modules/@react-native-community/audio-toolkit/ios/ReactNativeAudioToolkit/ReactNativeAudioToolkit",
-					"$(SRCROOT)/../node_modules/@react-native-community/slider/ios",
 					"$(SRCROOT)/../node_modules/react-native-sound/RNSound",
 					"$(SRCROOT)/../node_modules/@react-native-community/netinfo/ios",
 					"$(SRCROOT)/../node_modules/react-native-autogrow-textinput/ios",
@@ -1590,7 +1582,6 @@
 					"$(SRCROOT)/../node_modules/react-native-fs/**",
 					"$(SRCROOT)/../node_modules/react-native-audio-record/ios",
 					"$(SRCROOT)/../node_modules/@react-native-community/audio-toolkit/ios/ReactNativeAudioToolkit/ReactNativeAudioToolkit",
-					"$(SRCROOT)/../node_modules/@react-native-community/slider/ios",
 					"$(SRCROOT)/../node_modules/react-native-sound/RNSound",
 					"$(SRCROOT)/../node_modules/@react-native-community/netinfo/ios",
 					"$(SRCROOT)/../node_modules/react-native-autogrow-textinput/ios",
@@ -1658,7 +1649,6 @@
 					"$(SRCROOT)/../node_modules/react-native-fs/**",
 					"$(SRCROOT)/../node_modules/react-native-audio-record/ios",
 					"$(SRCROOT)/../node_modules/@react-native-community/audio-toolkit/ios/ReactNativeAudioToolkit/ReactNativeAudioToolkit",
-					"$(SRCROOT)/../node_modules/@react-native-community/slider/ios",
 					"$(SRCROOT)/../node_modules/react-native-sound/RNSound",
 					"$(SRCROOT)/../node_modules/@react-native-community/netinfo/ios",
 					"$(SRCROOT)/../node_modules/react-native-autogrow-textinput/ios",
@@ -1726,7 +1716,6 @@
 					"$(SRCROOT)/../node_modules/react-native-fs/**",
 					"$(SRCROOT)/../node_modules/react-native-audio-record/ios",
 					"$(SRCROOT)/../node_modules/@react-native-community/audio-toolkit/ios/ReactNativeAudioToolkit/ReactNativeAudioToolkit",
-					"$(SRCROOT)/../node_modules/@react-native-community/slider/ios",
 					"$(SRCROOT)/../node_modules/react-native-sound/RNSound",
 					"$(SRCROOT)/../node_modules/@react-native-community/netinfo/ios",
 					"$(SRCROOT)/../node_modules/react-native-autogrow-textinput/ios",
@@ -1793,7 +1782,6 @@
 					"$(SRCROOT)/../node_modules/react-native-fs/**",
 					"$(SRCROOT)/../node_modules/react-native-audio-record/ios",
 					"$(SRCROOT)/../node_modules/@react-native-community/audio-toolkit/ios/ReactNativeAudioToolkit/ReactNativeAudioToolkit",
-					"$(SRCROOT)/../node_modules/@react-native-community/slider/ios",
 					"$(SRCROOT)/../node_modules/react-native-sound/RNSound",
 					"$(SRCROOT)/../node_modules/@react-native-community/netinfo/ios",
 					"$(SRCROOT)/../node_modules/react-native-autogrow-textinput/ios",
@@ -1860,7 +1848,6 @@
 					"$(SRCROOT)/../node_modules/react-native-fs/**",
 					"$(SRCROOT)/../node_modules/react-native-audio-record/ios",
 					"$(SRCROOT)/../node_modules/@react-native-community/audio-toolkit/ios/ReactNativeAudioToolkit/ReactNativeAudioToolkit",
-					"$(SRCROOT)/../node_modules/@react-native-community/slider/ios",
 					"$(SRCROOT)/../node_modules/react-native-sound/RNSound",
 					"$(SRCROOT)/../node_modules/@react-native-community/netinfo/ios",
 					"$(SRCROOT)/../node_modules/react-native-autogrow-textinput/ios",

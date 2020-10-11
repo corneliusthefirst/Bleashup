@@ -293,7 +293,8 @@ class ChatStore {
         data: {},
     };
     initializeStore() {
-        storage
+        setTimeout(() => {
+             storage
             .load({ key: this.key })
             .then((chats) => {
                 chats ? (this.messages = chats) : (this.messages = {});
@@ -301,6 +302,7 @@ class ChatStore {
             .catch((error) => {
                 this.messages = {};
             });
+        },700)
     }
     readFromStore() {
         return new Promise((resolve, reject) => {

@@ -49,16 +49,16 @@ class mainUpdater {
           date: date,
           time: null,
         };
-        
+
         oldRemind.calendar_id
           ? CalendarServe.saveEvent(
-              { ...oldRemind, location: newLocation },
-              oldRemind.alams,
-              'reminds'
-            ).then(() => {})
+            { ...oldRemind, location: newLocation },
+            oldRemind.alams,
+            'reminds'
+          ).then(() => { })
           : null;
         resolve(Change);
-        stores.ChangeLogs.addChanges(Change).then(() => {});
+        stores.ChangeLogs.addChanges(Change).then(() => { });
       });
     });
   }
@@ -83,7 +83,7 @@ class mainUpdater {
           time: null,
         };
         resolve(Change);
-        stores.ChangeLogs.addChanges(Change).then(() => {});
+        stores.ChangeLogs.addChanges(Change).then(() => { });
       });
     });
   }
@@ -176,7 +176,7 @@ class mainUpdater {
   saveMessage(message, eventID, committeeID, me) {
     return new Promise((resolve, reject) => {
       !me ? stores.Messages.addNewMessage(committeeID, message) : null;
-      !me && Requester.seenMessage(message.id,committeeID,eventID).then(() => {})
+      !me && Requester.seenMessage(message.id, committeeID, eventID).then(() => { })
       this.informCommitteeAndEvent(message, committeeID, eventID).then(() => {
         resolve();
       });
@@ -189,14 +189,14 @@ class mainUpdater {
     return new Promise((resolve, reject) => {
       stores.Messages.updateMessageText(commiteeID, messageID, text).then(
         () => {
-          stores.CommiteeStore.updateLatestMessageText(
+          /*stores.CommiteeStore.updateLatestMessageText(
             messageID,
             text,
             commiteeID,
             eventID
           ).then(() => {
             resolve();
-          });
+          });*/
         }
       );
     });
@@ -213,60 +213,60 @@ class mainUpdater {
   deleteMessage(messageID, commiteeID, eventID) {
     return new Promise((resolve, reject) => {
       stores.Messages.removeMessage(commiteeID, messageID).then(() => {
-        stores.CommiteeStore.removeNewMessage(
+       /* stores.CommiteeStore.removeNewMessage(
           messageID,
           eventID,
           commiteeID
-        ).then(() => {
+        ).then(() => {*/
           stores.Events.removeNewMessage(eventID, messageID, commiteeID).then(
             () => {
               resolve();
             }
           );
-        });
+       // });
       });
     });
   }
-  sayTyping(commiteeID, typer,dontEmit) {
+  sayTyping(commiteeID, typer, dontEmit) {
     return new Promise((resolve, reject) => {
-      emitter.emit(typing(commiteeID),typer)
+      emitter.emit(typing(commiteeID), typer)
       resolve();
     });
   }
   informCommitteeAndEvent(message, committeeID, eventID) {
     return new Promise((resolve, reject) => {
-      stores.CommiteeStore.addNewMessage(message, eventID, committeeID).then(
+      //stores.CommiteeStore.addNewMessage(message, eventID, committeeID).then(
+      //  () => {
+      stores.Events.addNewMessage(eventID, message, committeeID).then(
         () => {
-          stores.Events.addNewMessage(eventID, message, committeeID).then(
-            () => {
-              resolve();
-            }
-          );
+          resolve();
         }
       );
+      //  }
+      //);
     });
   }
   updateRemindAlarms(eventID, remindID, newAlarms, date, updater) {
-    return new Promise((resolve,reject) => {
+    return new Promise((resolve, reject) => {
       stores.Reminds.updateAlarmPatern(eventID,
         remindID,
         newAlarms.alarms,
         newAlarms.date).
         then((oldRemind) => {
           let change = {
-            id:IDMaker.make(),
+            id: IDMaker.make(),
             date: date,
             updated: "remind_alarms",
             updater: updater,
             title: `Updates on ${oldRemind.title} Program`,
             event_id: eventID,
-            changed:"Changed the default alarms definition of the propgram",
+            changed: "Changed the default alarms definition of the propgram",
             new_value: { data: null, new_value: newAlarms },
           };
           stores.ChangeLogs.addChanges(change).then(() => {
             resolve()
           })
-      })
+        })
     })
   }
 }

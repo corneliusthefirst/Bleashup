@@ -148,9 +148,8 @@ returnStoredIntervalsKey(key){
     return this.currentDateIntervals  && !this.state.mounted
   }
   render() {
-    console.warn("rendering: ", this.props.item.id)
+    console.warn("rendering: ", this.props.item.title)
     if(this.canLoadFirst()){
-      //console.error("loading first")
       this.calculateCurrentStates(this.currentDateIntervals,this.correspondingDateInterval)
     }
     return  (

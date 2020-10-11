@@ -191,7 +191,7 @@ export default class globalState {
     }
   }
   removeListener(id) {
-    this.listeners[id].pop()
+    this.listeners && this.listeners[id] && this.listeners[id].splice(-1, 1)
 
   }
   canStopListening(id) {

@@ -115,7 +115,7 @@ export default class Options extends AnimatedComponent {
             <View style={{
                 position: "absolute",
                 flexDirection: 'row',
-                paddingRight: 6,
+                paddingRight: 3,
                 height: this.state.full ? 300 : 50,
                 justifyContent: 'center',
                 marginBottom: "2%",

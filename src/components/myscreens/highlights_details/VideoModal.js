@@ -117,7 +117,7 @@ export default class VideoViewer extends BleashupModal {
                     </View>
                 </View>
                 <View style={{ backgroundColor: 'black', height: 60 }}>
-                    <Text style={{ color: ColorList.bodyBackground }} note>{this.date ? moment(this.date).calendar() : ""}</Text>
+                    <Text style={{ color: ColorList.bodyBackground }} note>{moment(this.date).isValid() ? moment(this.date).calendar() : ""}</Text>
                 </View>
             </View>
         );

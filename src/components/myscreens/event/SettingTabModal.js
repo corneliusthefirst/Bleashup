@@ -79,7 +79,7 @@ export default class SettingsTabModal extends BleashupModal {
           </View>
         </View>
         <ScrollView nestedScrollEnabled>
-          <View style={{ height: 400 }}>
+          <View style={{ height: GState.height *.50 }}>
             <Settings
               closeModals={this.onClosedModal.bind(this)}
               event={this.props.event}

@@ -7,11 +7,10 @@ import {
     View,
     ScrollView,
     Alert,
-    Slider,
     Vibration,
-    TouchableWithoutFeedback,
     Platform,
 } from "react-native";
+import Slider from 'react-native-slider';
 import Sound from "react-native-sound";
 import { AnimatedCircularProgress } from "react-native-circular-progress";
 import GState from "../../../stores/globalState";
@@ -23,82 +22,122 @@ import stores from "../../../stores";
 import TextContent from "./TextContent";
 import emitter from '../../../services/eventEmiter';
 import BePureComponent from '../../BePureComponent';
-import  EvilIcons from 'react-native-vector-icons/EvilIcons';
-import  FontAwesome5  from 'react-native-vector-icons/FontAwesome5';
+import EvilIcons from 'react-native-vector-icons/EvilIcons';
+import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 import Requester from './Requester';
+import Spinner from "../../Spinner";
+import { TouchableWithoutFeedback } from 'react-native-gesture-handler';
 export default class AudioMessage extends BePureComponent {
     constructor(props) {
         super(props);
         this.state = {
             duration: 0,
-            currentPosition: 1,
+            currentPosition: 0.01,
+            canPlay: true,
             currentTime: 0,
             downloadState: 0,
             downloading: true,
         };
     }
     unmountingComponent() {
+        this.cleanPlayer()
+    }
+    cleanPlayer() {
         this.player && this.player.stop();
         clearInterval(this.downloadID);
         emitter.off(this.playingEvent)
     }
     componentDidMount() {
-        //console.warn(this.props.message.source);
+        this.startDownloader()
+    }
+    startDownloader(immidiate) {
+        if (this.player) {
+            this.cleanPlayer()
+        }
         this.setStatePure({
             duration: null,
-            currentPosition: this.haveIPLayed() ? 1 : 0,
+            currentPosition: this.haveIPLayed() ? 1 : .00,
             playing: false,
             received: this.props.message.received,
             total: this.props.message.total,
-            sender_name: this.props.message.sender.nickname,
-            sender: !(this.props.message.sender.phone == this.props.user),
-            time: this.props.message.created_at.split(" ")[1],
-            creator: this.props.message.sender.phone == this.props.creator,
+            ...immidiate ? { canPlay: false } : {},
+            sender_name: this.props.message.sender && this.props.message.sender.nickname,
+            sender: this.props.message.sender && !(this.props.message.sender.phone == this.props.user),
+            time: this.props.message.created_at && this.props.message.created_at.split(" ")[1],
+            creator: this.props.message.sender && this.props.message.sender.phone == this.props.creator,
+        }, () => {
+            this.exchanger = new FileExachange(
+                this.props.message.source,
+                this.path,
+                this.state.total,
+                this.state.received,
+                this.progress.bind(this),
+                this.success.bind(this),
+                this.onFail.bind(this),
+                this.onError.bind(this)
+            );
+            this.mountTimeout = setTimeout(() => {
+                if (testForURL(this.props.message.source)) {
+                    !this.props.message.cancled
+                        ? this.downloadAudio(this.props.message.source)
+                        : this.setStatePure({
+                            downloading: false,
+                        });
+                } else {
+                    //this.initialisePlayer(this.props.message.source);
+                }
+
+            }, immidiate ? 0 : 1000);
         });
-        this.exchanger = new FileExachange(
-            this.props.message.source,
-            this.path,
-            this.state.total,
-            this.state.received,
-            this.progress.bind(this),
-            this.success.bind(this),
-            this.onFail.bind(this),
-            this.onError.bind(this)
-        );
-       this.mountTimeout = setTimeout(() => {
+    }
+    componentDidUpdate(prevPro, prevState) {
+        if (this.props.message.source !== prevPro.message.source) {
             if (testForURL(this.props.message.source)) {
-                !this.props.message.cancled
-                    ? this.downloadAudio(this.props.message.source)
-                    : this.setStatePure({
-                        downloading: false,
-                    });
-            } else {
-                //this.initialisePlayer(this.props.message.source);
-            }
-        }, 1000);
+                this.startDownloader(true)
+            } /*else {
+                this.showPlayController()
+                //this.initialisePlayer(this.props.message.source)
+            }*/
+        }
     }
     setAfterSuccess(path) {
         GState.downlading = false;
         this.props.message.source =
             Platform.OS === "android" ? path + "/" : "" + path;
-        stores.Messages.addStaticFilePath(
-            this.props.room,
-            this.props.message.source,
-            this.props.message.id
-        ).then(() => {
-            stores.Messages.addAudioSizeProperties(
+        if (this.props.room) {
+            stores.Messages.addStaticFilePath(
                 this.props.room,
-                this.props.message.id,
-                this.state.total,
-                this.state.received,
-                this.props.message.duration
+                this.props.message.source,
+                this.props.message.id
             ).then(() => {
-                this.initialisePlayer(this.props.message.source);
-                this.setStatePure({
-                    loaded: true,
-                });
+                stores.Messages.addAudioSizeProperties(
+                    this.props.room,
+                    this.props.message.id,
+                    this.state.total,
+                    this.state.received,
+                    this.props.message.duration
+                );
             });
+        } else {
+            if (this.props.activity_id && this.props.updateSource) {
+                this.props.updateSource(this.props.activity_id, {
+                    ...this.props.data,
+                    url: {
+                        ...this.props.message,
+                        received: this.state.received,
+                        total: this.state.total,
+                        source: this.props.message.source,
+                        duration: this.props.message.duration,
+                    }
+                })
+            }
+        }
+        this.source = this.props.message.source
+        this.initialisePlayer(this.source);
+        this.setStatePure({
+            loaded: true,
         });
+
     }
     success(path, total, received) {
         this.props.message.duration = this.exchanger.duration;
@@ -121,7 +160,8 @@ export default class AudioMessage extends BePureComponent {
             received: newReceived,
         });
     }
-    path = "/Sound/" + this.props.message.file_name;
+    source = this.props.message.source
+    path = "/Sound/" + (this.props.message.file_name || this.props.message.id);
     duration = 10;
     pattern = [1000, 0, 0];
     tempPath = this.path + ".download";
@@ -154,15 +194,14 @@ export default class AudioMessage extends BePureComponent {
         });
         this.props.message.received = this.state.received;
         this.props.message.total = this.state.total;
-        stores.Messages.addAudioSizeProperties(
+        this.props.room && stores.Messages.addAudioSizeProperties(
             this.props.room,
             this.props.message.id,
             this.state.total,
             this.state.received,
             this.props.message.duration
-        ).then(() => {
-            this.setStatePure({});
-        });
+        )
+        this.setStatePure({});
     }
     downloadID = null;
     downloadAudio(url) {
@@ -170,70 +209,96 @@ export default class AudioMessage extends BePureComponent {
             this.download(url);
         }, 500);
     }
-    initialisePlayer(source,play) {
+    showPlayController() {
+        setTimeout(() => {
+            this.setStatePure({
+                canPlay: true
+            })
+        }, 400)
+    }
+    initialisePlayer(source, play) {
         this.player = new Sound(source, "/", (error) => {
             console.warn(error, "error");
+            this.showPlayController()
             play && this.player.play(this.playerCallback.bind(this))
         });
     }
     player = null;
     pause() {
         clearInterval(this.refreshID)
-        this.player.pause();
+        this.player && this.player.pause();
         emitter.off(this.playingEvent)
         this.setStatePure({
             playing: false,
-        });
+        },);
     }
     task = null;
     previousTime = 0;
     plays() {
         if (this.props.message.duration) {
             this.refreshID = setInterval(() => {
-                this.player.getCurrentTime((time) => {
+                this.player && this.player.getCurrentTime((time) => {
                     if (this.previousTime == time) clearInterval(this.refreshID);
                     else {
                         this.previousTime = time;
                         this.setStatePure({
-                            currentPosition: time / this.props.message.duration,
-                            playing: true,
+                            currentPosition: (time / this.props.message.duration)||.02,
                             currentTime: time,
                         });
                     }
                 });
             }, 500);
         }
+        this.setStatePure({
+            playing: true,
+        })
         emitter.emit(this.playingEvent)
-       if(this.player){
-           this.player.play(this.playerCallback.bind(this));
-           emitter.on(this.playingEvent, this.handlePLaying.bind(this))
-       }else{
-           this.initialisePlayer(this.props.message.source,true)
-           emitter.on(this.playingEvent, this.handlePLaying.bind(this))
-       }
-       if(!this.haveIPLayed()){
-           Requester.playedMessage(this.props.message.id,this.props.room,this.props.activity_id)
-       }
+        if (this.player) {
+            this.player.play(this.playerCallback.bind(this));
+            emitter.on(this.playingEvent, this.handlePLaying.bind(this))
+        } else {
+            this.initialisePlayer(this.source, true)
+            emitter.on(this.playingEvent, this.handlePLaying.bind(this))
+        }
+        if (!this.haveIPLayed() && this.props.room) {
+            Requester.playedMessage(this.props.message.id, this.props.room, this.props.activity_id)
+        }
     }
-    handlePLaying(){
+    handlePLaying() {
         this.pause()
+    }
+    persistDuration(seconds) {
+        if (this.props.room) {
+            stores.Messages.addDuration(this.props.room, seconds, this.props.message.id).then(
+                (status) => {
+
+                }
+            );
+        } else {
+            if (this.props.activity_id && this.props.updateSource) {
+                this.props.updateSource(this.props.activity_id,
+                    {
+                        ...this.props.data, url: {
+                            ...this.props.message,
+                            duration:
+                                seconds
+                        }
+                    })
+            }
+        }
     }
     playingEvent = "playing"
-    playerCallback(success){
+    playerCallback(success) {
         this.pause()
         if (success) {
-            this.player.getCurrentTime((seconds) => {
+            this.player && this.player.getCurrentTime((seconds) => {
                 this.props.message.duration = Math.floor(seconds);
                 this.setStatePure({
                     currentPosition: seconds / this.props.message.duration,
-                    playing:false,
+                    playing: false,
                     currentTime: seconds,
                 });
-                stores.Messages.addDuration(this.props.room, seconds,this.props.message.id).then(
-                    (status) => {
-                        
-                    }
-                );
+                this.persistDuration(seconds)
             });
         }
     }
@@ -243,21 +308,21 @@ export default class AudioMessage extends BePureComponent {
                 showProgress: true,
             });
             this.progressTimout = setTimeout(() => {
-                this.setStatePure({ showProgress: false },() =>{
+                this.setStatePure({ showProgress: false }, () => {
                     clearTimeout(this.progressTimout)
                 });
             }, 5000);
         }
     }
-    haveIPLayed(){
-        return this.props.message && this.props.message.played && 
-        this.props.message.played.findIndex(ele => ele && ele.phone == stores.LoginStore.user.phone) >= 0
+    haveIPLayed() {
+        return this.props.room && this.props.message && this.props.message.played &&
+            this.props.message.played.findIndex(ele => ele && ele.phone == stores.LoginStore.user.phone) >= 0
     }
     cancelDownLoad(url) {
         if (this.exchanger.task !== null) {
             this.exchanger.task.cancel((err, taskID) => { });
         }
-        stores.Messages.SetCancledState(this.props.room, this.props.message.id);
+        this.props.room && stores.Messages.SetCancledState(this.props.room, this.props.message.id);
         this.setStatePure({
             downloading: false,
         });
@@ -281,14 +346,17 @@ export default class AudioMessage extends BePureComponent {
                 style={{
                     flexDirection: "column",
                     alignItems: "center",
+                    margin: 1,
                     flex: 1,
                 }}
             >
-                <TouchableOpacity
+                <TouchableWithoutFeedback
                     //onLongPress={() =>
                     //    this.props.handleLongPress ? this.props.handleLongPress() : null
-                   // }
-                    onPressIn={() => this.props.pressingIn()}
+                    // }
+                    onPressIn={() =>
+                        this.props.pressingIn && this.props.pressingIn()
+                    }
                 >
                     <View
                         style={{
@@ -308,15 +376,20 @@ export default class AudioMessage extends BePureComponent {
                             <View style={textStyle}>
                                 <View>
                                     <Slider
+                                        //minimumValue={0}
+                                        //maximumValue={100}
+                                        step={.01}
+                                        
+                                        thumbTouchSize={{ height:50,width:50 }}
                                         minimumTrackTintColor={trackColor}
-                                        value={this.state.currentPosition}
+                                        value={(isFinite(this.state.currentPosition) && (this.state.currentPosition) || .01) || .01}
                                         onValueChange={(value) => {
-                                          this.plays()
-                                          setTimeout(() => {
-                                              this.player.setCurrentTime(
-                                                  value * this.props.message.duration
-                                              );
-                                          })
+                                            //this.plays()
+                                            setTimeout(() => {
+                                                this.player && this.player.setCurrentTime(
+                                                    value * this.props.message.duration
+                                                );
+                                            })
                                         }}
                                     ></Slider>
                                 </View>
@@ -336,7 +409,7 @@ export default class AudioMessage extends BePureComponent {
                             </View>
                         ) : null}
                         <View style={{ width: this.props.message.duration ? "15%" : "100%", alignItems: "center" }}>
-                            {testForURL(this.props.message.source) ? (
+                            {testForURL(this.source) ? (
                                 <AnimatedCircularProgress
                                     size={40}
                                     width={3}
@@ -359,7 +432,7 @@ export default class AudioMessage extends BePureComponent {
                                             >
                                                 <View>
                                                     <EvilIcons
-                                                        style={{...GState.defaultIconSize, color: ColorList.bodyText }}
+                                                        style={{ ...GState.defaultIconSize, color: ColorList.bodyText }}
                                                         type="EvilIcons"
                                                         name={
                                                             this.state.downloading ? "close" : "arrow-down"
@@ -370,25 +443,25 @@ export default class AudioMessage extends BePureComponent {
                                         </View>
                                     )}
                                 </AnimatedCircularProgress>
-                            ) : (
-                                    <TouchableOpacity
-                                        style={this.playIconStyle}
-                                        onPress={() =>
-                                            requestAnimationFrame(() =>
-                                                !this.state.playing ? this.plays() : this.pause()
-                                            )
-                                        }
-                                    >
-                                        <FontAwesome5
-                                            type="FontAwesome5"
-                                            style={{...GState.defaultIconSize, color: ColorList.bodyText, fontSize: 20 }}
-                                            name={!this.state.playing ? "play" : "pause"}
-                                        />
-                                    </TouchableOpacity>
-                                )}
+                            ) : this.state.canPlay ? (
+                                <TouchableOpacity
+                                    style={this.playIconStyle}
+                                    onPress={() =>
+                                        requestAnimationFrame(() =>
+                                            !this.state.playing ? this.plays() : this.pause()
+                                        )
+                                    }
+                                >
+                                    <FontAwesome5
+                                        type="FontAwesome5"
+                                        style={{ ...GState.defaultIconSize, color: ColorList.bodyText, fontSize: 20 }}
+                                        name={!this.state.playing ? "play" : "pause"}
+                                    />
+                                </TouchableOpacity>
+                            ) : <Spinner></Spinner>}
                         </View>
                     </View>
-                </TouchableOpacity>
+                </TouchableWithoutFeedback>
                 {this.props.message.text ? <View style={{ margin: "1%", alignSelf: "flex-start" }}>
                     <TextContent
                         animate={this.props.animate}

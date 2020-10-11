@@ -89,7 +89,7 @@ export default class PhotoInputModal extends BleashupModal {
                                 withTrash={!this.props.isRelation && this.props.photo}
                                 currentURL={{ photo: this.props.photo }}
                                 saveMedia={(url) => this.props.saveBackground(url.photo)}
-                                creating={false} notVideo notAudio>
+                                creating={false} notVideo notAudio notFile>
                             </PickersUpload>
                         </View>}
                         <TouchableOpacity onPress={this.props.replyToPhoto} style={{ ...rounder(35, ColorList.bodyDarkWhite), justifyContent: 'center', }}>

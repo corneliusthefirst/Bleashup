@@ -16,6 +16,12 @@ export default class SocialTabModal extends TabModal {
     TabHeader() {
         return null
     }
+    mountedComponent(){
+        this.setStatePure({
+            mounted:true
+        })
+    }
+    shouldUpdateTabs = true
     underlineStyle = {
         height: 0,
         color: 'transparent'
@@ -64,5 +70,8 @@ export default class SocialTabModal extends TabModal {
                 return <View></View>;
             },
         }
+    }
+    returnTabs() {
+        return this.tabs
     }
 }

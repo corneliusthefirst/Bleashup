@@ -4,8 +4,9 @@ import { Dimensions } from 'react-native';
 
 let { height, width } = Dimensions.get('window');
 class colorlist {
-  constructor() {}
-
+  constructor() {
+    
+  }
   errorColor = '#A91A84';
   containerHeight = height;
   containerWidth = '100%';
@@ -17,8 +18,6 @@ class colorlist {
   containerBackground = 'white';
   profilePlaceHolderHeight = 30
   replyColor = "#56B671"
-
-  //header
   iconGray = '#555756';
   iconActive = '#1FABAB';
   iconInactive = '#ADE3D2';
@@ -41,8 +40,6 @@ class colorlist {
   chatboxBorderRadius = 5;
   copy = '#92E578';
   delete = 'red';
-
-  //body
   bodyIcon = 'black';
   bodyText = 'black';
   bodyBackground = 'white';
@@ -51,82 +48,26 @@ class colorlist {
   darkGrayText = '#696969';
   bodyTextBlue = '#1e90ff';
   bodyIconBlue = '#1e90ff';
-
-  //dark body
   bodyIcondark = '#f4f6fc';
   bodyTextdark = '#f4f6fc';
   bodyBackgrounddark = '#101010';
   bodyBackgroundDarkGray = '#202020';
   transparent = "rgba(0, 0, 0, 0.001)";
-  //modal
-
-  //pop menu
   popMenuBackground = 'white';
-
-  //likes
   heartColor = '#FE1D1D';
   likeActive = '#1FABAB';
   likeInactive = 'black';
   indicatorColor = '#057D74';
   indicatorInverted = '#DDECE9';
+  descriptionBody = "mintcream";
+  recorderColor = 'rgba(92, 185, 158,.8)'
   sendRand = () => Math.floor(Math.random() * (this.senTBoxColor.length-1))
-  //messages
   senTBoxColor = ["#EFF8FE"]
-  //7 "#FEF7EF"
-  // 6 "#FEFDEF"
-  // 5 "#EFFEF8"
-   //4 "#EFF8FE" 
-  // 3"#F8EFFE"
-  //2 "#D2E5FB"
-  //1 '#BCEFD7';
   receivedBox = 'white';
-
-  //Array Iterate
-  colorArray = ['#1e90ff', '#8b008b',  '#cd5c5c', '#66cdaa', '#48d1cc', '#663399', '#4682b4', '#663399', '#00ced1', '#7b68ee', '#ff69b4','#228b22', '#5f9ea0','#6495ed'];
+  colorArray = ['#1e90ff',  '#cd5c5c', '#48d1cc', '#663399', '#4682b4', '#663399', '#00ced1', '#7b68ee', '#5f9ea0','#6495ed'];
 
 }
 
 const ColorList = new colorlist();
 export default ColorList;
 
-/**import React, { Component } from 'react';
-import { Dimensions } from 'react-native';
-
-
-let { height, width } = Dimensions.get('window');
-class Colorlist extends Component {
-
-
-//container
-containerHeight = height
-containerWidth = width
-containerBackground = "#1FABAB"
-
-//header
- headerIcon = "ivory"
- headerText = "ivory"
- headerBlackText = "black"
- headerBackground = "#1FABAB"
- headerHeight = 50
- headerFontweight = "bold"
- headerFontSize = 20
-
-
-//body
- bodyIcon = "black"
- bodyText = "black"
- bodyBackground = "white"
- bodySubtext = "gray"
- bodyDarkWhite = "#f4f6fc"
-
- //modal
-
-
- //pop menu
- popMenuBackground = "white"
-
-
-}
-
-ColorList = new Colorlist()
-export default ColorList; */

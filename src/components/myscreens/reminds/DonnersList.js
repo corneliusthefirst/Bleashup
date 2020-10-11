@@ -20,6 +20,7 @@ import Texts from "../../../meta/text";
 import emitter from "../../../services/eventEmiter";
 import { members_updated } from "../../../meta/events";
 import replies from '../eventChat/reply_extern';
+import stores from "../../../stores";
 
 export default class DonnersList extends BeComponent {
   constructor(props) {
@@ -28,6 +29,20 @@ export default class DonnersList extends BeComponent {
       mounted: false,
       newing: false,
     };
+    this.updateSource = this.updateSource.bind(this)
+  }
+  updateSource(aid, data) {
+    console.warn("updaing source: ",aid)
+    stores.Reminds.makeAsDone(aid, {
+      ...data, donners: [{
+        ...this.state.currentUser, phone: this.state.currentPhone, status: {
+          ...this.state.currentReport,
+          url: data.url
+        }
+      }]
+    }).then(() => {
+      this.props.refresh && this.props.refresh()
+    })
   }
   concludeScrollForInterval(intervalIndex) {
     this.setStatePure({
@@ -72,7 +87,7 @@ export default class DonnersList extends BeComponent {
       const donner = this.props.donners(this.state.interval);
       const user = donner.find(
         (ele) =>
-         ele && ele.phone == this.state.currentPhone &&
+          ele && ele.phone == this.state.currentPhone &&
           this.state.currentUser.status.date == ele.status.date
       );
       this.setStatePure({
@@ -152,7 +167,7 @@ export default class DonnersList extends BeComponent {
       : true;
   }
   showReport(interval, item, index) {
-   item && this.setStatePure({
+    item && this.setStatePure({
       isReportModalOpened: true,
       interval: interval,
       currentIndex: index,
@@ -339,6 +354,9 @@ export default class DonnersList extends BeComponent {
         {this.state.isReportModalOpened ? (
           <RemindReportContent
             total={this.state.total}
+            activity_id={this.props.activity_id}
+            updateSource={this.updateSource}
+            remind_id={this.props.remind_id}
             reply={this.replyReport.bind(this)}
             currentIndex={this.state.currentIndex}
             switchBack={this.switchBack.bind(this)}

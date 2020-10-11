@@ -32,16 +32,18 @@ export default class changelogs {
         autoSync: true
     }
     initializeStore(){
-        storage.load(this.readKey).then((changes) => {
-            if(Array.isArray(changes)){
-                console.warn("changes is an array")
-                changes = groupBy(changes, "event_id")
-                this.setProperty(changes)
-            }
-            this.changes = changes
-        }).catch(() => {
-            this.changes = {}
-        })
+        setTimeout(() => {
+            storage.load(this.readKey).then((changes) => {
+                if (Array.isArray(changes)) {
+                    console.warn("changes is an array")
+                    changes = groupBy(changes, "event_id")
+                    this.setProperty(changes)
+                }
+                this.changes = changes
+            }).catch(() => {
+                this.changes = {}
+            })
+        },900)
     }
     saver(){
       if(Object.keys(this.changes).length > 0){

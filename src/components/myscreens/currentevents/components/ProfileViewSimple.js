@@ -190,7 +190,7 @@ const styles = StyleSheet.create({
     color: ColorList.bodyBackground,
   },
   iconPlaceHolder: {
-    color: ColorList.colorArray[Math.floor(Math.random() * 14)],
+    color: ColorList.colorArray[Math.floor(Math.random() * (ColorList.colorArray.length - 1))],
     fontSize: ColorList.profilePlaceHolderHeight,
   },
   invite: {

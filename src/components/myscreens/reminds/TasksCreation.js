@@ -83,7 +83,8 @@ export default class TasksCreation extends BleashupModal {
     return remind.location ||
       (remind.remind_url && remind.remind_url.photo) ||
       remind.description ||
-      (remind.remind_url && remind.remind_url.video)
+      (remind.remind_url && remind.remind_url.video) ||
+      (remind.remind_url && remind.remind_url.source)
       ? "event"
       : "reminder";
   }
@@ -749,7 +750,7 @@ export default class TasksCreation extends BleashupModal {
                             this.setStatePure({ selectMemberState: true })
                           )
                         }
-                        style={{ flexDirection: "row",marginRight: "3%", }}
+                        style={{ flexDirection: "row", marginRight: "3%", }}
                       >
                         <Ionicons
                           name="ios-people"
@@ -804,6 +805,7 @@ export default class TasksCreation extends BleashupModal {
                 <View style={{ width: "90%", alignSelf: "center" }}>
                   <CreateTextInput
                     height={50}
+                    maxLength={100}
                     value={this.state.currentRemind.title}
                     placeholder={
                       this.isEvent()
@@ -1192,7 +1194,6 @@ export default class TasksCreation extends BleashupModal {
                     currentURL={this.state.currentRemind.remind_url || {}}
                     saveMedia={this.saveURL.bind(this)}
                     creating={!this.update}
-                    notAudio
                   />
                 </View>
               )}
@@ -1202,6 +1203,7 @@ export default class TasksCreation extends BleashupModal {
                   style={{ width: "90%", alignSelf: "center" }}
                 >
                   <MediaPreviewer
+                    data={{ id: this.state.currentRemind.id + '_create' }}
                     cleanMedia={() => this.saveURL(request.Remind().remind_url)}
                     height={180}
                     defaultPhoto={require("../../../../assets/new-event.png")}
@@ -1222,7 +1224,6 @@ export default class TasksCreation extends BleashupModal {
                     disabled={!this.state.ownership}
                     value={this.state.currentRemind.description}
                     placeholder={Texts.details}
-                    maxLength={2000}
                     onChange={(value) => this.onChangedDescription(value)}
                   />
                 </View>

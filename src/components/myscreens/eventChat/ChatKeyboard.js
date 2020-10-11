@@ -49,6 +49,7 @@ export default class ChatKeyboard extends AnimatedComponent {
             textValue: "",
             isOptionsOpened: false,
         }
+        this.tagItem = this.tagItem.bind(this)
     }
     componentMounting() {
         this.formSerachableMembers();
@@ -199,6 +200,25 @@ export default class ChatKeyboard extends AnimatedComponent {
         );
     }
     searchableMembers = [];
+    tagItem (item){
+        return (
+            <TouchableOpacity
+                onPress={() => requestAnimationFrame(() => this.chooseItem(item))}
+            >
+                <View style={{ width: 200, alignSelf: "flex-start" }}>
+                    <ProfileSimple
+                        searching
+                        searchString={
+                            this.state.textValue.split("@")[
+                            this.state.textValue.split("@").length - 1
+                            ]
+                        }
+                        profile={item}
+                    ></ProfileSimple>
+                </View>
+            </TouchableOpacity>
+        )
+    }
     tagger() {
         return (
             <View
@@ -234,23 +254,7 @@ export default class ChatKeyboard extends AnimatedComponent {
                             : "~-pz"
                     )}
                     numberOfItems={this.searchableMembers.length}
-                    renderItem={(item) => (
-                        <TouchableOpacity
-                            onPress={() => requestAnimationFrame(() => this.chooseItem(item))}
-                        >
-                            <View style={{ width: 200, alignSelf: "flex-start" }}>
-                                <ProfileSimple
-                                    searching
-                                    searchString={
-                                        this.state.textValue.split("@")[
-                                        this.state.textValue.split("@").length - 1
-                                        ]
-                                    }
-                                    profile={item}
-                                ></ProfileSimple>
-                            </View>
-                        </TouchableOpacity>
-                    )}
+                    renderItem={this.tagItem}
                 ></BleashupFlatList>
             </View>
         );
@@ -483,7 +487,11 @@ export default class ChatKeyboard extends AnimatedComponent {
     }
     audioRecorder() {
         return (
+            <View style={{
+                margin: 2,
+            }}>
             <AudioRecorder
+               room
                 justHideMe={() => {
                     this.setStatePure({
                         showAudioRecorder: false,
@@ -497,6 +505,7 @@ export default class ChatKeyboard extends AnimatedComponent {
                 ref={"AudioRecorder"}
                 toggleAudioRecorder={() => this.toggleAudioRecorder()}
             ></AudioRecorder>
+            </View>
         );
     }
     toggleEmojiKeyboard() {
@@ -785,7 +794,7 @@ export default class ChatKeyboard extends AnimatedComponent {
                                 onPress={() => requestAnimationFrame(() => this.showSnapper() //this.openCamera()
                                 )}
                                 style={{
-                                    width: 35,
+                                    width: 45,
                                     alignSelf: "flex-end",
                                     bottom: 2,
                                 }}
@@ -793,13 +802,13 @@ export default class ChatKeyboard extends AnimatedComponent {
                                 <View
                                     style={{
                                         alignItems: "center",
-                                        ...rounder(30, ColorList.bodyBackground),
+                                        ...rounder(40, ColorList.bodyBackground),
                                     }}
                                 >
                                     <MaterialIconCommunity
                                         style={{
                                             color: ColorList.indicatorColor,
-                                            fontSize: 20,
+                                            fontSize: 30,
                                         }}
                                         type={"MaterialCommunityIcons"}
                                         name={"camera"}
@@ -855,7 +864,7 @@ export default class ChatKeyboard extends AnimatedComponent {
                                         style={{
                                             color: ColorList.likeActive,
                                             alignSelf: "flex-end",
-                                            fontSize: 22,
+                                            fontSize: 25,
                                         }}
                                         type="Entypo"
                                         name="emoji-flirt"
@@ -912,7 +921,7 @@ export default class ChatKeyboard extends AnimatedComponent {
 
                         <TouchableOpacity
                             style={{
-                                width: 35,
+                                width: 45,
                                 alignSelf: "flex-end",
                                 alignItems: "center",
                                 bottom: 2,
@@ -929,7 +938,7 @@ export default class ChatKeyboard extends AnimatedComponent {
                             <View
                                 style={{
                                     alignSelf: "flex-end",
-                                    ...rounder(30, ColorList.bodyBackground),
+                                    ...rounder(40, ColorList.bodyBackground),
                                     alignItems: "center",
                                 }}
                             >
@@ -939,7 +948,7 @@ export default class ChatKeyboard extends AnimatedComponent {
                                         <FontAwesome5
                                             style={{
                                                 color: ColorList.indicatorColor,
-                                                fontSize: 23,
+                                                fontSize: 30,
                                                 alignSelf: "center",
                                             }}
                                             type={"FontAwesome5"}
@@ -949,7 +958,7 @@ export default class ChatKeyboard extends AnimatedComponent {
                                         <Ionicons
                                             style={{
                                                 color: ColorList.indicatorColor,
-                                                fontSize: 23,
+                                                fontSize: 30,
                                                 alignSelf: "center",
                                             }}
                                             name="md-send"

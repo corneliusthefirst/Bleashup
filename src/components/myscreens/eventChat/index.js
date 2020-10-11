@@ -192,6 +192,7 @@ There are also Erlang plugins for other code editors Vim (vim-erlang) , Atom , E
       }}
       ref={"room"}
       openPage={this.props.openPage}
+      openDescription={this.props.openDescription}
       openSettings={this.props.openSettings}
       id={this.props.id}
       showActivityPhotoAction={this.props.showActivityPhotoAction}

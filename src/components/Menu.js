@@ -45,7 +45,7 @@ export default class BeMenu extends BeComponent {
                     <TouchableOpacity
                     onPress={this.showMenu.bind(this)}
                     style={{
-                        ...rounder(40,ColorList.bodyDarkWhite),
+                        ...rounder(this.props.size||40,ColorList.bodyDarkWhite),
                         justifyContent: 'center',
                     }}>
                     <Entypo name={"dots-three-vertical"} style={{

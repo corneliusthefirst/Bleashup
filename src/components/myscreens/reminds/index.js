@@ -166,8 +166,8 @@ class Reminds extends AnimatedComponent {
               id: this.props.id,
             });
             scrollIndex >= 0 &&
-              this.refs.RemindsList &&
-              this.refs.RemindsList.scrollToIndex(scrollIndex);
+              this.refs.RemindsList ?
+              this.refs.RemindsList.scrollToIndex(scrollIndex) : Toaster({ text: Texts.not_found_item });
           }
         }
       );
@@ -332,7 +332,7 @@ class Reminds extends AnimatedComponent {
       }
     }
   }
-  markAsDoneWithReport(report) {
+  markAsDoneWithReport(report, url) {
     if (this.props.working) {
       this.sayAppBusy();
     } else {
@@ -353,6 +353,7 @@ class Reminds extends AnimatedComponent {
               ...(this.state.currentDonner && this.state.currentDonner.status),
               latest_edit: this.state.currentDonner && moment().format(),
               report: report,
+              url
             },
           },
         ],
@@ -464,6 +465,7 @@ class Reminds extends AnimatedComponent {
     this.setStatePure({
       currentDonner: donner,
       currentReport: donner.status.report,
+      currentReportURL: donner.status.url,
       showReportModal: true,
       reportEditing: true
     })
@@ -482,6 +484,9 @@ class Reminds extends AnimatedComponent {
       currentRemindUser: this.props.currentRemindUser,
       concernees: members,
       reply: this.reply.bind(this),
+      refresh:this.refreshReminds.bind(this),
+      activity_id: this.props.event_id,
+      remind_id: this.state.remind.id,
       confirmed: this.filterConfirmed.bind(this),
       replyPrivate: this.replyPrivate.bind(this),
       donners: this.filterDonners.bind(this),
@@ -785,9 +790,10 @@ class Reminds extends AnimatedComponent {
           />
         ) : null}
         <AddReport
+          currentReportURL={this.state.currentReportURL}
           currentReport={this.state.currentReport || ""}
-          report={(report) => {
-            this.markAsDoneWithReport(report);
+          report={(report, url) => {
+            this.markAsDoneWithReport(report, url);
           }}
           onClosed={() => {
             this.setStatePure({

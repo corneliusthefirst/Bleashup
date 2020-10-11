@@ -237,7 +237,7 @@ export default class VideoController extends BeComponent {
    * Either close the video or go to a
    * new page.
    */
-  _onEnd() {}
+  _onEnd() { }
 
   /**
    * Set the error state to true which then
@@ -484,11 +484,11 @@ export default class VideoController extends BeComponent {
 
     return this.formatTime(this.state.currentTime);
   }
-  returnCurrentTime(){
+  returnCurrentTime() {
     const time = this.state.currentTime
     return `${this.formatTime(time)}`
   }
-  returnTotalTime(){
+  returnTotalTime() {
     const time = this.state.duration
     return `${this.formatTime(time)}`
   }
@@ -975,29 +975,29 @@ export default class VideoController extends BeComponent {
         {this.props.extra ? (
           this.props.extra
         ) : (
-          <TouchableOpacity
-            onPress={this.methods.toggleFullscreen}
-            style={{
-              width: 50,
-              flexDirection: "row",
-              justifyContent: "center",
-              ...this.props.expandContainerStyle,
-            }}
-          >
-            <MaterialIcons
+            <TouchableOpacity
+              onPress={this.methods.toggleFullscreen}
               style={{
-                ...GState.defaultIconSize,
-                color: ColorList.bodyBackground,
-                marginBottom: "auto",
-                marginTop: "auto",
+                width: 50,
+                flexDirection: "row",
+                justifyContent: "center",
+                ...this.props.expandContainerStyle,
               }}
-              type="MaterialIcons"
-              name="fullscreen"
-            />
-          </TouchableOpacity>
-        )}
+            >
+              <MaterialIcons
+                style={{
+                  ...GState.defaultIconSize,
+                  color: ColorList.bodyBackground,
+                  marginBottom: "auto",
+                  marginTop: "auto",
+                }}
+                type="MaterialIcons"
+                name="fullscreen"
+              />
+            </TouchableOpacity>
+          )}
       </View>,
-      !this.props.extra ? this.methods.toggleFullscreen : () => {},
+      !this.props.extra ? this.methods.toggleFullscreen : () => { },
       styles.controls.fullscreen
     );
   }
@@ -1009,9 +1009,9 @@ export default class VideoController extends BeComponent {
     const currentTime = this.props.disableTimer
       ? this.renderNullControl()
       : this.renderCurrentTime();
-    const TotalTime = this.props.disableTimer?
-    this.renderNullControl():
-    this.renderTotalTime()
+    const TotalTime = this.props.disableTimer ?
+      this.renderNullControl() :
+      this.renderTotalTime()
     const seekbarControl = this.props.disableSeekbar
       ? this.renderNullControl()
       : this.renderSeekbar();
@@ -1034,7 +1034,7 @@ export default class VideoController extends BeComponent {
           <View
             style={[styles.controls.row, styles.controls.bottomControlGroup]}
           >
-          {currentTime}
+            {currentTime}
             {this.renderTitle()}
             {TotalTime}
           </View>
@@ -1121,11 +1121,12 @@ export default class VideoController extends BeComponent {
    */
   renderPlayPause() {
     return this.renderControl(<View style={{
-      ...rounder(50,ColorList.buttonerBackground),justifyContent: 'center',}}>
+      ...rounder(50, ColorList.buttonerBackground), justifyContent: 'center',
+    }}>
       <MaterialCommunityIcons
         type="MaterialCommunityIcons"
         name={!this.state.paused ? "pause" : "play-circle-outline"}
-        style={{ ...GState.defaultIconSize, color: "white",fontSize: 40, }}
+        style={{ ...GState.defaultIconSize, color: "white", fontSize: 40, }}
       /></View>,
       this.methods.togglePlayPause,
       styles.controls.playPause
@@ -1169,20 +1170,20 @@ export default class VideoController extends BeComponent {
       styles.controls.timer
     );
   }
-  renderCurrentTime(){
+  renderCurrentTime() {
     return this.renderControl(
       <Text style={styles.controls.timerText}>{this.returnCurrentTime()}</Text>,
       this.methods.toggleTimer,
       styles.controls.timer
     );
   }
-renderTotalTime(){
-  return this.renderControl(
-    <Text style={styles.controls.timerText}>{this.returnTotalTime()}</Text>,
-    this.methods.toggleTimer,
-    styles.controls.timer
-  );
-}
+  renderTotalTime() {
+    return this.renderControl(
+      <Text style={styles.controls.timerText}>{this.returnTotalTime()}</Text>,
+      this.methods.toggleTimer,
+      styles.controls.timer
+    );
+  }
   /**
    * Show loading icon
    */
@@ -1204,15 +1205,15 @@ renderTotalTime(){
     }
     return null;
   }
-    videoStyle = [
-        styles.player.video,
-        {
-            overflow: "hidden",
-            height: "100%",
-            width: "100%",
-            position: "absolute",
-        },
-    ]
+  videoStyle = [
+    styles.player.video,
+    {
+      overflow: "hidden",
+      height: "100%",
+      width: "100%",
+      position: "absolute",
+    },
+  ]
   /**
    * Provide all of our options and render the whole component.
    */
@@ -1226,12 +1227,17 @@ renderTotalTime(){
           style={[
             styles.player.container,
             this.styles.containerStyle,
-            this.props.messaging && { borderRadius: 5, ...shadower(4) },
+            this.props.messaging && {
+              borderRadius: !this.props.fScreen ? 5 : null,
+              marginTop: !this.props.fScreen ? 5 : null,
+              backgroundColor: this.props.fScreen ? 'black' : ColorList.buttonerBackground,
+              ...shadower(4)
+            },
           ]}
         >
           {!this.state.mounted ? (
             <View
-                        style={[...this.videoStyle,this.styles.videoStyle,{
+              style={[...this.videoStyle, this.styles.videoStyle, {
                 backgroundColor: ColorList.bodyIcon,
                 flex: 1,
                 flexDirection: "column",
@@ -1240,27 +1246,27 @@ renderTotalTime(){
               }]}
             >
               <Spinner></Spinner>
-              <Text style={{...GState.defaultTextStyle,color:ColorList.bodyBackground}}>{Texts.loading_video+" ..."}</Text>
+              <Text style={{ ...GState.defaultTextStyle, color: ColorList.bodyBackground }}>{Texts.loading_video + " ..."}</Text>
             </View>
           ) : (
-            <Video
-              {...this.props}
-              ref={(videoPlayer) => (this.player.ref = videoPlayer)}
-              resizeMode={this.state.resizeMode}
-              volume={this.state.volume}
-              paused={this.state.paused}
-              muted={this.state.muted}
-              rate={this.state.rate}
-              playInBackground={false}
-              onLoadStart={this.events.onLoadStart}
-              onProgress={this.events.onProgress}
-              onError={this.events.onError}
-              onLoad={this.events.onLoad}
-              onEnd={this.events.onEnd}
-              style={[...this.videoStyle, this.styles.videoStyle]}
-              source={{ ...this.props.source, type: "mp4" }}
-            />
-          )}
+              <Video
+                {...this.props}
+                ref={(videoPlayer) => (this.player.ref = videoPlayer)}
+                resizeMode={this.state.resizeMode}
+                volume={this.state.volume}
+                paused={this.state.paused}
+                muted={this.state.muted}
+                rate={this.state.rate}
+                playInBackground={false}
+                onLoadStart={this.events.onLoadStart}
+                onProgress={this.events.onProgress}
+                onError={this.events.onError}
+                onLoad={this.events.onLoad}
+                onEnd={this.events.onEnd}
+                style={[...this.videoStyle, this.styles.videoStyle]}
+                source={{ ...this.props.source, type: "mp4" }}
+              />
+            )}
           {this.renderError()}
           {this.renderTopControls()}
           {this.state.loading
@@ -1352,9 +1358,10 @@ const styles = {
       textAlign: "center",
     },
     pullRight: {
+      flex: 1,
       flexDirection: "row",
       alignItems: "center",
-      justifyContent: "center",
+      justifyContent: "space-between",
     },
     top: {
       flex: 1,
@@ -1366,8 +1373,8 @@ const styles = {
       flex: 2,
       justifyContent: "flex-end",
     },
-    center:{
-      width:"100%",
+    center: {
+      width: "100%",
       alignSelf: 'center',
       justifyContent: 'flex-end',
       flexDirection: 'column',

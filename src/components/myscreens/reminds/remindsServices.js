@@ -1,4 +1,4 @@
-import { AlarmPatterns, format, frequencies, timeFormat, daysOfWeeksDefault } from "../../../services/recurrenceConfigs";
+import { AlarmPatterns, format, frequencies, timeFormat, daysOfWeeksDefault, frequencyType } from "../../../services/recurrenceConfigs";
 import { getCurrentDateInterval } from '../../../services/getCurrentDateInterval';
 import stores from "../../../stores";
 import { dateDiff, getDayMonth, getMonthDay } from "../../../services/datesWriter";
@@ -36,7 +36,7 @@ export function loadStates(isThisProgram, fresh) {
                 currentDateIntervals,
                 correspondingDateInterval
             ).then(() => {
-                this.currentDateIntervals = currentDateIntervals 
+                this.currentDateIntervals = currentDateIntervals
                 this.correspondingDateInterval = correspondingDateInterval
                 this.setStatePure({
                     mounted: true,
@@ -62,14 +62,14 @@ export function loadIntervals(canCheck, fresh) {
         }
         stores.Reminds.getRemindsIntervals(this.item, fresh).then(
             ({ currentDateIntervals, correspondingDateInterval }) => {
-                if(correspondingDateInterval){
-                    callback(currentDateIntervals,correspondingDateInterval)
-                }else{
+                if (correspondingDateInterval) {
+                    callback(currentDateIntervals, correspondingDateInterval)
+                } else {
                     stores.Reminds.getCurrentInterval(
                         this.item,
                         currentDateIntervals,
-                    ).then(({correspondingDateInterval}) => {
-                        callback(currentDateIntervals,correspondingDateInterval)
+                    ).then(({ correspondingDateInterval }) => {
+                        callback(currentDateIntervals, correspondingDateInterval)
                     });
                 }
             }
@@ -154,17 +154,20 @@ export function calculateCurrentStates(currentDateIntervals, correspondingDateIn
         this.remindTimeDetails = `${sayInitialDate(this.item.period)}.\n${returnFrequency(this.item.recursive_frequency.frequency,
             this.item.recursive_frequency.days_of_week,
             this.item.period,
-            this.item.recursive_frequency.recurrence)}`
+            this.item.recursive_frequency.recurrence, this.item.recursive_frequency.interval)}`
         this.canShare = this.item.status == public_states.public_
         resolve();
     });
 }
 
-function returnFrequency(frequency, dayOfWeek, date, enddate) {
+function returnFrequency(frequency, dayOfWeek, date, enddate, interval) {
 
     const returnDays = () => dayOfWeek.reduce((prev, day) => prev +
         daysOfWeeksDefault.find(ele => ele.code == day).day + ", ", "")
-    const final = ` ${Texts.until} ${moment(enddate).calendar()}`
+    const occursOnce = frequency == frequencies['yearly'] && interval == 1
+    const hasPassed = moment(enddate).format("x") < moment().format("x")
+    const final = `${occursOnce ? hasPassed ? Texts.past_since :
+        Texts.ends : (' ' + Texts.until)} ${moment(enddate).calendar()}`
     const getFrequency = () => {
         switch (frequency) {
             case frequencies.daily:
@@ -174,7 +177,7 @@ function returnFrequency(frequency, dayOfWeek, date, enddate) {
             case frequencies.weekly:
                 return `${Texts.every} ${returnDays()} at ${moment(date).format(timeFormat)}`
             case frequencies.yearly:
-                return `${Texts.yearly} ${getMonthDay(date)}`
+                return occursOnce ? "" : `${Texts.yearly} ${getMonthDay(date)}`
         }
     }
     return getFrequency() + final

@@ -25,7 +25,7 @@ export default class ChatroomMenu extends BeComponent {
             isPublisherModalOpened: false
         }
     }
-    shouldComponentUpdate(){
+    shouldComponentUpdate() {
         return false
     }
     _menu = null;
@@ -65,9 +65,7 @@ export default class ChatroomMenu extends BeComponent {
                             ...rounder(35, ColorList.bodyBackground),
                             justifyContent: 'center',
                         }}
-                        onPress={() =>
-                            requestAnimationFrame(() => this.showMenu())
-                        }><Entypo style={{
+                        onPress={() => this.showMenu()}><Entypo style={{
                             ...GState.defaultIconSize,
                             color: colorList.headerIcon,
                         }}
@@ -91,13 +89,19 @@ export default class ChatroomMenu extends BeComponent {
                         this.gotToPage(ActivityPages.logs)
                     }}>{Texts.logs}</MenuItem>
                         <MenuDivider color={ColorList.bodyIcon} /></View>
-                    <View><MenuItem textStyle={{ color: ColorList.bodyText }} onPress={() => {
+                    {!this.props.isRelation ? <View><MenuItem textStyle={{ color: ColorList.bodyText }} onPress={() => {
                         this.hideMenu()
                         this.props.settings()
                     }}>{Texts.settings}
                     </MenuItem>
-                        <MenuDivider color={ColorList.bodyText} /></View>
-                    {~this.props.isRelation ? <View><MenuItem textStyle={{ color: ColorList.bodyText }} onPress={() => {
+                        <MenuDivider color={ColorList.bodyText} /></View> : null}
+                    {!this.props.isRelation ? <View><MenuItem textStyle={{ color: ColorList.bodyText }} onPress={() => {
+                        this.hideMenu()
+                        this.props.openDescription()
+                    }}>{Texts.show_activity_description}
+                    </MenuItem>
+                        <MenuDivider color={ColorList.bodyText} /></View> : null}
+                    {!this.props.isRelation ? <View><MenuItem textStyle={{ color: ColorList.bodyText }} onPress={() => {
                         this.hideMenu()
                         this.props.getShareLink(constructActivityLink(this.props.activity_id))
                     }}>{Texts.get_share_link}

@@ -310,8 +310,8 @@ class TEXTS {
         fr: "Deja Confirmee"
     }[GState.lang]
     reply = {
-        en: "reply",
-        fr: "Repondre"
+        en: "Mention",
+        fr: "Mentioner"
     }[GState.lang]
     update = {
         en: "Update",
@@ -678,8 +678,12 @@ class TEXTS {
         fr: "Photo de Lactivitee"
     }[GState.lang]
     unable_to_reply = {
-        en: "unable to reply",
-        fr: "impossible de repondre"
+        en: "unable to mention",
+        fr: "impossible de mentioner"
+    }[GState.lang]
+    name_cannot_be_empty = {
+        en: "name cannot be empty",
+        fr: "le nom ne peut etre vide"
     }[GState.lang]
     b_up_default_status = {
         en: "Hey, let's schedule that",
@@ -717,6 +721,10 @@ class TEXTS {
         en: "Settings",
         fr: "Parametres"
     }[GState.lang]
+    show_activity_description = {
+        en: "View activity description",
+        fr: "Voir la description de l'activitee"
+    }[GState.lang]
     get_share_link = {
         en: "Get share link",
         fr: "Obtenir le lien de partage"
@@ -730,24 +738,24 @@ class TEXTS {
         fr: "M'assgner"
     }[GState.lang]
     un_assign_to_me = {
-        en:"Unassign To Me",
-        fr:"Me Deassigner"
+        en: "Unassign To Me",
+        fr: "Me Deassigner"
     }[GState.lang]
     past_since = {
         en: "Past since: ",
         fr: "Passee Depuis"
     }[GState.lang]
     started = {
-        en:"Started",
+        en: "Started",
         fr: "Depuis"
     }[GState.lang]
     starts = {
-        en:"Due",
-        fr:"Pour"
+        en: "Due",
+        fr: "Pour"
     }[GState.lang]
     ends = {
-        en:"Ends",
-        fr:"Passes"
+        en: "Ends",
+        fr: "Passes"
     }[GState.lang]
     deu = {
         en: "Deu",
@@ -769,16 +777,16 @@ class TEXTS {
         en: "Yes",
         no: "Oui"
     }[GState.lang]
-    every_day_at ={
-        en:"every days at",
+    every_day_at = {
+        en: "every days at",
         fr: "tous les jours a"
     }[GState.lang]
     every_month_on_the = {
-        en:"every months on the",
-        fr:"chaques mois le"
+        en: "every months on the",
+        fr: "chaques mois le"
     }[GState.lang]
     every = {
-        en:"every",
+        en: "every",
         fr: "chaques"
     }[GState.lang]
     yearly = {
@@ -794,7 +802,7 @@ class TEXTS {
         fr: "Continuer"
     }[GState.lang]
     venue = {
-        en:"Venue",
+        en: "Venue",
         fr: "Lieu"
     }[GState.lang]
     unable_to_load_data = {
@@ -811,7 +819,7 @@ class TEXTS {
     }[GState.lang]
     select_from = {
         en: "Select From",
-        fr:"Selectioner De"
+        fr: "Selectioner De"
     }[GState.lang]
     remove_member = {
         en: "Remove Members",
@@ -819,23 +827,23 @@ class TEXTS {
     }[GState.lang]
     ban = {
         en: "Ban",
-        fr:"Retirer"
+        fr: "Retirer"
     }[GState.lang]
     loading_data = {
         en: "Loading Data",
         fr: "Chargement des donnee"
     }[GState.lang]
     reply_privately_to = {
-        en: "Reply privately to",
-        fr: "Repondre en privee a"
+        en: "Mention privately to",
+        fr: "Mentioner en privee a"
     }[GState.lang]
     author = {
-        en:"Author",
+        en: "Author",
         fr: "Auteur"
     }[GState.lang]
     reply_privately = {
-        en: "Reply privately",
-        fr: "Repondre en privee"
+        en: "Mention privately",
+        fr: "Mentioner en privee"
     }[GState.lang]
     remind_member_action = {
         en: "remind member action",
@@ -845,7 +853,7 @@ class TEXTS {
         en: "Add Report",
         fr: "Ajouter un raport"
     }[GState.lang]
-    advanced_config={
+    advanced_config = {
         en: "Advanced Configurations",
         fr: "Configuration Avancee"
     }[GState.lang]
@@ -854,7 +862,7 @@ class TEXTS {
         fr: "Recement mis a jour "
     }[GState.lang]
     upddated_ = {
-        en :"Updated ",
+        en: "Updated ",
         fr: "Mis a jours "
     }[GState.lang]
     times = {
@@ -872,6 +880,50 @@ class TEXTS {
     relation = {
         en: "Relation",
         fr: "Relation"
+    }[GState.lang]
+    take_photo_from_internet = {
+        en: "Take Photo from the internet",
+        fr: "Prendre une photo sur internet"
+    }[GState.lang]
+    add_video = {
+        en: "Add video",
+        fr: "Ajouter une video"
+    }[GState.lang]
+    add_audio = {
+        en: "Add audio",
+        fr: "Ajouter un audio"
+    }[GState.lang]
+    add_file = {
+        en: "Add file",
+        fr: "Ajouter un fichier"
+    }[GState.lang]
+    camera = {
+        en: 'Camera',
+        fr: 'Camera'
+    }[GState.lang]
+    galery = {
+        en: "Gallery",
+        fr: 'Gallerie'
+    }[GState.lang]
+    star_must_have_at_least = {
+        en: "A Star Must include at least a media or title",
+        fr: "A message important doit avoir au moins un media ou un titre"
+    }[GState.lang]
+    title = {
+        en:'Title',
+        fr: "Titre"
+    }[GState.lang]
+    not_found_item = {
+        en: "Item not found",
+        fr: "Element non trouvable"
+    }[GState.lang]
+    edit = {
+        en:'Edit',
+        fr: 'Editer'
+    }[GState.lang]
+    record_audio = {
+        en: "Record Sound",
+        fr: "Enregistree un son"
     }[GState.lang]
 }
 const Texts = new TEXTS()

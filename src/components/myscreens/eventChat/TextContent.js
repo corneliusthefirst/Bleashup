@@ -13,13 +13,16 @@ import ColorList from "../../colorList";
 import Toaster from "../../../services/Toaster";
 import Vibrator from "../../../services/Vibrator";
 import rounder from "../../../services/rounder";
-export default class TextContent extends Component {
+import BeComponent from '../../BeComponent';
+import ProfileModal from '../invitations/components/ProfileModal';
+export default class TextContent extends BeComponent {
   constructor(props) {
     super(props);
     this.state = {
       splicer: 500,
       notShowingAll: true,
     };
+    this.hideContact = this.hideContact.bind(this)
   }
   handleUrlPress(url, matchIndex /*: number*/) {
     openLink(url);
@@ -35,13 +38,28 @@ export default class TextContent extends Component {
   }
 
   handleNamePress(name, matchIndex /*: number*/) {
-    console.warn(name);
-  }
+    let phone = this.props.tags.find(ele => ele.nickname == name)
+    this.showContact(phone)
 
+  }
+  puncBod = /\*([\u2000-\u206F\u2E00-\u2E7F\\'!"#$%&()*+,\-.\/:;<=>?@\[\]^_`{|}~].*?|.*?)\*/i
+  puncItalic = /\_([\u2000-\u206F\u2E00-\u2E7F\\'!"#$%&()*+,\-.\/:;<=>?@\[\]^_`{|}~].*?|.*?)\_/i
+  puncStrick = /\~([\u2000-\u206F\u2E00-\u2E7F\\'!"#$%&()*+,\-.\/:;<=>?@\[\]^_`{|}~].*?|.*?)\~/i
   handleEmailPress(email, matchIndex /*: number*/) {
     this.copyToClipboard(email);
   }
-
+  showContact(phone) {
+    console.warn("hpone: ", phone)
+    this.setStatePure({
+      showContacts: true,
+      profile: phone
+    })
+  }
+  hideContact() {
+    this.setStatePure({
+      showContacts: false
+    })
+  }
   renderText(matchingString, matches) {
     // matches => ["[@michel:5455345]", "@michel", "5455345"]
     let pattern = /\[(@[^:]+):([^\]]+)\]/i;
@@ -49,7 +67,7 @@ export default class TextContent extends Component {
     return `^^${match[1]}^^`;
   }
   fontSizeFormular() {
-    let text = this.props.text||this.props.children
+    let text = this.props.text || this.props.children
     return text && this.testForImoji(text) ? 100 : 16;
   }
   emoji_regex = /^(?:[\u2700-\u27bf]|(?:\ud83c[\udde6-\uddff]){2}|[\ud800-\udbff][\udc00-\udfff]|[\u0023-\u0039]\ufe0f?\u20e3|\u3299|\u3297|\u303d|\u3030|\u24c2|\ud83c[\udd70-\udd71]|\ud83c[\udd7e-\udd7f]|\ud83c\udd8e|\ud83c[\udd91-\udd9a]|\ud83c[\udde6-\uddff]|[\ud83c[\ude01-\ude02]|\ud83c\ude1a|\ud83c\ude2f|[\ud83c[\ude32-\ude3a]|[\ud83c[\ude50-\ude51]|\u203c|\u2049|[\u25aa-\u25ab]|\u25b6|\u25c0|[\u25fb-\u25fe]|\u00a9|\u00ae|\u2122|\u2139|\ud83c\udc04|[\u2600-\u26FF]|\u2b05|\u2b06|\u2b07|\u2b1b|\u2b1c|\u2b50|\u2b55|\u231a|\u231b|\u2328|\u23cf|[\u23e9-\u23f3]|[\u23f8-\u23fa]|\ud83c\udccf|\u2934|\u2935|[\u2190-\u21ff])+$/;
@@ -73,7 +91,7 @@ export default class TextContent extends Component {
   String_toRegExp(pattern, flags) {
     return new RegExp(pattern, "i");
   }
-  showAll(){
+  showAll() {
     this.props.animate && this.props.animate()
     this.setState({
       notShowingAll: !this.state.notShowingAll,
@@ -148,38 +166,37 @@ export default class TextContent extends Component {
               },
               this.props.tags
                 ? {
-                    pattern: this.String_toRegExp(
-                      this.props.tags.map((ele) => ele && ele.nickname).join("|")
-                    ),
-                    style: styles.name,
-                    onPress: this.handleNamePress.bind(this),
-                  }
+                  pattern: this.String_toRegExp(
+                    this.props.tags.map((ele) => ele && ele.nickname).join("|")
+                  ),
+                  style: styles.name,
+                  onPress: this.handleNamePress.bind(this),
+                }
                 : {
-                    pattern: /\[(@[^:]+):([^\]]+)\]/i,
-                    style: styles.username,
-                    onPress: this.handleNamePress.bind(this),
-                    renderText: this.renderText,
-                  },
+                  pattern: /\[(@[^:]+):([^\]]+)\]/i,
+                  style: styles.username,
+                  onPress: this.handleNamePress.bind(this),
+                  renderText: this.renderText,
+                },
               {
                 pattern: /^\d+$/,
                 style: styles.phone,
                 onPress: this.handlePhonePress.bind(this),
               },
-              { pattern: /42/, style: styles.magicNumber },
               {
-                pattern: /\*(.*?)\*/gm,
-                style: styles.boldText,
-                renderText: this.renderBoldText.bind(this),
+                pattern: this.puncStrick,
+                style: styles.strikesText,
+                renderText: this.renderStrickenText.bind(this),
               },
               {
-                pattern: /\_(\w+)\_/,
+                pattern: this.puncItalic,
                 style: styles.italicStyle,
                 renderText: this.renderItalicText.bind(this),
               },
               {
-                pattern: /\~(\w+)\~/,
-                style: styles.strikesText,
-                renderText: this.renderStrickenText.bind(this),
+                pattern: this.puncBod,
+                style: styles.boldText,
+                renderText: this.renderBoldText.bind(this),
               },
               { pattern: /#(\w+)/, style: styles.hashTag },
               ...(this.props.notScallEmoji
@@ -194,6 +211,11 @@ export default class TextContent extends Component {
             {text}
           </ParsedText>
         </View>
+        {this.state.showContacts ? <ProfileModal
+          isOpen={this.state.showContacts}
+          onClosed={this.hideContact}
+          profile={this.state.profile}>
+        </ProfileModal> : null}
       </TouchableOpacity>
     );
   }
@@ -229,7 +251,7 @@ const styles = StyleSheet.create({
   },
   emoji_only: {
     fontSize: 60,
-    textAlign:'center'
+    textAlign: 'center'
   },
   text: {
     color: "black",

@@ -58,7 +58,7 @@ export default class CreateTextInput extends Component {
               : colorList.bodyBackground,
           }}
           value={this.props.value}
-          maxLength={this.props.maxLength || 100}
+          maxLength={this.props.maxLength || null}
           placeholder={`@${this.props.placeholder}`}
           placeholderTextColor={
             this.props.placeholderTextColor
@@ -94,7 +94,7 @@ export default class CreateTextInput extends Component {
                 : null,*/
             }}
           note>{`${(this.props.value && this.props.value.length) || 0} / ${
-            this.props.maxLength || 100
+            this.props.maxLength || 'infinity'
           }`}</Text>
         </View>
       </View>

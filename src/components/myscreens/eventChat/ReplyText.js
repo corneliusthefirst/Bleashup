@@ -40,105 +40,79 @@ export default class ReplyText extends BePureComponent {
   }
   reply_font = 14;
   renderReplyIcon(type) {
-    switch (type) {
-      case replies.posts:
-        return (
-          <AntDesign
-            name={"star"}
-            type={"AntDesign"}
-            style={{
-              fontSize: this.reply_font,
-              color: ColorList.post,
-            }}
-          />
-        );
-      case replies.reminds:
-        return (
-          <Entypo
-            name={"bell"}
-            type={"Entypo"}
-            style={{
-              fontSize: this.reply_font,
-              color: ColorList.reminds,
-            }}
-          />
-        );
-      case replies.votes:
-        return (
-          <FontAwesome5
-            name={"vote-yea"}
-            type={"FontAwesome5"}
-            style={{
-              fontSize: this.reply_font,
-              color: ColorList.vote,
-            }}
-          />
-        );
-      case replies.description:
-        return (
-          <Feather
-            name={"file-text"}
-            style={{
-              fontSize: this.reply_font,
-              color: ColorList.iconActive,
-            }}
-          ></Feather>
-        );
-      case replies.activity_photo:
-        return (
-          <EvilIcons
-            name={"camera"}
-            style={{
-              fontSize: 18,
-              color: ColorList.indicatorColor,
-            }}
-          ></EvilIcons>
-        );
-      case replies.member:
-        return (
-          <Ionicons
-            style={{
-              fontSize: 16,
-              color: ColorList.iconActive
-            }}
-            name={"ios-people"}
-          >
-          </Ionicons>
-        );
-      case replies.done:
-        return (
-          <Ionicons
-            name={"md-checkmark"}
-            style={{
-              fontSize: 16,
-              color: ColorList.indicatorColor
-            }}
-          >
-          </Ionicons>
-        );
-      case replies.confirmed:
-        return (
-          <MaterialCommunityIcons
-            name="check-all"
-            style={{
-              fontSize: 16,
-              color: ColorList.likeActive
-            }}
-          >
-          </MaterialCommunityIcons>
-        )
-      default:
-        return (
-          <MaterialIcons
-            name={"history"}
-            type={"MaterialIcons"}
-            style={{
-              fontSize: this.reply_font,
-              color: ColorList.darkGrayText,
-            }}
-          />
-        );
+    const types = {
+      [replies.posts]: <AntDesign
+        name={"star"}
+        type={"AntDesign"}
+        style={{
+          fontSize: this.reply_font,
+          color: ColorList.post,
+        }}
+      />,
+      [replies.reminds]: <Entypo
+        name={"bell"}
+        type={"Entypo"}
+        style={{
+          fontSize: this.reply_font,
+          color: ColorList.reminds,
+        }}
+      />,
+      [replies.votes]: <FontAwesome5
+        name={"vote-yea"}
+        type={"FontAwesome5"}
+        style={{
+          fontSize: this.reply_font,
+          color: ColorList.vote,
+        }}
+      />,
+      [replies.description]: <Feather
+        name={"file-text"}
+        style={{
+          fontSize: this.reply_font,
+          color: ColorList.iconActive,
+        }}
+      ></Feather>,
+      [replies.activity_photo]: <EvilIcons
+        name={"camera"}
+        style={{
+          fontSize: 18,
+          color: ColorList.indicatorColor,
+        }}
+      ></EvilIcons>,
+      [replies.member]: <Ionicons
+        style={{
+          fontSize: 16,
+          color: ColorList.iconActive
+        }}
+        name={"ios-people"}
+      >
+      </Ionicons>,
+      [replies.done]: <Ionicons
+        name={"md-checkmark"}
+        style={{
+          fontSize: 16,
+          color: ColorList.indicatorColor
+        }}
+      >
+      </Ionicons>,
+      [replies.confirmed]: <MaterialCommunityIcons
+        name="check-all"
+        style={{
+          fontSize: 16,
+          color: ColorList.likeActive
+        }}
+      >
+      </MaterialCommunityIcons>
     }
+    const defaultVal = <MaterialIcons
+      name={"history"}
+      type={"MaterialIcons"}
+      style={{
+        fontSize: this.reply_font,
+        color: ColorList.darkGrayText,
+      }}
+    />
+    return types[type] || defaultVal
   }
   handleReply() {
     this.props.openReply(this.props.reply);
@@ -222,8 +196,8 @@ export default class ReplyText extends BePureComponent {
                         maxWidth: "99%",
                       }}
                     >
-                        {`${(this.props.reply.activity_name ? 
-                          ("("+this.props.reply.activity_name + ") ") : "")}${this.props.reply.title && this.props.reply.title.split(": \n")[0]}`}
+                        {`${(this.props.reply.activity_name ?
+                          ("(" + this.props.reply.activity_name + ") ") : "")}${this.props.reply.title && this.props.reply.title.split(": \n")[0]}`}
                       </TextContent>}
                   </View>
                 </View>

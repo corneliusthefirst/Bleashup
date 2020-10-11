@@ -15,6 +15,7 @@ import CreateButton from '../event/createEvent/components/ActionButton';
 import Creator from './Creator';
 import rounder from "../../../services/rounder";
 import replies from '../eventChat/reply_extern';
+import stores from "../../../stores";
 
 
 export function remindTime() {
@@ -102,13 +103,19 @@ export function remindTitle() {
         </View>
     </View>
 }
-
+function updateURL(aid,data){
+    stores.Reminds.updateURL(aid,data)
+}
 export function remindMedia() {
     this.item = this.props.item || this.item
     return this.item.remind_url &&
         (this.item.remind_url.photo ||
-            this.item.remind_url.video) ? (
+            this.item.remind_url.video ||
+            this.item.remind_url.source) ? (
             <MedaiView
+                data={{ remind_id: this.item.id }}
+                activity_id={this.item.event_id}
+                updateSource={updateURL}
                 height={ColorList.containerHeight * 0.39}
                 width={"100%"}
                 url={this.item.remind_url}
@@ -161,6 +168,7 @@ export function remindMembers() {
 export function remindTimeDetail() {
     return <TextContent style={{
         fontSize: 12,
+        marginRight: '2%',
         fontStyle: 'italic',
         fontWeight: 'bold',
         color: ColorList.darkGrayText
@@ -195,38 +203,38 @@ export function remindActons() {
                     this.showMembers(replies.confirmed)
                 })
             }} style={{
-                ...rounder(40,ColorList.bodyDarkWhite),
+                ...rounder(40, ColorList.bodyDarkWhite),
                 justifyContent: 'center',
             }}>
-            <MaterialCommunityIcons
-                type="MaterialCommunityIcons"
-                name="check-all"
-                style={{
-                    ...GState.defaultIconSize,
-                    color: "#54F5CA",
-                }}
-            ></MaterialCommunityIcons>
-                </TouchableOpacity>
-        ) : (
-            <TouchableOpacity 
-                        onPress={() => {
-                            requestAnimationFrame(() => {
-                                this.showMembers(replies.done)
-                            })
-                        }} style={{
-                            ...rounder(40, ColorList.bodyDarkWhite),
-                            justifyContent: 'center',
-                        }}
-            >
-                        <AntDesign
-                            type="AntDesign"
-                            name="check"
-                            style={{
-                                ...GState.defaultIconSize,
-                                color: ColorList.indicatorColor,
-                            }}
-                        ></AntDesign>
+                <MaterialCommunityIcons
+                    type="MaterialCommunityIcons"
+                    name="check-all"
+                    style={{
+                        ...GState.defaultIconSize,
+                        color: "#54F5CA",
+                    }}
+                ></MaterialCommunityIcons>
             </TouchableOpacity>
+        ) : (
+                <TouchableOpacity
+                    onPress={() => {
+                        requestAnimationFrame(() => {
+                            this.showMembers(replies.done)
+                        })
+                    }} style={{
+                        ...rounder(40, ColorList.bodyDarkWhite),
+                        justifyContent: 'center',
+                    }}
+                >
+                    <AntDesign
+                        type="AntDesign"
+                        name="check"
+                        style={{
+                            ...GState.defaultIconSize,
+                            color: ColorList.indicatorColor,
+                        }}
+                    ></AntDesign>
+                </TouchableOpacity>
             )
     ) : this.missed ? null :
                 this.canBeDone ? (
@@ -263,8 +271,8 @@ export function remindCreator() {
     </View>
 }
 
-export function UnAssignAction(){
-    return this.member?<View style={{
+export function UnAssignAction() {
+    return this.member ? <View style={{
         marginTop: "2%",
         marginBottom: "2%",
         marginLeft: "1%",
@@ -277,7 +285,7 @@ export function UnAssignAction(){
                 width: 135,
                 alignSelf: "flex-end",
                 height: 35,
-                color:ColorList.bodyBackground,
+                color: ColorList.bodyBackground,
                 alignItems: "center",
                 justifyContent: "center",
                 ...shadower(3),
@@ -285,5 +293,5 @@ export function UnAssignAction(){
             }}
             action={this.unAssignToMe.bind(this)}
         ></CreateButton>
-    </View>:null
+    </View> : null
 }

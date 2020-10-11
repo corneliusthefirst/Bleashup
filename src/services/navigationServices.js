@@ -14,20 +14,20 @@ class NavigatorClass {
     navigateTo(page, param) {
         GState.nav.navigate(page, param)
     }
-    resetPushingState(key){
+    resetPushingState(key) {
         delete this.pushing[key]
     }
-    sayPushing(key){
+    sayPushing(key) {
         this.pushing[key] = true
     }
     pushWaite = 2000
     pushing = {}
     pushTimeoutRef = {}
-    waitAfterPush(key){
+    waitAfterPush(key) {
         this.pushTimeoutRef[key] = setTimeout(() => this.resetPushingState(key), this.pushWaite)
     }
-    pushActivityWithIndex(activity,data,noreply){
-        if(data){
+    pushActivityWithIndex(activity, data, noreply) {
+        if (data) {
             if (data.message_id) {
                 this.goToChatWithIndex(activity, data.message_id)
             } else if (data.remind_id) {
@@ -36,45 +36,47 @@ class NavigatorClass {
                 this.gotoStarWithIndex(activity, data.post_id, !noreply)
             } else {
                 this.pushToChat(activity)
-            } 
-        }else{
+            }
+        } else {
             this.pushToChat(activity)
         }
     }
-    push(route,params){
+    push(route, params) {
         GState.nav.push(route, params)
     }
-    pushRoute(route,params,key){
-        if(this.pushing[key]){
+    pushRoute(route, params, key) {
+        if (this.pushing[key]) {
             clearTimeout(this.pushTimeoutRef[key])
             this.waitAfterPush(key)
-            
-        }else{
+
+        } else {
             this.sayPushing(key)
-            this.push(route,params)
+            this.push(route, params)
             this.waitAfterPush(key)
         }
     }
-    openVideo(url,date){
+    openVideo(url, date) {
         //this.sayCloseAllModals()
-        this.pushRoute("Video",{
-            video:url,
+        this.pushRoute("Video", {
+            video: url,
             date
         })
     }
-    handleReply(event){
-        setTimeout(() => this.pushToChat(event,{}), GState.waitToReply)
+    handleReply(event) {
+        setTimeout(() => this.pushToChat(event, {}), GState.waitToReply)
     }
-    gotoChangeLogs(event,options){
-        this.pushActivity(event,ActivityPages.logs,options)
+    gotoChangeLogs(event, options) {
+        this.pushActivity(event, ActivityPages.logs, options)
     }
-    gotoRemindsWithIndex(event,id,withReply,options) {
+    gotoRemindsWithIndex(event, id, withReply, options) {
         //GState.toggleCurrentIndex(id, 7000)
         GState.setPointedID(id)
-        this.pushActivity(event, ActivityPages.reminds, { id, 
-            reply: withReply ? (reply) => this.handleReply(event) :null,...options })
+        this.pushActivity(event, ActivityPages.reminds, {
+            id,
+            reply: withReply ? (reply) => this.handleReply(event) : null, ...options
+        })
     }
-    goToRemind(event,withReply){
+    goToRemind(event, withReply) {
         this.pushActivity(event, ActivityPages.reminds, {
             reply: withReply ? (reply) => this.handleReply(event) : null
         })
@@ -83,63 +85,68 @@ class NavigatorClass {
         //GState.toggleCurrentIndex(id, 7000)
         GState.setPointedID(id)
         this.pushActivity(event, ActivityPages.starts, {
-            id, reply: withReply ? (reply) => this.handleReply(event): null })
+            id, reply: withReply ? (reply) => this.handleReply(event) : null
+        })
     }
-    goToChatWithIndex(event,id){
+    goToChatWithIndex(event, id) {
         //GState.toggleCurrentIndex(id,5000)
         GState.setPointedID(id)
-        this.pushToChat(event,{id})
+        this.pushToChat(event, { id })
     }
-    sayCloseAllModals(){
+    sayCloseAllModals() {
         emitter.emit(close_all_modals)
-        
+
     }
-    openPhoto(url,hideActions,date,callback){
-       // this.sayCloseAllModals()
+    openPhoto(url, hideActions, date, callback) {
+        // this.sayCloseAllModals()
         let route = 'PhotoViewer'
-        this.pushRoute(route, { 
+        this.pushRoute(route, {
             photo: url,
             date,
-            hideActions: hideActions||false,
+            hideActions: hideActions || false,
             callback
-        },route)
+        }, route)
     }
-    pushTo(page, param){
-        this.pushRoute(page,param,page)
+    pushTo(page, param) {
+        this.pushRoute(page, param, page)
     }
     leave_route_event = "leave_route"
-    pushToChat(event,options){
+    pushToChat(event, options) {
         emitter.emit(this.leave_route_event)
         setTimeout(() => {
             this.pushActivity(event, ActivityPages.chat, options)
         })
     }
-    pushActivity(event, page,options) {
+    pushActivity(event, page, options) {
         page = page || ActivityPages.chat
         this.pushRoute('Event', { Event: event, tab: page, ...options }, `Event/${page}`)
     }
-    navigateToContacts(){
+    navigateToContacts() {
         this.navigateTo("Contacts")
     }
-    navigateToQR(){
+    navigateToQR() {
         this.navigateTo("QR")
     }
-    navigateToCreateEvent(){
+    navigateToCreateEvent() {
         this.navigateTo("CreateEventView")
     }
-    gotoStarDetail(post_id,activity_id,more){
+    gotoStarDetail(post_id, activity_id, more) {
         let route = "StarDetail"
-        this.pushRoute(route,{post_id,activity_id,...more},route)
+        this.pushRoute(route, { post_id, activity_id, ...more }, route)
     }
-    goToRemindDetail(remind_id,activity_id,more){
+    goToRemindDetail(remind_id, activity_id, more) {
         let route = "RemindDetail"
-        this.pushRoute(route,{remind_id,activity_id,...more},route)
+        this.pushRoute(route, { remind_id, activity_id, ...more }, route)
     }
     goBack() {
         GState.nav.goBack()
     }
-    gotoContactList(contacts,title){
-        this.pushTo("ContactsList",{contacts,title})
+    gotoContactList(contacts, title) {
+        this.pushTo("ContactsList", { contacts, title })
+    }
+    gotoCreateStar(data) {
+        BeNavigator.pushTo("StarCreation", data)
+
     }
 }
 const BeNavigator = new NavigatorClass()

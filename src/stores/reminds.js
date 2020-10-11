@@ -30,24 +30,28 @@ export default class Reminds {
   currentSaveTime = moment().format();
   previousSaveTime = moment().format();
   initializeReminds() {
-    storage
-      .load(this.readKey)
-      .then((data) => {
-        this.Reminds = data;
-      })
-      .catch(() => {
-        this.Reminds = {};
-      });
+    setTimeout(() => {
+      storage
+        .load(this.readKey)
+        .then((data) => {
+          this.Reminds = data;
+        })
+        .catch(() => {
+          this.Reminds = {};
+        });
+    },600)
   }
   initializeRemindsIntervals() {
-    storage
-      .load(this.saveIntervalsKeys)
-      .then((data) => {
-        this.remindsIntervals = data;
-      })
-      .catch((err) => {
-        this.remindsIntervals = {};
-      });
+    setTimeout(() => {
+      storage
+        .load(this.saveIntervalsKeys)
+        .then((data) => {
+          this.remindsIntervals = data;
+        })
+        .catch((err) => {
+          this.remindsIntervals = {};
+        });
+    },500)
   }
   timer = () => {
     setInterval(() => {

@@ -21,20 +21,20 @@ import CacheImages from '../../CacheImages';
 import testForURL from '../../../services/testForURL';
 import shadower from '../../shadower';
 import TextContent from './TextContent';
+import BeComponent from '../../BeComponent';
 
-export default class ChatRoomHeader extends BePureComponent {
+export default class ChatRoomHeader extends BeComponent {
     constructor(props) {
         super(props);
         this.state = {
-            last_seen: "..."
+            last_seen: "years ago"
         };
         this.searchToolsParts = searchToolsParts.bind(this)
         this.pushUp = this.props.pushUp
         this.pushDown = this.props.pushDown
         this.props.isRelation ? this.onlinePart = onlinePart.bind(this) : null
-    }
-    componentMounting() {
-        this.props.isRelation && !this.checkUseOnlineStatus ? this.checkUseOnlineStatus = checkUserOnlineStatus.bind(this) : null
+        this.props.isRelation && !this.checkUseOnlineStatus ?
+            this.checkUseOnlineStatus = checkUserOnlineStatus.bind(this) : null
     }
     componentDidMount() {
         if (this.props.isRelation) {
@@ -162,6 +162,7 @@ export default class ChatRoomHeader extends BePureComponent {
                         }}
                     >
                         <ChatroomMenu
+                            openDescription={this.props.openDescription}
                             activity_id={this.props.activity_id}
                             getShareLink={this.props.getShareLink}
                             isRelation={this.props.isRelation}

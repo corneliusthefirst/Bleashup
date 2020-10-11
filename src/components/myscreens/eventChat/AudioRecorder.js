@@ -7,28 +7,29 @@ import rnFetchBlob from 'rn-fetch-blob';
 import ColorList from '../../colorList';
 import BeComponent from '../../BeComponent';
 import Toaster from '../../../services/Toaster';
-import  Entypo  from 'react-native-vector-icons/Entypo';
-import FontAwesome  from 'react-native-vector-icons/FontAwesome';
-import  EvilIcons  from 'react-native-vector-icons/EvilIcons';
+import Entypo from 'react-native-vector-icons/Entypo';
+import FontAwesome from 'react-native-vector-icons/FontAwesome';
+import EvilIcons from 'react-native-vector-icons/EvilIcons';
 import GState from '../../../stores/globalState';
 import emitter from '../../../services/eventEmiter';
+import shadower from '../../shadower';
 let dirs = rnFetchBlob.fs.dirs
-export default class AudioRecorder extends BeComponent{
-    constructor(props){
+export default class AudioRecorder extends BeComponent {
+    constructor(props) {
         super(props)
         this.state = {
-            recordTime:0,
-            recording:true
+            recordTime: 0,
+            recording: true
         }
         this.BackHandler = null
     }
-    componentMounting(){
-         }
+    componentMounting() {
+    }
     stopRecordTiming() {
         clearInterval(this.recordInterval)
     }
     playingEvent = "playing"
-    pausePLayingAudio(){
+    pausePLayingAudio() {
         emitter.emit(this.playingEvent)
     }
     startRecorder() {
@@ -78,7 +79,7 @@ export default class AudioRecorder extends BeComponent{
         }
     }
     filename = dirs.DocumentDir + "/test.mp3"
-    unmountingComponent(){
+    unmountingComponent() {
         SoundRecorder.stop().catch(() => {
 
         })
@@ -88,15 +89,15 @@ export default class AudioRecorder extends BeComponent{
         SoundRecorder.stop()
             .then((result) => {
                 this.duration = Math.ceil(result.duration / 1000)
-                this.props.sendAudioMessge(this.filename,this.duration,dontsend)
+                this.props.sendAudioMessge(this.filename, this.duration, dontsend)
             });
     }
-    stopRecordSimple(){
+    stopRecordSimple() {
         this.stopRecordTiming()
         SoundRecorder.stop().then(() => {
             this.setStatePure({
                 //recording:false,
-                recordTime:0
+                recordTime: 0
             })
         })
     }
@@ -135,27 +136,33 @@ export default class AudioRecorder extends BeComponent{
     state = {}
     audioRecorder() {
         return <View style={{
-            width: '100%', opacity: 0.97,alignSelf: 'center',margin: 'auto',
-            // marginTop: "1%",
-            backgroundColor: '#5CB99E', height: 50, display: 'flex', flexDirection: 'row',
-             borderTopLeftRadius: 5,borderTopRightRadius: 5,justifyContent: 'space-between',
-        }}><View style={{alignSelf: 'flex-start',marginTop: '3.8%',}}><TouchableOpacity onPress={() => this.props.toggleAudioRecorder()}><EvilIcons type={'EvilIcons'} 
-        name={'close'} style={{...GState.defaultIconSize, color: ColorList.bodyBackground }}/>
-        </TouchableOpacity></View>{this.state.recording ? 
-            <View style={{  marginTop: "1.8%", display: 'flex', flexDirection: 'row', }}>
-            <Entypo  onPress={() => this.stopRecord()} name={"controller-stop"} style={{ color: ColorList.bodyBackground, fontSize: 35, }}/>
-            <FontAwesome name={"pause"} onPress={() => this.pauseRecorder()} style={{ marginTop: "5%", marginLeft: "10%", color: ColorList.bodyBackground, fontSize: 26, }}/>
-        </View> :
-                <TouchableOpacity onPress={() => this.resumAudioRecoder()} style={{  marginTop: "1.8%", display: 'flex', flexDirection: 'row', }}>
-            <Entypo name={"controller-record"} style={{ color: ColorList.bodyBackground, fontSize: 35, }}/>
+            flex: this.props.room ? null : 1,
+            width: this.props.room ? "100%" : null,
+            alignSelf: 'center',
+            backgroundColor: ColorList.recorderColor,
+            maxHeight: 50,
+            height: this.props.room ? 40 : null,
+            flexDirection: 'row',
+            borderTopLeftRadius: 5,
+            borderTopRightRadius: 5,
+            justifyContent: 'space-between',
+        }}><View style={{ alignSelf: 'flex-start', marginTop: '3.8%', }}><TouchableOpacity onPress={() => this.props.toggleAudioRecorder()}><EvilIcons type={'EvilIcons'}
+            name={'close'} style={{ ...GState.defaultIconSize, color: ColorList.bodyBackground }} />
+        </TouchableOpacity></View>{this.state.recording ?
+            <View style={{ marginTop: "1.8%", display: 'flex', flexDirection: 'row', }}>
+                <Entypo onPress={() => this.stopRecord()} name={"controller-stop"} style={{ color: ColorList.bodyBackground, fontSize: 35, }} />
+                <FontAwesome name={"pause"} onPress={() => this.pauseRecorder()} style={{ marginTop: "5%", marginLeft: "10%", color: ColorList.bodyBackground, fontSize: 26, }} />
+            </View> :
+            <TouchableOpacity onPress={() => this.resumAudioRecoder()} style={{ marginTop: "1.8%", display: 'flex', flexDirection: 'row', }}>
+                <Entypo name={"controller-record"} style={{ color: ColorList.bodyBackground, fontSize: 35, }} />
             </TouchableOpacity>}
-            <View style={{alignSelf: 'flex-end',}}><View style={{ display: 'flex', flexDirection: 'row', marginLeft: "30%", }}>
+            <View style={{ alignSelf: 'flex-end', }}><View style={{ display: 'flex', flexDirection: 'row', marginLeft: "30%", }}>
                 <Text style={{ marginTop: "1.8%", fontSize: 22, color: ColorList.bodyBackground }}>
                     {converToHMS(this.state.recordTime)}</Text>
                 <PulseIndicator color={'red'}>
                 </PulseIndicator></View></View></View>;
     }
-    render(){
-        return this.props.showAudioRecorder?this.audioRecorder():false
+    render() {
+        return this.props.showAudioRecorder ? this.audioRecorder() : false
     }
 }

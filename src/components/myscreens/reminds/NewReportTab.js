@@ -38,7 +38,7 @@ export default class ReportTabModal extends TabModal {
   }
   backdropPressToClose = false
   shouldComponentUpdate(prevprops, prevState) {
-    return (prevState.mounted !== this.state.mounted || 
+    return (prevState.mounted !== this.state.mounted ||
       this.props.isOpen !== prevprops.isOpen)
       ? true : false
   }
@@ -70,6 +70,9 @@ export default class ReportTabModal extends TabModal {
   isRoute = this.props.navigation && true
   getParam = (param) => this.props.navigation && this.props.navigation.getParam(param)
   type = this.getParam("type") || this.props.type
+  refresh= this.getParam("refresh") || this.props.refresh
+  remind_id = this.getParam("remind_id") || this.props.remind_id
+  activity_id = this.getParam("activity_id") || this.props.activity_id
   actualInterval = this.getParam("actualInterval") || this.props.actualInterval
   intervals = this.getParam("intervals") || this.props.intervals
   currentRemindUser = this.getParam("currentRemindUser") || this.props.currentRemindUser
@@ -87,8 +90,8 @@ export default class ReportTabModal extends TabModal {
   concernees = this.getParam("concernees") || this.props.concernees
   donners = this.getParam("donners") || this.props.donners
   inialPage = this.mapInitialRoute(this.type)
- 
-  
+
+
   tabs = {
     Members: {
       navigationOptions: {
@@ -135,12 +138,15 @@ export default class ReportTabModal extends TabModal {
       screen: () => (
         this.state.mounted ? <View style={{ height: "100%" }}>
           <DonnersList
+            refresh={this.refresh}
             editReport={this.editReport}
             replyPrivate={this.replyPrivate.bind(this)}
             isRelation={this.isRelation}
             currentRemindUser={this.currentRemindUser}
             type={replies.done}
             reply={this.reply}
+            activity_id={this.activity_id}
+            remind_id={this.remind_id}
             intervals={this.intervals}
             donners={this.donners}
             confirmed={this.confirmed}
@@ -165,7 +171,10 @@ export default class ReportTabModal extends TabModal {
       screen: () => (
         this.state.mounted ? <View style={{ height: "100%" }}>
           <DonnersList
-           editReport={this.editReport}
+            refresh={this.refresh}
+            editReport={this.editReport}
+            activity_id={this.activity_id}
+            remind_id={this.remind_id}
             replyPrivate={this.replyPrivate.bind(this)}
             isRelation={this.isRelation}
             currentRemindUser={this.currentRemindUser}

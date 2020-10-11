@@ -10,6 +10,8 @@ import GState from '../../../stores/globalState';
 import Entypo from 'react-native-vector-icons/Entypo';
 import Toaster from '../../../services/Toaster';
 import Texts from '../../../meta/text';
+import PickersUpload from '../event/createEvent/components/PickerUpload';
+import MediaPreviewer from '../event/createEvent/components/MediaPeviewer';
 
 let { height, width } = Dimensions.get('window');
 
@@ -18,6 +20,13 @@ export default class AddReport extends BleashupModal {
         this.state = {
             description: ''
         }
+        this.saveURL = this.saveURL.bind(this)
+        this.cleanMedia = this.cleanMedia.bind(this)
+    }
+    saveURL(url) {
+        this.setStatePure({
+            url
+        })
     }
     state = {
 
@@ -31,13 +40,19 @@ export default class AddReport extends BleashupModal {
     }
     onOpenModal() {
         this.setStatePure({
-            description: this.props.currentReport
+            description: this.props.currentReport || this.state.description,
+            url: this.props.currentReportURL || this.state.url
         })
     }
     onClosedModal() {
         this.props.onClosed(this.state.description)
     }
-    swipeToClose=false
+    cleanMedia() {
+        this.refs.picker &&
+            this.refs.picker.cleanMedia &&
+            this.refs.picker.cleanMedia()
+    }
+    swipeToClose = false
     modalHeight = 300
     modalWidth = "90%"
     borderTopLeftRadius = 8
@@ -45,39 +60,69 @@ export default class AddReport extends BleashupModal {
     position = "bottom"
     entry = "bottom"
     modalBody() {
+        let canShowURL = this.state.url && (
+            this.state.url.photo ||
+            this.state.url.video ||
+            this.state.url.source
+        )
+        let canEdit = (this.state.description &&
+            this.state.description !== this.props.currentReport) ||
+            (this.state.url && (this.state.url.photo !== this.props.currentReportURL.photo ||
+                 this.props.currentReportURL.video 
+                !== this.state.url.video ||
+                 this.props.currentReportURL.source !== this.state.url.source))
         return (
             <ScrollView keyboardShouldPersistTaps={"handled"}
                 nestedScrollEnabled showsVerticalScrollIndicator={false} style={{ flex: 1, flexDirection: "column" }}>
-                <TouchableOpacity onPress={() => Toaster({ text: "You can enter a link pointing to your report" })} style={{ margin: '2%', }}>
-                    <Entypo style={{ ...GState.defaultIconSize }} name={"attachment"}>
-                    </Entypo>
-                </TouchableOpacity>
-                <View style={{ height: "65%", width: "95%", alignSelf: 'center', }}>
+                <PickersUpload
+                    ref={"picker"}
+                    currentURL={this.state.url}
+
+                    notInternet saveMedia={this.saveURL}></PickersUpload>
+                <View style={{ width: '98%', alignSelf: 'center', margin: 'auto', }}>
+                    {canShowURL ? <MediaPreviewer
+                        data={{ id: this.state.url && this.state.url.id + "_creating" }}
+                        updateSource={this.saveURL}
+                        cleanMedia={this.cleanMedia}
+                        url={this.state.url}
+                        height={200}
+                    >}
+                </MediaPreviewer> : null}
+                </View>
+                <View style={{ 
+                    height: 155, 
+                    width: "95%", 
+                    alignSelf: 'center', 
+                }}>
                     <CreateTextInput
                         height={150}
-                        maxLength={1000}
                         multiline
                         placeholder={Texts.add_report}
                         value={this.state.description} keyboardType="default"
                         onChange={(value) => this.onChangedEventDescription(value)} />
 
                 </View>
-                {this.state.description &&
-                    this.state.description !== this.props.currentReport ?
-                    <View style={{ height: "10%", marginTop: "1%" }}>
-                        <View style={{
-                            width: width / 4, height: 70, alignSelf: "flex-end",
-                            marginRight: "1%"
-                        }} >
-                            <TouchableOpacity onPress={() => this.props.report(this.state.description)} style={{
-                                borderRadius: 8,
-                                borderWidth: 1, marginRight: "2%", backgroundColor: ColorList.bodyBackground,
-                                borderColor: ColorList.bodyIcon, alignSelf: 'flex-end',
-                                width: width / 4, height: height / 18, justifyContent: "center"
-                            }}>
-                                <Text style={{ ...GState.defaultTextStyle, color: ColorList.bodyIcon, marginRight: "auto", marginLeft: "auto", }}>{Texts.report}</Text>
-                            </TouchableOpacity>
-                        </View>
+                { canEdit ?
+                    <View style={{
+                        width: width / 4,
+                        flexDirection: 'row',
+                        alignItems: 'flex-end',
+                        alignSelf: 'flex-end',
+                        marginRight: "1%"
+                    }} >
+                        <TouchableOpacity onPress={() => this.props.report(this.state.description, this.state.url)} style={{
+                            borderRadius: 8,
+                            borderWidth: 1, marginRight: "2%", backgroundColor: ColorList.bodyBackground,
+                            borderColor: ColorList.bodyIcon, alignSelf: 'flex-end',
+                            width: 90, height: 40, justifyContent: "center"
+                        }}>
+                            <Text style={{ 
+                                ...GState.defaultTextStyle, 
+                                color: ColorList.bodyIcon, 
+                                marginRight: "auto", 
+                                marginLeft: "auto", 
+                            }}>{Texts.report}</Text>
+                        </TouchableOpacity>
                     </View> : null}
             </ScrollView>)
     }

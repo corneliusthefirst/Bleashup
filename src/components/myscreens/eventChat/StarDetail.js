@@ -170,6 +170,9 @@ export default class StarDetail extends AnimatedComponent {
             }
         ]
     }
+    updateSource(aid, data) {
+        stores.Highlights.updateHighlightUrl(aid, data)
+    }
     render() {
         return this.state.mounted ? (
             <View>
@@ -270,6 +273,9 @@ export default class StarDetail extends AnimatedComponent {
                             </TextContent>
                         </View>
                         <MedaiView
+                            data={{ id: this.item.id }}
+                            activity_id={this.item.event_id}
+                            updateSource={this.updateSource}
                             width={ColorList.containerWidth}
                             height={250}
                             showItem={() => this.showItem(this.item)}

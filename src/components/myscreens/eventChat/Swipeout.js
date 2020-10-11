@@ -1,6 +1,7 @@
 import React, { PureComponent } from "react";
 import { SwipeRow } from "react-native-swipe-list-view";
-import { View, TouchableOpacity,TouchableWithoutFeedback } from "react-native";
+import { View, TouchableOpacity } from "react-native";
+import { TouchableWithoutFeedback} from "react-native-gesture-handler"
 import BePureComponent from '../../BePureComponent';
 
 export default class Swipeout extends BePureComponent {

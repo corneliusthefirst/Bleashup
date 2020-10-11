@@ -107,10 +107,10 @@ export default class CurrentEvents extends AnimatedComponent {
                     numberOfItems={(data && data.length) || 0}
                 >
                 </BleashupFlatList>
-                {<DetailsModal goToActivity={this.goToActivity} isToBeJoint event={this.state.event}
+                {this.state.isDetailsModalOpened ? <DetailsModal goToActivity={this.goToActivity} isToBeJoint event={this.state.event}
                     isOpen={this.state.isDetailsModalOpened}
                     onClosed={this.hideDetails}>
-                </DetailsModal>}
+                </DetailsModal> : null}
 
                 {this.state.isActionButtonVisible ? <CreateEvent {...this.props} /> : null}
             </View>

@@ -11,22 +11,26 @@ import GState from "../../../../../stores/globalState";
 import TextContent from "../../../eventChat/TextContent";
 import Creator from "../../../reminds/Creator";
 import { showHighlightForScrollToIndex } from "../../../eventChat/highlightServices";
+import stores from "../../../../../stores";
+import BeComponent from '../../../../BeComponent';
 
 let { height, width } = Dimensions.get("window");
 
-export default class HighlightCard extends BePureComponent {
+export default class HighlightCard extends BeComponent {
   constructor(props) {
     super(props);
     this.state = {
       updating: false,
       deleting: false,
-      mounted: false,
+      mounted: true,
       isOpen: false,
       check: false,
       master: this.props.participant && this.props.participant.master
     };
   }
-
+  shouldComponentUpdate(nextProps, nextState) {
+    return this.props.updateState !== nextProps.updateState ? true : false
+  }
   containsMedia() {
     return this.props.item.url.video ||
       this.props.item.url.audio ||
@@ -56,7 +60,11 @@ export default class HighlightCard extends BePureComponent {
     //borderBottomWidth: 0.5,
     //borderColor: "ivory",
   };
+  updateSource(aid, data) {
+    stores.Highlights.updateHighlightUrl(aid, data)
+  }
   render() {
+    console.warn("rendering post: ",this.props.item.title)
     return this.state.mounted ? (
       <View
         onLayout={(e) => {
@@ -67,7 +75,7 @@ export default class HighlightCard extends BePureComponent {
           disabled={false}
           minSwipe={50}
           onLongPress={this.props.showActions}
-          swipeLeft={() => {}}
+          swipeLeft={() => { }}
           swipeRight={() => {
             this.props.mention(this.props.item);
           }}
@@ -105,12 +113,15 @@ export default class HighlightCard extends BePureComponent {
                   fontWeight: "bold",
                   //marginTop: "10%",
                 }}
-                //numberOfLines={3}
+              //numberOfLines={3}
               >
                 {this.props.item.title}
               </TextContent>
             </View>
             <MedaiView
+              data={{ id: this.props.item.id }}
+              activity_id={this.props.item.event_id}
+              updateSource={this.updateSource}
               width={ColorList.containerWidth}
               height={this.props.height}
               showItem={() => this.props.showItem(this.props.item, false, true)}
@@ -153,13 +164,13 @@ export default class HighlightCard extends BePureComponent {
         </Swipeout>
       </View>
     ) : (
-      <View
-        style={{
-          ...this.container,
-          height: 100,
-          ...this.props.item.dimensions,
-        }}
-      ></View>
-    );
+        <View
+          style={{
+            ...this.container,
+            height: 100,
+            ...this.props.item.dimensions,
+          }}
+        ></View>
+      );
   }
 }

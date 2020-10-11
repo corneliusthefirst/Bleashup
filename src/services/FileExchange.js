@@ -97,6 +97,7 @@ export default class FileExachange {
         this.written = written
         this.total = total
         fs.exists(this.url).then(state => {
+            console.warn("does file exists? ",state)
             /*if (state) {
                 fs.unlink(this.url).then(() => {
 

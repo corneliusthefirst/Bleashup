@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { View, TouchableOpacity, Text  } from "react-native";
+import { View, TouchableOpacity, Text } from "react-native";
 import Like from "../../../currentevents/components/Like";
 import ColorList from "../../../../colorList";
 import SocialTabModal from "./SocialTabModal";
@@ -22,23 +22,23 @@ export default class Social extends BeComponent {
         flex: 1,
         marginBottom: "auto",
         marginTop: "auto",
-        width:'33.33%',
+        width: '33.33%',
         alignSelf: "center",
         justifyContent: "center",
     };
     render() {
         return (
-            <View style={{  margin: 3 }}>
+            <View style={{ margin: 3 }}>
                 <View style={{ flexDirection: "row", }}>
-                    <View style={{ width:"55%", flexDirection: "row",alignSelf: 'center',justifyContent: 'space-between', }}>
-                        <View style={{...this.itemStyle,width:'20%'}}>
+                    <View style={{ width: "55%", flexDirection: "row", alignSelf: 'center', justifyContent: 'space-between', }}>
+                        <View style={{ ...this.itemStyle, width: '20%' }}>
                             <Like
-                            icon={{ 
-                                    type:"AntDesign",
-                                    name:'hearto'
-                             }}
-                             size={25}
-                             likedColor={ColorList.heartColor}
+                                icon={{
+                                    type: "AntDesign",
+                                    name: 'hearto'
+                                }}
+                                size={25}
+                                likedColor={ColorList.heartColor}
                                 setLikesCount={(count) => {
                                     this.setStatePure({
                                         likesCount: count,
@@ -118,7 +118,7 @@ export default class Social extends BeComponent {
                             })
                         )
                     }
-                    style={{ margin: "1%",marginLeft: "-1%", }}
+                    style={{ margin: "1%", marginLeft: "-1%", }}
                 >
                     <Text
                         note
@@ -126,7 +126,7 @@ export default class Social extends BeComponent {
                             //, ${this.state.commentCount} comment(s), ${this.state.supportCount} supports`
                         }</Text>
                 </TouchableOpacity>
-                <SocialTabModal
+                {this.state.isSocialModalOpened ? <SocialTabModal
                     id={this.props.id}
                     isOpen={this.state.isSocialModalOpened}
                     closed={() => {
@@ -134,7 +134,7 @@ export default class Social extends BeComponent {
                             isSocialModalOpened: false,
                         });
                     }}
-                ></SocialTabModal>
+                ></SocialTabModal> : null}
             </View>
         );
     }
