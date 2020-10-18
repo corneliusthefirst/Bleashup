@@ -1093,6 +1093,10 @@ class TEXTS {
         en: "no updates yet",
         fr: 'aucune mise a jour faite'
     }[GState.lang]
+    update_on_main_activity = {
+        en: "Updates On Main Activity",
+        fr: "Mises à jour sur l'activité principale"
+    }[GState.lang]
 }
 const Texts = new TEXTS()
 export default Texts

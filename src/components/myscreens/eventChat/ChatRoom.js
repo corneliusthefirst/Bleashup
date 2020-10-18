@@ -712,10 +712,10 @@ class ChatRoom extends AnimatedComponent {
             alignItems: 'center',
         }}><View style={{
             ...shadower(2),
-                minWidth: 80,
-                minHeight: 30,
-                justifyContent: 'center',
-                alignItems: 'center',
+            minWidth: 80,
+            minHeight: 30,
+            justifyContent: 'center',
+            alignItems: 'center',
             backgroundColor: ColorList.descriptionBody,
             borderRadius: 10,
         }}>
@@ -723,7 +723,7 @@ class ChatRoom extends AnimatedComponent {
                     ...GState.defaultTextStyle,
                     color: ColorList.indicatorColor,
                     fontSize: 12,
-                    textAlign:'center'
+                    textAlign: 'center'
                 }}>
                     {dateDisplayer(this.state.day_date)}
                 </Text>
@@ -1154,6 +1154,7 @@ class ChatRoom extends AnimatedComponent {
             this.toggleDownScroller(true)
         } else {
             this.toggleDownScroller(false)
+            this.hideDayDate()
         }
         this._listViewOffset = currentOffset
     }
@@ -1343,17 +1344,25 @@ class ChatRoom extends AnimatedComponent {
         return item ? item.id : index.toString()
     }
     showCurrentDay(day) {
-        this.setStatePure({
-            showCurrentDay: true,
-            day_date: day.id
-        })
         if (this.showdayTimeoute) clearTimeout(this.showdayTimeoute)
         this.showdayTimeoute = setTimeout(() => {
             this.setStatePure({
-                showCurrentDay: false,
+                showCurrentDay: true,
                 day_date: day.id
             })
-        }, 3000)
+            clearTimeout(this.showdayTimeoute)
+            this.showdayTimeoute = null
+        }, 500)
+    }
+    hideDayDate() {
+        if(this.hideDaydateTimout) clearTimeout(this.hideDaydateTimout)
+        this.hideDaydateTimout = setTimeout(() => {
+            this.setStatePure({
+                showCurrentDay: false,
+            })
+            clearTimeout(this.hideDaydateTimout)
+            this.hideDaydateTimout = null
+        }, 500)
     }
     onFlatlistItemsChange(info) {
         console.warn("executing show current date")
@@ -1372,6 +1381,13 @@ class ChatRoom extends AnimatedComponent {
         }, 500)
 
     }
+    viewabilityConfig = {
+        waitForInteraction: true,
+        // At least one of the viewAreaCoveragePercentThreshold or itemVisiblePercentThreshold is required.
+        viewAreaCoveragePercentThreshold: 95,
+        itemVisiblePercentThreshold: 100
+    }
+    
     messageList() {
         this.data = stores.Messages.messages[this.roomID]
             ? stores.Messages.messages[this.roomID] : []
@@ -1379,6 +1395,7 @@ class ChatRoom extends AnimatedComponent {
             (this.data.length - 1) : 0
         return (
             <BleashupFlatList
+                viewabilityConfig={this.viewabilityConfig}
                 onViewableItemsChanged={this.onFlatlistItemsChange}
                 onScroll={this.onScroll}
                 windowSize={21}
