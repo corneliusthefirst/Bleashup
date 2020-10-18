@@ -5,8 +5,7 @@ import { navigationRef, isMountedRef } from './RootNave';
 import ColorList from './components/colorList';
 import LoginHomeRouter from "./LoginHomeRouter";
 import GState from './stores/globalState/index';
-import stores from "./stores";
-
+//import stores from "./stores";
 const AppNavigator = createStackNavigator(
   {
     LoginHomeRouter: { screen: LoginHomeRouter },
@@ -20,6 +19,8 @@ const AppNavigator = createStackNavigator(
 const AppContainer = createAppContainer(AppNavigator);
 
 export default () => {
+  GState.lang = "fr"
+
   return (
     <InAppNotificationProvider
       closeInterval={4000}

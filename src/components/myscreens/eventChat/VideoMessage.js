@@ -190,7 +190,7 @@ export default class VideoMessage extends BePureComponent {
                                                 }
                                             </AnimatedCircularProgress>
                                         </View>
-                                        <View style={{ marginTop: "5%", ...buttoner, height: 25,  minWidth: 75, }}><Text style={{ marginBottom: 7, }} note>{"("}{this.toMB(this.state.received).toFixed(1)}{"/"}
+                                        <View style={{ marginTop: "5%", ...buttoner, height: 25,  minWidth: 85, }}><Text style={{ marginBottom: 7, }} note>{"("}{this.toMB(this.state.received).toFixed(1)}{"/"}
                                             {this.toMB(this.state.total).toFixed(1)}{")Mb"}</Text></View></View>}</View>
                         </View>
                         {this.props.message.text ? <View style={{ marginTop: "-5%", padding: "2%", alignSelf: "flex-start" }}>

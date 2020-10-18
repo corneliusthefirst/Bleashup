@@ -10,7 +10,8 @@ import active_types from '../../components/myscreens/eventChat/activity_types';
 const { height, width } = Dimensions.get('window');
 
 export default class globalState {
-  constructor() {
+  constructor(lang) {
+    this.lang = lang
     Dimensions.addEventListener('change', (e) => {
       const { width, height } = e.window;
       this.width = width

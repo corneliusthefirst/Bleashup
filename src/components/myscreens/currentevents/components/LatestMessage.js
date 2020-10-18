@@ -105,7 +105,7 @@ class LatestMessage extends AnimatedComponent {
             [message_types.text_sender]: this.main(() => (
                 <View style={this.mainContainer}>{this.messageText()}</View>
             )),
-            [message_types.photo || message_types.photo_sender]: this.main(() => (
+            [message_types.photo]: this.main(() => (
                 <View style={this.mainContainer}>
                     <View style={this.iconContainer}>
                         <FontAwesome name={"photo"} style={this.iconStyle}></FontAwesome>
@@ -121,10 +121,10 @@ class LatestMessage extends AnimatedComponent {
                     <View style={this.textContentStyle}>{this.messageText()}</View>
                 </View>
             )),
-            [message_types.video || message_types.video_sender]: this.main(() => (
+            [message_types.video]: this.main(() => (
                 <View style={this.mainContainer}>
                     <View style={this.iconContainer}>
-                        <FontAwesome name={"video"} style={this.iconStyle}></FontAwesome>
+                        <FontAwesome name={"video-camera"} style={this.iconStyle}></FontAwesome>
                     </View>
                     <View style={this.textContentStyle}>{this.messageText()}</View>
                 </View>
@@ -132,7 +132,7 @@ class LatestMessage extends AnimatedComponent {
             [message_types.video_sender]: this.main(() => (
                 <View style={this.mainContainer}>
                     <View style={this.iconContainer}>
-                        <FontAwesome name={"video"} style={this.iconStyle}></FontAwesome>
+                        <FontAwesome name={"video-camera"} style={this.iconStyle}></FontAwesome>
                     </View>
                     <View style={this.textContentStyle}>{this.messageText()}</View>
                 </View>
