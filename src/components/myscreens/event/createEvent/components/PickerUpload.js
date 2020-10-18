@@ -291,8 +291,8 @@ export default class PickersUpload extends BeComponent {
   showAlert() {
     this.setStatePure({
       alert: {
-        title: "Remove Photo",
-        message: "Are you sure want to remove this photo"
+        title: Texts.remove_photo,
+        message: Texts.are_you_sure_to_remove_photo
       },
       showAlert: true
     })
@@ -358,7 +358,7 @@ export default class PickersUpload extends BeComponent {
       }}>
 
 
-        <View style={{ width: 35, ...this.center }}>
+        <View style={{ width: 45, ...this.center,alignSelf: 'flex-start', }}>
           <PickersMenu
             color={this.props.color}
             fontSize={this.props.fontSize}
@@ -380,7 +380,7 @@ export default class PickersUpload extends BeComponent {
             }}
           ></PickersMenu>
         </View>
-        {!this.props.onlyPhotos && <View style={{ width: 35, ...this.center }}>
+        {!this.props.onlyPhotos && <View style={{ width: 45, ...this.center }}>
           <PickersMenu
             menu={[
               {

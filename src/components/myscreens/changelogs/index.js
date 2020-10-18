@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { View, BackHandler, TouchableOpacity, Text } from 'react-native';
+import { View, TouchableOpacity, Text,ImageBackground } from 'react-native';
 import stores from '../../../stores';
 import BleashupTimeLine from '../../BleashupTimeLine';
 import moment from "moment";
@@ -20,6 +20,7 @@ import globalFunctions from '../../globalFunctions';
 import BePureComponent from '../../BePureComponent';
 import { search, computeSearch, startSearching, cancelSearch, finish, pushSearchDown, pushSearchUp } from '../eventChat/searchServices';
 import searchToolsParts from '../eventChat/searchToolsPart';
+import Spinner from "../../Spinner";
 
 export default class ChangeLogs extends BeComponent {
   constructor(props) {
@@ -68,13 +69,14 @@ export default class ChangeLogs extends BeComponent {
       this.setStatePure({
         newThing: !this.state.newThing,
         loaded: true
+      },() => {
+          if (this.props.activeMember) {
+            this.setStatePure({
+              searching: true,
+            })
+            this.search(stores.TemporalUsersStore.Users[this.props.activeMember].nickname)
+          }
       })
-      if (this.props.activeMember) {
-        this.setStatePure({
-          searching: true,
-        })
-        this.search(stores.TemporalUsersStore.Users[this.props.activeMember].nickname)
-      }
     })
   }
 
@@ -87,16 +89,20 @@ export default class ChangeLogs extends BeComponent {
   render() {
     this.data = (stores.ChangeLogs.changes &&
       stores.ChangeLogs.changes[this.props.event_id]) || []
-    return (!this.state.loaded ? <View style={{
-      width: '100%', height: '100%',
-      backgroundColor: colorList.bodyBackground,
-    }}></View> :
-
+    return (
+      <ImageBackground style={GState.imageBackgroundContainer} source={GState.backgroundImage}>
       <View style={{ height: "100%", width: "100%" }}>
-
         <View style={{ flex: 1, width: "100%" }} >
+          {!this.state.loaded ? <View style={{
+            width: '100%', height: '100%',
+            flexDirection: 'row',
+            alignItems: 'center',
+            justifyContent: 'center',
+            backgroundColor: colorList.bodyBackground,
+          }}><Spinner></Spinner></View>:
           <BleashupTimeLine
             ref={"timeline"}
+            backgroundColor={"transparent"}
             searchString={this.state.searchString}
             foundIndex={this.state.foundIndex}
             index={this.props.index}
@@ -125,9 +131,8 @@ export default class ChangeLogs extends BeComponent {
             }}
             data={this.data}
           >
-          </BleashupTimeLine>
+          </BleashupTimeLine>}
         </View>
-
         {this.state.hideHeader ? null :
           <View style={{
             height: colorList.headerHeight,
@@ -154,12 +159,15 @@ export default class ChangeLogs extends BeComponent {
                 </TouchableOpacity>
               </View>
               {!this.state.searching ? <View style={{ flex: 1, paddingLeft: '2%', justifyContent: "center" }}>
-                <Text style={{
+                <Text 
+                ellipsizeMode={"tail"}
+                numberOfLines={1}
+                style={{
                   color: colorList.headerText,
                   fontSize: colorList.headerFontSize,
                   fontWeight: colorList.headerFontweight,
                   alignSelf: 'flex-start'
-                }}>{Texts.history}</Text>
+                }}>{Texts.history + " @ "+this.props.activity_name}</Text>
               </View> : null}
 
               <View style={{
@@ -180,8 +188,8 @@ export default class ChangeLogs extends BeComponent {
               {this.state.searching && this.state.searchResult && this.state.searchResult.length > 0 ? this.searchToolsParts() : null}
             </View>
           </View>}
-
       </View>
+      </ImageBackground>
     )
   }
 }

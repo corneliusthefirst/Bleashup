@@ -8,12 +8,14 @@ import BleashupFlatList from "./BleashupFlatList";
 import bleashupHeaderStyle from "../services/bleashupHeaderStyle";
 import ColorList from "./colorList";
 import CreationHeader from "./myscreens/event/createEvent/components/CreationHeader";
-import  AntDesign  from 'react-native-vector-icons/AntDesign';
-import  Entypo  from 'react-native-vector-icons/Entypo';
-import Spinner from './Spinner';
+import AntDesign from "react-native-vector-icons/AntDesign";
+import Entypo from "react-native-vector-icons/Entypo";
+import Spinner from "./Spinner";
 import GState from "../stores/globalState";
+import BeComponent from "./BeComponent";
+import Texts from "../meta/text";
 
-export default class ParticipantList extends Component {
+export default class ParticipantList extends BeComponent {
     constructor(props) {
         super(props);
         this.state = {
@@ -39,7 +41,7 @@ export default class ParticipantList extends Component {
             if (!this.props.participants) {
                 stores.Events.getPaticipants(this.props.event_id).then(
                     (participants) => {
-                        this.setState({
+                        this.setStatePure({
                             participants: participants,
                             isloaded: true,
                         });
@@ -47,7 +49,7 @@ export default class ParticipantList extends Component {
                 );
             } else {
                 console.warn(this.props.participants);
-                this.setState({
+                this.setStatePure({
                     participants: this.props.participants ? this.props.participants : [],
                     isloaded: true,
                 });
@@ -59,7 +61,7 @@ export default class ParticipantList extends Component {
             if (!this.props.participants) {
                 stores.Events.getPaticipants(this.props.event_id).then(
                     (participants) => {
-                        this.setState({
+                        this.setStatePure({
                             participants: participants,
                             isloaded: true,
                         });
@@ -67,57 +69,83 @@ export default class ParticipantList extends Component {
                 );
             } else {
                 console.warn(this.props.participants);
-                this.setState({
+                this.setStatePure({
                     participants: this.props.participants ? this.props.participants : [],
                     isloaded: true,
                 });
             }
         }, 3);
     }
-    center = { marginBottom: 'auto', marginTop: 'auto', }
+    center = { marginBottom: "auto", marginTop: "auto" };
     delay = 0;
     _keyExtractor = (item, index) => item.phone;
     render() {
         return (
-            <View style={{ height:'100%' }}>
+            <View style={{ height: "100%" }}>
                 <CreationHeader
                     back={this.props.close}
-                    title={this.props.hide ? "" : this.props.title || "Participants List"}
+                    title={
+                        this.props.hide ? "" : this.props.title || Texts.participants_list
+                    }
                     extra={
-                        <View style={{ flexDirection: 'row', justifyContent: 'space-between',width:150,marginBottom: 'auto',marginTop: 'auto', }}>
+                        <View
+                            style={{
+                                flexDirection: "row",
+                                justifyContent: "space-between",
+                                alignItems: 'center',
+                                maxWidth: 150,
+                                paddingRight: 2,
+                                marginBottom: "auto",
+                                marginTop: "auto",
+                            }}
+                        >
                             {this.props.managing && (
-                                <View style={{ ...this.center, flexDirection: 'row', }}>
+                                <View
+                                    style={{
+                                        flexDirection: "row",
+                                        alignItems: 'center',
+                                    }}
+                                >
                                     <TouchableOpacity
-                                    transparent
-                                    style={{ backgroundColor: ColorList.bodyBackground,width:50 }}
+                                        transparent
+                                        style={{
+                                            backgroundColor: ColorList.bodyBackground,
+                                            width: 40,
+                                        }}
                                         onPress={this.props.addMembers}
                                     >
                                         <AntDesign
                                             name={"plus"}
-                                            style={{ ...GState.defaultIconSize,color: ColorList.headerIcon }}
+                                            style={{
+                                                ...GState.defaultIconSize,
+                                                color: ColorList.headerIcon,
+                                            }}
                                         ></AntDesign>
                                     </TouchableOpacity>
                                     {this.state.participants &&
                                         this.state.participants.length > 0 ? (
-                                            <TouchableOpacity style={{
-                                                width:50,
-                                                backgroundColor: ColorList.bodyBackground,
-                                            }}
+                                            <TouchableOpacity
+                                                style={{
+                                                    width: 40,
+                                                    backgroundColor: ColorList.bodyBackground,
+                                                }}
                                                 onPress={this.props.removeMember}
                                             >
                                                 <Entypo
                                                     name={"circle-with-minus"}
-                                                    style={{...GState.defaultIconSize, color: ColorList.headerIcon }}
+                                                    style={{
+                                                        ...GState.defaultIconSize,
+                                                        color: ColorList.headerIcon,
+                                                    }}
                                                 ></Entypo>
                                             </TouchableOpacity>
                                         ) : null}
                                 </View>
                             )}
-                            <View style={{ ...this.center,  }}>
-                                <Text style={{  fontSize: 12,}} note>
-                                    {this.state.participants ? this.state.participants.length : 0}
-                                    {" member(s)"}
-                                </Text></View>
+                            <Text style={{ fontSize: 12 }} note>
+                                {this.state.participants ? this.state.participants.length : 0}
+                                {" " + Texts.members }
+                            </Text>
                         </View>
                     }
                 ></CreationHeader>
@@ -130,7 +158,7 @@ export default class ParticipantList extends Component {
                                 }}
                                 note
                             >
-                                {"sory! there's no connction to the server"}
+                                {Texts.loading_data}
                             </Text>
                         ) : (
                                 <View style={{ hight: "93%" }}>
@@ -150,13 +178,19 @@ export default class ParticipantList extends Component {
                                             return item.phone &&
                                                 !(this.state.hidden && this.state.hidden[item.phone]) ? (
                                                     <View style={{ margin: "2%" }}>
-                                                        <View style={{ display: "flex", flexDirection: "row",justifyContent: 'space-between', }}>
+                                                        <View
+                                                            style={{
+                                                                display: "flex",
+                                                                flexDirection: "row",
+                                                                justifyContent: "space-between",
+                                                            }}
+                                                        >
                                                             <View style={{}}>
                                                                 <ProfileView
                                                                     hideMe={() => {
                                                                         let newHidden = this.state.hidden;
                                                                         newHidden[item.phone] = true;
-                                                                        this.setState({
+                                                                        this.setStatePure({
                                                                             hidden: newHidden,
                                                                         });
                                                                     }}

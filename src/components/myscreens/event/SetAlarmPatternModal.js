@@ -64,8 +64,11 @@ export default class SetAlarmPatternModal extends BleashupModal {
         this.setStatePure({
              selected: alarms
         //date: moment().format()
+        },() => {
+           setTimeout(() => {
+               this.refs.flatlist && this.refs.flatlist.scrollToEndReal()
+           })
         })
-        this.refs.flatlist && this.refs.flatlist.scrollToEndReal()
     }
     borderRadius = 10
     _keyExtractor = (item, index) => { return item ? item.id : null; };

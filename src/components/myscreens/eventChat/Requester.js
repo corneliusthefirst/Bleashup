@@ -7,11 +7,13 @@ import moment from "moment";
 import toTitleCase from "../../../services/toTitle";
 import message_types from "./message_types";
 import notification_channels from './notifications_channels';
+import emitter from "../../../services/eventEmiter";
+import persistTypes from './persisTypes';
 
 const received = "received";
 const newMes = "new";
-const update = "update";
-const deleteMes = "delete";
+export const update = "update";
+export const deleteMes = "delete";
 const played = "played";
 const seen = "seen";
 const react = "reaction";
@@ -20,6 +22,10 @@ class MessageRequest {
   constructor(){
      
      this.notif_channel = notification_channels.messaging
+  }
+  cancelMessageSent(messageID){
+    const id = messageID + deleteMes
+    emitter.emit(EventListener.events.unsuccessful_ + id)
   }
   determineMessageType(type) {
     switch (type) {
@@ -57,11 +63,12 @@ class MessageRequest {
       notif.data.message_id = message.id;
       messageData.action = newMes;
       messageData.data = message;
+      message.notme = notme;
       messageData.committee_id = CommitteeID;
       messageData.event_id = EventID;
       messageData.notif = notif;
       tcpRequest.messaging(messageData, message.id).then((JSONdata) => {
-        EventListener.sendRequest(JSONdata, message.id)
+        EventListener.sendRequest(JSONdata, message.id,persistTypes.messaging)
           .then((response) => {
             MainUpdater.saveMessage(
               message,
@@ -138,10 +145,11 @@ class MessageRequest {
       messageData.committee_id = commiteeID;
       messageData.event_id = eventID;
       messageData.data = { message_id: messageID };
+      const id = messageID + deleteMes
       tcpRequest
-        .messaging(messageData, messageID + deleteMes)
+        .messaging(messageData, id)
         .then((JSONdata) => {
-          EventListener.sendRequest(JSONdata, messageID + deleteMes).then(
+          EventListener.sendRequest(JSONdata, id).then(
             (response) => {
               console.warn(response);
               MainUpdater.deleteMessage(messageID, commiteeID, eventID).then(

@@ -66,6 +66,7 @@ export default class CreateTextInput extends Component {
               : colorList.bodyText
           }
           autoCapitalize="sentences"
+          autoFocus={this.props.autoFocus}
           returnKeyType="next"
           inverse
           last

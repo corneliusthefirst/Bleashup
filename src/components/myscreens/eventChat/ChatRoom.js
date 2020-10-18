@@ -43,7 +43,7 @@ import colorList from '../../colorList';
 import { PrivacyRequester } from '../settings/privacy/Requester';
 import { observer } from 'mobx-react';
 import PublishersModal from '../../PublishersModal';
-import Requester from './Requester';
+import Requester, { deleteMes } from './Requester';
 import globalFunctions from '../../globalFunctions';
 import MessageActions from './MessageActons';
 import replies from './reply_extern';
@@ -81,6 +81,9 @@ import { search, computeSearch, startSearching, cancelSearch, finish, pushSearch
 import messagePreparer from './messagePreparer';
 import active_types from './activity_types';
 import UserService from '../../../services/userHttpServices';
+import EventListener from '../../../services/severEventListener';
+import rounder from '../../../services/rounder';
+import dateDisplayer from '../../../services/dates_displayer';
 
 const screenWidth = Math.round(Dimensions.get('window').width);
 const screenheight = Math.round(Dimensions.get('window').height);
@@ -111,6 +114,8 @@ class ChatRoom extends AnimatedComponent {
         this.keyExtractor = this.keyExtractor.bind(this)
         this.onScroll = this.onScroll.bind(this)
         this.getItemLayout = this.getItemLayout.bind(this)
+        this.defaultItem = this.defaultItem.bind(this)
+        this.onFlatlistItemsChange = this.onFlatlistItemsChange.bind(this)
     }
     saveNotificationToken() {
         firebase
@@ -156,41 +161,9 @@ class ChatRoom extends AnimatedComponent {
         } else {
         }
     }
-    formPercentage(height) {
-        return height / screenWidth;
-    }
-    messageListFactor = 0.5;
-    textInputFactor = 0.15;
-    fireRef = null;
-    newMessages = [];
+
     roomID = this.props.firebaseRoom;
 
-    insetDateSeparator(messages, newMessage) {
-        return new Promise((resolve, reject) => {
-            let separator = {
-                ...newMessage,
-                id: Texts.new_messages,
-                type: 'new_separator',
-            };
-            index = findIndex(messages, { id: separator.id });
-            let result = index >= 0 ? messages : [separator].concat(messages);
-            resolve(result);
-        });
-    }
-    removeMessage(message) {
-        stores.Messages.addAndReadFromStore(this.roomID, message).then((value) => {
-            stores.Messages.removeMessage(this.roomID, value.id).then(() => {
-                firebase
-                    .database()
-                    .ref(`${this.props.firebaseRoom}/${message.key}`)
-                    .remove((error) => {
-                        this.setStatePure({
-                            newMessage: true,
-                        });
-                    });
-            });
-        });
-    }
     toastStyle = {
         marginTop: '-10%',
         paddingTop: '3%',
@@ -207,25 +180,10 @@ class ChatRoom extends AnimatedComponent {
         return Requester.sayTyping(this.typingListener,
             this.props.activity_id)
     }
-    formStorableData(messages) {
-        messages = uniqBy(messages, 'id').sort(this.dateSorter);
+    formStorableData() {
         let result = [];
         return new Promise((resolve, reject) => {
-            stores.Messages.readFromStore().then((data) => {
-                messages.forEach((element) => {
-                    let date = moment(element.created_at).format('YYYY/MM/DD');
-                    index =
-                        data[this.roomID] && findIndex(data[this.roomID], { id: date });
-                    index2 = findIndex(result, { id: date });
-                    if ((!index && index2 < 0) || (index < 0 && index2 < 0)) {
-                        result.unshift({ ...element, id: date, type: 'date_separator' });
-                        result.unshift(element);
-                    } else {
-                        result.unshift(element);
-                    }
-                });
-                resolve(result);
-            });
+            stores.Messages.addNewSeparator(this.roomID)
         });
     }
     checkForReply() {
@@ -235,65 +193,49 @@ class ChatRoom extends AnimatedComponent {
                 && this.replying(GState.reply, null)
         }, GState.waitToReply)
     }
+    removeNewIndicator() {
+        return new Promise((resovle, reject) => {
+            GState.currentCommitee = this.roomID
+            GState.currentRoom = this.roomID
+            if (this.findI(Texts.new_messages)) {
+                stores.States.removeNewMessage(this.roomID)
+                stores.Messages.removeNewIndicator(this.roomID)
+            }
+        })
+    }
+
     showMessage = [];
     initializeNewMessageForRoom() {
-        return new Promise((resolve, reject) => {
-            this.formStorableData(this.props.newMessages).then((news) => {
-                this.newMessages = news;
-                this.newMessages =
-                    this.newMessages.length > 0
-                        ? [
-                            ...this.newMessages,
-                            {
-                                id: Texts.new_messages,
-                                type: 'new_separator',
-                                sender: {
-                                    phone: 3,
-                                    nickname: 'Sokeng Kamga',
-                                },
-                                duration: Math.floor(0),
-                                created_at: '2014-03-30 12:32',
-                            },
-                        ]
-                        : [];
-                this.initTimeout = setTimeout(() => {
-                    this.setStatePure({
-                        loaded: true,
-                    }, () => {
-                        this.checkForReply()
-                        this.adjutRoomDisplay();
-                        this.scrollToMessage()
-                    });
-                    clearTimeout(this.initTimeout)
-                });
-                if (this.props.newMessages.length > 0) {
-                    stores.Messages.insertBulkMessages(
-                        this.roomID,
-                        this.newMessages
-                    ).then(() => {
-                        resolve();
-                    });
-                } else {
-                    resolve();
-                }
+        stores.Messages.addNewSeparator(this.roomID)
+        this.initTimeout = setTimeout(() => {
+            this.setStatePure({
+                loaded: true,
+            }, () => {
+                this.checkForReply()
+                this.adjutRoomDisplay();
+                this.scrollToMessage()
             });
+            clearTimeout(this.initTimeout)
         });
     }
-    dateSorter(a, b) {
-        let acreated = moment(a.created_at).format('X');
-        let bcreated = moment(b.created_at).format('X');
-        return acreated < bcreated ? -1 : bcreated < acreated ? 1 : 0;
-    }
     componentDidMount() {
-        GState.currentRoom = this.props.firebaseRoom;
         this.saveNotificationToken();
         this.initializeNewMessageForRoom()
+    }
+    scrollToNewMessage() {
+        const recentID = stores.States.getMostRecentMessage(this.roomID)
+        const index = recentID ? this.findI(recentID) : stores.States.getNewMessagesCount(this.roomID)
+        if (index) {
+            this.scrollToIndex(index)
+        }
+    }
+    findI(id) {
+        return findIndex(stores.Messages.messages[this.props.firebaseRoom], { id })
     }
     scrollToMessage() {
         if (this.props.id) {
             return new Promise(() => {
-                let index = findIndex(stores.Messages.messages[this.props.firebaseRoom],
-                    { id: this.props.id })
+                let index = this.findI(this.props.id)
                 if (index >= 0) {
                     setTimeout(() => {
                         this.scrollToIndex(index)
@@ -302,6 +244,8 @@ class ChatRoom extends AnimatedComponent {
                     Toaster({ text: Texts.not_found_item })
                 }
             })
+        } else {
+            this.scrollToNewMessage()
         }
     }
     adjutRoomDisplay(dontToggle) {
@@ -312,23 +256,6 @@ class ChatRoom extends AnimatedComponent {
             this.alreadyFocussed = true;
             clearTimeout(this.adjustDisplayTimeout)
         }, 30);
-    }
-    markAsRead() {
-        stores.Messages.deleteNewMessageIndicator(this.roomID).then(() => { });
-        if (this.newMessages.length > 0) {
-            stores.Messages.messages[this.roomID] = this.newMessages.concat(
-                stores.Messages.messages[this.roomID]
-            );
-            stores.Messages.messages[this.roomID] = uniqBy(
-                stores.Messages.messages[this.roomID],
-                'id'
-            );
-            this.newMessages = [];
-            this.showMessage = [];
-            this.setStatePure({
-                newMessage: true,
-            });
-        }
     }
     showImoji() {
         this.setStatePure({ showingImoji: true })
@@ -364,11 +291,7 @@ class ChatRoom extends AnimatedComponent {
             return false
         }
     }
-    componentMounting() {
-        PrivacyRequester.makeOnline()
-        this.keyboardDidShowSub = Keyboard.addListener('keyboardDidShow', this.handleKeyboardDidShow.bind(this));
-        this.keyboardDidHideSub = Keyboard.addListener('keyboardDidHide', this.handleKeyboardDidHide.bind(this));
-        BackHandler.addEventListener("hardwareBackPress", this.handleBackButton.bind(this));
+    startReplyListener() {
         emitter.on(this.reply_me_event, (rep) => {
             this.props.closeMenu && this.props.closeMenu()
             this.replying(rep, null)
@@ -378,10 +301,33 @@ class ChatRoom extends AnimatedComponent {
                 clearTimeout(this.focusInputTimeout)
             }, 400)
         })
+    }
+    startTypingListener() {
         emitter.on(this.typing_event, (typer) => {
             this.showTypingToast(typer);
         })
+    }
+    startKeyboardListeners() {
+        this.keyboardDidShowSub = Keyboard.addListener('keyboardDidShow', this.handleKeyboardDidShow.bind(this));
+        this.keyboardDidHideSub = Keyboard.addListener('keyboardDidHide', this.handleKeyboardDidHide.bind(this));
+    }
+    addBackListener() {
+        BackHandler.addEventListener("hardwareBackPress", this.handleBackButton.bind(this));
+    }
+    componentMounting() {
+        PrivacyRequester.makeOnline()
+        this.startKeyboardListeners()
+        this.addBackListener()
+        this.startReplyListener()
+        this.startTypingListener()
         this.props.isComment ? (stores.Messages.messages[this.roomID] = []) : null;
+    }
+    saveMostRecentMessage() {
+        if (stores.Messages.messages[this.roomID] &&
+            stores.Messages.messages[this.roomID][0])
+            stores.States.setMostRecentMessage(this.roomID,
+                stores.Messages.messages[this.roomID][0].id)
+
     }
     reply_me_event = reply_me
     typing_event = typing(this.typingListener)
@@ -391,14 +337,14 @@ class ChatRoom extends AnimatedComponent {
         BackHandler.removeEventListener("hardwareBackPress", this.handleBackButton.bind(this));
         this.keyboardDidHideSub.remove();
         this.keyboardDidShowSub.remove();
-
+        this.saveMostRecentMessage()
         emitter.off(this.typing_event)
         emitter.off(this.reply_me_event);
-
-        this.markAsRead();
+        this.removeNewIndicator()
         GState.currentRoom = null;
     }
     handleKeyboardDidShow = (event) => {
+        //this.removeNewIndicator()
         this.openedKeyboard = true;
     };
 
@@ -464,7 +410,7 @@ class ChatRoom extends AnimatedComponent {
     renderMessages(data) {
         data = {
             ...data,
-            received: [{ phone: this.user.phone, time: moment().format() }],
+            receive: [{ phone: this.user.phone, time: moment().format() }],
         };
         return data.map((element) => this.chooseComponent(element));
     }
@@ -498,6 +444,7 @@ class ChatRoom extends AnimatedComponent {
                     });
             } else {
                 resolve(messager);
+                this.removeNewIndicator()
             }
         });
     }
@@ -505,7 +452,10 @@ class ChatRoom extends AnimatedComponent {
     sendTextMessage(newMessage) {
         if (GState.connected) {
             this.scrollToEnd();
-            newMessage = { ...newMessage, received: this.received, sent: true };
+            newMessage = {
+                ...newMessage, receive: this.received, sent: true, type:
+                    message_types.text
+            };
             this.sendMessage(newMessage).then((mess) => {
                 stores.Messages.replaceMessage(this.roomID, mess).then(() => {
                     this.initRoom();
@@ -537,7 +487,7 @@ class ChatRoom extends AnimatedComponent {
         });
     }
     replaceMessage(newMessage) {
-        newMessage = { ...newMessage, received: this.received, sent: true };
+        newMessage = { ...newMessage, receive: this.received, sent: true };
         this.sendMessage({ ...newMessage, photo: newMessage.source }).then(
             (mess) => {
                 stores.Messages.replaceMessage(this.roomID, {
@@ -550,7 +500,7 @@ class ChatRoom extends AnimatedComponent {
         );
     }
     replaceMessageVideo(newMessage) {
-        newMessage = { ...newMessage, received: this.received, sent: true };
+        newMessage = { ...newMessage, receive: this.received, sent: true };
         this.sendMessage({
             ...newMessage,
             source: newMessage.temp,
@@ -565,7 +515,7 @@ class ChatRoom extends AnimatedComponent {
         });
     }
     replaceMessageFile(newMessage) {
-        newMessage = { ...newMessage, received: this.received, sent: true };
+        newMessage = { ...newMessage, receive: this.received, sent: true };
         this.sendMessage({ ...newMessage, source: newMessage.temp }).then(
             (mess) => {
                 stores.Messages.replaceMessage(this.roomID, {
@@ -578,7 +528,7 @@ class ChatRoom extends AnimatedComponent {
         );
     }
     replaceAudioMessage(newMessage) {
-        newMessage = { ...newMessage, received: this.received, sent: true };
+        newMessage = { ...newMessage, receive: this.received, sent: true };
         this.sendMessage({ ...newMessage, source: newMessage.temp }).then(
             (mess) => {
                 stores.Messages.replaceMessage(this.roomID, {
@@ -600,9 +550,13 @@ class ChatRoom extends AnimatedComponent {
     duration = 0;
 
     scrollToEnd() {
-        this.refs &&
-            this.refs.bleashupSectionListOut &&
-            this.refs.bleashupSectionListOut.scrollToEnd();
+        if (this.newCount) {
+            this.scrollToNewMessage()
+        } else {
+            this.refs &&
+                this.refs.bleashupSectionListOut &&
+                this.refs.bleashupSectionListOut.scrollToEnd();
+        }
     }
     initialzeFlatList() {
         this.refs &&
@@ -634,6 +588,7 @@ class ChatRoom extends AnimatedComponent {
     }
     showMessageAction(message, reply, sender) {
         this.tempReply = reply
+        this.removeNewIndicator()
         this.setStatePure({
             sender: sender,
             currentMessage: message,
@@ -734,7 +689,7 @@ class ChatRoom extends AnimatedComponent {
         ,
         {
             title: Texts.delete_,
-            condition: () => this.state.sender,
+            condition: () => true,
             iconName: "delete-circle-outline",
             iconType: "MaterialCommunityIcons",
             color: ColorList.delete,
@@ -746,16 +701,56 @@ class ChatRoom extends AnimatedComponent {
             showMessageInfo: false
         })
     }
+    currentDayDate() {
+        return <View style={{
+            position: 'absolute',
+            alignSelf: 'center',
+            height: 50,
+            width: 100,
+            flexDirection: 'column',
+            justifyContent: 'center',
+            alignItems: 'center',
+        }}><View style={{
+            ...shadower(2),
+                minWidth: 80,
+                minHeight: 30,
+                justifyContent: 'center',
+                alignItems: 'center',
+            backgroundColor: ColorList.descriptionBody,
+            borderRadius: 10,
+        }}>
+                <Text numberOfLines={1} ellipsizeMode={'tail'} style={{
+                    ...GState.defaultTextStyle,
+                    color: ColorList.indicatorColor,
+                    fontSize: 12,
+                    textAlign:'center'
+                }}>
+                    {dateDisplayer(this.state.day_date)}
+                </Text>
+            </View>
+        </View>
+    }
     blurTextInput() {
         this.refs.keyboard && this.refs.keyboard.blur();
+    }
+    writeNewMessageCount() {
+        this.newCount = stores.States.getNewMessagesCount(this.roomID)
+        return this.newCount && <View style={{
+            ...rounder(20, ColorList.reminds)
+        }}>
+            <Text ellipsizeMode={'tail'} numberOfLines={1} style={{
+                fontSize: 8,
+                fontWeight: 'bold',
+                color: ColorList.bodyBackground
+            }}>
+                {this.newCount}
+            </Text>
+        </View>
     }
     render() {
         let canShowHeder = this.state.showHeader && !this.state.showCaption && !this.state.fullScreen
         return (
-            <ImageBackground style={{
-                resizeMode: 'cover',
-                justifyContent: 'center',
-            }} source={require('../../../../assets/chat_screen.jpg')}>
+            <ImageBackground style={GState.imageBackgroundContainer} source={GState.backgroundImage}>
                 <View style={{ height: '100%', justifyContent: 'flex-end' }}>
                     {
                         // **********************Header************************ //
@@ -806,7 +801,21 @@ class ChatRoom extends AnimatedComponent {
                                                                 alignItems: "center",
                                                                 ...shadower(4)
                                                             }}>
-                                                            <SimpleLineIcons name="arrow-down" type="SimpleLineIcons" style={{ color: ColorList.bodyIcon, fontSize: 22 }} />
+                                                            <SimpleLineIcons name="arrow-down"
+                                                                type="SimpleLineIcons" style={{
+                                                                    color: ColorList.bodyIcon,
+                                                                    fontSize: 22
+                                                                }} />
+                                                            <View style={{
+                                                                position: 'absolute',
+                                                                height: 30,
+                                                                width: 30,
+                                                                paddingLeft: 'auto',
+                                                                paddingRight: 1,
+                                                                alignSelf: 'flex-start',
+                                                            }}>
+                                                                {this.writeNewMessageCount()}
+                                                            </View>
                                                         </TouchableOpacity>
                                                     }}
                                                     action={() => requestAnimationFrame(() => { this.scrollToEnd() })}
@@ -815,6 +824,8 @@ class ChatRoom extends AnimatedComponent {
                                                     size={20}
                                                 //offsetY={20}
                                                 />}
+
+                                                {this.state.showCurrentDay ? this.currentDayDate() : null}
                                             </TouchableWithoutFeedback>
                                         </View>
                                         <View style={{
@@ -843,7 +854,7 @@ class ChatRoom extends AnimatedComponent {
                                             ) : (
                                                     // ***************** KeyBoard Displayer *****************************
 
-                                                    !this.state.searching && <View style={{ justifyContent: 'flex-end' }}>{this.keyboardView()}</View>
+                                                    !this.state.searching && <View style={{ justifyContent: 'flex-start', width: '100%' }}>{this.keyboardView()}</View>
                                                 )}
                                         </View>
                                     </KeyboardAvoidingView>
@@ -909,7 +920,7 @@ class ChatRoom extends AnimatedComponent {
                         }
                     </View>
                 </View>
-            </ImageBackground>
+            </ImageBackground >
         );
     }
 
@@ -1014,16 +1025,20 @@ class ChatRoom extends AnimatedComponent {
         this.animateKeyboard()
     }
     deleteMessage(messageID) {
-        Requester.deleteMessage(
-            messageID,
-            this.props.activity_id,
-            this.roomID
-        ).then(() => {
-            this.animateKeyboard()
-        });
+        if (this.state.currentMessage.sent && this.state.sender) {
+            Requester.deleteMessage(
+                messageID,
+                this.props.activity_id,
+                this.roomID
+            ).then(() => {
+                this.animateKeyboard()
+            });
+        } else {
+            stores.Messages.removeMessage(this.roomID, messageID)
+            Requester.cancelMessageSent(messageID)
+        }
     }
     delay = 1;
-    addVote() { }
     getItemLayout(item, index) {
         return GState.getItemLayout(item, index,
             stores.Messages.messages[this.roomID], 100)
@@ -1080,7 +1095,7 @@ class ChatRoom extends AnimatedComponent {
                         message.name + (message.text ? ('\n' + message.text) : "")
                 }
             default:
-                Toaster({ text: 'unable to reply for unsent messages' });
+                Toaster({ text: Texts.cannot_reply_unsent_message });
                 return null;
         }
     }
@@ -1128,7 +1143,7 @@ class ChatRoom extends AnimatedComponent {
         })
     }
     onScroll(event) {
-
+        //this.removeNewIndicator()
         // Check if the user is scrolling up or down by confronting the new scroll position with your own one
         const currentOffset = event.nativeEvent.contentOffset.y
         const direction = (currentOffset > 0 && currentOffset > this._listViewOffset)
@@ -1232,7 +1247,6 @@ class ChatRoom extends AnimatedComponent {
                 isfirst={isFirst}
                 received={recieved}
                 allplayed={played}
-                key={item.id}
                 isRelation={this.props.isRelation}
                 react={this.reactToMessage.bind(this)}
                 showReacters={this.showReacters.bind(this)}
@@ -1240,7 +1254,6 @@ class ChatRoom extends AnimatedComponent {
                 forwardMessage={() => {
                     this.forwardToContacts(item);
                 }}
-                newCount={this.props.newMessages.length}
                 index={index}
                 key={item.id}
                 scrolling={this.scrolling}
@@ -1279,8 +1292,85 @@ class ChatRoom extends AnimatedComponent {
             />
         </View>
     }
+    whatCanBeDoneWithChatRoom = [
+        Texts.send_a_message,
+        Texts.send_message_as_emoticons,
+        Texts.send_multimedia_messages,
+        Texts.share_thinks_like,
+        Texts.mention_everything,
+        Texts.turn_a_message_a_highlight,
+        Texts.turn_a_message_into_a_program,
+        Texts.react_to_a_message,
+        Texts.delete_a_message,
+        Texts.see_message_info
+    ]
+    featuresLister() {
+        return this.whatCanBeDoneWithChatRoom.map((ele, index) => <View style={{
+            flexDirection: 'row', alignItems: 'center', width: '100%'
+        }}>
+            <View style={{
+                marginRight: '2%',
+            }}><Text style={{
+                ...GState.defaultTextStyle,
+                fontWeight: 'bold',
+            }}>{`${index + 1}`}</Text></View>
+            <View style={{
+                flex: 1,
+            }}><Text style={{ ...GState.defaultTextStyle }}>{ele}</Text></View>
+        </View>)
+    }
+    defaultItem() {
+        return <View style={GState.descriptBoxStyle}>
+            <View style={{
+                alignSelf: 'center',
+                marginBottom: '3%',
+            }}>
+                <Text style={GState.featureBoxTitle}>{Texts.b_up_chatroom}</Text>
+            </View>
+            <View style={{
+                flexDirection: 'column',
+                alignItems: 'flex-start',
+            }}>
+                <Text style={{
+                    ...GState.defaultTextStyle,
+                    fontWeight: 'bold',
+                }}>{Texts.use_it_to}</Text>
+                {this.featuresLister()}
+            </View>
+        </View>
+    }
     keyExtractor(item, index) {
         return item ? item.id : index.toString()
+    }
+    showCurrentDay(day) {
+        this.setStatePure({
+            showCurrentDay: true,
+            day_date: day.id
+        })
+        if (this.showdayTimeoute) clearTimeout(this.showdayTimeoute)
+        this.showdayTimeoute = setTimeout(() => {
+            this.setStatePure({
+                showCurrentDay: false,
+                day_date: day.id
+            })
+        }, 3000)
+    }
+    onFlatlistItemsChange(info) {
+        console.warn("executing show current date")
+        if (this.itemChangeTimeout) clearImmediate(this.itemChangeTimeout)
+        this.itemChangeTimeout = setTimeout(() => {
+            this.viewableItems = info.viewableItems
+            this.currentSeparator = this.viewableItems && this.viewableItems.forEach(element => {
+                console.warn(element)
+                if (element.item.type == message_types.date_separator) {
+                    console.warn("trying to show current date")
+                    this.showCurrentDay(element.item)
+                }
+                clearTimeout(this.itemChangeTimeout)
+                this.itemChangeTimeout = null
+            });
+        }, 500)
+
     }
     messageList() {
         this.data = stores.Messages.messages[this.roomID]
@@ -1289,15 +1379,16 @@ class ChatRoom extends AnimatedComponent {
             (this.data.length - 1) : 0
         return (
             <BleashupFlatList
+                onViewableItemsChanged={this.onFlatlistItemsChange}
                 onScroll={this.onScroll}
                 windowSize={21}
-                //notOptimized={this.state.searchString && this.state.searching}
                 backgroundColor={'transparent'}
                 keyboardShouldPersistTaps={'handled'}
                 disableVirtualization={false}
                 firstIndex={0}
                 ref="bleashupSectionListOut"
                 inverted={true}
+                defaultItem={this.defaultItem}
                 //loadMoreFromRemote={() => this.props.isComment && this.loadComments()}
                 renderPerBatch={20}
                 initialRender={30}
@@ -1386,7 +1477,6 @@ class ChatRoom extends AnimatedComponent {
                 handleReplyExtern={this.handleReplyExtern.bind(this)}
                 handleReply={this.handleReply.bind(this)}
                 showProfile={this.props.showProfile}
-                markAsRead={this.markAsRead.bind(this)}
             />
         );
     }

@@ -99,7 +99,7 @@ import AnimatedComponent from '../../AnimatedComponent';
             </View> :
                 <TouchableOpacity
                     style={{
-                        ...rounder(35, ColorList.bodyBackground),
+                        ...rounder(35, ColorList.descriptionBody),
                         justifyContent: 'center',
                     }}
                     onPress={() => {

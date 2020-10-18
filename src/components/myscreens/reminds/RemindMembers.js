@@ -3,6 +3,7 @@ import BleashupModal from "../../mainComponents/BleashupModal";
 import ParticipantList from "../../ParticipantList";
 import SelectableContactList from "../../SelectableContactList";
 import { View } from 'react-native';
+import Texts from '../../../meta/text';
 
 export default class RemindMembers extends BleashupModal {
     onClosedModal(){
@@ -33,7 +34,7 @@ export default class RemindMembers extends BleashupModal {
                             adding: false,
                         });
                     }}
-                    title={"Remind Concernee"}
+                    title={Texts.program_members}
                     participants={this.props.currentMembers}
                     creator={this.props.creator}
                 managing></ParticipantList>

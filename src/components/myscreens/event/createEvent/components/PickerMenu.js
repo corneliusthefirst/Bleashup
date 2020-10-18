@@ -27,7 +27,7 @@ export default class PickersMenu extends Component {
     }
   }
   iconStyle = {
-    color: this.props.color || ColorList.bodyIcon,
+    color: this.props.color || ColorList.indicatorColor,
     fontSize: this.props.fontSize ? this.props.fontSize : 30,
   }
   hideMenu = () => {
@@ -62,6 +62,7 @@ export default class PickersMenu extends Component {
       <View
         style={{
           alignItems: "center",
+          alignSelf: 'flex-start',
           justifyContent: "center",
         }}
       >
@@ -69,7 +70,7 @@ export default class PickersMenu extends Component {
           ref={this.setMenuRef}
           button={
             <TouchableOpacity
-             style={{...rounder((this.props.fontSize||30)+5,ColorList.bodyBackground),
+             style={{...rounder((this.props.fontSize||30)+5,ColorList.descriptionBody),
               justifyContent: 'center',}} onPress={() => requestAnimationFrame(this.showMenu.bind(this))}
             >
               {this.icons(this.props.icon.type)}

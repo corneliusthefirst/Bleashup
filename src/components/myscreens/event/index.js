@@ -448,6 +448,7 @@ export default class Event extends BeComponent {
       case ActivityPages.logs:
         return (
           <ChangeLogs
+            activity_name={this.event && this.event.about && this.event.about.title}
             isRelation={this.isRelation}
             index={this.index}
             goback={this.goback.bind(this)}
@@ -713,11 +714,11 @@ export default class Event extends BeComponent {
         (member && member.master) ||
         this.event.creator_phone === this.user.phone;
       this.computedMaster =
-        this.event.who_can_update === "master"
+        (this.event.who_can_update === "master"
           ? this.master
           : this.event.who_can_update === "creator"
             ? this.event.creator_phone === this.user.phone
-            : true;
+          : true) && !this.event.closed;
       this.member = member ? true : false;
       this.setStatePure({
         working: false,
@@ -800,7 +801,6 @@ export default class Event extends BeComponent {
       Toaster({ text: Texts.app_busy });
     }
   }
-  master = false;
   leave_route_event = "leave_route";
   componentMounting() {
     emitter.on(this.leave_route_event, () => {
@@ -1509,7 +1509,9 @@ export default class Event extends BeComponent {
   replyWith(phone) {
     getRelation(phone).then((relation) => {
       GState.reply.activity_id = relation.id;
-      BeNavigator.pushToChat(relation);
+      setTimeout(() => {
+        BeNavigator.pushToChat(relation);
+      })
     });
   }
   authorFirstWithouMe(members, author) {
@@ -1531,7 +1533,7 @@ export default class Event extends BeComponent {
     });
   }
   hideReply() {
-    GState.reply = null;
+    //GState.reply = null;
     this.setStatePure({
       showPrivateReply: false,
     });
@@ -1580,7 +1582,8 @@ export default class Event extends BeComponent {
       let reply = GState.prepareActivityPhotoForMention(
         this.event.background,
         this.event.id,
-        this.event.creator_phone
+        this.event.creator_phone,
+        this.event.type
       );
       this.mention(reply);
     }, 100);

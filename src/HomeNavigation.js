@@ -21,10 +21,11 @@ import TasksCreation from './components/myscreens/reminds/TasksCreation';
 import SelectRelation  from './components/myscreens/eventChat/SelectRelation';
 import ContactsModal from './components/ContactsModal';
 import EventHighlights from './components/myscreens/event/createEvent/components/EventHighlights';
+import HomeTabs from './HomeTabs';
 
 enableScreens()
 const HomeNavigator = createStackNavigator({
-    Home: { screen: homePage },
+    Home: { screen: HomeTabs },
     QR: { screen: QRScanner },
     Contacts: { screen: ContactView },
     Report: { screen: ReportTabModal },

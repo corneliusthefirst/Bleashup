@@ -85,7 +85,7 @@ class Home extends BeComponent {
   handleNotif(data) {
     stores.Events.loadCurrentEvent(data.activity_id).then(activity => {
       if (this.isMember(activity)) {
-        BeNavigator.pushActivityWithIndex(activity, data, 
+        BeNavigator.pushActivityWithIndex(activity, data,
           GState.currentRoom && true)
       } else {
         this.showDetailModal(activity, data)
@@ -172,7 +172,6 @@ class Home extends BeComponent {
   animating = false;
   realNew = [];
   componentDidMount() {
-    //stores.Events.initSearch();
     emitter.on("notify", (event) => {
       if (GState.currentRoom !== event.data.room_key) {
         this.props.showNotification({
@@ -245,7 +244,7 @@ class Home extends BeComponent {
     BeNavigator.navigateTo("voteCard");
   }
   render() {
-    GState.nav = this.props.navigation
+    GState.setBeroute(this.props.navigation)
     StatusBar.setBackgroundColor(colorList.headerBackground, true);
     StatusBar.setBarStyle("dark-content", true);
     StatusBar.setHidden(false, true);
@@ -260,30 +259,33 @@ class Home extends BeComponent {
                 style={styles.headerImage}
               />}
             </View>
-            <View style={styles.settingsIconStyleContainer}>
-              <View style={{
-                height: 35,
-                ...this.state.searching ? { width: "80%" } : { width: 35 }
-              }}>
-                <Searcher
-                  searching={this.state.searching}
-                  search={this.search}
-                  startSearching={this.startSearching}
-                  cancelSearch={this.cancelSearching}
-                  searchString={this.state.searchString}
-                >
-                </Searcher>
-              </View>
-              <TouchableOpacity
-                style={styles.settingsIconStyleContainerSub}
+            {!this.state.searching ? <View style={{
+              marginLeft: 150,
+            }}><TouchableOpacity
+              style={styles.settingsIconStyleContainerSub}
+              onPress={this.settings}
+            >
+              <Icon
+                name="gear"
+                style={styles.settingsIcon}
                 onPress={this.settings}
+              />
+            </TouchableOpacity></View> : null}
+            <View style={{
+              height: 35,
+              alignSelf: 'center',
+              marginRight: '2%',
+              flex: this.state.searching ? 1 : null,
+              ...this.state.searching ? null : { width: 35 }
+            }}>
+              <Searcher
+                searching={this.state.searching}
+                search={this.search}
+                startSearching={this.startSearching}
+                cancelSearch={this.cancelSearching}
+                searchString={this.state.searchString}
               >
-                <Icon
-                  name="gear"
-                  style={styles.settingsIcon}
-                  onPress={this.settings}
-                />
-              </TouchableOpacity>
+              </Searcher>
             </View>
           </View>
         </View>
@@ -327,7 +329,7 @@ const styles = StyleSheet.create({
   headerImageContainer: {
     alignSelf: "flex-start",
     justifyContent: "center",
-    height: "95%",
+    height: "100%",
   },
   headerImage: {
     width: 120,

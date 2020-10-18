@@ -212,18 +212,16 @@ class mainUpdater {
   }
   deleteMessage(messageID, commiteeID, eventID) {
     return new Promise((resolve, reject) => {
-      stores.Messages.removeMessage(commiteeID, messageID).then(() => {
-       /* stores.CommiteeStore.removeNewMessage(
-          messageID,
-          eventID,
-          commiteeID
-        ).then(() => {*/
-          stores.Events.removeNewMessage(eventID, messageID, commiteeID).then(
-            () => {
-              resolve();
-            }
-          );
-       // });
+      stores.Messages.removeMessage(commiteeID, messageID).then((mess) => {
+        const seeer = this.isSeeer(mess)
+        if (!seeer) {
+          stores.States.removeNewMessage(commiteeID, messageID)
+        }
+        stores.Events.changeUpdatedStatus(eventID, true).then(
+          () => {
+            resolve();
+          }
+        );
       });
     });
   }
@@ -233,17 +231,23 @@ class mainUpdater {
       resolve();
     });
   }
+  isSeeer(message) {
+    return message.seen && message.seen.find(ele => ele &&
+      ele.phone &&
+      ele.phone.replace("+", "00") ===
+      stores.LoginStore.user.phone)
+  }
   informCommitteeAndEvent(message, committeeID, eventID) {
     return new Promise((resolve, reject) => {
-      //stores.CommiteeStore.addNewMessage(message, eventID, committeeID).then(
-      //  () => {
-      stores.Events.addNewMessage(eventID, message, committeeID).then(
+      const seeer = this.isSeeer(message)
+      if (!seeer) {
+        stores.States.addNewMessage(committeeID, message.id)
+      }
+      stores.Events.changeUpdatedStatus(eventID).then(
         () => {
           resolve();
         }
       );
-      //  }
-      //);
     });
   }
   updateRemindAlarms(eventID, remindID, newAlarms, date, updater) {

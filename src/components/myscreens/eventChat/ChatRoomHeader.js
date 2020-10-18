@@ -49,6 +49,7 @@ export default class ChatRoomHeader extends BeComponent {
             this.checker = null
         }
     }
+    color = ColorList.colorArray[Math.floor(Math.random() * (ColorList.colorArray.length - 1))]
     render() {
         return <View>
             <View
@@ -96,11 +97,22 @@ export default class ChatRoomHeader extends BeComponent {
                             source={{ uri: this.props.background }}
                         ></CacheImages>
                     ) : (
-                            <Image
+                            <View
                                 resizeMode={"cover"}
-                                style={{ ...rounder(30) }}
+                                style={{ ...rounder(30,this.color),
+                                }}
                                 source={this.props.isRelation ? GState.profilePlaceHolder : GState.activity_place_holder}
-                            ></Image>
+                            >
+                            <MaterialIcons
+                            style={{
+                                ...GState.defaultIconSize,
+                                color:ColorList.bodyBackground,
+                                        fontSize: 22,
+                            }}
+                            name={'chat-bubble'}
+                            >
+                            </MaterialIcons>
+                            </View>
                         )}
                 </TouchableOpacity>}
                 {this.props.searching ? null : <TouchableOpacity onPress={() => {
@@ -113,7 +125,7 @@ export default class ChatRoomHeader extends BeComponent {
                     <View>
                         <TextContent
                             numberOfLines={1}
-                            onPress={this.props.openSettings}
+                            onPress={!this.props.isRelation && this.props.openSettings}
                             style={{
                                 alignSelf: 'center',
                                 color: ColorList.headerText,

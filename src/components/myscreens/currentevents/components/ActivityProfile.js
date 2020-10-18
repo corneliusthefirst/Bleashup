@@ -10,10 +10,12 @@ import AntDesign from 'react-native-vector-icons/AntDesign';
 import BeComponent from '../../../BeComponent';
 import testForURL from '../../../../services/testForURL';
 import active_types from "../../eventChat/activity_types";
+import MaterialIcons  from 'react-native-vector-icons/MaterialIcons';
 export default class ActivityProfile extends BeComponent {
     constructor(props) {
         super(props);
     }
+    color = ColorList.colorArray[Math.floor(Math.random() * (ColorList.colorArray.length - 1))]
     render() {
         let isRelation = this.props.Event.type == active_types.relation
         return (
@@ -50,12 +52,12 @@ export default class ActivityProfile extends BeComponent {
 
                             ></CacheImages>
                         ) : (<View style={{
-                            ...rounder(40, ColorList.photoPlaceHolderColor)
+                                ...rounder(50, this.color)
                         }}>
-                            <AntDesign name={"calendar"} style={{
+                            <MaterialIcons name={"chat-bubble"} style={{
                                 alignSelf: 'center',
                                 color: ColorList.bodyBackground,
-                                fontSize: ColorList.profilePlaceHolderHeight - 10,
+                                fontSize: ColorList.profilePlaceHolderHeight-10,
                             }} />
                         </View>
                             )}
@@ -71,6 +73,7 @@ export default class ActivityProfile extends BeComponent {
                     }}
                 >
                     <TitleView
+                        navigate={this.props.navigate}
                         onPress={this.props.onPress}
                         searchString={this.props.searchString}
                         searching={this.props.searching}

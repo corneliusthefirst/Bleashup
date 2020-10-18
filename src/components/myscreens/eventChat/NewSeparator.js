@@ -2,20 +2,43 @@ import React, { Component } from "react";
 
 import { View, Text } from "react-native";
 import shadower from "../../shadower";
-export default class NewSeparator extends Component {
+import ColorList from '../../colorList';
+import stores from "../../../stores";
+import Texts from "../../../meta/text";
+import { observer } from "mobx-react";
+@observer class NewSeparator extends Component {
     constructor(props) {
         super(props)
     }
     render() {
+        this.newCount = stores.States.getNewMessagesCount(this.props.room)
         return (
-            <View style={{ width: 200, height: 30, 
-            backgroundColor: 'transparent', 
-            borderRadius: 10,
-            display:'flex',
+            <View style={{ 
+            ...shadower(1) ,
+            maxHeight: 35,
+            minHeight: 25, 
+            backgroundColor: ColorList.transparentWhite, 
+            borderRadius: 5,
+            width:'100%',
+            borderWidth: 1,
+            borderColor: ColorList.bodyBackground,
+            flexDirection: 'column',
             justifyContent: 'center',
-            alignSelf: 'center', borderWidth: 1, borderColor: "#fff",...shadower(2) }}>
-                <Text style={{ fontWeight: 'bold', marginTop: "1%", alignSelf: 'center' }}>{this.props.newCount && `(${this.props.newCount}) `}  {this.props.data}</Text>
+            alignSelf: 'center',
+            alignItems: 'center',
+            }}>
+            <View>
+                <Text style={{ 
+                fontWeight: 'bold', 
+                textAlign:'center',
+                alignSelf: 'center',
+                color:ColorList.reminds
+            }}>
+                {this.newCount && `(${this.newCount}) `}  {Texts.new_messages}</Text>
+            </View>
             </View>
         );
     }
 }
+
+export default NewSeparator

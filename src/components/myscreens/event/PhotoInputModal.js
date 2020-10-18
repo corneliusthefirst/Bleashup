@@ -39,6 +39,7 @@ export default class PhotoInputModal extends BleashupModal {
         height: 290,
         borderRadius: 5
     }
+    color = ColorList.colorArray[Math.floor(Math.random() * (ColorList.colorArray.length - 1))]
     position = "center"
     modalBody() {
         return (
@@ -58,11 +59,25 @@ export default class PhotoInputModal extends BleashupModal {
                         source={{ uri: this.props.photo }}
                         style={this.photoStyle} thumbnails
                         square></CacheImages> :
-                        <Image
-                            style={this.photoStyle}
+                        <View
+                            style={
+                                {...this.photoStyle,
+                                backgroundColor:this.color,
+                                justifyContent: 'center',
+                                alignItems: 'center',
+                                }}
                             resizeMode={"cover"}
                             source={this.props.isRelation ? GState.profilePlaceHolder : GState.activity_place_holder}
-                        ></Image>}
+                        >
+                        <MaterialIcons name={'chat-bubble'} 
+                        style={{
+                            ...GState.defaultIconSize,
+                            fontSize: 200,
+                            color:ColorList.bodyBackground
+                        }}
+                        >
+                        </MaterialIcons>
+                        </View>}
                 </TouchableOpacity>
 
 

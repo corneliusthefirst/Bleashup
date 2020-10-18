@@ -7,6 +7,7 @@ import {
   Platform,
   Dimensions,
   Text,
+  ImageBackground
 } from "react-native";
 import TasksCard from "./TasksCard";
 import stores from "../../../stores/index";
@@ -69,6 +70,7 @@ import { returnCurrentPatterns, sendRemindAsMessage } from "./remindsServices";
 import messagePreparer from "../eventChat/messagePreparer";
 import { constructProgramLink } from "../eventChat/services";
 import { members_updated } from "../../../meta/events";
+import ColorList from "../../colorList";
 
 @observer
 class Reminds extends AnimatedComponent {
@@ -88,7 +90,9 @@ class Reminds extends AnimatedComponent {
     this.search = justSearch.bind(this);
     this.renderItem = this.renderItem.bind(this);
     this.getItemLayout = this.getItemLayout.bind(this);
-    this.editReport = this.editReport.bind(this)
+    this.editReport = this.editReport.bind(this);
+    this.defaultItem = this.defaultItem.bind(this)
+    this.AddRemind = this.AddRemind.bind(this)
   }
   addMembers(currentMembers, item) {
     this.setStatePure({
@@ -141,19 +145,19 @@ class Reminds extends AnimatedComponent {
   componentDidMount() {
     this.initReminds();
   }
-  scrolled = 0;
-  initReminds() {
+  startRemindUpdateListener(){
     emitter.on("remind-updated", () => {
       this.refreshReminds();
     });
+  }
+  scrolled = 0;
+  initReminds() {
+    this.startRemindUpdateListener()
     if (
       !stores.Reminds.Reminds[this.props.event_id] ||
       stores.Reminds.Reminds[this.props.event_id].length <= 1
     ) {
       stores.Reminds.loadReminds(this.props.event_id).then((reminds) => { });
-    }
-    if (this.props.currentMembers || this.props.remind) {
-      BeNavigator.pushTo("TaskCreation", this.returnTaskCreationOptions());
     }
     setTimeout(() => {
       this.setStatePure(
@@ -161,6 +165,9 @@ class Reminds extends AnimatedComponent {
           mounted: true,
         },
         () => {
+          if (this.props.currentMembers || this.props.remind) {
+            this.AddRemind()
+          }
           if (this.props.id) {
             let scrollIndex = findIndex(this.getRemindData(), {
               id: this.props.id,
@@ -317,7 +324,15 @@ class Reminds extends AnimatedComponent {
       } else {
         this.props.startLoader();
         RemindRequest.confirm(
-          [user],
+          [{
+            ...request.Participant(),
+            phone:user.phone,
+            status:{
+              date:user.status.date
+            },
+            host:user.host,
+            master:user.master
+          }],
           this.state.currentTask.id,
           this.state.currentTask.event_id
         )
@@ -484,7 +499,7 @@ class Reminds extends AnimatedComponent {
       currentRemindUser: this.props.currentRemindUser,
       concernees: members,
       reply: this.reply.bind(this),
-      refresh:this.refreshReminds.bind(this),
+      refresh: this.refreshReminds.bind(this),
       activity_id: this.props.event_id,
       remind_id: this.state.remind.id,
       confirmed: this.filterConfirmed.bind(this),
@@ -494,7 +509,7 @@ class Reminds extends AnimatedComponent {
       isRelation: false,
       confirm: this.confirm.bind(this),
       master:
-        currentTask && stores.LoginStore.user.phone === currentTask.creator,
+        (currentTask && stores.LoginStore.user.phone === currentTask.creator) || this.props.master,
       must_report: currentTask && currentTask.must_report,
       actualInterval: actualInterval,
     };
@@ -571,7 +586,7 @@ class Reminds extends AnimatedComponent {
   delay = 1;
   getRemindData = () => {
     let RemindData = (stores.Reminds.Reminds
-      ? stores.Reminds.Reminds[this.props.event_id]
+      ? (stores.Reminds.Reminds[this.props.event_id]||[])
       : []
     ).filter((ele) =>
       globalFunctions.filterReminds(ele, this.state.searchString || "")
@@ -995,12 +1010,57 @@ class Reminds extends AnimatedComponent {
       />
     );
   }
+  defaultItem(){
+    return <View style={{
+      ...GState.descriptBoxStyle
+    }}>
+    <View style={{
+      alignSelf: 'center',
+      marginBottom: "3%",
+    }}>
+    <Text style={{...GState.featureBoxTitle}}>{Texts.be_up_reminds}</Text>
+    </View>
+    <View style={{ marginBottom: "2%",}}>
+    <Text style={{
+      ...GState.defaultTextStyle,
+      fontWeight: 'bold',
+    }}>{Texts.program_descriptions}</Text>
+    </View>
+    <View style={{
+      alignSelf: 'center',
+    }}>
+    {this.plusButtom()}
+    </View>
+    </View>
+  }
+  plusButtom(){
+    return <TouchableOpacity
+      style={{
+        backgroundColor: colorList.bodyBackground,
+        ...rounder(50, colorList.bodyBackground),
+        ...shadower(2),
+        justifyContent: "center",
+      }}
+      onPress={() => requestAnimationFrame(() => this.AddRemind())}
+    >
+      <MaterialCommunityIcons
+        type="AntDesign"
+        name="bell-plus"
+        style={{
+          ...GState.defaultIconSize,
+          color: colorList.reminds,
+          alignSelf: "center",
+        }}
+      />
+    </TouchableOpacity>
+  }
   getItemLayout(item, index) {
     return GState.getItemLayout(item, index, this.data, 70, 0);
   }
   renderReminds() {
     this.data = this.getRemindData();
     return (
+      <ImageBackground style={GState.imageBackgroundContainer} source={GState.backgroundImage}>
       <View style={{ width: "100%", height: "100%" }}>
         {this.props.removeHeader ? null : (
           <View
@@ -1020,7 +1080,7 @@ class Reminds extends AnimatedComponent {
               }}
             >
               <TouchableOpacity
-                onPress={() => requestAnimationFrame(() => this.props.goback())}
+                onPress={this.props.goback}
                 style={{
                   width: 60,
                   paddingLeft: "3%",
@@ -1082,7 +1142,9 @@ class Reminds extends AnimatedComponent {
         <View style={{ height: "92%" }}>
           {this.state.mounted ? (
             <BleashupFlatList
+             backgroundColor={colorList.transparent}
               onScroll={this.onScroll}
+              defaultItem={this.defaultItem}
               fit={this.props.fit}
               getItemLayout={this.getItemLayout}
               initialRender={6}
@@ -1096,37 +1158,18 @@ class Reminds extends AnimatedComponent {
               numberOfItems={this.data}
             />
           ) : (
-              <Spinner></Spinner>
+              <Spinner big color={ColorList.bodyBackground}></Spinner>
             )}
         </View>
         {this.state.isActionButtonVisible ? (
           <SideButton
             buttonColor={colorList.transparent}
-            action={() => requestAnimationFrame(() => this.AddRemind())}
-            renderIcon={() => (
-              <TouchableOpacity
-                style={{
-                  backgroundColor: colorList.bodyBackground,
-                  ...rounder(50, colorList.bodyBackground),
-                  ...shadower(2),
-                  justifyContent: "center",
-                }}
-                onPress={() => requestAnimationFrame(() => this.AddRemind())}
-              >
-                <MaterialCommunityIcons
-                  type="AntDesign"
-                  name="bell-plus"
-                  style={{
-                    ...GState.defaultIconSize,
-                    color: colorList.reminds,
-                    alignSelf: "center",
-                  }}
-                />
-              </TouchableOpacity>
-            )}
+            action={this.AddRemind}
+            renderIcon={() => this.plusButtom()}
           ></SideButton>
         ) : null}
       </View>
+      </ImageBackground>
     );
   }
 }

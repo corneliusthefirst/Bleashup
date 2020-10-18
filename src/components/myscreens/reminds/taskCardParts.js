@@ -86,6 +86,7 @@ export function remindTitle() {
         <View>
             <TextContent
                 tags={this.item.extra && this.item.extra.tags}
+                onPress={this.onPressTitle}
                 searchString={this.props.searchString}
                 ellipsizeMode={"tail"}
                 numberOfLines={7}
@@ -103,8 +104,8 @@ export function remindTitle() {
         </View>
     </View>
 }
-function updateURL(aid,data){
-    stores.Reminds.updateURL(aid,data)
+function updateURL(aid, data) {
+    stores.Reminds.updateURL(aid, { ...data, url: { ...data.url, main_source: this.item.source } })
 }
 export function remindMedia() {
     this.item = this.props.item || this.item
@@ -115,7 +116,7 @@ export function remindMedia() {
             <MedaiView
                 data={{ remind_id: this.item.id }}
                 activity_id={this.item.event_id}
-                updateSource={updateURL}
+                updateSource={updateURL.bind(this)}
                 height={ColorList.containerHeight * 0.39}
                 width={"100%"}
                 url={this.item.remind_url}
@@ -191,7 +192,7 @@ export function remindActons() {
                     alignItems: "center",
                     justifyContent: "center",
                     ...shadower(1),
-                    backgroundColor: ColorList.bodyDarkWhite,
+                    backgroundColor: ColorList.descriptionBody,
                 }}
                 action={this.assignToMe.bind(this)}
             ></CreateButton>
@@ -203,7 +204,7 @@ export function remindActons() {
                     this.showMembers(replies.confirmed)
                 })
             }} style={{
-                ...rounder(40, ColorList.bodyDarkWhite),
+                ...rounder(40, ColorList.descriptionBody),
                 justifyContent: 'center',
             }}>
                 <MaterialCommunityIcons
@@ -222,7 +223,7 @@ export function remindActons() {
                             this.showMembers(replies.done)
                         })
                     }} style={{
-                        ...rounder(40, ColorList.bodyDarkWhite),
+                        ...rounder(40, ColorList.descriptionBody),
                         justifyContent: 'center',
                     }}
                 >
@@ -242,9 +243,9 @@ export function remindActons() {
                         style={{
                             borderRadius: 10,
                             alignSelf: "flex-end",
-                            ...shadower(3),
+                            ...shadower(1),
                             borderWidth: 0,
-                            backgroundColor: ColorList.bodyDarkWhite,
+                            backgroundColor: ColorList.descriptionBody,
                             width: 70,
                             alignItems: "center",
                             justifyContent: "center",

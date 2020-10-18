@@ -7,6 +7,7 @@ import tcpRequest from "../services/tcpRequestData";
 import request from "../services/requestObjects";
 import serverEventListener from "../services/severEventListener";
 import emitter from "../services/eventEmiter";
+import globalFunctions from '../components/globalFunctions';
 export default class highlights {
   constructor() {
     /*storage.remove(this.saveKey).then(() => {
@@ -24,6 +25,12 @@ export default class highlights {
       .load(this.readKey)
       .then((data) => {
         this.highlights = data;
+        setTimeout(() => {
+          const vals = Object.keys(this.highlights)
+          vals.forEach(ele => {
+            this.highlights[ele] = this.highlights[ele].sort(globalFunctions.sortHighlights)
+          })
+        })
       })
       .catch(() => {
         this.highlights = {};

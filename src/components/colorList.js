@@ -5,7 +5,7 @@ import { Dimensions } from 'react-native';
 let { height, width } = Dimensions.get('window');
 class colorlist {
   constructor() {
-    
+
   }
   errorColor = '#A91A84';
   containerHeight = height;
@@ -16,11 +16,12 @@ class colorlist {
   redIcon = 'red';
   photoPlaceHolderColor = "#C5C5C5"
   containerBackground = 'white';
-  profilePlaceHolderHeight = 30
+  profilePlaceHolderHeight = 45
   replyColor = "#56B671"
   iconGray = '#555756';
   iconActive = '#1FABAB';
   iconInactive = '#ADE3D2';
+  transparentWhite = 'rgba(255, 255, 252,.4)';
   replyBackground = 'rgba(34, 0, 0, 0.1)';
   headerTextInverted = 'black';
   headerIcon = 'black';
@@ -60,11 +61,11 @@ class colorlist {
   indicatorColor = '#057D74';
   indicatorInverted = '#DDECE9';
   descriptionBody = "mintcream";
-  recorderColor = 'rgba(92, 185, 158,.8)'
-  sendRand = () => Math.floor(Math.random() * (this.senTBoxColor.length-1))
+  recorderColor = 'rgba(92, 185, 158,1)'
+  sendRand = () => Math.floor(Math.random() * (this.senTBoxColor.length - 1))
   senTBoxColor = ["#EFF8FE"]
   receivedBox = 'white';
-  colorArray = ['#1e90ff',  '#cd5c5c', '#48d1cc', '#663399', '#4682b4', '#663399', '#00ced1', '#7b68ee', '#5f9ea0','#6495ed'];
+  colorArray = ['#1e90ff', '#cd5c5c', '#48d1cc', '#663399', '#4682b4', '#663399', '#00ced1', '#7b68ee', '#5f9ea0', '#6495ed'];
 
 }
 

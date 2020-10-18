@@ -43,7 +43,7 @@ export default class FileExachange {
     task = null
     received = 0
     total = 0
-    download(received, total) {
+    startDownload(received,total){
         received ? this.received = received : null
         total ? this.total = total : null
         this.DetemineRange(this.tempPath).then(size => {
@@ -66,7 +66,10 @@ export default class FileExachange {
                 this.errorHandlerFunc ? this.errorHandlerFunc(error) : null
             })
             this.task.then((res) => {
+                console.warn("size from temp path is ", this.received)
                 res.info().headers.Duration ? this.duration = Math.floor(res.info().headers.Duration) : null
+                this.total = this.total || 0
+                this.received = this.received || 0
                 temp1 = this.received / 1000
                 temp2 = this.total / 1000
                 temper1 = temp2 / 1000
@@ -92,6 +95,9 @@ export default class FileExachange {
                 }
             })
         })
+    }
+    download(received, total) {
+        this.startDownload(received,total)
     }
     upload(written, total) {
         this.written = written

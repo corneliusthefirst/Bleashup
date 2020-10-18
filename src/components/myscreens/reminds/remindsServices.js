@@ -10,6 +10,13 @@ import Requester from '../eventChat/Requester';
 import Texts from '../../../meta/text';
 import public_states from './public_states';
 
+export function returnStoredIntervalsKey(key){
+    this.item = this.item || this.props.item
+    return stores.Reminds.remindsIntervals && 
+    stores.Reminds.remindsIntervals[this.item.event_id] && 
+    stores.Reminds.remindsIntervals[this.item.event_id][this.item.id] && 
+    stores.Reminds.remindsIntervals[this.item.event_id][this.item.id][key]
+}
 export function returnCurrentPatterns(remind) {
     return remind && remind.extra && remind.extra.alarms
         ? [

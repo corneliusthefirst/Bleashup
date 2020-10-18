@@ -9,7 +9,9 @@ import GState from "../stores/globalState";
 import { forEach } from "lodash";
 import moment from "moment";
 import connect from "./tcpConnect";
-import BeBackground from './backgroundSync';
+import BeBackground from "./backgroundSync";
+import persistTypes from "../components/myscreens/eventChat/persisTypes";
+import MainUpdater from "./mainUpdater";
 
 class ServerEventListener {
   events = {
@@ -57,40 +59,64 @@ class ServerEventListener {
   constructor() { }
   socket = () => { };
   clearUpdates() {
-    console.warn("trying to clean all", this.infoDispatched, this.invitationsDispatched, this.updatesDispatched)
-    if (this.invitationsDispatched &&
+    console.warn(
+      "trying to clean all",
+      this.infoDispatched,
+      this.invitationsDispatched,
+      this.updatesDispatched
+    );
+    if (
+      this.invitationsDispatched &&
       this.updatesDispatched &&
-      this.infoDispatched) {
+      this.infoDispatched
+    ) {
       tcpRequest.clear().then((JSONData) => {
         emitter.once(this.events.cleared, (data) => {
           console.warn(this.sayClearAll);
-          this.updatesDispatched = false
-          this.invitationsDispatched = false
-          this.infoDispatched = false
+          this.updatesDispatched = false;
+          this.invitationsDispatched = false;
+          this.infoDispatched = false;
         });
         this.writeToSocket(JSONData);
       });
     }
   }
   returnReqeustFromString(data) {
-    let request = JSON.parse(data.
-      replace(this.splitter.start, "").
-      replace(this.splitter.end, ""))
-    return request
+    let request = JSON.parse(
+      data.replace(this.splitter.start, "").replace(this.splitter.end, "")
+    );
+    return request;
   }
   returnRequestData(data) {
-    const request = this.returnReqeustFromString(data)
-    return request.data
+    const request = this.returnReqeustFromString(data);
+    return request.data;
   }
-  infoDispatched = false
-  updatesDispatched = false
-  invitationsDispatched = false
+  infoDispatched = false;
+  updatesDispatched = false;
+  invitationsDispatched = false;
+  sendUnSentMessages() {
+    let mess = stores.States.unsentMessagesExist()
+    if (mess) {
+      console.warn("unsent messages exist! ");
+      let ele = mess[0];
+      if (ele) {
+        this.writeToSocketFresh(stores.States.getUnsentMessage(ele), ele, true);
+      }else{
+        console.warn("executing here in sendUnsentMessage ",mess)
+        stores.States.unPersistRequestUnsentMessage(ele) 
+        this.sendUnSentMessages()
+      }
+    } else {
+      emitter.emit(this.events.cleared, this.data.data);
+      this.informWaiters();
+    }
+  }
   dispatch(data) {
     //console.warn("data from dispatcher: ",data)
     if (data.response) {
       switch (data.response) {
         case this.responseCases.wrong_json:
-          console.warn("wrong json data was sent to the server: ", data.data)
+          console.warn("wrong json data was sent to the server: ", data.data);
           break;
         case this.responseCases.not_eligible:
           emitter.emit(
@@ -101,14 +127,13 @@ class ServerEventListener {
         case this.responseCases.cleared:
           console.warn("clearing.....");
           if (stores.States.requestsExists()) {
-            console.warn("persisted request existing")
-            Object.keys(stores.States.states.requests).forEach(ele => {
-              this.writeToSocketFresh(stores.States.getRequest(ele), ele)
-            })
+            console.warn("persisted request existing");
+            Object.keys(stores.States.states.requests).forEach((ele) => {
+              this.writeToSocketFresh(stores.States.getRequest(ele), ele);
+            });
           }
-          emitter.emit(this.events.cleared, data.data);
-          this.informWaiters();
-
+          this.data = data
+          this.sendUnSentMessages();
           break;
         case this.responseCases.all_updates:
           let sorter = (a, b) =>
@@ -117,33 +142,33 @@ class ServerEventListener {
               : moment(a.date).format("x") > moment(b.date).format("x")
                 ? -1
                 : 0;
-          const sortedUpdates = data.updated.sort(sorter)
+          const sortedUpdates = data.updated.sort(sorter);
           UpdatesDispatcher.dispatchUpdates(sortedUpdates, () => {
-            console.warn("done Dispaching !")
-            this.updatesDispatched = true
-            this.clearUpdates()
+            console.warn("done Dispaching !");
+            this.updatesDispatched = true;
+            this.clearUpdates();
           });
           InvitationDispatcher.dispatchUpdates(
             data.new_events,
-            "invitation"
-            , () => {
-              console.warn("invitations completely dispachd")
-              this.invitationsDispatched = true
-              this.clearUpdates()
-            });
+            "invitation",
+            () => {
+              console.warn("invitations completely dispachd");
+              this.invitationsDispatched = true;
+              this.clearUpdates();
+            }
+          );
           if (data.reschedules)
             RescheduleDispatcher.dispatchReschedules(data.reschedules);
           if (data.info)
             InvitationDispatcher.dispatchInvitationsUpdates(data.info, () => {
-              this.infoDispatched = true
-              this.clearUpdates()
+              this.infoDispatched = true;
+              this.clearUpdates();
             });
           break;
         case this.responseCases.current_events:
-          emitter.emit(this.events.current_events, data.body);
+          emitter.emit(this.events.successful_ + data.body.id, data.body);
           break;
         case this.responseCases.presence:
-          console.warn(data.reference);
           GState.initialized = true;
           stores.Session.updateReference(data.reference).then((sessios) => {
             tcpRequest.get_all_update().then((JSONData) => {
@@ -153,8 +178,8 @@ class ServerEventListener {
           break;
         case this.responseCases.event_changes:
           UpdatesDispatcher.dispatchUpdate(data.updated, () => {
-            console.warn(this.sayDispatchingDone)
-          })
+            console.warn(this.sayDispatchingDone);
+          });
           break;
         case this.responseCases.current_event:
           emitter.emit(
@@ -164,7 +189,7 @@ class ServerEventListener {
           );
           break;
         case this.responseCases.events:
-          emitter.emit(this.events.events, data.body);
+          emitter.emit(this.events.successful_ + data.body.id, data.body);
           break;
         case this.responseCases.invitation:
           InvitationDispatcher.dispatcher(
@@ -257,7 +282,6 @@ class ServerEventListener {
         emitter.emit(this.events.cleared_ + ele);
       });
     this.initializing = false;
-
   }
   initPresence() {
     tcpRequest.Presence().then((JSONData) => {
@@ -337,34 +361,34 @@ class ServerEventListener {
   }
   requestUnprocessed = {};
   requestWaitTimeout = 7000;
-  sayReconnectionAttempt = "reconnection attempted"
-  sayClearAll = "cleared all"
-  sayDispatchingDone = "done dispaching !"
+  sayReconnectionAttempt = "reconnection attempted";
+  sayClearAll = "cleared all";
+  sayDispatchingDone = "done dispaching !";
   noConnectionResponse = "not connected";
   requestTimedOutResponse = "requestTimeout";
   get_data(data, id) {
     return new Promise((resolve, reject) => {
       emitter.once(this.events.successful_ + id, (response, dataResponse) => {
-        this.clearRetriesFinal(id)
+        this.clearRetriesFinal(id);
         resolve(dataResponse.data);
       });
       emitter.once(this.events.unsuccessful_ + id, (response, dataError) => {
-        this.clearRetriesFinal(id)
+        this.clearRetriesFinal(id);
         reject(dataError);
       });
       //console.warn(this.requestUnprocessed[id])
-      this.startDataSending(data, id, reject)
+      this.startDataSending(data, id, reject);
     });
   }
   startDataSending(data, id, reject, persist) {
     if (!this.requestUnprocessed[id]) {
       this.writeToSocket(data);
       if (this.shouldReconnect) {
-        this.startRetryer(data, id, reject)
-        this.shouldReconnect = false
+        this.startRetryer(data, id, reject);
+        this.shouldReconnect = false;
       }
       this.requestUnprocessed[id] = true;
-      this.startClearListener(id, data, persist)
+      this.startClearListener(id, data, persist);
     }
   }
   writeToSocket(data, init) {
@@ -373,31 +397,61 @@ class ServerEventListener {
       this.socket.write(data);
     }
   }
-  writeToSocketFresh(data, id) {
-    let request = JSON.parse(data.
-      replace(this.splitter.start, "").
-      replace(this.splitter.end, ""))
-    tcpRequest.sendData(request.action, request.data, request.id).then(JSONData => {
-      if (id) {
-        this.startClearPersistedRequest(id)
+  writeToSocketFresh(data, id, message) {
+    let request = JSON.parse(
+      data.replace(this.splitter.start, "").replace(this.splitter.end, "")
+    );
+    tcpRequest
+      .sendData(request.action, request.data, request.id)
+      .then((JSONData) => {
+        if (id) {
+          this.startClearPersistedRequest(id, message);
+        }
+        this.writeToSocket(JSONData);
+      });
+  }
+
+  startClearPersistedRequest(id, message) {
+    if (!this.requestUnprocessed[id]) {
+      if (message) {
+        this.messageData = this.returnRequestData(
+          stores.States.getUnsentMessage(id)
+        ).data;
+        console.warn("the message is: ", this.messageData);
       }
-      this.writeToSocket(JSONData)
-    })
+      emitter.once(this.events.successful_ + id, () => {
+        if (message) {
+          MainUpdater.saveMessage(
+            { ...this.messageData, sent: true },
+            this.messageData.committee_id,
+            this.messageData.committee_id,
+            this.messageData.notme
+          ).then(() => {
+            stores.States.unPersistRequestUnsentMessage(id);
+            this.sendUnSentMessages()
+          });
+        } else {
+          stores.States.unPersistRequest(id);
+        }
+      });
+      emitter.once(this.events.unsuccessful_ + id, () => {
+        if (message) {
+          stores.Messages.removeMessage(
+            this.messageData.committee_id,
+            this.messageData.id
+          );
+          stores.States.unPersistRequestUnsentMessage(id);
+        } else {
+          stores.States.unPersistRequest(id);
+        }
+      });
+    }
   }
-  startClearPersistedRequest(id) {
-    emitter.once(this.events.successful_ + id, () => {
-      stores.States.unPersistRequest(id)
-    })
-    emitter.once(this.events.unsuccessful_ + id, () => {
-      stores.States.unPersistRequest(id)
-    })
-  }
-  connectionCheck() { }
   reconnect() {
     if (!this.reconnecting && !this.initializing) {
       this.reconnecting = true;
       connect.connect().then(() => {
-        this.reconnecting = false
+        this.reconnecting = false;
         this.initPresence();
       });
       setTimeout(() => {
@@ -406,60 +460,65 @@ class ServerEventListener {
       }, this.reconnectionTimeout);
     }
   }
-  shouldReconnect = true
+  shouldReconnect = true;
   sayReconnectionTimeout = "reconnection timeout reached";
   reconnectionTimeout = 5000;
   reconnectionMessage = "recconnection was successful";
   reconnecting = false;
   sayConnectionTimedout = "connection timed out";
-  sayEnteringReconnectionTimmer = "entering reconnection timmier"
+  sayEnteringReconnectionTimmer = "entering reconnection timmier";
   reconnectAfterTimeout() {
     console.warn(this.sayEnteringReconnectionTimmer);
     this.reconnect();
   }
-  collectRetriesTimeout = 5000
-  collectRetries = null
+  collectRetriesTimeout = 5000;
+  collectRetries = null;
   working = false;
   unsentRequest = {};
   sendRequest(data, id, persist) {
     //console.warn("sending ...", data)
     return new Promise((resolve, reject) => {
       emitter.once(this.events.successful_ + id, (response) => {
-        this.clearRetriesFinal(id)
+        this.clearRetriesFinal(id);
         console.warn("result response", response);
         resolve(response);
       });
       emitter.once(this.events.unsuccessful_ + id, (response) => {
-        this.clearRetriesFinal(id)
+        this.clearRetriesFinal(id);
         console.warn("unsuccessful, " + response);
         reject(response);
       });
-      this.startDataSending(data, id, reject, persist)
+      this.startDataSending(data, id, reject, persist);
     });
   }
   startClearListener(id, data, persist) {
     if (persist) {
-      stores.States.PersistRequest(data, id)
+      if (persist == persistTypes.messaging) {
+        stores.States.persistMessageSending(id, data);
+      } else {
+        stores.States.PersistRequest(data, id);
+      }
     } else {
       emitter.once(this.events.cleared_ + id, () => {
-        this.requestUnprocessed[id] && this.handleRerequest(data, id)
+        this.requestUnprocessed[id] && this.handleRerequest(data, id);
       });
     }
   }
   clearRetries(id) {
     clearInterval(this.retries[id]);
-    delete this.retries[id]
+    delete this.retries[id];
   }
   clearRetriesFinal(id) {
     this.clearRetries(id);
-    stores.States.unPersistRequest(id)
-    this.shouldReconnect = true
-    emitter.off(this.events.cleared_ + id)
+    stores.States.unPersistRequestUnsentMessage(id);
+    stores.States.unPersistRequest(id);
+    this.shouldReconnect = true;
+    emitter.off(this.events.cleared_ + id);
     delete this.retries[id];
     delete this.retriesCounter[id];
     delete this.requestUnprocessed[id];
   }
-  allowableTrials = 50
+  allowableTrials = 50;
   startRetryer(data, id, reject) {
     this.retries[id] = setInterval(() => {
       //emitter.off(this.events.cleared_ + id);
@@ -467,22 +526,23 @@ class ServerEventListener {
         this.retriesCounter[id] &&
         this.retriesCounter[id] > this.allowableTrials &&
         this.requestUnprocessed[id]
-      ) { // handling when total number of retries for a request atained
-        console.warn("completing retries")
-        this.clearRetriesFinal(id)
+      ) {
+        // handling when total number of retries for a request atained
+        console.warn("completing retries");
+        this.clearRetriesFinal(id);
         reject();
-      } else { // new trial waiter
-        this.retriesCounter[id] = this.retriesCounter[id] > 0
-          ? this.retriesCounter[id] + 1
-          : 1;
+      } else {
+        // new trial waiter
+        this.retriesCounter[id] =
+          this.retriesCounter[id] > 0 ? this.retriesCounter[id] + 1 : 1;
         this.reconnectAfterTimeout();
       }
     }, this.retryInterval);
   }
   handleRerequest(data, id) {
-    console.warn("clear message received for ", id)
-    this.writeToSocketFresh(data)
-    this.clearRetries(id)
+    console.warn("clear message received for ", id);
+    this.writeToSocketFresh(data);
+    this.clearRetries(id);
   }
   retryInterval = 7000;
   retriesCounter = {};

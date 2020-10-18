@@ -106,7 +106,7 @@ export default class TasksCreation extends BleashupModal {
             remind.recursive_frequency.frequency !== "yearly",
           members: this.event.participant,
           ownership:
-            remind.creator === stores.LoginStore.user.phone &&
+            (this.master || stores.LoginStore.user.phone == remind.creator) &&
             this.update,
           currentMembers: remind && remind.members ? remind.members : [],
           date:
@@ -137,7 +137,7 @@ export default class TasksCreation extends BleashupModal {
             ),
           members: this.event.participant,
           ownership:
-            remind.creator === stores.LoginStore.user.phone &&
+            (this.master || stores.LoginStore.user.phone == remind.creator) &&
             (this.update || remind.id === request.Remind().id),
           currentMembers:
             this.currentMembers && this.currentMembers.length > 0
@@ -682,6 +682,7 @@ export default class TasksCreation extends BleashupModal {
   updateRemind = this.getParam("updateRemind") || this.props.updateRemind
   CreateRemind = this.getParam("CreateRemind") || this.props.CreateRemind
   update = this.getParam("update") || this.props.update
+  master = this.getParam("master") || this.props.master
   starRemind = this.getParam("starRemind") || this.props.starRemind
   remind = this.getParam("remind") || this.props.remind
   event_id = this.getParam("event_id") || this.props.event_id
@@ -1188,7 +1189,7 @@ export default class TasksCreation extends BleashupModal {
               {this.isEvent() && this.state.ownership && (
                 <View
                   pointerEvents={this.state.ownership ? null : "none"}
-                  style={{ width: "90%", alignSelf: "center", marginTop: 20 }}
+                  style={{ width: "90%", alignSelf: "center", marginTop: 20,marginBottom: '2%', }}
                 >
                   <PickersUpload
                     currentURL={this.state.currentRemind.remind_url || {}}

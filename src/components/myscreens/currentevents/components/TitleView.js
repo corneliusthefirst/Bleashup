@@ -13,6 +13,7 @@ import TextContent from "../../eventChat/TextContent";
 import ActivityPages from "../../eventChat/chatPages";
 import active_types from "../../eventChat/activity_types";
 import ProfileView from "../../invitations/components/ProfileView";
+import LatestMessage from './LatestMessage';
 export default class TitleView extends BePureComponent {
   constructor(props) {
     super(props);
@@ -24,13 +25,13 @@ export default class TitleView extends BePureComponent {
   }
   typing_event = `${this.props.Event.id}_typing`;
   componentMounting() {
-    emitter.on(this.typing_event, (typer) => {
+    this.props.navigate && emitter.on(this.typing_event, (typer) => {
       !this.sayTyping ? (this.sayTyping = sayTyping.bind(this)) : null;
       this.sayTyping(typer);
     });
   }
   unmountingComponent() {
-    emitter.off(this.typing_event);
+    this.props.navigate && emitter.off(this.typing_event);
   }
   componentDidMount() { }
   renderTitleForRelation() {
@@ -67,7 +68,8 @@ export default class TitleView extends BePureComponent {
         stores.Session.SessionStore.phone
       ).then((event) => {
         if (event) {
-          BeNavigator.pushToChat(event);
+          this.props.navigate ? BeNavigator.navigateToActivity(ActivityPages.chat, event) :
+            BeNavigator.pushToChat(event);
         } else {
           this.props.openDetail && this.props.openDetail();
         }
@@ -82,6 +84,13 @@ export default class TitleView extends BePureComponent {
   }
   render() {
     let isRelation = this.props.Event.type === active_types.relation;
+    this.title = !isRelation ? this.props.Event.about.title : ""
+    this.creator = this.props.Event.creator_phone
+    this.creator = stores.TemporalUsersStore.Users[this.creator]
+    this.creatorName = this.creator && this.creator.nickname
+    this.title = stores.Events.isMyActivity(this.props.Event) &&
+      this.creatorName ?
+      (this.title + ' @ ' + this.creatorName) : this.title
     return (
       <View style={styles.mainContainer}>
         <TouchableOpacity
@@ -100,11 +109,11 @@ export default class TitleView extends BePureComponent {
                   style={styles.titleTextStyles}
                   ellipsizeMode="tail"
                 >
-                  {this.props.Event.about.title}
+                  {this.title}
                 </TextContent>
               </View>
             )}
-          {this.state.typing && !isRelation && (
+          {this.state.typing ? !isRelation && (
             <Text
               style={[
                 GState.defaultTextStyle,
@@ -114,7 +123,11 @@ export default class TitleView extends BePureComponent {
                 },
               ]}
             >{`${this.state.typer} is ${Texts.typing}`}</Text>
-          )}
+          ) : this.props.navigate ? <LatestMessage
+            id={this.props.Event.id}
+            members={this.props.Event.participant}
+          >
+          </LatestMessage> : null}
         </TouchableOpacity>
       </View>
     );

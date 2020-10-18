@@ -219,7 +219,7 @@ export default class ContactView extends BeComponent {
                   paddingLeft: '7%',
                 }}
               >
-                Relations
+                {Texts.contacts}
               </Text>
             </View> : null
             }
@@ -289,7 +289,7 @@ export default class ContactView extends BeComponent {
                 this.delay = this.delay >= 15 ? 0 : this.delay + 1;
 
                 return (<View
-                  style={{ height: 60, width: 250, paddingLeft: '1.3%' }}
+                  style={{ height: 60, flex: 1, paddingLeft: '1.3%' }}
                 >
                   <ProfileViewCall
                     showInvite={this.showInvite.bind(this)}

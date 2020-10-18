@@ -43,7 +43,7 @@ export default class ChangeBox extends AnimatedComponent {
     margin: "1%",
     borderRadius: 5,
     backgroundColor: colorList.bodyBackground,
-    ...shadower(2),
+    ...shadower(1),
   };
   render() {
     return (
@@ -63,7 +63,6 @@ export default class ChangeBox extends AnimatedComponent {
                 style={{
                   flexDirection: "row",
                   maxHeight: 20,
-                  marginLeft: "-5%",
                 }}
               >
                 <View

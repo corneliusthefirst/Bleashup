@@ -32,7 +32,6 @@ export default class DonnersList extends BeComponent {
     this.updateSource = this.updateSource.bind(this)
   }
   updateSource(aid, data) {
-    console.warn("updaing source: ",aid)
     stores.Reminds.makeAsDone(aid, {
       ...data, donners: [{
         ...this.state.currentUser, phone: this.state.currentPhone, status: {
@@ -320,20 +319,21 @@ export default class DonnersList extends BeComponent {
       with_report: true,
     });
   }
-  switchBack() {
-    if (this.state.currentIndex <= 0) {
-      let index = this.donners.length - 1;
+  switchFront() {
+    if (this.state.currentIndex >= this.donners.length - 1) {
+      let index = 0;
       this.showReport(this.state.interval, this.donners[index], index);
     } else {
       let index = this.state.currentIndex + 1;
       this.showReport(this.state.interval, this.donners[index], index);
     }
   }
-  switchFront() {
-    if (this.state.currentIndex >= this.donners.length - 1) {
-      this.showReport(this.state.interval, this.donners[0], 0);
+  switchBack() {
+    if (this.state.currentIndex <= 0 ) {
+      let index = this.donners.length - 1;
+      this.showReport(this.state.interval, this.donners[index], index);
     } else {
-      let index = this.state.currentIndex + 1;
+      let index = this.state.currentIndex - 1;
       this.showReport(this.state.interval, this.donners[index], index);
     }
   }

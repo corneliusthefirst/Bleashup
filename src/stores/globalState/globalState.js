@@ -4,16 +4,21 @@ import replies from "../../components/myscreens/eventChat/reply_extern";
 import stores from "..";
 import Toaster from "../../services/Toaster";
 import Texts from "../../meta/text";
-import {  Dimensions,} from "react-native"
+import { Dimensions, } from "react-native"
+import shadower from "../../components/shadower";
+import active_types from '../../components/myscreens/eventChat/activity_types';
 const { height, width } = Dimensions.get('window');
 
 export default class globalState {
-  constructor(){
+  constructor() {
     Dimensions.addEventListener('change', (e) => {
       const { width, height } = e.window;
-      this.width = width 
+      this.width = width
       this.height = height
     })
+  }
+  setBeroute(nav) {
+    this.nav = nav
   }
   @observable scrollOuter = true;
   @observable writing = false;
@@ -44,14 +49,14 @@ export default class globalState {
   @observable passwordError = false;
   @observable newPasswordError = false;
   @observable nav = {};
-  waitToReply = 100;
+  waitToReply = 200;
   nameMaxLength = 40;
   @observable height = height
   @observable width = width
   @observable messageMediaWidth = width * .52
   animationsDeclared = false;
   @observable nameError = false;
-  defaultIconSize = { fontSize: 30, color: ColorList.bodyIcon };
+  defaultIconSize = { fontSize: 30, color: ColorList.bodyIcon, };
   defaultTextStyle = { fontSize: 13, color: ColorList.bodyText };
   @observable newEvent = false;
   @observable emailError = false;
@@ -190,9 +195,36 @@ export default class globalState {
       this.listeners[id] = [0]
     }
   }
+  alreadyListening(id) {
+    return this.listeners[id] && this.listeners[id].length > 0
+  }
   removeListener(id) {
     this.listeners && this.listeners[id] && this.listeners[id].splice(-1, 1)
 
+  }
+  descriptBoxStyle = {
+    margin: '6%',
+    alignSelf: 'center',
+    width: '90%',
+    padding: '2%',
+    borderRadius: 6,
+    ...shadower(1),
+    backgroundColor: ColorList.descriptionBody,
+    flexDirection: 'column',
+
+  }
+  imageBackgroundContainer = {
+    resizeMode: 'cover',
+    height: '100%',
+    width: '100%',
+    justifyContent: 'center',
+  }
+  backgroundImage = require('../../../assets/chat_screen.jpg')
+  featureBoxTitle = {
+    ...this.defaultTextStyle,
+    fontSize: 20,
+    color: ColorList.indicatorColor,
+    fontWeight: 'bold',
   }
   canStopListening(id) {
     if (!this.listeners[id] ||
@@ -263,13 +295,13 @@ export default class globalState {
       replyer_phone: creator,
     };
   }
-  prepareActivityPhotoForMention(photo, activity_id, creator) {
+  prepareActivityPhotoForMention(photo, activity_id, creator, type) {
     return {
       id: activity_id,
       type_extern: replies.activity_photo,
       photo: true,
       sent: true,
-      title: Texts.activity_photo + ": \n",
+      title: (type == active_types.relation ? Texts.profile_photo : Texts.activity_photo) + ": \n",
       sourcer: photo,
     };
   }
@@ -323,12 +355,12 @@ export default class globalState {
     }, delay || 500);
   }
   toogleWait = 5000;
-  setPointedID(id){
+  setPointedID(id) {
     this.currentID = id
   }
-  isPointed(id){
-    return this.currentID === id 
-   }
+  isPointed(id) {
+    return this.currentID === id
+  }
   toggleCurrentIndex(id, delay) {
     this.currentID = id;
     setTimeout(() => {

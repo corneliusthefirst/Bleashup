@@ -21,9 +21,10 @@ export default class SearchContent extends BeComponent {
         this.state = {
             users: this.props.users,
             activity: this.props.activity,
-            searchString:"",
+            searchString: "",
 
         }
+        this.renderItem = this.renderItem.bind(this)
     }
     changeSeachString(e) {
         this.setStatePure({
@@ -47,17 +48,17 @@ export default class SearchContent extends BeComponent {
                         });
                         this.sending = false;
                     })
-                    /*.catch((error) => {
-                        this.toastError()
-                        this.sending = false;
-                    });*/
+                /*.catch((error) => {
+                    this.toastError()
+                    this.sending = false;
+                });*/
             });
         }
     }
     sendToActivity(item) {
         if (!this.sending) {
             this.sending = true;
-            Requester.sendMessage(this.props.message, item.id, item.id, true,item.about.title)
+            Requester.sendMessage(this.props.message, item.id, item.id, true, item.about.title)
                 .then((response) => {
                     this.setStatePure({
                         activity: reject(this.state.activity, { id: item.id }),
@@ -72,7 +73,7 @@ export default class SearchContent extends BeComponent {
             Toaster({ text: "app busy! " });
         }
     }
-    toastError(){
+    toastError() {
         Toaster({ text: Texts.cannot_send_message });
     }
     searching = true;
@@ -85,39 +86,100 @@ export default class SearchContent extends BeComponent {
                     height: 35,
                 }}
             >
-                    <View
+                <View
+                    style={{
+                        marginTop: 5,
+                        height: 30,
+                        borderRadius: 20,
+                        borderWidth: .8,
+                        borderColor: ColorList.bodyIcon,
+                        marginBottom: "auto",
+                        marginLeft: "auto",
+                        marginRight: "auto",
+                        width: "95%",
+                    }}
+                >
+                    <TextInput
+                        //maxLength={30}
+                        value={this.state.searchString}
+                        onChange={this.changeSeachString.bind(this)}
+                        autoFocus
+                        autoCapitalize={"none"}
                         style={{
-                            marginTop: 5,
-                            height: 30,
-                            borderRadius: 20,
-                            borderWidth: .8,
-                            borderColor: ColorList.bodyIcon,
-                            marginBottom: "auto",
-                            marginLeft: "auto",
-                            marginRight: "auto",
-                            width: "95%",
+                            width: "100%",
+                            fontSize: 12,
+                            height: 35,
                         }}
-                    >
-                        <TextInput
-                            //maxLength={30}
-                            value={this.state.searchString}
-                            onChange={this.changeSeachString.bind(this)}
-                            autoFocus
-                            autoCapitalize={"none"}
-                            style={{
-                                width: "100%",
-                                fontSize: 12,
-                                height: 35,
-                            }}
-                            placeholder={Texts.search_in_your_contact}
-                        ></TextInput>
-                    </View>
+                        placeholder={Texts.search_in_your_contact}
+                    ></TextInput>
+                </View>
             </View>
         );
     }
+    renderItem(item, index) {
+        return <View
+            style={{
+                width: "99%",
+                flexDirection: "row",
+                alignSelf: "center",
+                alignItems: 'center',
+                height: ColorList.headerHeight - 5,
+                justifyContent: "space-between",
+            }}
+        >
+            <View
+                style={{
+                    flex: 1,
+                    justifyContent: "flex-start",
+                }}
+            >
+                {!this.type ? (
+                    <ProfileSimple
+                        profile={item}
+                        searching
+                        searchString={this.state.searchString}
+                    ></ProfileSimple>
+                ) : (
+                        <ActivityProfile
+                            small
+                            searching
+                            searchString={this.state.searchString}
+                            Event={item}
+                        ></ActivityProfile>
+                    )}
+            </View>
+            <TouchableOpacity
+                style={{
+                    width: 50
+                }}
+                onPress={() =>
+                    requestAnimationFrame(() =>
+                        this.type ? this.sendToActivity(item) : this.sendTo(item)
+                    )
+                }
+                style={{
+                    marginBottom: "auto",
+                    marginTop: "auto",
+                    justifyContent: "center",
+                    ...rounder(30, ColorList.indicatorColor),
+                }}
+            >
+                <MaterialIcons
+                    style={{
+                        fontSize: 15,
+                        alignSelf: "center",
+                        color: ColorList.bodyBackground,
+                    }}
+                    type={"MaterialIcons"}
+                    name={"send"}
+                />
+            </TouchableOpacity>
+        </View>
+    }
+    keyExtractor = (item, index) => item.phone
     render() {
-        let type = this.props.type
-        let items = !type
+        this.type = this.props.type
+        this.items = !this.type
             ? this.state.users
                 ? globalFunctions.returnUserSearch(
                     this.state.users,
@@ -141,68 +203,11 @@ export default class SearchContent extends BeComponent {
                     firstIndex={0}
                     initialRender={7}
                     renderPerBatch={20}
-                    numberOfItems={items.length}
+                    numberOfItems={this.items.length}
                     keyboardShouldPersistTaps={"always"}
-                    dataSource={items}
-                    keyExtractor={(item, index) => item.phone}
-                    renderItem={(item, index) => (
-                        <View
-                            style={{
-                                width: "95%",
-                                flexDirection: "row",
-                                alignSelf: "center",
-                                height: ColorList.headerHeight - 5,
-                                justifyContent: "space-between",
-                            }}
-                        >
-                            <View
-                                style={{
-                                    marginTop: "auto",
-                                    marginBottom: "auto",
-                                    width: 250,
-                                    justifyContent: "flex-start",
-                                }}
-                            >
-                                {!type ? (
-                                    <ProfileSimple
-                                        profile={item}
-                                        searching
-                                        searchString={this.state.searchString}
-                                    ></ProfileSimple>
-                                ) : (
-                                        <ActivityProfile
-                                            small
-                                            searching
-                                            searchString={this.state.searchString}
-                                            Event={item}
-                                        ></ActivityProfile>
-                                    )}
-                            </View>
-                            <TouchableOpacity
-                                onPress={() =>
-                                    requestAnimationFrame(() =>
-                                        type ? this.sendToActivity(item) : this.sendTo(item)
-                                    )
-                                }
-                                style={{
-                                    marginBottom: "auto",
-                                    marginTop: "auto",
-                                    justifyContent: "center",
-                                    ...rounder(30, ColorList.indicatorColor),
-                                }}
-                            >
-                                <MaterialIcons
-                                    style={{
-                                        fontSize: 15,
-                                        alignSelf: "center",
-                                        color: ColorList.bodyBackground,
-                                    }}
-                                    type={"MaterialIcons"}
-                                    name={"send"}
-                                />
-                            </TouchableOpacity>
-                        </View>
-                    )}
+                    dataSource={this.items}
+                    keyExtractor={this.keyExtractor}
+                    renderItem={this.renderItem}
                 ></BleashupFlatList>
             </View>
         </View>

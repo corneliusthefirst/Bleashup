@@ -36,42 +36,55 @@ import MaterialIcons from "react-native-vector-icons/MaterialIcons";
 import Texts from "../../../../meta/text";
 import BeNavigator from "../../../../services/navigationServices";
 import ActivityPages from '../../eventChat/chatPages';
+import ColorList from "../../../colorList";
+import rounder from "../../../../services/rounder";
+import AntDesign from 'react-native-vector-icons/AntDesign';
+import BeComponent from '../../../BeComponent';
+import AnimatedComponent from '../../../AnimatedComponent';
 
 let { height, width } = Dimensions.get("window");
 
-export default class CreateEventView extends Component {
-  constructor(props) {
-    super(props);
-
+export default class CreateEventView extends AnimatedComponent {
+  initialize() {
     this.state = {
-      colorWhenChoosed: "#1FABAB",
+      colorWhenChoosed: ColorList.indicatorColor,
       currentEvent: request.Event(),
       participant: null,
       title: "",
+      showMore: false,
       photo: "",
       DefaultPhoto: require("../../../../../Images/activity_post.png"),
       searchImageState: false,
     };
+    this.togglMore = this.togglMore.bind(this)
+  }
+  togglMore() {
+    this.setStatePure({
+      showMore: !this.state.showMore
+    })
   }
   componentDidMount() {
     stores.Events.readFromStore().then((Events) => {
-      let event = find(Events, { id: "newEventId" });
-      this.setState({
-        participant: head(event.participant),
+      let event = find(Events, { id: request.Event().id });
+      this.setStatePure({
+        showMore: false,
+        participant: this.isRemind ? request.Event().participant : head(event.participant),
         currentEvent: event,
-        title: event.about.title,
-        photo: event.background,
+        title: this.isRemind ? Texts.my_activity : event.about.title,
+        photo: this.isRemind ? null : event.background,
       });
     });
   }
-
+  getParam = (param) => this.props.navigation.getParam(param)
+  isRemind = this.getParam("remind")
   back = () => {
     this.props.navigation.navigate("Home");
   };
   navigateToActivity = (event) => {
     this.props.navigation.navigate("Event", {
       Event: event,
-      tab: ActivityPages.starts,
+      tab: this.isRemind ? ActivityPages.reminds : ActivityPages.chat,
+      currentRemindMembers: request.Event().participant
     });
   };
 
@@ -79,26 +92,27 @@ export default class CreateEventView extends Component {
     if (!this.state.currentEvent.about.title) {
       Toaster({ text: Texts.event_must_have_a_name, duration: 4000 });
     } else {
-      this.setState({
+      this.setStatePure({
         creating: true,
       });
       let event = this.state.currentEvent;
       event.created_at = moment().format();
+      event.participant = this.state.participant
       event.updated_at = moment().format();
       CreateRequest.createEvent(event)
         .then((res) => {
+          this.setStatePure({
+            currentEvent: request.Event(),
+            title: "",
+            photo: "",
+            creating: false,
+          });
           stores.Events.delete(request.Event().id).then(() => {
-            this.setState({
-              currentEvent: request.Event(),
-              title: "",
-              photo: "",
-              creating: false,
-            });
             this.navigateToActivity(res);
           });
         })
         .catch(() => {
-          this.setState({
+          this.setStatePure({
             creating: false,
           });
         });
@@ -107,14 +121,14 @@ export default class CreateEventView extends Component {
 
   onChangedTitle = (value) => {
     this.state.currentEvent.about.title = value;
-    this.setState({ title: value, currentEvent: this.state.currentEvent });
-    stores.Events.updateTitle(request.Event().id, value, false).then(() => {});
+    this.setStatePure({ title: value, currentEvent: this.state.currentEvent });
+    stores.Events.updateTitle(request.Event().id, value, false).then(() => { });
   };
 
   //for photo
   TakePhotoFromCamera = () => {
     Pickers.SnapPhoto(true).then((res) => {
-      this.setState({
+      this.setStatePure({
         uploading: true,
       });
       let exchanger = new FileExchange(
@@ -124,24 +138,24 @@ export default class CreateEventView extends Component {
         0,
         null,
         (newDir, path, total) => {
-          this.setState({ photo: path });
+          this.setStatePure({ photo: path });
           this.state.currentEvent.background = path;
-          this.setState({ currentEvent: this.state.currentEvent });
+          this.setStatePure({ currentEvent: this.state.currentEvent });
           stores.Events.updateBackground("newEventId", path, false).then(() => {
-            this.setState({
+            this.setStatePure({
               uploading: false,
             });
           });
         },
         () => {
           Toaster({ text: Texts.unable_to_upload, position: "top" });
-          this.setState({
+          this.setStatePure({
             uploading: false,
           });
         },
         (error) => {
           Toaster({ text: Texts.unable_to_upload, position: "top" });
-          this.setState({
+          this.setStatePure({
             uploading: false,
           });
         },
@@ -158,7 +172,7 @@ export default class CreateEventView extends Component {
     let exchanger = new FileExchange();
     exchanger.deleteFile(this.state.photo);
     stores.Events.updateBackground("newEventId", null).then(() => {
-      this.setState({
+      this.setStatePure({
         photo: null,
       });
     });
@@ -171,14 +185,14 @@ export default class CreateEventView extends Component {
         quality: "medium",
       }).then((response) => {
         let res = head(response);
-        this.setState({ photo: res.path });
+        this.setStatePure({ photo: res.path });
         this.state.currentEvent.background = res.path;
-        this.setState({ currentEvent: this.state.currentEvent });
+        this.setStatePure({ currentEvent: this.state.currentEvent });
         stores.Events.updateBackground(
           request.Event().id,
           res.path,
           false
-        ).then(() => {});
+        ).then(() => { });
         resolve(res.path);
       });
     });
@@ -240,13 +254,15 @@ export default class CreateEventView extends Component {
         <ScrollView style={{ height: "92%", flexDirection: "column" }}>
           <View style={{ marginTop: "5%", width: "80%", alignSelf: "center" }}>
             <CreateTextInput
+              maxLength={100}
+              autoFocus={this.isRemind}
               height={height / 12}
               value={this.state.title}
               onChange={this.onChangedTitle}
-              placeholder={"Activity name"}
+              placeholder={Texts.activity_name}
             ></CreateTextInput>
           </View>
-          <View
+          {this.state.showMore ? <View
             style={{
               height: colorList.containerHeight / 16,
               alignItems: "flex-end",
@@ -264,7 +280,7 @@ export default class CreateEventView extends Component {
                 color: colorList.bodyText,
               }}
             >
-              @activity photo
+              @{Texts.activity_photo}
             </Text>
             <EvilIcons
               name="camera"
@@ -282,11 +298,11 @@ export default class CreateEventView extends Component {
               type="MaterialCommunityIcons"
               style={{ ...GState.defaultIconSize, color: colorList.bodyIcon }}
               onPress={() => {
-                this.setState({ searchImageState: true });
+                this.setStatePure({ searchImageState: true });
               }}
             />
-          </View>
-          <View style={{ height: 250, justifyContent: "center" }}>
+          </View> : null}
+          {this.state.showMore ? <View style={{ height: GState.height * .24, justifyContent: "center" }}>
             <TouchableOpacity
               onPress={() =>
                 this.state.photo && testForURL(this.state.photo)
@@ -307,32 +323,36 @@ export default class CreateEventView extends Component {
                   }}
                 />
               ) : (
-                <Image
-                  resizeMode={"cover"}
-                  source={
-                    this.state.photo
-                      ? { uri: this.state.photo }
-                      : this.state.DefaultPhoto
-                  }
-                  style={{
-                    alignSelf: "center",
-                    height: "90%",
-                    width: "81%",
-                    borderRadius: 5,
-                  }}
-                ></Image>
-              )}
+                  <Image
+                    resizeMode={"cover"}
+                    source={
+                      this.state.photo
+                        ? { uri: this.state.photo }
+                        : this.state.DefaultPhoto
+                    }
+                    style={{
+                      alignSelf: "center",
+                      height: "90%",
+                      width: "81%",
+                      borderRadius: 5,
+                    }}
+                  ></Image>
+                )}
             </TouchableOpacity>
             {this.state.photo ? (
               <View
                 style={{
                   position: "absolute",
                   alignSelf: "flex-end",
-                  marginBottom: "60%",
-                  marginRight: "10%",
+                  marginBottom: "33%",
+                  paddingRight: "11%",
                 }}
               >
                 <TouchableOpacity
+                  style={{
+                    ...rounder(40, ColorList.buttonerBackground),
+                    justifyContent: 'center',
+                  }}
                   onPress={() => {
                     this.resetPhoto();
                   }}
@@ -340,7 +360,7 @@ export default class CreateEventView extends Component {
                   <EvilIcons
                     name={"close"}
                     type={"EvilIcons"}
-                    style={{ ...GState.defaultIconSize, color: "red" }}
+                    style={{ ...GState.defaultIconSize, color: ColorList.bodyBackground }}
                   />
                 </TouchableOpacity>
               </View>
@@ -356,17 +376,44 @@ export default class CreateEventView extends Component {
                 <Spinner color={colorList.headerBackground}></Spinner>
               </View>
             ) : null}
-          </View>
+          </View> : null}
+          <TouchableOpacity onPress={this.togglMore} style={{
+            width: '80%',
+            alignSelf: 'center',
+            height: 35,
+            marginVertical: '5%',
+            flexDirection: 'row',
+            alignItems: 'center',
+          }}>
+            <View style={{ width: 30 }}>
+              <AntDesign
+                style={{
+                  ...GState.defaultIconSize,
+                  color: ColorList.likeActive,
+                  fontSize: 18,
+                }} name={this.state.showMore ? "upcircle" : "downcircle"} >
 
+              </AntDesign>
+            </View>
+            <View>
+              <Text style={{ 
+                ...GState.defaultTextStyle,
+                fontStyle: 'italic',
+               }}>{this.state.showMore ? Texts.show_less : Texts.show_more}</Text>
+            </View>
+          </TouchableOpacity>
           {this.state.creating ? (
             <Spinner></Spinner>
           ) : (
-            <CreateButton
-              action={this.creatEvent}
-              title={"Create Activity"}
-              width={"80%"}
-            ></CreateButton>
-          )}
+              <View style={{
+                width: '100%',
+              }}>
+                <CreateButton
+                  action={this.creatEvent}
+                  title={Texts.add_activity}
+                  width={"80%"}
+                ></CreateButton></View>
+            )}
           <SearchImage
             h_modal={true}
             accessLibrary={() => {
@@ -374,7 +421,7 @@ export default class CreateEventView extends Component {
             }}
             isOpen={this.state.searchImageState}
             onClosed={(mother) => {
-              this.setState({ searchImageState: false });
+              this.setStatePure({ searchImageState: false });
             }}
           />
         </ScrollView>

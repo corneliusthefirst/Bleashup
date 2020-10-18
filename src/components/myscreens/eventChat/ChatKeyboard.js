@@ -41,6 +41,7 @@ import request from "../../../services/requestObjects";
 import RelationMessage from "./RelationMessage";
 import message_types from './message_types';
 import Requester from './Requester';
+import  MaterialIcons  from 'react-native-vector-icons/MaterialIcons';
 
 export default class ChatKeyboard extends AnimatedComponent {
     constructor(props) {
@@ -200,7 +201,7 @@ export default class ChatKeyboard extends AnimatedComponent {
         );
     }
     searchableMembers = [];
-    tagItem (item){
+    tagItem(item) {
         return (
             <TouchableOpacity
                 onPress={() => requestAnimationFrame(() => this.chooseItem(item))}
@@ -490,21 +491,21 @@ export default class ChatKeyboard extends AnimatedComponent {
             <View style={{
                 margin: 2,
             }}>
-            <AudioRecorder
-               room
-                justHideMe={() => {
-                    this.setStatePure({
-                        showAudioRecorder: false,
-                    });
-                    this.refs.AudioRecorder.stopRecordSimple();
-                }}
-                showAudioRecorder={this.props.showAudioRecorder}
-                sendAudioMessge={(file, duration, dontsend) =>
-                    this.sendAudioMessge(file, duration, dontsend)
-                }
-                ref={"AudioRecorder"}
-                toggleAudioRecorder={() => this.toggleAudioRecorder()}
-            ></AudioRecorder>
+                <AudioRecorder
+                    room
+                    justHideMe={() => {
+                        this.setStatePure({
+                            showAudioRecorder: false,
+                        });
+                        this.refs.AudioRecorder.stopRecordSimple();
+                    }}
+                    showAudioRecorder={this.props.showAudioRecorder}
+                    sendAudioMessge={(file, duration, dontsend) =>
+                        this.sendAudioMessge(file, duration, dontsend)
+                    }
+                    ref={"AudioRecorder"}
+                    toggleAudioRecorder={() => this.toggleAudioRecorder()}
+                ></AudioRecorder>
             </View>
         );
     }
@@ -771,154 +772,135 @@ export default class ChatKeyboard extends AnimatedComponent {
                     <View
                         style={{
                             flexDirection: "row",
-                            alignSelf: "center",
                             marginBottom: 5,
                             alignSelf: "center",
                             width: "100%",
                         }}
                     >
+                        <TouchableOpacity
+                            onPress={() => requestAnimationFrame(() => this.showSnapper() //this.openCamera()
+                            )}
+                            style={{
+                                width: 45,
+                                alignSelf: "flex-end",
+                                bottom: 2,
+                            }}
+                        >
+                            <View
+                                style={{
+                                    alignItems: "center",
+                                    ...rounder(40, ColorList.bodyBackground),
+                                }}
+                            >
+                                <MaterialIconCommunity
+                                    style={{
+                                        color: ColorList.indicatorColor,
+                                        fontSize: 30,
+                                    }}
+                                    type={"MaterialCommunityIcons"}
+                                    name={"camera"}
+                                />
+                            </View>
+                        </TouchableOpacity>
                         <View
                             style={{
-                                width: "88%",
-                                fontSize: 17,
-                                bottom: 0,
-                                flexDirection: "row",
-                                marginBottom: 3,
-                                justifyContent: "space-between",
-                                borderColor: ColorList.indicatorColor,
-                                borderWidth: 0,
-                                borderRadius: 10,
+                                flex: 1,
+                                flexDirection: "column",
+                                borderRadius: 35,
+                                ...shadower(2),
+                                minHeight: 20,
+                                maxHeight: 500,
+                                backgroundColor: ColorList.bodyBackground,
+                                borderTopLeftRadius:
+                                    this.state.replying ||
+                                        this.state.tagging ||
+                                        this.props.showAudioRecorder ||
+                                        this.state.showCaption
+                                        ? 5
+                                        : 35,
+                                borderTopRightRadius:
+                                    this.state.replying ||
+                                        this.state.tagging ||
+                                        this.props.showAudioRecorder ||
+                                        this.state.showCaption
+                                        ? 5
+                                        : 35,
                             }}
                         >
                             <TouchableOpacity
-                                onPress={() => requestAnimationFrame(() => this.showSnapper() //this.openCamera()
+                                onPress={() => requestAnimationFrame(() => this.toggleEmojiKeyboard()//this.openCamera()
                                 )}
-                                style={{
-                                    width: 45,
-                                    alignSelf: "flex-end",
-                                    bottom: 2,
-                                }}
+                                style={
+                                    {
+                                        ...this.keyBoardActionContainer,
+                                        right: null,
+                                        width: 25,
+                                        bottom: 9,
+                                        height: 25,
+                                        paddingTop: 3,
+                                        alignItems: 'center',
+                                        justifyContent: 'center',
+                                        flexDirection: 'row',
+                                        left: 7
+                                    }}
                             >
-                                <View
+                                <Entypo
                                     style={{
-                                        alignItems: "center",
-                                        ...rounder(40, ColorList.bodyBackground),
+                                        color: ColorList.likeActive,
+                                        alignSelf: "flex-end",
+                                        fontSize: 25,
                                     }}
-                                >
-                                    <MaterialIconCommunity
-                                        style={{
-                                            color: ColorList.indicatorColor,
-                                            fontSize: 30,
-                                        }}
-                                        type={"MaterialCommunityIcons"}
-                                        name={"camera"}
-                                    />
-                                </View>
+                                    type="Entypo"
+                                    name="emoji-flirt"
+                                />
                             </TouchableOpacity>
-                            <View
-                                style={{
-                                    flex: 1
-                                    // width: //this.state.textValue.length <= 0 ? 
-                                    //"88%" //: "88%"
-                                    ,
-                                    flexDirection: "column",
-                                    borderRadius: 35,
-                                    ...shadower(2),
-                                    minHeight: 20,
-                                    maxHeight: 500,
-                                    backgroundColor: ColorList.bodyBackground,
-                                    borderTopLeftRadius:
-                                        this.state.replying ||
-                                            this.state.tagging ||
-                                            this.props.showAudioRecorder ||
-                                            this.state.showCaption
-                                            ? 5
-                                            : 35,
-                                    borderTopRightRadius:
-                                        this.state.replying ||
-                                            this.state.tagging ||
-                                            this.props.showAudioRecorder ||
-                                            this.state.showCaption
-                                            ? 5
-                                            : 35,
+                            {
+                                //* Reply Message caption */
+                                this.state.replying ? this.replyMessageCaption() : null
+                            }
+                            {
+                                this.state.isSendingRelation ? this.displayRelation() : null
+                            }
+                            {this.state.showCaption && !this.state.isSendingRelation ? this.showMedia() : null}
+                            {
+                                //* Tagger component @Giles e.g *//
+                                this.state.tagging ? this.tagger() : null
+                            }
+                            {
+                                // ******************** Audio Recorder Input ************************//
+
+                                this.audioRecorder()
+                            }
+                            <GrowingInput
+                                dontShowKeyboard={this.props.dontShowKeyboard}
+                                onFocus={this.resetImoji.bind(this)}
+                                _onChange={this._onChange.bind(this)}
+                                animateLayout={() =>
+                                    this.animateLayout()
+                                }
+                                textValue={this.state.textValue}
+                                ref={(r) => {
+                                    this._textInput = r;
                                 }}
+                            ></GrowingInput>
+                            {this.state.textValue.length <= 0 ? <TouchableOpacity
+                                style={{ ...this.keyBoardActionContainer, bottom: 15 }}
+                                onPress={() =>
+                                    requestAnimationFrame(() => {
+                                        this.props.openOptions()
+                                    })
+                                }
                             >
-                                <TouchableOpacity
-                                    onPress={() => requestAnimationFrame(() => this.toggleEmojiKeyboard()//this.openCamera()
-                                    )}
-                                    style={
-                                        {
-                                            ...this.keyBoardActionContainer,
-                                            right: null,
-                                            width: 25,
-                                            bottom: 9,
-                                            height: 25,
-                                            paddingTop: 3,
-                                            alignItems: 'center',
-                                            justifyContent: 'center',
-                                            flexDirection: 'row',
-                                            left: 7
-                                        }}
-                                >
-                                    <Entypo
-                                        style={{
-                                            color: ColorList.likeActive,
-                                            alignSelf: "flex-end",
-                                            fontSize: 25,
-                                        }}
-                                        type="Entypo"
-                                        name="emoji-flirt"
-                                    />
-                                </TouchableOpacity>
-                                {
-                                    //* Reply Message caption */
-                                    this.state.replying ? this.replyMessageCaption() : null
-                                }
-                                {
-                                    this.state.isSendingRelation ? this.displayRelation() : null
-                                }
-                                {this.state.showCaption && !this.state.isSendingRelation ? this.showMedia() : null}
-                                {
-                                    //* Tagger component @Giles e.g *//
-                                    this.state.tagging ? this.tagger() : null
-                                }
-                                {
-                                    // ******************** Audio Recorder Input ************************//
-
-                                    this.audioRecorder()
-                                }
-                                <GrowingInput
-                                    dontShowKeyboard={this.props.dontShowKeyboard}
-                                    onFocus={this.resetImoji.bind(this)}
-                                    _onChange={this._onChange.bind(this)}
-                                    animateLayout={() =>
-                                        this.animateLayout()
-                                    }
-                                    textValue={this.state.textValue}
-                                    ref={(r) => {
-                                        this._textInput = r;
+                                <Ionicons
+                                    style={{
+                                        color: ColorList.indicatorColor,
+                                        fontSize: 30,
                                     }}
-                                ></GrowingInput>
-                                {this.state.textValue.length <= 0 ? <TouchableOpacity
-                                    style={{ ...this.keyBoardActionContainer, bottom: 15 }}
-                                    onPress={() =>
-                                        requestAnimationFrame(() => {
-                                            this.props.openOptions()
-                                        })
-                                    }
-                                >
-                                    <Ionicons
-                                        style={{
-                                            color: ColorList.indicatorColor,
-                                            fontSize: 30,
-                                        }}
-                                        type={"Ionicons"}
-                                        name={this.props.showOptions ? "ios-close" : "ios-add"}
-                                    />
-                                </TouchableOpacity> : null}
-                            </View>
+                                    type={"Ionicons"}
+                                    name={this.props.showOptions ? "ios-close" : "ios-add"}
+                                />
+                            </TouchableOpacity> : null}
                         </View>
-
                         <TouchableOpacity
                             style={{
                                 width: 45,
@@ -938,21 +920,20 @@ export default class ChatKeyboard extends AnimatedComponent {
                             <View
                                 style={{
                                     alignSelf: "flex-end",
-                                    ...rounder(40, ColorList.bodyBackground),
+                                    ...rounder(40, ColorList.descriptionBody),
                                     alignItems: "center",
                                 }}
                             >
                                 {!this.state.textValue &&
                                     !this.props.showAudioRecorder &&
                                     !this.state.showCaption ? (
-                                        <FontAwesome5
+                                        <MaterialIcons
                                             style={{
                                                 color: ColorList.indicatorColor,
                                                 fontSize: 30,
                                                 alignSelf: "center",
                                             }}
-                                            type={"FontAwesome5"}
-                                            name={"microphone-alt"}
+                                            name={"keyboard-voice"}
                                         />
                                     ) : (
                                         <Ionicons

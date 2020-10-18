@@ -142,10 +142,10 @@ export default class RemindReportContent extends BleashupModal {
                 <View style={{
                     marginTop: "1%",
                 }}>{this.renderSwitchers()}</View>
-                {canShowReport && <View style={this.flexContainerStyle}><View>
+                <View style={this.flexContainerStyle}><View>
                     <ProfileView hidePhoto phone={this.props.currentPhone}></ProfileView></View>
                     {this.editButton()}
-                </View>}
+                </View>
                 {canShowReport ? <ScrollView style={{
                     maxHeight: GState.height * .41,
                 }} nestedScrollEnabled={true} showsVerticalScrollIndicator={false}>
@@ -183,9 +183,11 @@ export default class RemindReportContent extends BleashupModal {
                     <View>
                         <TextContent style={{ ...GState.defaultTextStyle, fontStyle: 'italic', color: ColorList.darkGrayText }}>{moment(this.props.report.date).calendar()}</TextContent>
                     </View>
-                    {!canShowReport ? this.editButton() : null}
                 </View>
-                <View style={{ ...this.flexContainerStyle, marginVertical: '1%', }}>
+                <View style={{
+                    ...this.flexContainerStyle, marginVertical: '1%',
+                    ...!canShowReport ? { justifyContent: 'flex-end', } : {}
+                }}>
                     {canShowReport ? <View style={{ flex: 1, }}>
                         {this.props.report.latest_edit ? <TextContent style={{
                             ...GState.defaultTextStyle,

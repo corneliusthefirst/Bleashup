@@ -91,7 +91,7 @@ export default class PrivateReplyModal extends BleashupModal {
                 </View>
             </View>
             <View style={{
-                maxHeight: isAll ? 200 : 60
+                maxHeight: isAll ? 250 : 60
             }}>
                 <BleashupFlatList
                     fit
@@ -145,7 +145,9 @@ export default class PrivateReplyModal extends BleashupModal {
                 >
                 </BleashupFlatList>
             </View>
-            <View style={{
+            <TouchableOpacity 
+            onPress={() => this.toggleList(isAll)}
+            style={{
                 margin: '1%',
                 borderRadius: 10,
                 borderTopLeftRadius: 0,
@@ -170,7 +172,7 @@ export default class PrivateReplyModal extends BleashupModal {
 
                     </AntDesign>
                 </TouchableOpacity>
-            </View>
+            </TouchableOpacity>
         </View>
     }
 }

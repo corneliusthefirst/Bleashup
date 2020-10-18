@@ -18,7 +18,7 @@ class CreateRequester {
                             resolve(eve)
                         })
                     }else{
-                        let newEvent = { ...event, id: response.event_id }
+                        const newEvent = { ...event, id: response.event_id }
                         stores.Events.addEvent(newEvent).then(() => {
                             let Change = {
                                 id: IDMaker.make(),
@@ -31,10 +31,8 @@ class CreateRequester {
                                 date: event.created_at,
                                 time: null
                             }
-                            resolve(newEvent)
-                            //firebase.database().ref(`activity/${newEvent.id}/participants`).set(newEvent.participant)
                             stores.ChangeLogs.addChanges(Change).then(res => {
-
+                                resolve(newEvent)
                             })
                         })
                     }

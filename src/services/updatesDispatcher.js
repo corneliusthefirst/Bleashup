@@ -16,7 +16,7 @@ import IDMaker from './IdMaker';
 import UserInfoDispatcher from './UserInfoDispatcher';
 class UpdatesDispatcher {
   constructor() { }
-  dispatchUpdates(updates,done) {
+  dispatchUpdates(updates, done) {
     if (updates.length <= 0) {
       console.warn("finishing ...")
       done()
@@ -24,12 +24,12 @@ class UpdatesDispatcher {
       let update = updates.pop()
       this.dispatchUpdate(update).then(() => {
         console.warn("dipatching ", update)
-        this.dispatchUpdates(updates,done)
+        this.dispatchUpdates(updates, done)
       });
     }
 
   }
-  dispatchUpdate(update,done) {
+  dispatchUpdate(update, done) {
     return this.UpdatePossibilities[update.update](update);
   }
   infomCurrentRoom(Change, commitee, event_id) {
@@ -49,10 +49,10 @@ class UpdatesDispatcher {
     }
   }
   UpdatePossibilities = {
-    user_info_changed:update => UserInfoDispatcher.updateContactUserInfo(update.updater,update.new_value),
-    added_as_contact:(update) => UserInfoDispatcher.saveNewContact({phone:update.addedphone,host:update.new_value}),
+    user_info_changed: update => UserInfoDispatcher.updateContactUserInfo(update.updater, update.new_value),
+    added_as_contact: (update) => UserInfoDispatcher.saveNewContact({ phone: update.addedphone, host: update.new_value }),
     removed_as_contact: update => UserInfoDispatcher.removeContact(update.addedphone),
-    typing_message: update => MainUpdater.sayTyping(update.new_value.committee_id,update.new_value.data),
+    typing_message: update => MainUpdater.sayTyping(update.new_value.committee_id, update.new_value.data),
     message_reaction: update => MainUpdater.reactToMessage(update.new_value.data.message_id,
       update.new_value.committee_id,
       update.event_id,
@@ -401,35 +401,35 @@ class UpdatesDispatcher {
     },
     unpublished: update => {
       return new Promise((resolve, reject) => {
-          stores.Events.isParticipant(update.event_id, stores.LoginStore.user.phone).then(
-            stat => {
-              if ((state = false)) {
-                stores.Events.removeEvent(update.event_id).then(() => {
-                  resolve();
+        stores.Events.isParticipant(update.event_id, stores.LoginStore.user.phone).then(
+          stat => {
+            if ((state = false)) {
+              stores.Events.removeEvent(update.event_id).then(() => {
+                resolve();
+              });
+            } else {
+              let Change = {
+                title: "Update On Main Activity",
+                event_id: update.event_id,
+                changed: "UnPublished The Activity",
+                updater: update.updater,
+                id: IDMaker.make(),
+                new_value: { data: null, new_value: null },
+                date: update.date,
+                time: update.time
+              };
+              stores.Events.unpublishEvent(update.event_id, true).then(
+                () => {
+                  this.infomCurrentRoom(Change, Change, update.event_id)
+                  stores.ChangeLogs.addChanges(Change).then(() => {
+                    GState.eventUpdated = true;
+                    resolve();
+                  }
+                  );
                 });
-              } else {
-                let Change = {
-                  title: "Update On Main Activity",
-                  event_id: update.event_id,
-                  changed: "UnPublished The Activity",
-                  updater: update.updater,
-                  id: IDMaker.make(),
-                  new_value: { data:null, new_value: null },
-                  date: update.date,
-                  time: update.time
-                };
-                stores.Events.unpublishEvent(update.event_id, true).then(
-                  () => {
-                    this.infomCurrentRoom(Change, Change, update.event_id)
-                    stores.ChangeLogs.addChanges(Change).then(() => {
-                      GState.eventUpdated = true;
-                      resolve();
-                    }
-                    );
-                  });
-              }
             }
-          );
+          }
+        );
       });
     },
     url: update => {
@@ -670,13 +670,7 @@ class UpdatesDispatcher {
             GState.eventUpdated = true;
             resolve("ok")
           })
-          /* stores.Events.changeUpdatedStatus(
-             update.event_id,
-             "highlight_updated",
-             true
-           ).then(() => {*/
         });
-        //});
       });
     },
     highlight_update_url: update => {
@@ -821,7 +815,7 @@ class UpdatesDispatcher {
             if (Vote.data && Vote.data !== 'empty') {
               let vote = Array.isArray(Vote.data) ? Vote.data[0] : Vote.data
               console.warn(vote)
-              stores.Votes.addVote(update.event_id,vote).then(() => {
+              stores.Votes.addVote(update.event_id, vote).then(() => {
                 stores.Events.addVote(vote.event_id, vote.id).then(() => {
                   stores.CommiteeStore.imIInThisCommttee(update.event_id, stores.LoginStore.user.phone,
                     vote.committee_id).then((state) => {
@@ -853,7 +847,7 @@ class UpdatesDispatcher {
               });
             } else {
               let vote = { ...request.Vote(), title: 'Deleted Vote', event_id: update.event_id, id: update.new_value }
-              stores.Votes.addVote(vote.event_id,vote).then(() => {
+              stores.Votes.addVote(vote.event_id, vote).then(() => {
                 stores.Events.addVote(vote.event_id, Vote.id).then(() => {
                 })
               })
@@ -864,7 +858,7 @@ class UpdatesDispatcher {
     },
     vote_deleted: update => {
       return new Promise((resolve, reject) => {
-        stores.Votes.removeVote(update.event_id,update.new_value).then((vote) => {
+        stores.Votes.removeVote(update.event_id, update.new_value).then((vote) => {
           stores.Events.removeVote(update.event_id, update.new_value).then(
             () => {
               stores.CommiteeStore.imIInThisCommttee(update.event_id, stores.LoginStore.user.phone,
@@ -895,7 +889,7 @@ class UpdatesDispatcher {
       });
     },
     restored_vote: update => new Promise((resolve, reject) => {
-      stores.Votes.addVote(update.event_id,update.new_value).then(() => {
+      stores.Votes.addVote(update.event_id, update.new_value).then(() => {
         stores.Events.addVote(update.event_id, update.new_value.id).then(() => {
           stores.CommiteeStore.imIInThisCommttee(update.event_id, stores.LoginStore.user.phone, update.new_value.committee_id).then((state) => {
             if (update.published === 'public' || state) {
@@ -933,22 +927,16 @@ class UpdatesDispatcher {
           time: update.time
         };
         stores.ChangeLogs.addChanges(Change).then(() => {
-          stores.Votes.PublishVote(update.event_id,update.new_value).then(() => {
-            stores.Events.changeUpdatedStatus(
-              update.event_id,
-              "vote_updated",
-              true
-            ).then(() => {
-              GState.eventUpdated = true;
-              resolve();
-            });
+          stores.Votes.PublishVote(update.event_id, update.new_value).then(() => {
+            GState.eventUpdated = true;
+            resolve();
           });
         });
       });
     },
     vote: update => {
       return new Promise((resolve, reject) => {
-        stores.Votes.vote(update.event_id,update.new_value).then((vote) => {
+        stores.Votes.vote(update.event_id, update.new_value).then((vote) => {
           stores.CommiteeStore.imIInThisCommttee(update.event_id, stores.LoginStore.user.phone,
             vote.committee_id).then((state) => {
               console.warn(state, "--")
@@ -973,7 +961,7 @@ class UpdatesDispatcher {
     },
     vote_period_updated: update => {
       return new Promise((resolve, reject) => {
-        stores.Votes.UpdateVotePeriod(update.event_id,update.new_value).then((vote) => {
+        stores.Votes.UpdateVotePeriod(update.event_id, update.new_value).then((vote) => {
           stores.CommiteeStore.imIInThisCommttee(update.event_id, stores.LoginStore.user.phone,
             vote.committee_id).then((state) => {
               if (state || votes.published === 'public') {
@@ -1022,14 +1010,8 @@ class UpdatesDispatcher {
             },
             true
           ).then(() => {
-            stores.Events.changeUpdatedStatus(
-              update.event_id,
-              "vote_updated",
-              true
-            ).then(() => {
-              GState.eventUpdated = true;
-              resolve();
-            });
+            GState.eventUpdated = true;
+            resolve();
           });
         });
       });
@@ -1049,14 +1031,8 @@ class UpdatesDispatcher {
             { id: update.new_value.vote_id, title: update.new_value.title },
             true
           ).then(() => {
-            stores.Events.changeUpdatedStatus(
-              update.event_id,
-              "vote_updated",
-              true
-            ).then(() => {
-              GState.eventUpdated = true;
-              resolve();
-            });
+            GState.eventUpdated = true;
+            resolve();
           });
         });
       });
@@ -1076,14 +1052,8 @@ class UpdatesDispatcher {
             { id: update.new_value.vote_id, option: update.new_value.option },
             true
           ).then(() => {
-            stores.Events.changeUpdatedStatus(
-              update.event_id,
-              "vote_updated",
-              true
-            ).then(() => {
-              GState.eventUpdated = true;
-              resolve();
-            });
+            GState.eventUpdated = true;
+            resolve();
           });
         });
       });
@@ -1104,14 +1074,8 @@ class UpdatesDispatcher {
             update.new_value.vote_option_name_updated,
             true
           ).then(() => {
-            stores.Events.changeUpdatedStatus(
-              update.event_id,
-              "vote_updated",
-              true
-            ).then(() => {
-              GState.eventUpdated = true;
-              resolve();
-            });
+            GState.eventUpdated = true;
+            resolve();
           });
         });
       });
@@ -1133,14 +1097,8 @@ class UpdatesDispatcher {
             update.new_value.new_name,
             true
           ).then(() => {
-            stores.Events.changeUpdatedStatus(
-              update.event_id,
-              "vote_updated",
-              true
-            ).then(() => {
-              GState.eventUpdated = true;
-              resolve();
-            });
+            GState.eventUpdated = true;
+            resolve();
           });
         });
       });
@@ -1205,8 +1163,8 @@ class UpdatesDispatcher {
         tcpRequestData.getRemind(RemindID, update.new_value + "reminder").then(JSONData => {
           serverEventListener.sendRequest(JSONData, update.new_value + "reminder").then(Remind => {
             if (Remind.data && Remind.data !== 'empty') {
-              stores.Reminds.addReminds(update.event_id,Remind.data).then(() => {
-                stores.Events.addRemind(update.event_id, Remind.id).then(() => {
+              stores.Reminds.addReminds(update.event_id, Remind.data).then((rem) => {
+                stores.Events.addRemind(update.event_id, Remind.data[0].id).then(() => {
                   let Change = {
                     id: IDMaker.make(),
                     title: "Updates On Main Activity",
@@ -1218,8 +1176,9 @@ class UpdatesDispatcher {
                     date: update.date,
                     time: null
                   }
+                  stores.States.addNewReminds(update.event_id, Remind.data[0].id)
                   RemindRequest.saveToCanlendar(update.event_id,
-                    Remind.data[0],Remind.data[0].extra && Remind.data[0].extra.alarms,
+                    Remind.data[0], Remind.data[0].extra && Remind.data[0].extra.alarms,
                     Remind.data[0].title)
                   this.infomCurrentRoom(Change, Remind.data[0], update.event_id)
                   stores.ChangeLogs.addChanges(Change).then(() => {
@@ -1275,12 +1234,12 @@ class UpdatesDispatcher {
           }
           this.infomCurrentRoom(Change, oldRemind, update.event_id)
           stores.ChangeLogs.addChanges(Change).then(() => {
-             RemindRequest.saveToCanlendar(oldRemind.event_id,{
+            RemindRequest.saveToCanlendar(oldRemind.event_id, {
               ...oldRemind, period:
                 update.new_value.period
-            },null).then(() => {
+            }, null).then(() => {
 
-              })
+            })
             resolve('ok')
           })
         });
@@ -1320,33 +1279,33 @@ class UpdatesDispatcher {
     },
     remind_title_updated: update => {
       return new Promise((resolve, reject) => {
-        stores.Reminds.updateTitle(update.event_id,update.new_value, true).
-        then((oldRemind) => {
-          let Change = {
-            id: IDMaker.make(),
-            title: `Updates On ${oldRemind.title} Remind`,
-            updated: `remind_title_updated`,
-            updater: update.updater,
-            event_id: update.event_id,
-            changed: "Changed The Title To ",
-            new_value: {
-              data: update.new_value.remind_id,
-              new_value: update.new_value.title
-            },
-            date: update.date,
-            time: null
-          }
-          this.infomCurrentRoom(Change, oldRemind, update.event_id)
-          stores.ChangeLogs.addChanges(Change).then(() => {
-            GState.eventUpdated = true;
-            resolve('ok')
-          })
-        });
+        stores.Reminds.updateTitle(update.event_id, update.new_value, true).
+          then((oldRemind) => {
+            let Change = {
+              id: IDMaker.make(),
+              title: `Updates On ${oldRemind.title} Remind`,
+              updated: `remind_title_updated`,
+              updater: update.updater,
+              event_id: update.event_id,
+              changed: "Changed The Title To ",
+              new_value: {
+                data: update.new_value.remind_id,
+                new_value: update.new_value.title
+              },
+              date: update.date,
+              time: null
+            }
+            this.infomCurrentRoom(Change, oldRemind, update.event_id)
+            stores.ChangeLogs.addChanges(Change).then(() => {
+              GState.eventUpdated = true;
+              resolve('ok')
+            })
+          });
       });
     },
     remind_deleted: update => {
       return new Promise((resolve, reject) => {
-        stores.Reminds.removeRemind(update.event_id,update.new_value, true).then((oldRemind) => {
+        stores.Reminds.removeRemind(update.event_id, update.new_value, true).then((oldRemind) => {
           let Change = {
             id: IDMaker.make(),
             title: `Updates On ${oldRemind.title} Remind`,
@@ -1360,10 +1319,10 @@ class UpdatesDispatcher {
           }
           this.infomCurrentRoom(Change, oldRemind, update.event_id)
           stores.ChangeLogs.addChanges(Change).then(() => {
-              RemindRequest.saveToCanlendar(oldRemind.event_id,{ ...oldRemind, period: null }, null).
+            RemindRequest.saveToCanlendar(oldRemind.event_id, { ...oldRemind, period: null }, null).
               then(() => {
-                  console.warn("calendar_id successfully removed")
-                  resolve('ok')
+                console.warn("calendar_id successfully removed")
+                resolve('ok')
               })
             resolve('ok')
           })
@@ -1372,7 +1331,7 @@ class UpdatesDispatcher {
     },
     restored_remind: update => {
       return new Promise((resolve, reject) => {
-        stores.Reminds.addReminds(update.event_id,update.new_value.remind).then(() => {
+        stores.Reminds.addReminds(update.event_id, update.new_value.remind).then(() => {
           stores.Events.addRemind(update.new_value.remind.id,
             update.new_value.remind.event_id, true).then(() => {
               let Change = {
@@ -1389,9 +1348,9 @@ class UpdatesDispatcher {
               this.infomCurrentRoom(Change, update.new_value.remind,
                 update.event_id)
               stores.ChangeLogs.addChanges(Change).then(() => {
-                  RemindRequest.saveToCanlendar(update.new_value.remind.event_id, update.new_value.remind, null).
+                RemindRequest.saveToCanlendar(update.new_value.remind.event_id, update.new_value.remind, null).
                   then(calendar_id => {
-                      resolve()
+                    resolve()
                   })
               })
             })
@@ -1400,7 +1359,7 @@ class UpdatesDispatcher {
     },
     remind_public_state: update => {
       return new Promise((resolve, reject) => {
-        stores.Reminds.updateStatus(update.event_id,update.new_value, true).then((oldRemind) => {
+        stores.Reminds.updateStatus(update.event_id, update.new_value, true).then((oldRemind) => {
           let Change = {
             id: IDMaker.make(),
             title: `Updates On ${oldRemind.title} Remind`,
@@ -1425,7 +1384,7 @@ class UpdatesDispatcher {
     },
     remind_recurrence: update => {
       return new Promise((resolve, reject) => {
-        stores.Reminds.updateRecursiveFrequency(update.event_id,update.new_value, true).then((oldRemind) => {
+        stores.Reminds.updateRecursiveFrequency(update.event_id, update.new_value, true).then((oldRemind) => {
           let Change = {
             id: IDMaker.make(),
             title: `Updates On ${oldRemind.title} Remind`,
@@ -1442,7 +1401,7 @@ class UpdatesDispatcher {
           }
           this.infomCurrentRoom(Change, oldRemind, update.event_id)
           stores.ChangeLogs.addChanges(Change).then(() => {
-            RemindRequest.saveToCanlendar(oldRemind.event_id,{
+            RemindRequest.saveToCanlendar(oldRemind.event_id, {
               ...oldRemind,
               recursive_frequency: update.new_value.recurrence
             },
@@ -1456,7 +1415,7 @@ class UpdatesDispatcher {
     },
     members_added_to_remind: update => {
       return new Promise((resolve, reject) => {
-        stores.Reminds.addMembers(update.event_id,update.new_value, true).then(oldRemind => {
+        stores.Reminds.addMembers(update.event_id, update.new_value, true).then(oldRemind => {
           let Change = {
             id: IDMaker.make(),
             title: `Updates On ${oldRemind.title} Remind`,
@@ -1473,9 +1432,9 @@ class UpdatesDispatcher {
           }
           this.infomCurrentRoom(Change, oldRemind, update.event_id)
           stores.ChangeLogs.addChanges(Change).then(() => {
-              RemindRequest.saveToCanlendar(oldRemind.event_id, 
-                oldRemind, oldRemind.extra && oldRemind.extra.alams).then(calendar_id => {
-                  resolve('ok')
+            RemindRequest.saveToCanlendar(oldRemind.event_id,
+              oldRemind, oldRemind.extra && oldRemind.extra.alams).then(calendar_id => {
+                resolve('ok')
               })
           });
         });
@@ -1483,7 +1442,7 @@ class UpdatesDispatcher {
     },
     members_removed_from_remind: update => {
       return new Promise((resolve, reject) => {
-        stores.Reminds.removeMember(update.event_id,update.new_value, true).then(oldRemind => {
+        stores.Reminds.removeMember(update.event_id, update.new_value, true).then(oldRemind => {
           let Change = {
             id: IDMaker.make(),
             title: `Updates On ${oldRemind.title} Remind`,
@@ -1500,16 +1459,16 @@ class UpdatesDispatcher {
           }
           this.infomCurrentRoom(Change, oldRemind, update.event_id)
           stores.ChangeLogs.addChanges(Change).then(() => {
-              RemindRequest.saveToCanlendar(oldRemind.event_id,{ ...oldRemind, period: null }, null).then(() => {
-                  resolve('ok')
-              })
+            RemindRequest.saveToCanlendar(oldRemind.event_id, { ...oldRemind, period: null }, null).then(() => {
+              resolve('ok')
+            })
           })
         })
       })
     },
     mark_as_done: update => {
       return new Promise((resolve, reject) => {
-        stores.Reminds.makeAsDone(update.event_id,update.new_value, true).then(oldRemind => {
+        stores.Reminds.makeAsDone(update.event_id, update.new_value, true).then(oldRemind => {
           let Change = {
             id: IDMaker.make(),
             title: `Updates On ${oldRemind.title} Remind`,
@@ -1534,7 +1493,7 @@ class UpdatesDispatcher {
     },
     confirm: update => {
       return new Promise((resolve, reject) => {
-        stores.Reminds.confirm(update.event_id,update.new_value, true).then(oldRemind => {
+        stores.Reminds.confirm(update.event_id, update.new_value, true).then(oldRemind => {
           let Change = {
             id: IDMaker.make(),
             title: `Updates On ${oldRemind.title} Remind`,
@@ -1559,7 +1518,7 @@ class UpdatesDispatcher {
     },
     must_report: update => {
       return new Promise((resolve, reject) => {
-        stores.Reminds.updateRequestReportOnComplete(update.event_id,update.new_value, true).then(oldRemind => {
+        stores.Reminds.updateRequestReportOnComplete(update.event_id, update.new_value, true).then(oldRemind => {
           let Change = {
             id: IDMaker.make(),
             title: `Updates On ${oldRemind.title} Remind`,

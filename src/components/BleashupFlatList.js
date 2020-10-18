@@ -23,7 +23,7 @@ export default class BleashupFlatList extends BeComponent {
             currentRender: this.props.initialRender ? this.props.initialRender : 4,
             currentNewRender: this.props.initialNewRender ? this.props.initialNewRender : 4,
             endReached: false,
-            indexing:false
+            indexing: false
         }
         this.continueScroll = this.continueScroll.bind(this)
         this.renderItem = this.renderItem.bind(this)
@@ -53,7 +53,7 @@ export default class BleashupFlatList extends BeComponent {
             })
         }
     }
-    resetCurrentRender(){
+    resetCurrentRender() {
         this.setStatePure({
             currentRender: this.props.dataSource.length
         })
@@ -65,20 +65,20 @@ export default class BleashupFlatList extends BeComponent {
             scroll()
             setTimeout(() => {
                 scroll()
-           },50)
+            }, 50)
         })
     }
     scrollToEnd(duration) {
-       this.refs.bleashupFlatlist && this.refs.bleashupFlatlist.scrollToOffset({ animated: true, offset: 0,duration })
+        this.refs.bleashupFlatlist && this.refs.bleashupFlatlist.scrollToOffset({ animated: true, offset: 0, duration })
     }
-    scrollToEndReal(duration){
+    scrollToEndReal(duration) {
         this.resetCurrentRender()
         setTimeout(() => {
             this.refs.bleashupFlatlist && this.refs.bleashupFlatlist.scrollToEnd({ animated: true, duration })
             setTimeout(() => {
                 this.refs.bleashupFlatlist && this.refs.bleashupFlatlist.scrollToEnd({ animated: true, duration })
-            },100)
-        },100)
+            }, 100)
+        }, 100)
 
     }
     resetItemNumbers() {
@@ -97,7 +97,7 @@ export default class BleashupFlatList extends BeComponent {
     renderNewData() {
         return this.props.newData ? this.props.newData : [];
     }
-    continueScroll({ nativeEvent }){
+    continueScroll({ nativeEvent }) {
         if (isTooCloseToBottom(nativeEvent)) {
             this.props.loadMoreFromRemote && this.props.loadMoreFromRemote()
         }
@@ -105,7 +105,7 @@ export default class BleashupFlatList extends BeComponent {
             this.continueScrollDown()
         }
     }
-    renderItem({ item, index }){
+    renderItem({ item, index }) {
         return <View style={styles.item}>{this.props.renderItem(item, index)}</View>
     }
     extraStyles = {
@@ -117,13 +117,14 @@ export default class BleashupFlatList extends BeComponent {
             this.props.empty ? this.props.empty() : null
         }
         this.data = //this.props.dataSource 
-             this.extractData()
+            this.extractData()
         return (
-            <View style={[styles.container,this.extraStyles,{...this.props.styles}]}>
+            <View style={[styles.container, this.extraStyles, { ...this.props.styles }]}>
                 {this.props.marginTop ? <View style={styles.padder}></View> : null}
-                <FlatList
+                {this.data.length <= 0 && this.props.defaultItem ? this.props.defaultItem() : <FlatList
                     viewabilityConfig={this.viewabilityConfig}
-                    keyboardShouldPersistTaps={this.props.keyboardShouldPersistTaps||"handled"}
+                    onViewableItemsChanged={this.props.onViewableItemsChanged}
+                    keyboardShouldPersistTaps={this.props.keyboardShouldPersistTaps || "handled"}
                     onScrollEndDrag={this.continueScroll}
                     enableEmptySections={false}
                     disableVirtualization={this.props.disableVirtualization}
@@ -139,7 +140,7 @@ export default class BleashupFlatList extends BeComponent {
                     ref="bleashupFlatlist"
                     //canCancelContentTouches={true}
                     inverted={this.props.inverted ? this.props.inverted : false}
-                    style={{ paddingHorizontal: 10,paddingTop: 5, }}
+                    style={{ paddingHorizontal: 10, paddingTop: 5, }}
                     //ItemSeparatorComponent={this.props.ItemSeparatorComponent}
                     maxToRenderPerBatch={this.props.renderPerBatch ? this.props.renderPerBatch : this.props.inverted ? 5 : this.state.endReached ? 1 : 3}
                     //updateCellsBatchingPeriod={10}
@@ -151,22 +152,22 @@ export default class BleashupFlatList extends BeComponent {
                     renderItem={this.renderItem}
                     ListFooterComponent={() =>
                         !this.props.fit && <View style={{ width: "100%", height: 200 }} >
-                            </View>
+                        </View>
                     }
-                />
+                />}
             </View>)
     }
 }
 const styles = StyleSheet.create({
     container: {
-        flexDirection: 'column', 
+        flexDirection: 'column',
         height: '100%',
         backgroundColor: "#ffffff",
     },
-    padder: { 
-        height: 5 
+    padder: {
+        height: 5
     },
     item: {
-       
+
     }
 });

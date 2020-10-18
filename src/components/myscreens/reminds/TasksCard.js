@@ -30,7 +30,7 @@ import BePureComponent from "../../BePureComponent";
 import TextContent from '../eventChat/TextContent';
 import { showHighlightForScrollToIndex } from '../eventChat/highlightServices';
 import Texts from '../../../meta/text';
-import { loadStates, loadIntervals, calculateCurrentStates, returnRealActualIntervals, returnActualDatesIntervals } from "./remindsServices";
+import { loadStates, loadIntervals, calculateCurrentStates, returnRealActualIntervals, returnActualDatesIntervals, returnStoredIntervalsKey } from "./remindsServices";
 import { remindTime, remindLocation, remindTitle, remindMedia, remindDescription, remindMembers, remindTimeDetail, remindActons, remindCreator } from './taskCardParts';
 
 let { height, width } = Dimensions.get("window");
@@ -60,14 +60,12 @@ export default class EventTasksCard extends BeComponent {
     this.remindTimeDetail = remindTimeDetail.bind(this)
     this.remindActions = remindActons.bind(this)
     this.remindCreator = remindCreator.bind(this)
+    this.returnStoredIntervalsKey = returnStoredIntervalsKey.bind(this)
     this.correspondingDateInterval = this.returnStoredIntervalsKey("correspondingDateInterval");
     this.currentDateIntervals = this.returnStoredIntervalsKey("currentDateIntervals")
     //console.error(this.correspondingDateInterval)
   }
-returnStoredIntervalsKey(key){
-  this.item = this.item || this.props.item
- return stores.Reminds.remindsIntervals[this.item.event_id][this.item.id] && stores.Reminds.remindsIntervals[this.item.event_id][this.item.id][key]
-}
+
   componentDidMount() {
     this.mountTimeout = setTimeout(() => {
       const showHighlighted = showHighlightForScrollToIndex.bind(this)
@@ -79,7 +77,10 @@ returnStoredIntervalsKey(key){
       this.loadStates(isThisProgram)
     }, 30 * this.props.delay);
   }
-
+  updateURL(aid,data){
+    stores.Reminds.updateURL(aid, data)
+    console.warn("remind url updated: ",data)
+  }
   onDone() {
     this.props.markAsDone(this.props.item);
   }

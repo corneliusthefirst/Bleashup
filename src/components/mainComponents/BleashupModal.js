@@ -84,7 +84,7 @@ export default class BleashupModal extends AnimatedComponent {
                 coverScreen={this.coverScreen}
                 style={{
                     borderWidth: this.borderWidth,
-                    backgroundColor: this.modalBackground || '#FFFFFF',
+                    backgroundColor: this.modalBackground || ColorList.bodyBackground,
                     height: !this.modalMinHieight ? this.modalHeight : null,
                     minHeight: this.modalMinHieight ? this.modalMinHieight : null,
                     maxHeight: this.modalMinHieight && this.modalHeight,

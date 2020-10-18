@@ -174,17 +174,23 @@ export default class VideoMessage extends BePureComponent {
                                                 {
                                                     (fill) => (<View style={{ ...buttoner, alignSelf: 'center' }}>
                                                         {this.state.downloading ? <TouchableWithoutFeedback onPress={() => this.cancelDownLoad(this.props.message.source)}>
-                                                            <EvilIcons type="EvilIcons" style={{ color: ColorList.bodyBackground }} name="close">
+                                                            <EvilIcons type="EvilIcons" style={{
+                                                                ...GState.defaultIconSize, 
+                                                                color: ColorList.bodyBackground 
+                                                            }} name="close">
                                                             </EvilIcons>
                                                         </TouchableWithoutFeedback> : <TouchableWithoutFeedback onPress={() => this.downloadVideo(this.props.message.source)}>
-                                                                <EvilIcons type="EvilIcons" style={{ color: ColorList.bodyBackground }} name="arrow-down">
+                                                                <EvilIcons type="EvilIcons" style={{
+                                                                    ...GState.defaultIconSize, 
+                                                                    color: ColorList.bodyBackground 
+                                                                }} name="arrow-down">
                                                                 </EvilIcons>
                                                             </TouchableWithoutFeedback>}
                                                     </View>)
                                                 }
                                             </AnimatedCircularProgress>
                                         </View>
-                                        <View style={{ marginTop: "5%", ...buttoner, height: 25, width: 75 }}><Text style={{ marginBottom: 7, }} note>{"("}{this.toMB(this.state.received).toFixed(1)}{"/"}
+                                        <View style={{ marginTop: "5%", ...buttoner, height: 25,  minWidth: 75, }}><Text style={{ marginBottom: 7, }} note>{"("}{this.toMB(this.state.received).toFixed(1)}{"/"}
                                             {this.toMB(this.state.total).toFixed(1)}{")Mb"}</Text></View></View>}</View>
                         </View>
                         {this.props.message.text ? <View style={{ marginTop: "-5%", padding: "2%", alignSelf: "flex-start" }}>

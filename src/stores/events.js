@@ -21,6 +21,8 @@ import serverEventListener from '../services/severEventListener';
 import request from '../services/requestObjects';
 import stores from './index';
 import GState from './globalState/index';
+import EventListener from '../services/severEventListener';
+import globalFunctions from '../components/globalFunctions';
 
 export default class events {
   constructor() {
@@ -86,35 +88,45 @@ export default class events {
   }
   @observable searchdata = [];
   @observable array = [];
-  initSearch() {
-    this.createSearchdata(this.events).then((array) => {
-      this.searchdata = array;
-    });
-  }
-  @action createSearchdata(Events) {
+
+  getAllEvents() {
     return new Promise((resolve, reject) => {
-      Events && Events.forEach((event) => {
-        if (event.type && event.type == 'relation') {
-          event.participant.forEach((participant) => {
-            if (participant.phone != stores.LoginStore.user.phone) {
-              stores.TemporalUsersStore.getUser(participant.phone).then((user) => {
-                obj = { id: event.id, name: user.name, image: user.profile, type: 'relation' };
-                this.array.push(obj);
-              });
-            }
-          });
-        } else if (event.participant) {
-          obj = { id: event.id, name: event.about.title, image: event.background, type: 'activity' };
-          this.array.push(obj);
-
-        }
-      });
-      resolve(this.array);
-      this.array = [];
-    });
-
+      let getEvents = request.None()
+      const phone = stores.LoginStore.user.phone
+      const id = phone + "_all_events"
+      tcpRequest.getEvents(getEvents, id).then(JSONData => {
+        EventListener.sendRequest(JSONData, id).then(data => {
+          resolve(data.data)
+        })
+      })
+    })
   }
-
+  isMyActivity(activity) {
+    const participant = activity.participant
+    if (participant &&
+      participant.length == 1 &&
+      participant[0] &&
+      participant[0].phone == activity.creator_phone &&
+      activity.creator_phone !== stores.LoginStore.user.phone
+    ) {
+      return true
+    } else {
+      return false
+    }
+  }
+  getAllCurrentEvents() {
+    return new Promise((resolve, reject) => {
+      let getEvents = request.None()
+      const phone = stores.LoginStore.user.phone
+      const id = phone + "_all_current_events"
+      tcpRequest.collectCurrentEvents(getEvents, id).then(JSONData => {
+        EventListener.sendRequest(JSONData, id).then(data => {
+          this.setProperties(data.data)
+          resolve(data.data)
+        })
+      })
+    })
+  }
 
 
   addEvent(NewEvent) {
@@ -139,11 +151,10 @@ export default class events {
   }
 
   delete(EventID) {
-    console.warn('calling delete activity ,,,,,, ', EventID);
     return new Promise((resolve, rejec) => {
       this.readFromStore().then(Events => {
         Events = reject(Events, { id: EventID });
-        EventID === 'newEventId' ? Events.push(request.Event()) : null;
+        //EventID === 'newEventId' ? Events.push(request.Event()) : null;
         this.saveKey.data = Events;
         this.setProperties(this.saveKey.data, false);
         resolve('ok');
@@ -974,14 +985,17 @@ export default class events {
       });
     });
   }
-  changeUpdatedStatus(EventID, statusKey, newStatus) {
+  changeUpdatedStatus(EventID, revert) {
     return new Promise((resolve, reject) => {
       this.readFromStore().then(Events => {
-
+        
         let index = findIndex(Events, {
           id: EventID,
         });
-        Events[index].updated_at = moment().format();
+        const previousUpdate = Events[index].previous_updated
+        const currentUpdate = Events[index].updated_at
+        Events[index].updated_at = revert ? previousUpdate : moment().format();
+        Events[index].previous_updated = currentUpdate
         this.setProperties(Events, true);
         resolve();
       });

@@ -1,5 +1,5 @@
 /* eslint-disable quotes */
-import { observable, action } from "mobx";
+import { observable, action, keys } from "mobx";
 import { find, findIndex, uniqBy, reject, isEmpty } from "lodash";
 import storage from "./Storage";
 import moment from "moment";
@@ -15,6 +15,7 @@ import {
 import { format } from "../services/recurrenceConfigs";
 //import { mapper } from '../services/mapper';
 import { getcurrentDateIntervals } from "../services/getCurrentDateInterval";
+import globalFunctions from '../components/globalFunctions';
 
 export default class Reminds {
   constructor() {
@@ -27,6 +28,7 @@ export default class Reminds {
     this.intervalsSavetimer();
   }
   saveInterval = 2000;
+  @observable allReminds = []
   currentSaveTime = moment().format();
   previousSaveTime = moment().format();
   initializeReminds() {
@@ -35,11 +37,27 @@ export default class Reminds {
         .load(this.readKey)
         .then((data) => {
           this.Reminds = data;
+          this.initallReminds()
         })
         .catch(() => {
           this.Reminds = {};
         });
-    },600)
+    }, 100)
+  }
+  initallReminds(justAll) {
+    if (this.initTimeout) clearTimeout(this.initTimeout)
+    this.initTimeout = setTimeout(() => {
+      const vals = Object.keys(this.Reminds)
+      let res = []
+      vals.forEach(ele => {
+        this.Reminds[ele] = globalFunctions.sortReminds(this.Reminds[ele])
+        res = [...res, ...this.Reminds[ele]]
+      })
+      console.warn("initing all reminds ")
+      this.allReminds = globalFunctions.sortReminds(res)
+      clearTimeout(this.initTimeout)
+      this.initTimeout = null
+    }, justAll ? 1000 : 0)
   }
   initializeRemindsIntervals() {
     setTimeout(() => {
@@ -51,7 +69,7 @@ export default class Reminds {
         .catch((err) => {
           this.remindsIntervals = {};
         });
-    },500)
+    }, 500)
   }
   timer = () => {
     setInterval(() => {
@@ -100,6 +118,7 @@ export default class Reminds {
   setIntervalProperties(data) {
     this.remindsIntervals = data;
     this.currentIntervalsSaveTime = moment().format();
+    this.initallReminds(true)
   }
   setProperty(Reminds) {
     this.Reminds = Reminds;
@@ -197,10 +216,14 @@ export default class Reminds {
         if (Reminds[EventID] && Reminds[EventID].length > 0) {
           if (Array.isArray(NewRemind)) {
             if (NewRemind.length === 1) {
-              Reminds[EventID] = reject(Reminds[EventID], {
+              let RIndex = findIndex(Reminds[EventID], {
                 id: NewRemind[0].id,
               });
-              Reminds[EventID] = NewRemind.concat(Reminds[EventID]);
+              if (RIndex >= 0) {
+                Reminds[EventID][RIndex] = NewRemind[0]
+              } else {
+                Reminds[EventID] = NewRemind.concat(Reminds[EventID]);
+              }
             } else {
               Reminds[EventID] = uniqBy(
                 NewRemind.concat(Reminds[EventID]),
@@ -208,8 +231,12 @@ export default class Reminds {
               );
             }
           } else {
-            Reminds[EventID] = reject(Reminds[EventID], { id: NewRemind.id });
-            Reminds[EventID] = [NewRemind].concat(Reminds[EventID]);
+            let RIndex = findIndex(Reminds[EventID], { id: NewRemind.id })
+            if (RIndex >= 0) {
+              Reminds[EventID][RIndex] = NewRemind
+            } else {
+              Reminds[EventID] = [NewRemind].concat(Reminds[EventID]);
+            }
           }
         } else {
           Reminds[EventID] = Array.isArray(NewRemind) ? NewRemind : [NewRemind];
@@ -543,7 +570,7 @@ export default class Reminds {
         if (Reminds[EventID][index].donners &&
           Reminds[EventID][index].donners.length > 0) {
           Reminds[EventID][index].donners = reject(Reminds[EventID][index].donners,
-            ele =>  ele && ele.phone == Remind.donners[0].phone && ele.status &&
+            ele => ele && ele.phone == Remind.donners[0].phone && ele.status &&
               ele.status.date == Remind.donners[0].status.date)
           Reminds[EventID][index].donners =
             Remind.donners.concat(Reminds[EventID][index].donners)

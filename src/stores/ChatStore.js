@@ -7,6 +7,7 @@ import request from '../services/requestObjects';
 import message_types from '../components/myscreens/eventChat/message_types';
 import stores from ".";
 import messagePreparer from '../components/myscreens/eventChat/messagePreparer';
+import Texts from '../meta/text';
 
 class ChatStore {
     constructor() {
@@ -22,6 +23,7 @@ class ChatStore {
     previousModif = moment().format();
     currentModif = moment().format();
     timer = 2000;
+
     saveInterval = null;
     commenting = false;
     addToStore(data, message_id) {
@@ -45,6 +47,7 @@ class ChatStore {
         });
     }
     addMessageToStore(roomID, newMessage) {
+        newMessage.committee_id = roomID
         return new Promise((resolve, reject) => {
             this.readFromStore().then((olddata) => {
                 this.insetDateSeparator(
@@ -61,6 +64,28 @@ class ChatStore {
             });
         });
     }
+    addNewSeparator(roomID, sender) {
+        let newMessages = stores.States.getNewMessagesCount(roomID)
+        if (newMessages) {
+            this.messages[roomID] = this.messages[roomID] ?
+                reject(this.messages[roomID], { id: Texts.new_messages }) :
+                this.messages[roomID]
+            this.messages[roomID] &&
+                this.messages[roomID].splice &&
+                this.messages[roomID].
+                    splice(newMessages, 0, {
+                        ...request.Message(),
+                        id: Texts.new_messages,
+                        type: message_types.new_separator,
+                        created_at: moment().format(),
+                    })
+        }
+    }
+    removeNewIndicator(roomID) {
+        this.messages[roomID] = this.messages[roomID] ?
+            reject(this.messages[roomID], { id: Texts.new_messages }) :
+            this.messages[roomID]
+    }
     setMessageDimessions(roomID, id, dim) {
         return new Promise((resolve, reject) => {
             this.readFromStore().then((messages) => {
@@ -71,20 +96,19 @@ class ChatStore {
             });
         });
     }
-    insetDateSeparator(roomID, messages, newMessage) {
+    insetDateSeparator(roomID, newMessage) {
         return new Promise((resolve, reject) => {
             let separator = {
                 ...request.Message(),
                 id: moment(newMessage.created_at).format("YYYY/MM/DD"),
-                type: "date_separator",
+                type: message_types.date_separator,
             };
-            index = findIndex(messages[roomID], { id: separator.id });
-            let result = messages;
-            result[roomID] =
+            let index = findIndex(this.messages[roomID], { id: separator.id });
+            this.messages[roomID] =
                 index && index >= 0
-                    ? messages[roomID]
-                    : [separator].concat(messages[roomID] || []);
-            resolve(result);
+                    ? this.messages[roomID]
+                    : [separator].concat(this.messages[roomID] || []);
+            resolve(this.messages);
         });
     }
     receiveMessage(roomID, receiver, messageID) {
@@ -198,28 +222,26 @@ class ChatStore {
     }
     addNewMessage(roomID, newMessage) {
         return new Promise((resolve, reject) => {
-            this.readFromStore().then((olddata) => {
-                this.insetDateSeparator(roomID, olddata, newMessage).then((data) => {
-                    let index = findIndex(data[roomID], { id: newMessage.id });
-                    if (index >= 0) {
-                        data[roomID][index] = {
-                            ...data[roomID][index],
-                            receive: newMessage.receive,
-                            key: newMessage.key,
-                            sent: newMessage.sent,
-                            type: newMessage.type,
-                        };
-                        this.addToStore(data);
-                        resolve(data);
-                    } else {
-                        newMessage = { ...newMessage };
-                        data[roomID]
-                            ? data[roomID].unshift(newMessage)
-                            : (data[roomID] = [newMessage]);
-                        this.addToStore(data);
-                        resolve(data);
-                    }
-                });
+            this.insetDateSeparator(roomID, newMessage).then((data) => {
+                let index = findIndex(this.messages[roomID], { id: newMessage.id });
+                if (index >= 0) {
+                    this.messages[roomID][index] = {
+                        ...this.messages[roomID][index],
+                        receive: newMessage.receive,
+                        key: newMessage.key,
+                        sent: newMessage.sent,
+                        type: newMessage.type,
+                    };
+                    this.addToStore(this.messages);
+                    resolve(this.messages);
+                } else {
+                    newMessage = { ...newMessage };
+                    this.messages[roomID]
+                        ? this.messages[roomID].unshift(newMessage)
+                        : (this.messages[roomID] = [newMessage]);
+                    this.addToStore(this.messages);
+                    resolve(this.messages);
+                }
             });
         });
     }
@@ -238,6 +260,7 @@ class ChatStore {
         return new Promise((resolve, reje) => {
             this.readFromStore().then((data) => {
                 let index = findIndex(data[roomID], { id: messageID });
+                const mess = data[roomID][index]
                 if (index <= 0 && data[roomID][index + 1].type === message_types.date_separator) {
                     let otherID = data[roomID][index + 1].id;
                     data[roomID] = reject(data[roomID],
@@ -253,7 +276,7 @@ class ChatStore {
                 } else {
                     data[roomID] = reject(data[roomID], { id: messageID });
                     this.addToStore(data);
-                    resolve();
+                    resolve(mess);
                 }
             });
         });
@@ -294,15 +317,15 @@ class ChatStore {
     };
     initializeStore() {
         setTimeout(() => {
-             storage
-            .load({ key: this.key })
-            .then((chats) => {
-                chats ? (this.messages = chats) : (this.messages = {});
-            })
-            .catch((error) => {
-                this.messages = {};
-            });
-        },700)
+            storage
+                .load({ key: this.key })
+                .then((chats) => {
+                    chats ? (this.messages = chats) : (this.messages = {});
+                })
+                .catch((error) => {
+                    this.messages = {};
+                });
+        })
     }
     readFromStore() {
         return new Promise((resolve, reject) => {

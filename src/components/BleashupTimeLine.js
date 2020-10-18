@@ -93,6 +93,7 @@ export default class BleashupTimeLine extends BeComponent {
       <View style={[styles.container, this.props.style]}>
         <BleashupFlatList
           marginTop
+          backgroundColor={this.props.backgroundColor}
           ref={"changeList"}
           style={[styles.listview, this.props.listViewStyle]}
           dataSource={this.props.data}
@@ -194,7 +195,7 @@ export default class BleashupTimeLine extends BeComponent {
     switch (this.props.columnFormat) {
       case "single-column-left":
         timeWrapper = {
-          alignItems: "flex-end",
+          alignItems: "center",
         };
         break;
       case "single-column-right":
@@ -244,8 +245,8 @@ export default class BleashupTimeLine extends BeComponent {
           borderColor: lineColor,
           borderLeftWidth: lineWidth,
           borderRightWidth: 0,
-          marginLeft: 20,
-          paddingLeft: 20,
+          marginLeft: 5,
+          paddingLeft: 5,
         };
         break;
       case "single-column-right":
@@ -253,8 +254,8 @@ export default class BleashupTimeLine extends BeComponent {
           borderColor: lineColor,
           borderLeftWidth: 0,
           borderRightWidth: lineWidth,
-          marginRight: 20,
-          paddingRight: 20,
+          marginRight: 5,
+          paddingRight: 5,
         };
         break;
       case "two-column":
@@ -265,15 +266,15 @@ export default class BleashupTimeLine extends BeComponent {
               borderColor: lineColor,
               borderLeftWidth: lineWidth,
               borderRightWidth: 0,
-              marginLeft: 20,
-              paddingLeft: 20,
+              marginLeft: 5,
+              paddingLeft: 5,
             }
             : {
               borderColor: lineColor,
               borderLeftWidth: 0,
               borderRightWidth: lineWidth,
-              marginRight: 20,
-              paddingRight: 20,
+              marginRight: 5,
+              paddingRight: 5,
             };
         break;
     }
@@ -523,7 +524,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   timeContainer: {
-    ...shadower(3),
+    ...shadower(1),
     borderRadius: 5,
     minWidth: 45,
   },
@@ -533,8 +534,8 @@ const styles = StyleSheet.create({
     overflow: "hidden",
   },
   circle: {
-    width: 16,
-    height: 16,
+    width: 0,
+    height: 0,
     borderRadius: 10,
     zIndex: 1,
     position: "absolute",

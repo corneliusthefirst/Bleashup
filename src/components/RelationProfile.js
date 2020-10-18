@@ -48,6 +48,9 @@ export default class RelationProfile extends BeComponent {
               style={styles.profileContainer}
             >
               <ProfileSimple
+                id={this.props.Event.id}
+                members={this.props.Event.participant}
+                navigate
                 searchString={this.props.searchString}
                 showPhoto={this.props.showPhoto}
                 profile={this.user}
@@ -76,7 +79,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   profileContainer: {
-    width: "65%",
+    flex: 1,
   },
   profile: {
     height: 50,

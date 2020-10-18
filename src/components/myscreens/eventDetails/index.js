@@ -4,7 +4,7 @@
 /* eslint-disable comma-dangle */
 /* eslint-disable prettier/prettier */
 import React, { Component } from "react";
-import { StyleSheet, View, Text, Image, TouchableOpacity, FlatList, ScrollView, Dimensions } from 'react-native';
+import { StyleSheet, View, Text, Image, TouchableOpacity, ImageBackground, FlatList, ScrollView, Dimensions } from 'react-native';
 import stores from '../../../stores/index';
 //import { observer } from 'mobx-react'
 import { find, findIndex, reject, } from "lodash";
@@ -80,6 +80,8 @@ let { height, width } = Dimensions.get('window');
     this.startSearching = startSearching.bind(this)
     this.newHighlight = this.newHighlight.bind(this)
     this.renderItem = this.renderItem.bind(this)
+    this.defaultItem = this.defaultItem.bind(this)
+    this.hideActions = this.hideActions.bind(this)
   }
   scrolled = 0
   initializer() {
@@ -89,9 +91,11 @@ let { height, width } = Dimensions.get('window');
       this.setStatePure({
         newing: !this.state.newing,
         isMounted: true,
-        EventHighlightState: this.props.star || this.props.autoStar ? true : false,
         participant: participant
       }, () => {
+        if (this.props.star || this.props.autoStar) {
+          this.newHighlight()
+        }
         this.concludeInitialization()
       });
     })
@@ -337,18 +341,53 @@ let { height, width } = Dimensions.get('window');
     />
     );
   }
+  defaultItem() {
+    return <View style={GState.descriptBoxStyle}>
+      <View style={{ alignSelf: 'center', marginBottom: '3%', }}>
+        <Text style={GState.featureBoxTitle}>{Texts.beup_highlight}</Text>
+      </View>
+      <View>
+        <Text style={{
+          ...GState.defaultTextStyle,
+          fontWeight: 'bold',
+          marginBottom: '3%',
+        }}>
+          {Texts.beup_highlight_description}
+        </Text>
+      </View>
+      <View style={{alignSelf: 'center',}}>
+        {this.plusButton()}
+      </View>
+    </View>
+  }
+  plusButton(){
+    return <TouchableOpacity
+      onPress={this.newHighlight}
+      style={{
+        backgroundColor: ColorList.bodyBackground,
+        ...rounder(50, ColorList.bodyBackground),
+        ...shadower(4)
+      }}>
+      <AntDesign name="star" type="AntDesign" style={{
+        ...GState.defaultIconSize,
+        color: ColorList.post,
+      }} />
+    </TouchableOpacity>
+  }
+  hideActions(){
+    this.setStatePure({
+      showActions: false
+    })
+  }
   getItemLayout = (item, index) => GState.getItemLayout(item, index, this.data, 70, 0)
   renderPosts() {
     this.data = (stores.Highlights.highlights[this.props.Event.id] || []).
       filter((ele) => globalFunctions.filterStars(ele, this.state.searchString || ""));
-    return (!this.state.isMounted ? <View style={{
-      height: colorList.containerHeight,
-      backgroundColor: colorList.bodyBackground,
-      width: '100%'
-    }}>
-      <Spinner></Spinner>
-    </View> :
-      <View style={{ flex: 1, width: "100%" }}>
+    return <ImageBackground
+      style={GState.imageBackgroundContainer}
+      source={GState.backgroundImage}
+    >
+      <View style={{ flex: 1, width: "100%", }}>
         <View
           style={{
             flexDirection: "row",
@@ -400,6 +439,14 @@ let { height, width } = Dimensions.get('window');
               </Searcher></View>
           </View>
         </View>
+        {!this.state.isMounted ? <View style={{
+          height: colorList.containerHeight,
+          backgroundColor: colorList.bodyBackground,
+          flex: 1,
+          width: '100%'
+        }}>
+          <Spinner></Spinner>
+        </View> :
           <View style={{
             flex: 1,
             width: "100%", alignSelf: 'center',
@@ -408,11 +455,13 @@ let { height, width } = Dimensions.get('window');
           }} >
 
             <BleashupFlatList
+              backgroundColor={"transparent"}
               initialRender={9}
               onScroll={this.onScroll}
               ref={"postList"}
               horizontal={false}
               renderPerBatch={10}
+              defaultItem={this.defaultItem}
               firstIndex={0}
               getItemLayout={this.getItemLayout}
               keyExtractor={this._keyExtractor}
@@ -421,12 +470,8 @@ let { height, width } = Dimensions.get('window');
               renderItem={this.renderItem}
             >
             </BleashupFlatList>
-          </View>
-        {this.state.showActions ? <MessageActions title={"star actions"} actions={this.action} onClosed={() => {
-          this.setStatePure({
-            showActions: false
-          })
-        }} isOpen={this.state.showActions}></MessageActions> : null}
+          </View>}
+        {this.state.showActions ? <MessageActions title={"star actions"} actions={this.action} onClosed={this.hideActions} isOpen={this.state.showActions}></MessageActions> : null}
         {this.props.isAreYouSureModalOpened ? <BleashupAlert
           title={Texts.delete_highlight}
           accept={Texts.yes} refuse={Texts.no}
@@ -439,23 +484,12 @@ let { height, width } = Dimensions.get('window');
           //text={"+"}
           buttonTextStyle={{ color: ColorList.transparent }}
           renderIcon={() => {
-            return <TouchableOpacity
-              onPress={this.newHighlight}
-              style={{
-                backgroundColor: ColorList.bodyBackground,
-                ...rounder(50, ColorList.bodyBackground),
-                ...shadower(4)
-              }}>
-              <AntDesign name="star" type="AntDesign" style={{
-                ...GState.defaultIconSize,
-                color: ColorList.post,
-              }} />
-            </TouchableOpacity>
+            return this.plusButton()
           }}
 
         /> : null}
       </View>
-    )
+    </ImageBackground>
   }
   renderBody() {
     return this.renderPosts()

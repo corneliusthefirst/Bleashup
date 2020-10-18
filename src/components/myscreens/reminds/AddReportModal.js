@@ -67,18 +67,21 @@ export default class AddReport extends BleashupModal {
         )
         let canEdit = (this.state.description &&
             this.state.description !== this.props.currentReport) ||
-            (this.state.url && (this.state.url.photo !== this.props.currentReportURL.photo ||
+            (this.state.url && this.props.currentReportURL && (this.state.url.photo !== this.props.currentReportURL.photo ||
                  this.props.currentReportURL.video 
                 !== this.state.url.video ||
-                 this.props.currentReportURL.source !== this.state.url.source))
+                 this.props.currentReportURL.source !== this.state.url.source))||
+                  (this.state.url && !this.props.currentReportURL)
         return (
             <ScrollView keyboardShouldPersistTaps={"handled"}
                 nestedScrollEnabled showsVerticalScrollIndicator={false} style={{ flex: 1, flexDirection: "column" }}>
-                <PickersUpload
+                <View style={{
+                    margin: '2%',
+                }}><PickersUpload
                     ref={"picker"}
                     currentURL={this.state.url}
 
-                    notInternet saveMedia={this.saveURL}></PickersUpload>
+                    notInternet saveMedia={this.saveURL}></PickersUpload></View>
                 <View style={{ width: '98%', alignSelf: 'center', margin: 'auto', }}>
                     {canShowURL ? <MediaPreviewer
                         data={{ id: this.state.url && this.state.url.id + "_creating" }}

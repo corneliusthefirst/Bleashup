@@ -4,7 +4,7 @@ import {
     Dimensions,
     Text,
     TouchableOpacity,
-    ScrollView
+    ScrollView,
 } from "react-native";
 import AnimatedComponent from "../../AnimatedComponent";
 import BeNavigator from "../../../services/navigationServices";
@@ -20,11 +20,11 @@ import Spinner from "../../Spinner";
 import DetailsModal from "../invitations/components/DetailsModal";
 import Entypo from "react-native-vector-icons/Entypo";
 import rounder from "../../../services/rounder";
-import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
+import MaterialIcons from "react-native-vector-icons/MaterialIcons";
 import ShareWithYourContacts from "./ShareWithYourContacts";
 import request from "../../../services/requestObjects";
-import messagePreparer from './messagePreparer';
-import public_states from '../reminds/public_states';
+import messagePreparer from "./messagePreparer";
+import public_states from "../reminds/public_states";
 import BeMenu from "../../Menu";
 import Texts from "../../../meta/text";
 
@@ -49,22 +49,24 @@ export default class StarDetail extends AnimatedComponent {
     }
     loadStatesFromStar() {
         stores.Events.loadCurrentEvent(this.star.event_id).then((event) => {
-            this.activity = event
+            this.activity = event;
             this.item = {
                 ...this.star,
-                public_state: public_states.private_
-            }
-            this.refreshStates()
-        })
+                public_state: public_states.private_,
+            };
+            this.refreshStates();
+        });
     }
     loadInitialStates() {
         stores.Events.loadCurrentEvent(this.activity_id).then((event) => {
-            this.activity = event
-            stores.Highlights.loadHighlight(this.activity_id, this.item_id).then((item) => {
-                this.item = { ...item, public_state: public_states.private_ }
-                this.refreshStates()
-            })
-        })
+            this.activity = event;
+            stores.Highlights.loadHighlight(this.activity_id, this.item_id).then(
+                (item) => {
+                    this.item = { ...item, public_state: public_states.private_ };
+                    this.refreshStates();
+                }
+            );
+        });
     }
     refreshStates() {
         this.setStatePure({
@@ -73,49 +75,50 @@ export default class StarDetail extends AnimatedComponent {
         });
     }
     loadStatesFromRemote() {
-        stores.Events.loadCurrentEventFromRemote(this.activity_id).then(
-            (event) => {
-                this.activity = event;
-                stores.Highlights.loadHighlightFromRemote(
+        stores.Events.loadCurrentEventFromRemote(this.activity_id).then((event) => {
+            this.activity = event;
+            stores.Highlights.loadHighlightFromRemote(
+                this.activity_id,
+                this.item_id
+            ).then((star) => {
+                this.item = Array.isArray(star) && star[0];
+                stores.Messages.updateStarMessageInfoMessage(
                     this.activity_id,
-                    this.item_id
-                ).then((star) => {
-                    this.item = Array.isArray(star) && star[0];
-                    stores.Messages.updateStarMessageInfoMessage(this.activity_id,
-                        this.item_id, this.item)
-                    stores.Highlights.addHighlight(this.activity_id, this.item)
-                    this.refreshStates()
-                });
-            }
-        );
+                    this.item_id,
+                    this.item
+                );
+                stores.Highlights.addHighlight(this.activity_id, this.item);
+                this.refreshStates();
+            });
+        });
     }
     componentDidMount() {
         setTimeout(() => {
             if (this.star) {
-                this.loadStatesFromStar()
+                this.loadStatesFromStar();
             } else {
-                this.loadInitialStates()
-                this.loadStatesFromRemote()
+                this.loadInitialStates();
+                this.loadStatesFromRemote();
             }
         }, 50);
     }
     startSharing() {
         this.setStatePure({
-            isSharing: true
-        })
+            isSharing: true,
+        });
     }
     hideSharing() {
         this.setStatePure({
-            isSharing: false
-        })
+            isSharing: false,
+        });
     }
     getParam = (param) => this.props.navigation.getParam(param);
-    star = this.getParam("star")
+    star = this.getParam("star");
     forward = this.getParam("forward") || this.startSharing.bind(this);
     item_id = this.getParam("post_id");
-    reply = this.getParam("reply")
-    roomID = this.getParam("room")
-    reply_privately = this.getParam("reply_privately")
+    reply = this.getParam("reply");
+    roomID = this.getParam("room");
+    reply_privately = this.getParam("reply_privately");
     activity_id = this.getParam("activity_id");
     container = {
         width: "98%",
@@ -128,20 +131,20 @@ export default class StarDetail extends AnimatedComponent {
         //borderColor: "ivory",
     };
     formReply() {
-        let reply = GState.prepareStarForMention(this.item)
-        reply.from_activity = this.item.event_id
-        reply.activity_id = this.roomID
-        reply.activity_name = this.activity.about.title
-        return reply
+        let reply = GState.prepareStarForMention(this.item);
+        reply.from_activity = this.item.event_id;
+        reply.activity_id = this.roomID;
+        reply.activity_name = this.activity.about.title;
+        return reply;
     }
     startReply() {
-        GState.reply = this.formReply()
-        this.reply()
-        this.goback()
+        GState.reply = this.formReply();
+        this.reply();
+        this.goback();
     }
     startPrivateReply() {
-        GState.reply = this.formReply()
-        this.reply_privately([], this.item.creator)
+        GState.reply = this.formReply();
+        this.reply_privately([], this.item.creator);
     }
     showItem(item) {
         item.url.video
@@ -153,25 +156,38 @@ export default class StarDetail extends AnimatedComponent {
             isDetailsOpened: true,
         });
     }
+    isMember() {
+        return this.activity.participant.find(
+            (ele) => ele.phone === stores.LoginStore.user.phone
+        );
+    }
+    gotoRemindInAct() {
+        BeNavigator.gotoStarWithIndex(this.activity, this.item_id);
+    }
     goback() {
-        this.props.navigation.goBack()
+        this.props.navigation.goBack();
     }
     items() {
         return [
             {
                 title: Texts.reply,
                 action: this.startReply.bind(this),
-                condition: this.roomID
+                condition: this.roomID,
+            },
+            {
+                title: Texts.manage_in_activity,
+                condition: this.isMember(),
+                action: this.gotoRemindInAct.bind(this),
             },
             {
                 title: Texts.reply_privately,
                 action: this.startPrivateReply.bind(this),
-                condition: this.roomID
-            }
-        ]
+                condition: this.roomID,
+            },
+        ];
     }
     updateSource(aid, data) {
-        stores.Highlights.updateHighlightUrl(aid, data)
+        stores.Highlights.updateHighlightUrl(aid, data);
     }
     render() {
         return this.state.mounted ? (
@@ -190,7 +206,7 @@ export default class StarDetail extends AnimatedComponent {
                         <View
                             style={{
                                 width: "98%",
-                                flexDirection: 'row',
+                                flexDirection: "row",
                                 alignSelf: "flex-start",
                                 hieght: 70,
                                 marginBottom: "5%",
@@ -198,18 +214,24 @@ export default class StarDetail extends AnimatedComponent {
                                 alignItems: "center",
                             }}
                         >
-                            <TouchableOpacity onPress={this.goback.bind(this)} style={{
-                                width: 45,
-
-                            }}>
-                                <MaterialIcons name={"arrow-back"} style={{
-                                    ...GState.defaultIconSize
-                                }}>
-                                </MaterialIcons>
+                            <TouchableOpacity
+                                onPress={this.goback.bind(this)}
+                                style={{
+                                    width: 45,
+                                }}
+                            >
+                                <MaterialIcons
+                                    name={"arrow-back"}
+                                    style={{
+                                        ...GState.defaultIconSize,
+                                    }}
+                                ></MaterialIcons>
                             </TouchableOpacity>
-                            <View style={{
-                                flex: 1,
-                            }}>
+                            <View
+                                style={{
+                                    flex: 1,
+                                }}
+                            >
                                 <ActivityProfile
                                     small
                                     Event={this.activity}
@@ -217,30 +239,35 @@ export default class StarDetail extends AnimatedComponent {
                                     openDetails={this.openDetails.bind(this)}
                                 ></ActivityProfile>
                             </View>
-                            <View style={{
-                                flexDirection: 'row',
-                                alignItems: 'center',
-                            }}>
-                                {this.item.public_state == public_states.public_ ? <TouchableOpacity
-                                    onPress={this.forward}
+                            <View
+                                style={{
+                                    flexDirection: "row",
+                                    alignItems: "center",
+                                }}
+                            >
+                                {this.item.public_state == public_states.public_ ? (
+                                    <TouchableOpacity
+                                        onPress={this.forward}
+                                        style={{
+                                            ...rounder(40),
+                                            justifyContent: "center",
+                                        }}
+                                    >
+                                        <Entypo
+                                            name={"forward"}
+                                            style={{
+                                                ...GState.defaultIconSize,
+                                                color: ColorList.indicatorColor,
+                                            }}
+                                        ></Entypo>
+                                    </TouchableOpacity>
+                                ) : null}
+                                <View
                                     style={{
-                                        ...rounder(40),
-                                        justifyContent: "center",
+                                        marginRight: "5%",
                                     }}
                                 >
-                                    <Entypo
-                                        name={"forward"}
-                                        style={{
-                                            ...GState.defaultIconSize,
-                                            color: ColorList.indicatorColor,
-                                        }}
-                                    ></Entypo>
-                                </TouchableOpacity> : null}
-                                <View style={{
-                                    marginRight: "5%",
-                                }}>
-                                    <BeMenu items={this.items.bind(this)}>
-                                    </BeMenu>
+                                    <BeMenu items={this.items.bind(this)}></BeMenu>
                                 </View>
                             </View>
                         </View>
@@ -304,13 +331,15 @@ export default class StarDetail extends AnimatedComponent {
                             }}
                         >
                             <Creator creator={this.item.creator}></Creator>
-                            {!this.star && <Social
-                                title={this.item.title}
-                                activity_name={this.activity.about.title}
-                                creator={this.item.creator}
-                                activity_id={this.activity_id}
-                                id={this.item.id}
-                            ></Social>}
+                            {!this.star && (
+                                <Social
+                                    title={this.item.title}
+                                    activity_name={this.activity.about.title}
+                                    creator={this.item.creator}
+                                    activity_id={this.activity_id}
+                                    id={this.item.id}
+                                ></Social>
+                            )}
                         </View>
                     </View>
                 </ScrollView>
@@ -339,8 +368,7 @@ export default class StarDetail extends AnimatedComponent {
                         from: null,
                     }}
                     onClosed={this.hideSharing.bind(this)}
-                >
-                </ShareWithYourContacts>
+                ></ShareWithYourContacts>
             </View>
         ) : (
                 <View

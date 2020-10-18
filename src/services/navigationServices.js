@@ -57,7 +57,7 @@ class NavigatorClass {
     }
     openVideo(url, date) {
         //this.sayCloseAllModals()
-        this.pushRoute("Video", {
+        this.navigateTo("Video", {
             video: url,
             date
         })
@@ -100,7 +100,7 @@ class NavigatorClass {
     openPhoto(url, hideActions, date, callback) {
         // this.sayCloseAllModals()
         let route = 'PhotoViewer'
-        this.pushRoute(route, {
+        this.navigateTo(route, {
             photo: url,
             date,
             hideActions: hideActions || false,
@@ -113,6 +113,7 @@ class NavigatorClass {
     leave_route_event = "leave_route"
     pushToChat(event, options) {
         emitter.emit(this.leave_route_event)
+        this.sayCloseAllModals()
         setTimeout(() => {
             this.pushActivity(event, ActivityPages.chat, options)
         })
@@ -127,8 +128,8 @@ class NavigatorClass {
     navigateToQR() {
         this.navigateTo("QR")
     }
-    navigateToCreateEvent() {
-        this.navigateTo("CreateEventView")
+    navigateToCreateEvent(d) {
+        this.navigateTo("CreateEventView",d)
     }
     gotoStarDetail(post_id, activity_id, more) {
         let route = "StarDetail"

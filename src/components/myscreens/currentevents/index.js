@@ -3,8 +3,9 @@ import CurrentEvents from "./components/CurrentEvents";
 import { observer } from "mobx-react";
 import stores from "../../../stores";
 import actFilterFunc from './activityFilterFunc';
+import BeComponent from '../../BeComponent';
 
-@observer class CurrentEventView extends Component {
+@observer class CurrentEventView extends BeComponent {
   constructor(props) {
     super(props);
   }

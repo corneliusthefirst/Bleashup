@@ -133,6 +133,14 @@ class TEXTS {
         en: "Activity",
         fr: "Activitee"
     }[GState.lang]
+    my_activity = {
+        en:"My Activity",
+        fr: "Mon Activitee"
+    }[GState.lang]
+    activities = {
+        en: 'Activities',
+        fr: 'Activitees'
+    }[GState.lang]
     cannot_send_message = {
         en: "cannot to forward message",
         fr: "message ne peut etre transmit"
@@ -326,12 +334,12 @@ class TEXTS {
         fr: "Membre(s)"
     }[GState.lang]
     assign = {
-        en: "Assign",
-        fr: "Assigner"
+        en: "Add Members",
+        fr: "Ajouter des membres"
     }[GState.lang]
     unassign = {
-        en: "Unassign",
-        fr: "Deassigner"
+        en: "Remove Members",
+        fr: "Supprimer des membres"
     }[GState.lang]
     share = {
         en: 'Share',
@@ -350,8 +358,8 @@ class TEXTS {
         fr: "Favoriser"
     }[GState.lang]
     remind = {
-        en: "Remind / Program",
-        fr: "Rappeler / Programer"
+        en: "Program",
+        fr: "Programer"
     }[GState.lang]
     reminder = {
         en: "Remind",
@@ -374,16 +382,144 @@ class TEXTS {
         fr: "Nouveau messages"
     }[GState.lang]
     remind_must_have_atleate_date_time_or_title = {
-        en: "Remind / Program Must Have Atleat a Title and Data/Time",
-        fr: "Un Rappel doit au moin contenire un title et une date"
+        en: "Program Must Have Atleat a Title and Data/Time",
+        fr: "Un Programme doit au moin contenire un title et une date"
     }[GState.lang]
     remind_configs = {
-        en: "Remind configs",
-        fr: "Configuration Du Rapel / Program"
+        en: "Program configs",
+        fr: "Configuration Du Program"
     }[GState.lang]
     add_remind = {
-        en: "Add Remind",
-        fr: "Ajouter un Rappel / Program"
+        en: "Add Program",
+        fr: "Ajouter un Program"
+    }[GState.lang]
+    scann_qr = {
+        en : "Scan QR Code",
+        fr: "Scanner le Code QR"
+    }[GState.lang]
+    program_members = {
+        en: "Program Members",
+        fr: "Membres du program"
+    }[GState.lang]
+    cannot_reply_unsent_message = {
+        en: 'unable to reply for unsent messages',
+        fr: 'ne peut repondre un message non envoyee'
+    }[GState.lang]
+    b_up_chatroom = {
+        en: 'BeUp Chat Room',
+        fr: 'Salon Conversation'
+    }[GState.lang]
+    send_a_message = {
+        en: "Send a message as text",
+        fr: 'Envoyer un message comme text'
+    }[GState.lang]
+    send_message_as_emoticons = {
+        en: "Send message as emoticons",
+        fr: "Envoyer un message emoticons"
+    }[GState.lang]
+    use_it_to = {
+        en:"Use it to",
+        fr: "Utilise le pour"
+    }[GState.lang]
+    send_multimedia_messages = {
+        en:"Send multimedia files like: audio, video, photos and, any type of file",
+        fr: "Envoyer des fichier multimedia tel que: audios, photo, video, and n'importe quelle type de fichier"
+    }[GState.lang]
+    share_thinks_like = {
+        en: "Share Things like (Contacts, Activities, Programs, Highlights etc)",
+        fr: "Partager des choses tell que des Contacts, des Activitee, des Programmes etc"
+    }[GState.lang]
+    mention_everything = {
+        en: "Mention a message, program, highlight, any update made in the activity, activity description, activity photo and etc",
+        fr: "Mentionner un message, un programme, une mise en évidence, toute mise à jour effectuée dans l'activité, la description de l'activité, la photo de l'activité, etc."
+    }[GState.lang]
+    turn_a_message_into_a_program = {
+        en: "Turn a message into a program and vice versa",
+        fr: "Faire d'un message un programme et vice versa"
+    }[GState.lang]
+    turn_a_message_a_highlight = {
+        en: "Turn a message into a highlight and vice versa",
+        fr: "Transformez un message en un moment fort et vice versa"
+    }[GState.lang]
+    be_up_reminds = {
+        en : "BeUp Programs",
+        fr: "Programmes"
+    }[GState.lang]
+    program_descriptions = {
+        en: "Programs are the essence of the activity; use a program to make people know and be reminded of everything taking place in the activity. \n\n Click on the button below to add a program.",
+        fr: "Programmes sont l'essence meme d'une activitee; Tres utiles pour signaler et rappeler tous ce qui se passe dans l'activitee. \n\n clickez sur le button dessous pour ajouter un programme."
+    }[GState.lang]
+    beup_highlight = {
+        en: "BeUp Highlights",
+        fr: "Moments forts"
+    }[GState.lang]
+    beup_highlight_description = {
+        en: "Highlights are essential to keep important stuffs which are to be accessible by any member of the activity \n\n Click below to add a Highlight",
+        fr: "Tres important pour garder les choses importants relative a l'activitee. \n\n Clickee le button dessou pour ajouter"
+    }[GState.lang]
+    beup_activity = {
+        en: "BeUp Activity",
+        fr: "Activitee de BeUp"
+    }[GState.lang]
+    beup_activity_description = {
+        en: "BeUp activity is a place where one can organize programs, invite people to the program, share the program for people to join the program. An activity has group chat where people can discuss fun and stuffs related to programs. People can also Keep track most important stuffs in the activity by adding them as highlights. \n\n Click below to get started.",
+        fr: "L'activité BeUp est un endroit où l'on peut organiser des programmes, inviter des gens au programme, partager le programme pour que les gens rejoignent le programme. Une activité comprend une discussion de groupe où les gens peuvent discuter de plaisir et de choses liées aux programmes. Les gens peuvent également suivre les éléments les plus importants de l'activité en les ajoutant en tant que faits saillants. \n \n Cliquez ci-dessous pour commencer."
+    }[GState.lang]
+    no_activity_found = {
+        en: "No activity found! ",
+        fr: "Aucune activité trouvée!"
+    }[GState.lang]
+    click_below_to_create_a_new_one = {
+        en: "Click below to create a new one",
+        fr: "Cliquez ci-dessous pour en créer un nouveau"
+    }[GState.lang]
+    activity_name= {
+        en: "Activity name",
+        fr: "Nom de l'activitee"
+    }[GState.lang]
+    add_activity = {
+        en: "Create",
+        fr: "Cree"
+    }[GState.lang]
+    show_less = {
+        en:"Show less",
+        fr: "Voir moin"
+    }[GState.lang]
+    show_more = {
+        en: "Show more",
+        fr: "Voir moin"
+    }[GState.lang]
+    activity_actions = {
+        en: "Activity Actions",
+        fr: "Actions sur l'activitee"
+    }[GState.lang]
+    delete_activity = {
+        en: "Delete Activity",
+        fr: "Effacer cette activitee"
+    }[GState.lang]
+    are_you_sure_to_delete_activity = {
+        en: 'are you sure you want to delete this activity ?',
+        fr: 'etes vous sur de vouloire effacer cette activitee'
+    }[GState.lang]
+    react_to_a_message = {
+        en: "React to a sent message",
+        fr: "React a un message envoyee"
+    }[GState.lang]
+    delete_a_message = {
+        en: "Delete a sent message",
+        fr: "Effacer un message envoyee"
+    }[GState.lang]
+    see_message_info = {
+        en: "Check the status of every sent message",
+        fr: "Verifier le status de chaque message envoyee"
+    }[GState.lang]
+    participants_list = {
+        en: "Participants List",
+        fr: "List des participants"
+    }[GState.lang]
+    select_activity = {
+        en: "Select activity",
+        fr: "Selectioner Lactivitee",
     }[GState.lang]
     program = {
         en: "Program",
@@ -398,7 +534,7 @@ class TEXTS {
         fr: "Title du program"
     }[GState.lang]
     remind_message = {
-        en: "Remind message",
+        en: "Program message",
         fr: "Message du rappel"
     }[GState.lang]
     remind_date = {
@@ -422,8 +558,8 @@ class TEXTS {
         fr: "le"
     }[GState.lang]
     update_remind = {
-        en: "Update Remind",
-        fr: "Editer le Rappel / Program"
+        en: "Update Program",
+        fr: "Editer le Programme"
     }[GState.lang]
     all_days = {
         en: "(all days)",
@@ -677,6 +813,10 @@ class TEXTS {
         en: "Activity Photo",
         fr: "Photo de Lactivitee"
     }[GState.lang]
+    profile_photo = {
+        en: "Profile photo",
+        fr: "Photo de profile"
+    }[GState.lang]
     unable_to_reply = {
         en: "unable to mention",
         fr: "impossible de mentioner"
@@ -734,8 +874,8 @@ class TEXTS {
         fr: "Fait"
     }[GState.lang]
     assign_me = {
-        en: "Assign To Me",
-        fr: "M'assgner"
+        en: "Take Part",
+        fr: "Prendre part"
     }[GState.lang]
     un_assign_to_me = {
         en: "Unassign To Me",
@@ -873,9 +1013,13 @@ class TEXTS {
         en: "Program Members",
         fr: "Membres du program"
     }[GState.lang]
-    join_activity_or_program_via_qr = {
-        en: "Join an activity or program through QR",
-        fr: "Rejoindre une activitee ou un program par code QR"
+    join_activity_via_qr = {
+        en: "Join Actvity through QR code",
+        fr: "Rejoindre un activitee par code QR"
+    }[GState.lang]
+    join_program_via_qr = {
+        en: "Join program through QR",
+        fr: "Rejoindre un program par code QR"
     }[GState.lang]
     relation = {
         en: "Relation",
@@ -909,6 +1053,14 @@ class TEXTS {
         en: "A Star Must include at least a media or title",
         fr: "A message important doit avoir au moins un media ou un titre"
     }[GState.lang]
+    manage_in_activity = {
+        en: "Manage from activity",
+        fr: "Gérer de l'activité"
+    }[GState.lang]
+    remove_photo = {
+        en: "Remove Photo",
+        fr: "Retirer la photo"
+    }[GState.lang]
     title = {
         en:'Title',
         fr: "Titre"
@@ -924,6 +1076,22 @@ class TEXTS {
     record_audio = {
         en: "Record Sound",
         fr: "Enregistree un son"
+    }[GState.lang]
+    all_programs = {
+        en: "All Programs",
+        fr: "Tous les programs"
+    }[GState.lang]
+    programs = {
+        en: "Programs",
+        fr: "Programmes"
+    }[GState.lang]
+    loading = {
+        en: "Loading",
+        fr: "Chargement"
+    }[GState.lang]
+    no_updates_yet = {
+        en: "no updates yet",
+        fr: 'aucune mise a jour faite'
     }[GState.lang]
 }
 const Texts = new TEXTS()

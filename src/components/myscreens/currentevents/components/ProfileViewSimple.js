@@ -23,6 +23,7 @@ import { observer } from "mobx-react";
 import BePureComponent from "../../../BePureComponent";
 import Texts from "../../../../meta/text";
 import TextContent from "../../eventChat/TextContent";
+import LatestMessage from "./LatestMessage";
 
 @observer
 class ProfileSimple extends BePureComponent {
@@ -49,7 +50,7 @@ class ProfileSimple extends BePureComponent {
   }
   typing_event = typing(this.props.profile.phone)
   componentMounting() {
-    if (this.props.profile) {
+    if (this.props.profile && this.props.navigate) {
       emitter.on(this.typing_event, (typer) => {
         !this.sayTyping ? (this.sayTyping = sayTyping.bind(this)) : null;
         this.sayTyping(typer);
@@ -57,12 +58,12 @@ class ProfileSimple extends BePureComponent {
     }
   }
   unmountingComponent() {
-    emitter.off(this.typing_event)
+    this.props.profile && this.props.navigate && emitter.off(this.typing_event)
 
   }
   showTyper() {
     return (
-      this.state.typing && (
+      this.state.typing ? (
         <Text
           style={[
             GState.defaultTextStyle,
@@ -75,7 +76,10 @@ class ProfileSimple extends BePureComponent {
           {Texts.typing}
         </Text>
       )
-    );
+        : this.props.navigate ? <LatestMessage
+          id={this.props.id}
+          members={this.props.members}>
+        </LatestMessage> : null);
   }
   closeProfileModal() {
     this.setStatePure({ isModalOpened: false });
@@ -155,22 +159,22 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     width: "100%",
     alignItems: "center",
-    marginBottom: "4%",
   },
   containerSub: {
-    width: "23%",
-    paddingLeft: "4%",
+    justifyContent: 'center',
+    alignItems: 'center',
+    alignSelf: 'center',
+    width: 60,
+    marginRight:"2%",
   },
   textStyles: {
-    width: "77%",
-    paddingLeft: "4.6%",
-    justifyContent: "flex-start",
+    flex: 1,
+    alignSelf: 'center',
     flexDirection: "column",
+    justifyContent: "flex-end",
   },
   text: {
-    marginBottom: "2%",
     fontWeight: "bold",
-    alignSelf: "flex-start",
     color: ColorList.bodyText,
     fontSize: 14,
   },
@@ -197,5 +201,5 @@ const styles = StyleSheet.create({
     fontWeight: "500",
     color: ColorList.indicatorColor,
   },
-  inviteContainer: { width: "17%" },
+  inviteContainer: { width: 75 },
 });

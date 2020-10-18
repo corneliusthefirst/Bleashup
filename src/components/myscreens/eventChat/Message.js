@@ -3,10 +3,10 @@ import {
     View,
     TouchableOpacity,
     Vibration,
-    TouchableWithoutFeedback,
     TouchableHighlight,
     Text,
 } from "react-native";
+import { TouchableWithoutFeedback } from "react-native-gesture-handler"
 import TextMessage from "./TextMessage";
 import PhotoMessage from "./PhotoMessage";
 import VideoMessage from "./VideoMessage";
@@ -42,6 +42,7 @@ import { showHighlightForScrollToIndex } from './highlightServices';
 import RemindMessage from "./RemindMessage";
 import StarMessage from "./StarMessage";
 import RelationMessage from "./RelationMessage";
+import MessageState from "./MessageState";
 
 export default class Message extends BeComponent {
     constructor(props) {
@@ -241,7 +242,7 @@ export default class Message extends BeComponent {
             >
             </RelationMessage>
         }
-       return types[data.type]
+        return types[data.type]
     }
 
     voteCreator = null;
@@ -354,11 +355,6 @@ export default class Message extends BeComponent {
             refresh: !this.state.refresh,
         });
     }
-    iconStyles = {
-        fontSize: 14,
-        color: ColorList.indicatorColor,
-        //marginTop: "-2%",
-    };
     handLongPress() {
         this.replying = false;
         let reply = this.props.choseReply(this.props.message);
@@ -418,56 +414,13 @@ export default class Message extends BeComponent {
         }, 2000);
     }
     rendermessageState(color) {
-        return this.props.message.sent ? (
-            this.props.received ? (
-                this.props.seen ? (
-                    <View
-                        style={{
-                            ...rounder(12, ColorList.indicatorColor),
-                            justifyContent: "center",
-                        }}
-                    >
-                        <Ionicons
-                            style={{
-                                ...this.iconStyles,
-                                color: ColorList.bodyBackground,
-                                marginLeft: 0,
-                                fontSize: 14,
-                                marginBottom: 0,
-                                paddingTop: 0,
-                            }}
-                            type="Ionicons"
-                            name="ios-done-all"
-                        />
-                    </View>
-                ) : (
-                        <Ionicons
-                            style={this.iconStyles}
-                            type="Ionicons"
-                            name="ios-checkmark-circle"
-                        />
-                    )
-            ) : (
-                    <View style={{
-                        ...rounder(14, color), justifyContent: 'center',
-                    }}
-                    ><EvilIcons
-                            style={this.iconStyles}
-                            type={"EvilIcons"}
-                            name="check"
-                        />
-                    </View>
-                )
-        ) : (
-                <MaterialIconCommunity
-                    style={{
-                        ...this.iconStyles,
-                        color: ColorList.darkGrayText,
-                    }}
-                    type="MaterialCommunityIcons"
-                    name="progress-check"
-                />
-            )
+        return <MessageState
+            color={this.state.color}
+            sent={this.props.message.sent}
+            received={this.props.received}
+            seen={this.props.seen}
+        >
+        </MessageState>
 
     }
     render() {
@@ -484,7 +437,7 @@ export default class Message extends BeComponent {
             ? ColorList.receivedBox
             : ColorList.senTBoxColor[ColorList.sendRand()];
         let GeneralMessageBoxStyle = {
-            maxWidth: GState.width*.78,
+            maxWidth: GState.width * .78,
             flexDirection: "column",
             minWidth: 60,
             minHeight: 20,
@@ -562,12 +515,12 @@ export default class Message extends BeComponent {
                     <View
                         style={{
                             marginTop: "2%",
+                            width: "100%",
                             marginBottom: "2%",
                         }}
                     >
                         <NewSeparator
-                            newCount={this.props.newCount}
-                            data={this.props.message.id}
+                            room={this.props.room}
                         ></NewSeparator>
                     </View>
                 ) : !this.state.loaded ? (
@@ -628,7 +581,7 @@ export default class Message extends BeComponent {
                                                             justifyContent: "center",
                                                         }}
                                                     >
-                                                     {this.rendermessageState(color)}  
+                                                        {this.rendermessageState(color)}
                                                     </View>
                                                 ) : null}
                                                 <View style={GeneralMessageBoxStyle}>
@@ -695,15 +648,17 @@ export default class Message extends BeComponent {
                                                             ) : null}
                                                             <TouchableWithoutFeedback
                                                                 onPressIn={this.handlePressIn.bind(this)}
-                                                            //onPress={this.handlePress.bind(this)}
-                                                            /*onLongPress={() => {
-                                                                                          this.handLongPress();
-                                                                                      }}*/
+                                                                //onPress={this.handlePress.bind(this)}
+                                                                style={{ flex: 1 }}
+                                                                onLongPress={() => {
+                                                                    this.handLongPress();
+                                                                }}
                                                             >
                                                                 <View
                                                                     style={{
                                                                         marginLeft: "1%",
                                                                         marginRight: "1%",
+                                                                        flex: 1,
                                                                     }}
                                                                 >
                                                                     {this.chooseComponent(
@@ -765,7 +720,7 @@ export default class Message extends BeComponent {
                                         <View
                                             style={{
                                                 position: "absolute",
-                                                width: GState.width*.90,
+                                                width: GState.width * .90,
                                                 alignSelf: "center",
                                                 height: this.state.containerDims
                                                     ? this.state.containerDims.height + 10

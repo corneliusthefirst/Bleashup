@@ -3,6 +3,9 @@ import stores from "../stores";
 import message_types from "./myscreens/eventChat/message_types";
 import request from '../services/requestObjects';
 import active_types from './myscreens/eventChat/activity_types';
+import moment from 'moment';
+import { format } from "../services/recurrenceConfigs";
+import actFilterFunc from './myscreens/currentevents/activityFilterFunc';
 
 class Functions {
   constructor() { }
@@ -62,7 +65,7 @@ class Functions {
         let oponent = stores.TemporalUsersStore.Users[oponentPhone]
         return oponent && oponent.nickname && oponent.nickname.toLowerCase().includes(text)
       } else {
-        return event.about && event.about.title && event.about.title.includes(text)
+        return event.about && event.about.title && event.about.title.toLowerCase().includes(text)
       }
     } else {
       return false
@@ -111,9 +114,9 @@ class Functions {
   }
   byTitleAndDesc(ele, search) {
     search = search ? search.toLowerCase() : ""
-    return (ele.title && ele.title.toLowerCase().includes(search) ||
-      ele.description && ele.description.toLowerCase().includes(search)) ||
-      (ele.location && ele.location.toLowerCase().includes(search)) ||
+    return (ele.title && ele.title.toLowerCase && ele.title.toLowerCase().includes(search) ||
+      ele.description && ele.description.toLowerCase && ele.description.toLowerCase().includes(search)) ||
+      (ele.location && ele.location.toLowerCase && ele.location.toLowerCase().includes(search)) ||
       (ele.members && ele.members.length && search.includes(ele.members.length.toString()))
   }
   filterStars(ele, search) {
@@ -135,6 +138,100 @@ class Functions {
     } else {
       return false
     }
+  }
+  sortHighlights(a, b) {
+    const formatThis = (ele, format) => moment(ele, format).format("x")
+    return formatThis(a.created_at) <= formatThis(b.created_at) ? 1 : -1
+  }
+  sortReminds(reminds) {
+    return reminds.sort(this.sortRemindValid).sort(this.sortRemind)
+  }
+  sortRemindValid(a, b) {
+    const thisIntervalA = a && stores.Reminds.remindsIntervals && stores.Reminds.remindsIntervals[a.event_id] &&
+      stores.Reminds.remindsIntervals[a.event_id][a.id]
+      && stores.Reminds.remindsIntervals[a.event_id][a.id].correspondingDateInterval
+    const thisIntervalB = b && stores.Reminds.remindsIntervals && stores.Reminds.remindsIntervals[b.event_id] &&
+      stores.Reminds.remindsIntervals[b.event_id][b.id] &&
+      stores.Reminds.remindsIntervals[b.event_id][b.id].correspondingDateInterval
+    if (thisIntervalA && thisIntervalB) {
+      return -1
+    } else if (thisIntervalA && !thisIntervalB) {
+      return -1
+    }
+    else if (!thisIntervalA && thisIntervalB) {
+      return 1
+    } else {
+      return 0
+    }
+  }
+  sortRemind(a, b) {
+    const thisIntervalA = a && stores.Reminds.remindsIntervals &&
+      stores.Reminds.remindsIntervals[a.event_id] &&
+      stores.Reminds.remindsIntervals[a.event_id][a.id] &&
+      stores.Reminds.remindsIntervals[a.event_id][a.id].correspondingDateInterval
+    const formatThis = (ele, format) => moment(ele, format).format("x")
+    const thisIntervalB = b && stores.Reminds.remindsIntervals &&
+      stores.Reminds.remindsIntervals[b.event_id] &&
+      stores.Reminds.remindsIntervals[b.event_id][b.id]
+      && stores.Reminds.remindsIntervals[b.event_id][b.id].correspondingDateInterval
+    const aStartDate = thisIntervalA ? formatThis(thisIntervalA.end, format) : 0
+    const bStartDate = thisIntervalB ? formatThis(thisIntervalB.end, format) : 0
+    if (bStartDate && aStartDate) {
+      if (aStartDate < bStartDate) {
+        return -1
+      } else if (aStartDate > bStartDate) {
+        return 1
+      } else {
+        return 0
+      }
+    } else {
+      return 0
+    }
+  }
+
+  sortActivityForRemindCreation() {
+    const acts = stores.Events.events.filter(ele => actFilterFunc(ele) && 
+    ele.type !== active_types.relation)
+    const me = stores.LoginStore.user.phone
+    const findMe = (act) => act.participant.find(ele => ele.phone == me)
+    const isMeMaster = (act) => {
+      let me = findMe(act)
+      return me && me.master
+    }
+    const actTitle = a => (a && a.about && a.about.title) || ""
+    const meCreator = act => act.creator_phone == me
+    const actMembersCount = act => (act.participant && act.participant.length) || 0
+    const sortByMembersCound = (a, b) => actMembersCount(a) >= actMembersCount(b) ? 1 : -1
+
+    const sortByMaster = (a, b) => {
+      const aMaster = isMeMaster(a)
+      const bMaster = isMeMaster(b)
+      if (aMaster || bMaster) {
+        return 1
+      } else {
+        return -1
+      }
+    }
+    const sortByCreator = (a, b) => {
+      const aCreator = meCreator(a)
+      const bCreator = meCreator(b)
+      if (aCreator || bCreator) {
+        return 1
+      } else {
+        return -1
+      }
+    }
+
+    const sortByTitle = (a, b) => {
+      const aTitle = actTitle(a)
+      const bTitle = actTitle(b)
+      if (aTitle >= bTitle) {
+        return 1
+      } else {
+        return -1
+      }
+    }
+    return acts.sort(sortByMaster).sort(sortByCreator).sort(sortByMembersCound)
   }
 }
 

@@ -43,7 +43,7 @@ export default class changelogs {
             }).catch(() => {
                 this.changes = {}
             })
-        },900)
+        })
     }
     saver(){
       if(Object.keys(this.changes).length > 0){

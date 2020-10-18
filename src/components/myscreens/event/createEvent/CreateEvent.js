@@ -16,17 +16,12 @@ export default class CreateEvent extends Component {
     super(props);
     this.onClickNewContact = this.onClickNewContact.bind(this)
     this.onClickNewEvent = this.onClickNewEvent.bind(this)
-    this.onClickNewRemind = this.onClickNewRemind.bind(this)
     this.navigateToQRScanner = this.navigateToQRScanner.bind(this)
   
   }
 
   onClickNewEvent() {
     BeNavigator.navigateToCreateEvent();
-  };
-
-  onClickNewRemind(){
-    BeNavigator.navigateTo("MyTasksView");
   };
 
   onClickNewContact() {
@@ -50,6 +45,9 @@ export default class CreateEvent extends Component {
   render() {
     return (
       <ActionButton
+        style={{
+          marginBottom: "4%",
+        }}
         buttonColor={ColorList.bodyBackground}
         position="right"
         backgroundTappable={true}
@@ -60,7 +58,7 @@ export default class CreateEvent extends Component {
       >
         <ActionButton.Item
           buttonColor="#3D90E3"
-          title={Texts.relation} onPress={this.onClickNewContact}
+          title={Texts.contacts} onPress={this.onClickNewContact}
           size={75}
         >
         
@@ -80,14 +78,14 @@ export default class CreateEvent extends Component {
           size={65}
         >
           <Feather
-            name={'activity'}
+            name={'users'}
             style={styles.actionButtonIcon}
           />
         </ActionButton.Item>
 
         <ActionButton.Item
           buttonColor="#cd5c5c"
-          title={Texts.join_activity_or_program_via_qr} onPress={this.navigateToQRScanner}
+          title={Texts.join_activity_via_qr} onPress={this.navigateToQRScanner}
           size={55}
         >
           <Icon
@@ -116,5 +114,5 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     ...shadower(4),
   },
-  plusIcon: { color: ColorList.bodyIcon, fontSize: 27 }
+  plusIcon: { color: ColorList.indicatorColor, fontSize: 30 }
 });

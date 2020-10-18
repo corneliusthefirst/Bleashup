@@ -86,7 +86,7 @@ export default class QRScanner extends BePureComponent {
                 topContent={
                     <View style={{ ...bleashupHeaderStyle, padding: '2%', height: 45 }}>
                         <Text style={{ ...GState.defaultTextStyle, fontWeight: 'bold', }}>
-                            {Texts.join_activity_or_program_via_qr}
+                            {Texts.scann_qr}
                         </Text>
                     </View>
                 }

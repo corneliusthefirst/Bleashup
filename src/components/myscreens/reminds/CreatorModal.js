@@ -49,7 +49,7 @@ export default class CreatorModal extends BleashupModal {
               {this.props.intro && this.props.intro}
             </Text>
             {this.props.creator.nickname ? (
-              <Text style={styles.subMainText}>
+              <Text style={[styles.subMainText,{fontWeight: 'bold',}]}>
                 by {this.props.creator.nickname}{" "}
               </Text>
             ) : null}

@@ -32,7 +32,7 @@ export default class AudioMessage extends BePureComponent {
         super(props);
         this.state = {
             duration: 0,
-            currentPosition: 0.01,
+            currentPosition: this.props.room ? 1 : 0.01,
             canPlay: true,
             currentTime: 0,
             downloadState: 0,
@@ -53,7 +53,7 @@ export default class AudioMessage extends BePureComponent {
     startDownloader(immidiate) {
         if (this.player) {
             this.cleanPlayer()
-        }
+        }           
         this.setStatePure({
             duration: null,
             currentPosition: this.haveIPLayed() ? 1 : .00,
@@ -91,6 +91,7 @@ export default class AudioMessage extends BePureComponent {
         });
     }
     componentDidUpdate(prevPro, prevState) {
+        console.warn("component updating: ",prevPro.message.source, this.props.message.source)
         if (this.props.message.source !== prevPro.message.source) {
             if (testForURL(this.props.message.source)) {
                 this.startDownloader(true)
@@ -102,7 +103,7 @@ export default class AudioMessage extends BePureComponent {
     }
     setAfterSuccess(path) {
         GState.downlading = false;
-        this.props.message.source =
+        this.source =
             Platform.OS === "android" ? path + "/" : "" + path;
         if (this.props.room) {
             stores.Messages.addStaticFilePath(
@@ -126,13 +127,12 @@ export default class AudioMessage extends BePureComponent {
                         ...this.props.message,
                         received: this.state.received,
                         total: this.state.total,
-                        source: this.props.message.source,
+                        source: this.source,
                         duration: this.props.message.duration,
                     }
                 })
             }
         }
-        this.source = this.props.message.source
         this.initialisePlayer(this.source);
         this.setStatePure({
             loaded: true,
@@ -230,7 +230,7 @@ export default class AudioMessage extends BePureComponent {
         emitter.off(this.playingEvent)
         this.setStatePure({
             playing: false,
-        },);
+        });
     }
     task = null;
     previousTime = 0;
@@ -240,9 +240,10 @@ export default class AudioMessage extends BePureComponent {
                 this.player && this.player.getCurrentTime((time) => {
                     if (this.previousTime == time) clearInterval(this.refreshID);
                     else {
+                        console.warn(time / this.props.message.duration)
                         this.previousTime = time;
                         this.setStatePure({
-                            currentPosition: (time / this.props.message.duration)||.02,
+                            currentPosition: (time / this.props.message.duration) || .02,
                             currentTime: time,
                         });
                     }
@@ -336,8 +337,8 @@ export default class AudioMessage extends BePureComponent {
     };
     render() {
         let trackColor = this.props.allplayed ? ColorList.reminds : ColorList.indicatorColor
-        textStyle = {
-            width: "85%",
+       let textStyle = {
+            width: "80%",
             flexDirection: "column",
             alignSelf: "center",
         };
@@ -363,11 +364,12 @@ export default class AudioMessage extends BePureComponent {
                             flexDirection: "row",
                             backgroundColor: ColorList.bottunerLighter,
                             borderRadius: ColorList.chatboxBorderRadius,
-                            width: "100%",
+                            width: "99%",
                             alignItems: "center",
                             marginTop: '1%',
                             paddingLeft: '1%',
-                            alignSelf: "flex-end",
+                            minWidth: 150,
+                            alignSelf: "center",
                             minHeight: 50,
                             justifyContent: "space-between",
                         }}
@@ -376,11 +378,14 @@ export default class AudioMessage extends BePureComponent {
                             <View style={textStyle}>
                                 <View>
                                     <Slider
-                                        //minimumValue={0}
-                                        //maximumValue={100}
+                                        style={{
+                                            alignSelf: 'flex-start',
+                                            width:'90%'
+                                        }}
+                                        minimumValue={0.01}
+                                        maximumValue={1}
                                         step={.01}
-                                        
-                                        thumbTouchSize={{ height:50,width:50 }}
+                                        thumbTouchSize={{ height: 50, width: 50 }}
                                         minimumTrackTintColor={trackColor}
                                         value={(isFinite(this.state.currentPosition) && (this.state.currentPosition) || .01) || .01}
                                         onValueChange={(value) => {
@@ -408,13 +413,13 @@ export default class AudioMessage extends BePureComponent {
                                 </View>
                             </View>
                         ) : null}
-                        <View style={{ width: this.props.message.duration ? "15%" : "100%", alignItems: "center" }}>
+                        <View style={{ width: this.props.message.duration ? "15%" : "100%", alignItems: "center",marginLeft: "2%", }}>
                             {testForURL(this.source) ? (
                                 <AnimatedCircularProgress
                                     size={40}
                                     width={3}
                                     fill={
-                                        testForURL(this.props.message.source)
+                                        testForURL(this.source)
                                             ? this.state.downloadState
                                             : 100
                                     }
