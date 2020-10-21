@@ -4,9 +4,9 @@ import storage from "./Storage";
 
 export default class TempLoginStore {
   constructor() {
-      /*storage.remove({
-      key: 'temploginStore'
-      });*/
+    /*storage.remove({
+    key: 'temploginStore'
+    });*/
   }
   @observable phonenumber = "";
   @observable resetCode = "";
@@ -78,21 +78,28 @@ export default class TempLoginStore {
             autoSync: true
           })
           .then(data => {
-            this.user = {
-              phone: data.phone,
-              name: data.name,
-              status: data.status,
-              nickname: data.nickname,
-              birth_date: data.birth_date,
-              created_at: data.created_at,
-              email: data.email,
-              country_code : data.country_code,
-              updated_at: data.updated_at,
-              password: data.password,
-              profile: data.profile,
-              profile_ext: data.profile_ext
-            };
-            resolve(this.user);
+            storage.load({
+              key: "phone",
+              autoSync: true
+            }).then((P) => {
+              this.user = {
+                phone: P.phone || data.phone,
+                name: data.name,
+                status: data.status,
+                nickname: data.nickname,
+                birth_date: data.birth_date,
+                created_at: data.created_at,
+                email: data.email,
+                country_code: P.country_code || data.country_code,
+                updated_at: data.updated_at,
+                password: data.password,
+                profile: data.profile,
+                profile_ext: data.profile_ext
+              };
+              resolve(this.user);
+            }).catch(() => {
+              resolve(this.user)
+            })
           })
           .catch(error => {
             reject(error);

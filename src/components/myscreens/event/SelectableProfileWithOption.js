@@ -7,6 +7,7 @@ import emitter from '../../../services/eventEmiter';
 import MaterialIcons  from 'react-native-vector-icons/MaterialIcons';
 import GState from '../../../stores/globalState/index';
 import ColorList from "../../colorList";
+import Texts from '../../../meta/text';
 export default class SelectableProfileWithOptions extends Component {
     constructor(props) {
         super(props)
@@ -49,7 +50,7 @@ export default class SelectableProfileWithOptions extends Component {
                         >
                             {!this.props.simplyMembers ? <View style={{ width: "20%",...this.margin }}>
                                 {this.props.mainMaster && this.props.contact.phone !== this.props.creator ?
-                                    <MaterialIcons style={{ ...GState.defaultIconSize ,color: ColorList.indicatorColor }} name={this.state.checked ? "radio-button-checked" :
+                                    <MaterialIcons style={{ ...GState.defaultIconSize ,color: ColorList.indicatorColor }} name={this.props.checked ? "radio-button-checked" :
                                         "radio-button-unchecked"}/> : null
                                 }
                             </View> : null}
@@ -75,10 +76,11 @@ export default class SelectableProfileWithOptions extends Component {
                             <Text note style={{
                                 ...this.margin, marginRight: "10%", fontWeight: this.props.creator === this.props.contact.phone ? 'bold' : "normal", color:
                                     this.props.creator === this.props.contact.phone ? "#54F5CA" : this.props.contact.master ? "#1FABAB" : "gray"
-                            }}>{this.props.creator === this.props.contact.phone ? "Creator" : this.props.contact.master ? "Master " : "Member"}</Text><View style={{ alignItems: 'flex-end' }}>
+                            }}>{this.props.creator === this.props.contact.phone ? Texts.creator : this.props.contact.master ? Texts.master : Texts.member}</Text><View style={{ alignItems: 'flex-end' }}>
                                 {this.props.simplyMembers && <MemberActions
                                     changeMasterState={() => this.changeMasterState()}
                                     creator={this.props.creator}
+                                    removeWithMe={this.props.removeWithMe}
                                     leaveActivity={this.props.leaveActivity}
                                     currentPhone={this.props.currentPhone}
                                     phone={this.props.contact.phone}

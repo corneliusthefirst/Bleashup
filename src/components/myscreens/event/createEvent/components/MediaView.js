@@ -37,13 +37,14 @@ export default class MedaiView extends Component {
         ></AudioMessage> : this.containsMedia() ?
                     <TouchableOpacity style={{
                         justifyContent: "center",
+                        borderRadius: this.props.style && this.props.style.borderRadius,
                         backgroundColor: "lightgrey",
                         width: this.props.width,
                         justifyContent: 'center',
                     }} onPress={() => requestAnimationFrame(() => this.props.showItem(this.props.url))} >
                         <CacheImages thumbnails square style={{
                             width: this.props.width ? this.props.width : "100%",
-                            alignSelf: 'center', height: this.props.height * .7
+                            alignSelf: 'center', height: this.props.height * .7,...this.props.style
                         }} source={{ uri: this.props.url.photo }}></CacheImages>
                         {this.props.url && (this.props.url.video || this.props.url.audio) ?
                             <View style={{

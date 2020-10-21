@@ -22,11 +22,11 @@ class CreateRequester {
                         stores.Events.addEvent(newEvent).then(() => {
                             let Change = {
                                 id: IDMaker.make(),
-                                title: `First Update`,
+                                title: Texts.first_update,
                                 updated: "new_event",
                                 event_id: response.event_id,
                                 updater: stores.LoginStore.user.phone,
-                                changed: `Created The Activity`,
+                                changed: Texts.created_the_activity,
                                 new_value: { data: null, new_value: null },
                                 date: event.created_at,
                                 time: null

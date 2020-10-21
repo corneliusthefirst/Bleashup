@@ -6,6 +6,7 @@ import bleashupHeaderStyle from '../../../services/bleashupHeaderStyle';
 import BleashupModal from '../../mainComponents/BleashupModal';
 import MaterialIcons  from 'react-native-vector-icons/MaterialIcons';
 import GState from '../../../stores/globalState';
+import Texts from '../../../meta/text';
 
 export default class SelectDays extends BleashupModal {
     
@@ -44,7 +45,7 @@ export default class SelectDays extends BleashupModal {
             <View>
                 <View style={{ height: 30, width: '90%',alignSelf: 'center', margin: 'auto',}}>
                     <View style={{ justifyContent: 'center', alignSelf: 'center', }}>
-                        <Text style={{ ...GState.defaultTextStyle, width: '90%', alignSelf: 'center', fontWeight: 'bold' }}>{"days"}</Text>
+                        <Text style={{ ...GState.defaultTextStyle, width: '90%', alignSelf: 'center', fontWeight: 'bold' }}>{Texts.days}</Text>
                     </View></View>
                 <View pointerEvents={this.props.ownership ? null : 'none'}>
                     <ScrollView>

@@ -9,6 +9,7 @@ import colorList from '../../../../colorList';
 import CreateTextInput from './CreateTextInput';
 import CreateButton from "./ActionButton";
 import BleashupModal from '../../../../mainComponents/BleashupModal';
+import Texts from '../../../../../meta/text';
 
 
 let { height, width } = Dimensions.get('window');
@@ -80,13 +81,13 @@ export default class EventDescription extends BleashupModal {
               textAlignVertical: 'top',  // hack android
               backgroundColor: "#f5fffa", borderRadius: 25,
             }}
-            placeholder="activity Description" value={this.state.description} keyboardType="default"
+            placeholder={Texts.activity_description} value={this.state.description} keyboardType="default"
             onChange={(value) => this.onChangedEventDescription(value)} />
 
         </View>
 
         <View style={{ height: "25%", justifyContent: "center", }}>
-          <CreateButton style={{ width: '90%' }} title={"Update Description"} action={this.updateDescription.bind(this)}></CreateButton>
+          <CreateButton style={{ width: '90%' }} title={Texts.edit} action={this.updateDescription.bind(this)}></CreateButton>
         </View>
 
       </View>

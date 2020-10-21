@@ -12,67 +12,48 @@ import Toaster from "../../../services/Toaster";
 import IDMaker from "../../../services/IdMaker";
 import Texts from "../../../meta/text";
 import notification_channels from "../eventChat/notifications_channels";
+import UpdatesDispatch from '../../../services/updatesDispatcher';
+import Updates from '../../../services/updates-posibilites';
 class Requester {
   constructor() {
     this.notif_channel = notification_channels.reminds;
   }
   saveToCanlendar(eventID, remind, alarms, newRemindName) {
+    console.warn("remind members is: ", remind.members)
     return new Promise((resolve, reject) => {
       if (
         findIndex(remind.members, { phone: stores.LoginStore.user.phone }) >= 0
       ) {
         CalendarServe.saveEvent(remind, alarms, "reminds", newRemindName).then(
           (calendar_id) => {
-            stores.Reminds.updateCalendarID(
+            /*stores.Reminds.updateCalendarID(
               eventID,
               { remind_id: remind.id, calendar_id: calendar_id },
               alarms
-            ).then(() => {
+            ).then(() => {*/
               resolve(calendar_id);
-            });
+           // });
           }
         );
+      } else {
+        resolve()
       }
     });
   }
   CreateRemind(Remind, activityName) {
     return new Promise((resolve, reject) => {
-      /*let notif = request.Notification();
-      notif.notification.body = +" @ " + activityName + " Added a new Remind";
-      notif.notification.title = Remind.title;
-      notif.notification.android_channel_id = this.notif_channel;
-      notif.data.activity_id = Remind.event_id;
-      notif.data.remind_id = Remind.id;
-      Remind.notif = notif;*/
       tcpRequest
         .addRemind(Remind, Remind.event_id + "_currence")
         .then((JSONData) => {
           EventListener.sendRequest(JSONData, Remind.event_id + "_currence")
             .then((response) => {
-              stores.Reminds.addReminds(Remind.event_id, Remind).then((res) => {
-                stores.Events.addRemind(Remind.event_id, Remind.id).then(() => {
-                  let Change = {
-                    id: IDMaker.make(),
-                    title: "Updates On Main Activity",
-                    updated: "added_remind",
-                    updater: stores.LoginStore.user.phone,
-                    event_id: Remind.event_id,
-                    changed: `Added  ${Remind.title} Remind `,
-                    new_value: { data: Remind.id, new_value: Remind.title },
-                    date: moment().format(),
-                    time: null,
-                  };
-                  this.saveToCanlendar(
-                    Remind.event_id,
-                    Remind,
-                    Remind.extra && Remind.extra.alarms
-                  );
-                  stores.ChangeLogs.addChanges(Change).then(() => {
-                    console.warn("completed");
-                  });
-                  resolve("ok");
-                });
-              });
+              UpdatesDispatch.dispatchUpdate(request.Updated(Remind.event_id,
+                Remind,
+                null,
+                Updates.possibilites.remind_added
+              )).then(() => {
+                resolve("ok")
+              })
             })
             .catch(() => {
               Toaster({ text: Texts.unable_to_perform_request });
@@ -94,36 +75,12 @@ class Requester {
           .then((JSONData) => {
             EventListener.sendRequest(JSONData, remindID + "_name")
               .then((response) => {
-                stores.Reminds.updateTitle(
-                  eventID,
-                  {
-                    remind_id: remindID,
-                    title: newName,
-                  },
-                  true
-                ).then((oldRemind) => {
-                  let Change = {
-                    id: IDMaker.make(),
-                    title: `Updates On ${oldRemind.title} Remind`,
-                    updated: `remind_title_updated`,
-                    updater: stores.LoginStore.user.phone,
-                    event_id: eventID,
-                    changed: "Changed The Title To ",
-                    new_value: { data: remindID, new_value: newName },
-                    date: moment().format(),
-                    time: null,
-                  };
-                  stores.ChangeLogs.addChanges(Change).then(() => {
-                    oldRemind.calendar_id &&
-                      this.saveToCanlendar(
-                        oldRemind.event_id,
-                        { ...oldRemind, title: newName },
-                        oldRemind.alams,
-                        oldRemind.title
-                      ).then(() => { });
-                  });
-                  resolve("ok");
-                });
+                UpdatesDispatch.dispatchUpdate(request.Updated(eventID, {
+                  remind_id: remindID,
+                  title: newName,
+                }, null, Updates.possibilites.remind_title_updated)).then(() => {
+                  resolve("ok")
+                })
               })
               .catch((error) => {
                 Toaster({ text: Texts.unable_to_perform_request });
@@ -147,40 +104,16 @@ class Requester {
         tcpRequest
           .updateRemind(newRemindName, remindID + "_description")
           .then((JSONData) => {
-            EventListener.sendRequest(JSONData, remindID + "_description")
-              .then((response) => {
-                stores.Reminds.updateDescription(
-                  eventID,
-                  {
-                    remind_id: remindID,
-                    description: newDescription,
-                  },
-                  true
-                ).then((oldRemind) => {
-                  let Change = {
-                    id: IDMaker.make(),
-                    title: `Updates On ${oldRemind.title} Remind`,
-                    updated: `remind_description_updated`,
-                    updater: stores.LoginStore.user.phone,
-                    event_id: eventID,
-                    changed: newDescription
-                      ? oldRemind.description
-                        ? "Changed The Description To "
-                        : "Add a Description to The Remind"
-                      : "Removed The Description Of The Remind",
-                    new_value: { data: remindID, new_value: newDescription },
-                    date: moment().format(),
-                    time: null,
-                  };
-                  stores.ChangeLogs.addChanges(Change).then(() => { });
-                  resolve("ok");
-                });
-              })
-              .catch((error) => {
-                Toaster({ text: Texts.unable_to_perform_request });
-                console.warn(error);
-                reject(error);
-              });
+            UpdatesDispatch.dispatchUpdate(request.Updated(eventID, {
+              remind_id: remindID,
+              description: newDescription,
+            }, null, Updates.possibilites.remind_description_updated)).then(() => {
+              resolve("ok")
+            })
+          }).catch((error) => {
+            Toaster({ text: Texts.unable_to_perform_request });
+            console.warn(error);
+            reject(error);
           });
       } else {
         resolve();
@@ -197,36 +130,16 @@ class Requester {
       tcpRequest
         .updateRemind(newRemindName, remindID + "_confirm")
         .then((JSONData) => {
-          EventListener.sendRequest(JSONData, remindID + "_confirm")
-            .then((response) => {
-              stores.Reminds.confirm(
-                eventID,
-                {
-                  remind_id: remindID,
-                  confirmed: Member,
-                },
-                true
-              ).then((oldRemind) => {
-                let Change = {
-                  id: IDMaker.make(),
-                  title: `Updates On ${oldRemind.title} Remind`,
-                  updated: `remind_confirmed`,
-                  updater: stores.LoginStore.user.phone,
-                  event_id: eventID,
-                  changed: "Confirmed The Task Completion Of ...",
-                  new_value: { data: remindID, new_value: Member },
-                  date: moment().format(),
-                  time: null,
-                };
-                stores.ChangeLogs.addChanges(Change).then(() => { });
-                resolve("ok");
-              });
-            })
-            .catch((error) => {
-              Toaster({ text: Texts.unable_to_perform_request });
-              console.warn(error);
-              reject(error);
-            });
+          UpdatesDispatch.dispatchUpdate(request.Updated(eventID, {
+            remind_id: remindID,
+            confirmed: Member,
+          }, null, Updates.possibilites.confirm)).then(() => {
+            resolve("ok")
+          })
+        }).catch((error) => {
+          Toaster({ text: Texts.unable_to_perform_request });
+          console.warn(error);
+          reject(error);
         });
     });
   }
@@ -246,34 +159,12 @@ class Requester {
           .then((JSONData) => {
             EventListener.sendRequest(JSONData, remindID + "_recurrence")
               .then((reponse) => {
-                console.warn("update completely sent !");
-                stores.Reminds.updateRecursiveFrequency(
-                  eventID,
-                  {
-                    remind_id: remindID,
-                    recursive_frequency: newConfigs,
-                  },
-                  true
-                ).then((oldRemind) => {
-                  let Change = {
-                    id: IDMaker.make(),
-                    title: `Updates On ${oldRemind.title} Remind`,
-                    updated: `remind_reurrence_config_updated`,
-                    updater: stores.LoginStore.user.phone,
-                    event_id: eventID,
-                    changed: "Changed The Recurrency configurations",
-                    new_value: { data: remindID, new_value: newConfigs },
-                    date: moment().format(),
-                    time: null,
-                  };
-                  this.saveToCanlendar(
-                    eventID,
-                    oldRemind,
-                    oldRemind.extra && oldRemind.extra.alarms
-                  );
-                  resolve("ok");
-                  stores.ChangeLogs.addChanges(Change).then(() => { });
-                });
+                UpdatesDispatch.dispatchUpdate(request.Updated(eventID, {
+                  remind_id: remindID,
+                  recursive_frequency: newConfigs,
+                }, null, Updates.possibilites.remind_recurrence)).then(() => {
+                  resolve("ok")
+                })
               })
               .catch((error) => {
                 Toaster({ text: Texts.unable_to_perform_request });
@@ -299,25 +190,12 @@ class Requester {
           .then((JSONData) => {
             EventListener.sendRequest(JSONData, remindID + "_public_state")
               .then((response) => {
-                stores.Reminds.updateStatus(
-                  eventID,
+                UpdatesDispatch.dispatchUpdate(request.Updated(eventID,
                   { remind_id: remindID, status: newState },
-                  true
-                ).then((oldRemind) => {
-                  let Change = {
-                    id: IDMaker.make(),
-                    title: `Updates On ${oldRemind.title} Remind`,
-                    updated: `remind_public_state_updated`,
-                    updater: stores.LoginStore.user.phone,
-                    event_id: eventID,
-                    changed: "Changed The State Of The Remind To",
-                    new_value: { data: remindID, new_value: newState },
-                    date: moment().format(),
-                    time: null,
-                  };
-                  stores.ChangeLogs.addChanges(Change).then(() => { });
-                  resolve("ok");
-                });
+                  null,
+                  Updates.possibilites.remind_public_state)).then(() => {
+                    resolve("ok")
+                  })
               })
               .catch((error) => {
                 Toaster({ text: Texts.unable_to_perform_request });
@@ -343,25 +221,11 @@ class Requester {
           .then((JSONData) => {
             EventListener.sendRequest(JSONData, remindID + "_must_report")
               .then((response) => {
-                stores.Reminds.updateRequestReportOnComplete(
-                  eventID,
-                  { remind_id: remindID, must_report: newMustReport },
-                  false
-                ).then((oldRemind) => {
-                  let Change = {
-                    id: IDMaker.make(),
-                    title: `Updates On ${oldRemind.title} Remind`,
-                    updated: `remind_period_updated`,
-                    updater: stores.LoginStore.user.phone,
-                    event_id: eventID,
-                    changed: "Changed The Must Report Status ",
-                    new_value: { data: remindID, new_value: newMustReport },
-                    date: moment().format(),
-                    time: null,
-                  };
-                  stores.ChangeLogs.addChanges(Change).then(() => { });
-                  resolve("ok");
-                });
+                UpdatesDispatch.dispatchUpdate(request.Updated(eventID,
+                  { remind_id: remindID, must_report: newMustReport }, null,
+                  Updates.possibilites.must_report)).then(() => {
+                    resolve("ok")
+                  })
               })
               .catch((error) => {
                 Toaster({ text: Texts.unable_to_perform_request });
@@ -387,37 +251,13 @@ class Requester {
           .then((JSONData) => {
             EventListener.sendRequest(JSONData, remindID + "_period")
               .then((response) => {
-                stores.Reminds.updatePeriod(
-                  eventID,
-                  { remind_id: remindID, period: newPeriod },
-                  true
-                ).then((oldRemind) => {
-                  let Change = {
-                    id: IDMaker.make(),
-                    title: `Updates On ${oldRemind.title} Remind`,
-                    updated: `remind_period_updated`,
-                    updater: stores.LoginStore.user.phone,
-                    event_id: eventID,
-                    changed: "Changed start Date Of The Remind To ",
-                    new_value: {
-                      data: remindID,
-                      new_value: moment(newPeriod).format(
-                        "dddd, MMMM Do YYYY, h:mm:ss a"
-                      ),
-                    },
-                    date: moment().format(),
-                    time: null,
-                  };
-                  oldRemind.calendar_id
-                    ? CalendarServe.saveEvent(
-                      { ...oldRemind, period: newPeriod },
-                      null,
-                      "reminds"
-                    ).then(() => { })
-                    : null;
-                  resolve("ok");
-                  stores.ChangeLogs.addChanges(Change).then(() => { });
-                });
+                UpdatesDispatch.dispatchUpdate(request.Updated(eventID, {
+                  remind_id: remindID,
+                  period: newPeriod
+                }, null,
+                  Updates.possibilites.remind_period_updated)).then(() => {
+                    resolve("ok")
+                  })
               })
               .catch((error) => {
                 Toaster({ text: Texts.unable_to_perform_request });
@@ -447,15 +287,12 @@ class Requester {
           .then((JSONData) => {
             EventListener.sendRequest(JSONData, remindID + "_alarms").then(
               (response) => {
-                MainUpdater.updateRemindAlarms(
-                  eventID,
-                  remindID,
-                  newRemindName.data,
-                  moment().format(),
-                  stores.LoginStore.user.phone
-                ).then(() => {
-                  resolve("ok");
-                });
+                UpdatesDispatch.dispatchUpdate(request.Updated(eventID,
+                  newRemindName,
+                  null,
+                  Updates.possibilites.remind_alarms)).then(() => {
+                    resolve("ok")
+                  })
               }
             );
           })
@@ -479,17 +316,10 @@ class Requester {
         tcpRequest
           .updateRemind(newRemindName, remindID + "_location")
           .then((JSONData) => {
-            EventListener.sendRequest(JSONData, remindID + "_location")
-              .then((response) => {
-                MainUpdater.updateRemindLocation(
-                  eventID,
-                  remindID,
-                  newLocation,
-                  moment().format(),
-                  stores.LoginStore.user.phone
-                ).then(() => {
-                  resolve("ok");
-                });
+            UpdatesDispatch.dispatchUpdate(request.Updated(eventID,
+              { remind_id: remindID, location: newLocation }, null,
+              Updates.possibilites.remind_location)).then(() => {
+                resolve("ok")
               })
               .catch(() => {
                 Toaster({ text: Texts.unable_to_perform_request });
@@ -513,17 +343,11 @@ class Requester {
         tcpRequest
           .updateRemind(newRemindName, remindID + "_remind_url")
           .then((JSONData) => {
-            EventListener.sendRequest(JSONData, remindID + "_remind_url")
-              .then((response) => {
-                MainUpdater.updateRemindURL(
-                  eventID,
-                  remindID,
-                  newURL,
-                  moment().format(),
-                  stores.LoginStore.user.phone
-                ).then(() => {
-                  resolve("ok");
-                });
+            UpdatesDispatch.dispatchUpdate(request.Updated(eventID,
+              { url: newURL, remind_id: remindID },
+              null,
+              Updates.possibilites.remind_url)).then(() => {
+                resolve("ok")
               })
               .catch(() => {
                 reject();
@@ -570,29 +394,13 @@ class Requester {
   }
   concludeAddMembers(remind, alarms) {
     return new Promise((resolve, reject) => {
-      stores.Reminds.addMembers(
-        remind.event_id,
-        {
-          members: remind.members,
-          remind_id: remind.id,
-        },
-        true
-      ).then((oldRemind) => {
-        let Change = {
-          id: IDMaker.make(),
-          title: `Updates On ${oldRemind.title} Remind`,
-          updated: `remind_member_added`,
-          updater: stores.LoginStore.user.phone,
-          event_id: remind.event_id,
-          changed: "Assigned The Remind To ...",
-          new_value: { data: remind.id, new_value: remind.members },
-          date: moment().format(),
-          time: null,
-        };
-        this.saveToCanlendar(remind.event_id, remind, alarms);
-        stores.ChangeLogs.addChanges(Change).then(() => { });
-        resolve("ok");
-      });
+      UpdatesDispatch.dispatchUpdate(request.Updated(remind.event_id, {
+        members: remind.members,
+        remind_id: remind.id,
+        alarms
+      }, null, Updates.possibilites.members_added_to_remind)).then(() => {
+        resolve("ok")
+      })
     })
   }
   addMembers(remind, alarms, activity_name) {
@@ -649,54 +457,12 @@ class Requester {
   }
   concludeRemoveMembers(members, remindID, eventID) {
     return new Promise((resolve, reject) => {
-      stores.Reminds.removeMember(
-        eventID,
-        {
-          members: members,
-          remind_id: remindID,
-        },
-        true
-      ).then((oldRemind) => {
-        let Change = {
-          id: IDMaker.make(),
-          title: `Updates On ${oldRemind.title} Remind`,
-          updated: `remind_member_removed`,
-          updater: stores.LoginStore.user.phone,
-          event_id: eventID,
-          changed: "Unassigned This Task / Remind From ",
-          new_value: {
-            data: remindID,
-            new_value: members.map((ele) => {
-              return { phone: ele };
-            }),
-          },
-          date: moment().format(),
-          time: null,
-        };
-        if (
-          oldRemind.calendar_id &&
-          findIndex(
-            members,
-            (ele) => ele === stores.LoginStore.user.phone
-          ) >= 0
-        ) {
-          CalendarServe.saveEvent(
-            { ...oldRemind, period: null },
-            null,
-            "reminds",
-            true
-          ).then(() => {
-            stores.Reminds.updateCalendarID(eventID, {
-              remind_id: oldRemind.id,
-              calendar_id: undefined,
-            }).then(() => {
-              console.warn("calendar_id successfully removed");
-            });
-          });
-        }
-        resolve("ok");
-        stores.ChangeLogs.addChanges(Change).then(() => { });
-      });
+      UpdatesDispatch.dispatchUpdate(request.Updated(eventID, {
+        members: members,
+        remind_id: remindID,
+      }, null, Updates.possibilites.members_removed_from_remind)).then(() => {
+        resolve("ok")
+      })
     })
   }
   removeMembers(members, remindID, eventID) {
@@ -870,35 +636,12 @@ class Requester {
     this.shortName = this.yourName.split(" ")[0];
     return new Promise((resolve, reject) => {
       this.markAsDoneRemote(member, remind, activity_name)
-      stores.Reminds.makeAsDone(
-        remind.event_id,
-        {
-          donners: member,
-          remind_id: remind.id,
-        },
-        true
-      ).then((oldRemind) => {
-        let Change = {
-          id: IDMaker.make(),
-          title: `Updates On ${oldRemind.title} Remind`,
-          updated: `remind_marked_as_done`,
-          updater: stores.LoginStore.user.phone,
-          event_id: remind.event_id,
-          changed: "Marked The Remind As Done",
-          new_value: { data: remind.id, new_value: member },
-          date: moment().format(),
-          time: null,
-        };
-        if (oldRemind.calendar_id) {
-          //CalendarServe.saveEvent({ ...oldRemind, period: null }, null, 'reminds',false).then(() => {
-          //   stores.Reminds.updateCalendarID({ remind_id: oldRemind.id, calendar_id: undefined }).then(() => {
-          //console.warn("calendar_id successfully removed");
-          //  })
-          //  })
-        }
-        resolve("ok");
-        stores.ChangeLogs.addChanges(Change).then(() => { });
-      });
+      UpdatesDispatch.dispatchUpdate(request.Updated(remind.event_id, {
+        donners: member,
+        remind_id: remind.id,
+      }, null, Updates.possibilites.mark_as_done)).then(() => {
+        resolve("ok")
+      })
     })
       .catch((e) => {
         Toaster({ text: Texts.unable_to_perform_request });
@@ -917,39 +660,10 @@ class Requester {
         .then((JSONData) => {
           EventListener.sendRequest(JSONData, remindID + "_delete")
             .then((response) => {
-              stores.Reminds.removeRemind(eventID, remindID).then(
-                (oldRemind) => {
-                  stores.Events.removeRemind(eventID, remindID, false).then(
-                    () => {
-                      let Change = {
-                        id: IDMaker.make(),
-                        title: `Removed ${oldRemind.title} Remind`,
-                        updated: `delete_remind`,
-                        updater: stores.LoginStore.user.phone,
-                        event_id: eventID,
-                        changed: `Deleted ${oldRemind.title} Remind`,
-                        new_value: { data: remindID, new_value: oldRemind },
-                        date: moment().format(),
-                        time: null,
-                      };
-                      if (
-                        oldRemind.calendar_id &&
-                        findIndex(oldRemind.members, {
-                          phone: stores.LoginStore.user.phone,
-                        }) >= 0
-                      ) {
-                        CalendarServe.saveEvent(
-                          { ...oldRemind, period: null },
-                          null,
-                          "reminds"
-                        ).then(() => { });
-                      }
-                      stores.ChangeLogs.addChanges(Change).then(() => { });
-                      resolve("ok");
-                    }
-                  );
-                }
-              );
+              UpdatesDispatch.dispatchUpdate(request.Updated(eventID, remindID, null,
+                Updates.possibilites.remind_deleted)).then(() => {
+                  resolve("ok")
+                })
             })
             .catch(() => {
               Toaster({ text: Texts.unable_to_perform_request });

@@ -6,6 +6,7 @@ import Menu, { MenuItem, MenuDivider } from 'react-native-material-menu';
 import emitter from '../../../services/eventEmiter';
 import ColorList from '../../colorList';
 import  Entypo from 'react-native-vector-icons/Entypo';
+import Texts from '../../../meta/text';
 
 export default class MemberActions extends Component {
     constructor(props) {
@@ -68,18 +69,24 @@ export default class MemberActions extends Component {
                     <View><MenuItem textStyle={{ color: ColorList.headerIcon}} onPress={() => {
                         this.hideMenu()
                         this.props.checkActivity()
-                    }}>{"Check Activites"}</MenuItem>
+                    }}>{Texts.check_activity}</MenuItem>
                         <MenuDivider color={ColorList.iconActive} /></View>
                      {this.props.mainMaster && this.props.creator !== this.props.phone ? <View>
                         <MenuItem textStyle={{ color: ColorList.headerIcon }} onPress={() => {
                             this.hideMenu()
                             this.props.changeMasterState()
-                        }}>{this.props.master ? "Remove As Master" : "Add As Master"}</MenuItem>
+                        }}>{this.props.master ? Texts.remove_as_master : Texts.add_as_masteur}</MenuItem>
                         <MenuDivider color={ColorList.iconActive} /></View> : null}
+                    {this.props.mainMaster && this.props.creator !== this.props.phone ? <View>
+                        <MenuItem textStyle={{ color: ColorList.redIcon }} onPress={() => {
+                            this.hideMenu()
+                            this.props.removeWithMe(this.props.phone)
+                        }}>{Texts.remove_a_member}</MenuItem>
+                        <MenuDivider color={ColorList.headerIcon} /></View> : null}
                     {this.props.currentPhone === this.props.phone && <View><MenuItem textStyle={{ color: "red" }} onPress={() => {
                         this.hideMenu()
                         this.props.leaveActivity()
-                    }}>{"Leave Activites"}</MenuItem>
+                    }}>{Texts.leave_activity}</MenuItem>
                         <MenuDivider color={ColorList.iconActive} /></View>}
                 </Menu>
             </View>

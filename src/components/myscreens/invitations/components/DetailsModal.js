@@ -254,9 +254,10 @@ const styles = StyleSheet.create({
   joinButtonContainer: {
     flexDirection: "row",
     height: 40,
+    padding: '2%',
     marginLeft: "auto",
     alignSelf: "flex-end",
-    width: 60,
+    minWidth: 60,
     ...shadower(2),
     backgroundColor: ColorList.indicatorColor,
     borderRadius: 3,

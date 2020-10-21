@@ -116,10 +116,10 @@ export default class SetAlarmPatternModal extends BleashupModal {
                     </View>
                     <View style={{ flexDirection: 'column',justifyContent: 'center',alignSelf:'flex-end'}}>
                         {!this.props.dontSet && <CreateButton  
-                        title={"Set"} 
+                        title={Texts.set} 
                         action={() => this.save()} style={{ 
                             ...shadower(2), borderWidth: 0, 
-                            width: 55, margin: 5,
+                            minWidth: 55, margin: 5,maxWidth: 100,
                             backgroundColor: ColorList.bodyDarkWhite,height:35,borderRadius:10 }} noround />}
                     </View>
                 </View>

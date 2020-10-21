@@ -13,6 +13,7 @@ import Spinner from '../../Spinner';
 import Searcher from "../Contacts/Searcher";
 import { startSearching, cancelSearch, justSearch } from "../eventChat/searchServices";
 import globalFunctions from '../../globalFunctions';
+import Texts from '../../../meta/text';
 export default class SettingsTabModal extends BleashupModal {
 
   initialize() {
@@ -72,7 +73,7 @@ export default class SettingsTabModal extends BleashupModal {
                   fontSize: ColorList.fontSize,
                   alignSelf: 'flex-start'
                 }}>
-                  {"Activity Settings"}
+                  {Texts.activity_setting}
                 </Text>
               </View>
             </View>
@@ -90,7 +91,7 @@ export default class SettingsTabModal extends BleashupModal {
               closeActivity={this.props.closeActivity}
             ></Settings>
           </View>
-          <View style={{ height: 600,width:'100%' }}>
+          <View style={{ height: GState.height*.7,width:'100%' }}>
             <View style={{
               height: ColorList.headerHeight,
               width:'100%',
@@ -98,6 +99,8 @@ export default class SettingsTabModal extends BleashupModal {
             <View style={{ height: "80%" }}>
               {this.state.isMounted ?
                 <Members
+                  removeWithMe={this.props.remove}
+                  addMembers={this.props.addMembers}
                   closeModals={this.onClosedModal.bind(this)}
                   currentPhone={this.props.currentPhone}
                   leaveActivity={this.props.leaveActivity}
@@ -119,7 +122,7 @@ export default class SettingsTabModal extends BleashupModal {
       <View style={{
         flexDirection: 'row',
         alignSelf: 'center',
-        justifyContent: 'space-between',
+        //justifyContent: 'space-between',
         marginLeft: "1%",
         width:'97%',
         alignItems: 'center',
@@ -131,11 +134,13 @@ export default class SettingsTabModal extends BleashupModal {
           flex: 1,
         }}><Text style={{
           ...GState.defaultTextStyle
-        }}>members</Text></View> : null}
+        }}>{Texts.members}</Text></View> : null}
         <View style={{
           height: 35,
-          flex: this.state.searhing ? 1 : null,
-          width: this.state.searching ? "60%" : 35
+          alignSelf: 'center',
+          marginLeft: 5,
+          marginRight:6,
+          width: this.state.searching ? "98%" : 35
         }}>
           <Searcher
             searching={this.state.searching}
@@ -145,23 +150,6 @@ export default class SettingsTabModal extends BleashupModal {
             search={this.search}
           ></Searcher>
         </View>
-        <View
-          style={{
-            flexDirection: "row",
-            alignSelf: "flex-end",
-            width: 70,
-            justifyContent: "space-between",
-          }}
-        >
-
-          {this.props.master && <MoreMembersMenu
-            master={this.props.master}
-            addMembers={this.props.addMembers}
-            invite={this.props.invite}
-          ></MoreMembersMenu>}
-          {this.props.master && (
-            <RemoveMemberMenu remove={this.props.remove}></RemoveMemberMenu>
-          )}
-        </View></View>)
+       </View>)
   }
 }

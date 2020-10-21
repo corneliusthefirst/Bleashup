@@ -43,6 +43,7 @@ import RemindMessage from "./RemindMessage";
 import StarMessage from "./StarMessage";
 import RelationMessage from "./RelationMessage";
 import MessageState from "./MessageState";
+import Texts from '../../../meta/text';
 
 export default class Message extends BeComponent {
     constructor(props) {
@@ -595,7 +596,7 @@ export default class Message extends BeComponent {
                                                                 }}
                                                                 note
                                                             >
-                                                                {"(forwarded)"}
+                                                                {'(' + Texts.forwarded + ')'}
                                                             </Text>
                                                         ) : null}
                                                         {this.state.different &&

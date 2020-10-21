@@ -681,6 +681,16 @@ class Request {
             committee_id:""
         }
     }
+    Updated(event_id,new_value,addedphone, update){
+        return {
+            date: moment().format(),
+            updater: stores.LoginStore.user.phone,
+            new_value,
+            event_id,
+            addedphone,
+            update
+        }
+    }
     MessageAction(){
         return {
             action : "",

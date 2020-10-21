@@ -71,19 +71,18 @@ let { height, width } = Dimensions.get('window');
   }
 
   editActu = () => {
-    console.warn("here");
     this.props.navigation.navigate("Actu", { userInfo: stores.LoginStore.user });
   }
 
   //for photo
- 
+
   handleUpload(url) {
     this.setStatePure({ url })
     stores.LoginStore.updateProfile(url.photo).then(() => {
 
     })
   }
-  
+
 
   uploadError = (e) => {
     this.setStatePure({ uploading: false });
@@ -129,10 +128,10 @@ let { height, width } = Dimensions.get('window');
 
     );
   }
-  copyPhone(){
+  copyPhone() {
     Clipboard.setString(stores.LoginStore.user.phone)
     Vibrator.vibrateShort()
-    Toaster({text:Texts.copied})
+    Toaster({ text: Texts.copied })
   }
   renderProfileInfo = () => {
     return (
@@ -142,7 +141,7 @@ let { height, width } = Dimensions.get('window');
           <View style={{ width: "80%", flexDirection: "row" }}>
             <AntDesign name="user" active={true} type="AntDesign" style={{ ...GState.defaultIconSize, color: ColorList.headerIcon, }} />
             <View style={{ flex: 1, marginLeft: "5%", flexDirection: "column" }}>
-              <Text style={{ ...GState.defaultTextStyle, alignSelf: "flex-start" }} note>Name</Text>
+              <Text style={{ ...GState.defaultTextStyle, alignSelf: "flex-start" }} note>{Texts.name}</Text>
               <Text style={{ ...GState.defaultTextStyle, alignSelf: "flex-start" }}>{stores.LoginStore.user.nickname}</Text>
             </View>
           </View>
@@ -160,7 +159,7 @@ let { height, width } = Dimensions.get('window');
             <AntDesign name="infocirlceo" active={true} type="AntDesign" style={{ ...GState.defaultIconSize, color: ColorList.headerIcon, }} />
 
             <View style={{ flex: 1, marginLeft: "5%", flexDirection: "column" }}>
-              <Text style={{ ...GState.defaultTextStyle, alignSelf: "flex-start" }} note>Actu</Text>
+              <Text style={{ ...GState.defaultTextStyle, alignSelf: "flex-start" }} note>{Texts.status}</Text>
               <Text style={{ ...GState.defaultTextStyle, alignSelf: "flex-start" }} numberOfLines={1}  >{stores.LoginStore.user.status}</Text>
             </View>
 
@@ -178,7 +177,7 @@ let { height, width } = Dimensions.get('window');
           <View style={{ width: "90%", flexDirection: "row" }}>
             <FontAwesome name="phone" active={true} type="FontAwesome" style={{ ...GState.defaultIconSize, color: ColorList.headerIcon }} />
             <TouchableOpacity onLongPress={() => this.copyPhone()} style={{ flex: 1, marginLeft: "5%", flexDirection: "column" }}>
-              <Text style={{ ...GState.defaultTextStyle, alignSelf: "flex-start" }} note>Telephone</Text>
+              <Text style={{ ...GState.defaultTextStyle, alignSelf: "flex-start" }} note>{Texts.telephone}</Text>
               <Text style={{ ...GState.defaultTextStyle, alignSelf: "flex-start", marginLeft: 2 }}>{stores.LoginStore.user.phone}</Text>
             </TouchableOpacity>
           </View>
@@ -224,7 +223,12 @@ let { height, width } = Dimensions.get('window');
               <View style={{ width: '80%', flexDirection: 'row', marginTop: 50 }}>
                 <Entypo onPress={() => this.props.navigation.navigate("Settings")} name="sound-mute" active={true} type="Entypo" style={{ ...GState.defaultIconSize, color: ColorList.headerIcon, }} />
                 <TouchableWithoutFeedback style={{ flex: 1 }} onPress={() => BeNavigator.navigateTo("MuteView")}>
-                  <Text style={{ ...GState.defaultTextStyle, fontSize: 17, fontWeight: "400", marginLeft: "5%" }}>Mute Settings</Text>
+                  <Text style={{
+                    ...GState.defaultTextStyle,
+                    fontSize: 17,
+                    fontWeight: "400",
+                    marginLeft: "5%"
+                  }}>{Texts.muted}</Text>
                 </TouchableWithoutFeedback>
 
               </View>
@@ -232,7 +236,7 @@ let { height, width } = Dimensions.get('window');
               <View style={{ width: '80%', flexDirection: 'row', marginTop: 25 }}>
                 <MaterialIcons name="block" active={true} type="MaterialIcons" style={{ ...GState.defaultIconSize, color: 'red', }} onPress={() => this.props.navigation.navigate("Settings")} />
                 <TouchableWithoutFeedback style={{ flex: 1 }} onPress={() => BeNavigator.navigateTo("BlockView")}>
-                  <Text style={{ ...GState.defaultTextStyle, fontSize: 17, fontWeight: "400", marginLeft: "5%" }}>Block Settings</Text>
+                  <Text style={{ ...GState.defaultTextStyle, fontSize: 17, fontWeight: "400", marginLeft: "5%" }}>{Texts.blocked}</Text>
                 </TouchableWithoutFeedback>
               </View>
 
@@ -241,14 +245,14 @@ let { height, width } = Dimensions.get('window');
 
 
 
-            <EditUserModal 
-            isOpen={this.state.update} 
-            onClosed={() => { this.setStatePure({ update: false }); }} 
-            type="nickname" userInfo={stores.LoginStore.user} 
-            title={this.state.updatetitle} 
-            position={this.state.position} 
-            coverscreen={this.state.coverscreen} 
-            maxLength={GState.nameMaxLength} />
+            <EditUserModal
+              isOpen={this.state.update}
+              onClosed={() => { this.setStatePure({ update: false }); }}
+              type="nickname" userInfo={stores.LoginStore.user}
+              title={this.state.updatetitle}
+              position={this.state.position}
+              coverscreen={this.state.coverscreen}
+              maxLength={GState.nameMaxLength} />
 
           </View>
           : null}

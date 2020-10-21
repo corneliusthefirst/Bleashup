@@ -13,6 +13,7 @@ import AnimatedComponent from "../../AnimatedComponent";
 import Swipeout from "../eventChat/Swipeout";
 import TextContent from "../eventChat/TextContent";
 import AnimatedPureComponent from '../../AnimatedPureComponent';
+import { writeChange } from './change.services';
 
 export default class ChangeBox extends AnimatedComponent {
   initialize() {
@@ -24,6 +25,7 @@ export default class ChangeBox extends AnimatedComponent {
           ? stores.TemporalUsersStore.Users[this.props.change.updater]
           : this.props.change.updater,
     };
+    this.writeChange = writeChange.bind(this)
   }
   state = {
     changer:
@@ -32,9 +34,9 @@ export default class ChangeBox extends AnimatedComponent {
         : this.props.change.updater,
   };
   shouldComponentUpdate(nextProps, nextState, nextContext) {
-    return this.state.newThing !== nextState.newThing || 
-    this.props.searchString !== nextProps.searchString || 
-    this.props.foundString !== nextProps.foundString
+    return this.state.newThing !== nextState.newThing ||
+      this.props.searchString !== nextProps.searchString ||
+      this.props.foundString !== nextProps.foundString
   }
   mention(changer) {
     this.props.mention({ ...this.props.change }, changer);
@@ -108,9 +110,9 @@ export default class ChangeBox extends AnimatedComponent {
                   </TextContent>
                 </View>
                 <TextContent
-                onPress={this.props.onPress}
-                searchString={this.props.searchString}
-                foundString={this.props.foundString}
+                  onPress={this.props.onPress}
+                  searchString={this.props.searchString}
+                  foundString={this.props.foundString}
                   ellipsizeMode="tail"
                   style={{
                     fontSize: 13,
@@ -119,10 +121,7 @@ export default class ChangeBox extends AnimatedComponent {
                   }}
                   numberOfLines={2}
                 >
-                  {typeof this.props.change.new_value.new_value === "string" &&
-                  !testForURL(this.props.change.new_value.new_value, true)
-                    ? this.props.change.new_value.new_value
-                    : ""}
+                  {this.writeChange()}
                 </TextContent>
               </View>
             </View>

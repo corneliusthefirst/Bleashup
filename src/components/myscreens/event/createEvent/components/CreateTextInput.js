@@ -3,6 +3,7 @@ import React, { Component } from "react";
 import { View, TextInput, Text } from "react-native";
 import colorList from "./../../../../colorList";
 import GState from "../../../../../stores/globalState";
+import Texts from '../../../../../meta/text';
 
 export default class CreateTextInput extends Component {
   constructor(props) {
@@ -95,7 +96,7 @@ export default class CreateTextInput extends Component {
                 : null,*/
             }}
           note>{`${(this.props.value && this.props.value.length) || 0} / ${
-            this.props.maxLength || 'infinity'
+            this.props.maxLength || Texts.infinity
           }`}</Text>
         </View>
       </View>

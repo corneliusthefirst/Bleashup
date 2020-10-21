@@ -58,10 +58,17 @@ class AllReminds extends AnimatedComponent {
     //    this.animeTimeOut = null
     //},10)
   }
+  cleanStates(){
+    stores.States.removeNewReminds()
+  }
   componentDidMount() {
     setTimeout(() => {
       this.setStatePure({
         mounted: true,
+      },() => {
+        setTimeout(()=> {
+            this.canClean = true
+        },2000)
       });
     });
   }
@@ -93,6 +100,7 @@ class AllReminds extends AnimatedComponent {
     this.data = stores.Reminds.allReminds.filter((ele) =>
       globalFunctions.filterReminds(ele, this.state.searchString || "")
     );
+    
     return (
       <ImageBackground
         source={GState.backgroundImage}

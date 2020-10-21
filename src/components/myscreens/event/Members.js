@@ -9,7 +9,14 @@ import emitter from "../../../services/eventEmiter";
 import CacheImages from "../../CacheImages";
 import bleashupHeaderStyle from "../../../services/bleashupHeaderStyle";
 import Spinner from '../../Spinner';
-export default class Members extends Component {
+import SideButton from "../../sideButton";
+import AntDesign  from 'react-native-vector-icons/AntDesign';
+import GState from '../../../stores/globalState/index';
+import ColorList from '../../colorList';
+import rounder from '../../../services/rounder';
+import { _onScroll } from '../currentevents/components/sideButtonService';
+import BeComponent from '../../BeComponent';
+export default class Members extends BeComponent {
   constructor(props) {
     super(props);
     this.state = {
@@ -17,8 +24,10 @@ export default class Members extends Component {
       loaded: false,
       participants: [],
       event_id: null,
+      isActionButtonVisible:true,
       selected: [],
     };
+    this.onScroll = _onScroll.bind(this)
   }
   state = {};
   componentDidMount() {
@@ -73,6 +82,7 @@ export default class Members extends Component {
       <View style={{ height: "100%" }}>
         <BleashupFlatList
           firstIndex={0}
+          onScroll={this.onScroll}
           renderPerBatch={5}
           initialRender={15}
           numberOfItems={this.props.participants.length}
@@ -85,6 +95,7 @@ export default class Members extends Component {
                 closeModals={this.props.closeModals}
                 searchString={this.props.searchString}
                 simplyMembers
+                removeWithMe={this.props.removeWithMe}
                 delay={this.delay}
                 toggleMaster={(member) => this.toggleMaster(member)}
                 selected={(member) => {
@@ -105,6 +116,30 @@ export default class Members extends Component {
             );
           }}
         ></BleashupFlatList>
+        {this.state.isActionButtonVisible ? <SideButton
+          buttonColor={ColorList.bodyBackground}
+
+          position={"right"}
+          renderIcon={() => {
+            return <TouchableOpacity
+              transparent
+              style={{
+                ...rounder(40, ColorList.bodyBackground)
+              }}
+              onPress={this.props.addMembers}
+            >
+              <AntDesign
+                name={"plus"}
+                style={{
+                  ...GState.defaultIconSize,
+                  color: ColorList.indicatorColor,
+                }}
+              ></AntDesign>
+            </TouchableOpacity>
+          }}
+        >
+
+        </SideButton> : null}
       </View>
     ) : (
       <Spinner size={"small"}></Spinner>

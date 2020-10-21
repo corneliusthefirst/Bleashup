@@ -107,7 +107,7 @@ class ProfileView extends BePureComponent {
     let user = stores.TemporalUsersStore.Users[this.props.phone];
     let userName =
       user && user.phone === stores.LoginStore.user.phone
-        ? user.nickname + " (You)"
+        ? user.nickname + ` (${Texts.you})`
         : user
         ? user.nickname
         : (this.props.phoneInfo && this.props.phoneInfo.nickname) ||

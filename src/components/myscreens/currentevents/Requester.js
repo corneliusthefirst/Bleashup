@@ -8,18 +8,21 @@ import { AddParticipant } from '../../../services/cloud_services';
 import firebase from 'react-native-firebase';
 import Toaster from "../../../services/Toaster";
 import IDMaker from '../../../services/IdMaker';
+import Texts from '../../../meta/text';
+import UpdatesDispatch from "../../../services/updatesDispatcher";
+import Updates from '../../../services/updates-posibilites';
 class Requester {
     constructor() {
         this.currentUserPhone = stores.Session.SessionStore.phone;
     }
     currentUserPhone = ""
-    like(event_id,likesCount) {
+    like(event_id, likesCount) {
         return new Promise((resolve, reject) => {
             let eventID = requestObject.EventID()
             eventID.event_id = event_id;
             requestData.likeEvent(eventID, event_id + "like").then(JSONData => {
                 serverEventListener.sendRequest(JSONData, event_id + "like").then(SuccessMessage => {
-                    stores.Likes.like(event_id, stores.Session.SessionStore.phone,likesCount).then(() => {
+                    stores.Likes.like(event_id, stores.Session.SessionStore.phone, likesCount).then(() => {
                         resolve("ok");
                     })
                 }).catch(error => {
@@ -48,13 +51,13 @@ class Requester {
             })
         })
     }
-    unlike(event_id,likesCount) {
+    unlike(event_id, likesCount) {
         return new Promise((resolve, reject) => {
             let eventID = requestObject.EventID()
             eventID.event_id = event_id;
             requestData.unlikeEvent(eventID, event_id + "unlike").then((JSONData) => {
                 serverEventListener.sendRequest(JSONData, event_id + "unlike").then(SuccessMessage => {
-                    stores.Likes.unlike(event_id, stores.Session.SessionStore.phone,likesCount).then(() => {
+                    stores.Likes.unlike(event_id, stores.Session.SessionStore.phone, likesCount).then(() => {
                         resolve("ok");
                     })
                 }).catch(error => {
@@ -69,27 +72,13 @@ class Requester {
             eventID.event_id = event_id;
             requestData.publishEvent(eventID, event_id + "publish").then(JSONData => {
                 serverEventListener.sendRequest(JSONData, event_id + "publish").then(SuccessMessage => {
-                    Toaster({ type: "success", text: "successfully published to your contacts", buttonText: "ok" })
-                    stores.Events.publishEvent(event_id, false).then(() => {
-                        stores.Publishers.addPublisher(event_id, {
-                            phone:
-                                stores.Session.SessionStore.phone, period: { date: moment().format() }
-                        }).then(() => {
-                            let Change = {
-                                id: IDMaker.make(),
-                                title: "Updates On Main Activity",
-                                updated: "publish",
-                                event_id: event_id,
-                                changed: "Shared The Activity",
-                                updater: stores.LoginStore.user.phone,
-                                new_value: { data: null, new_value: null },
-                                date: moment().format(),
-                            }
-                            stores.ChangeLogs.addChanges(Change).then(() => {
-                            })
+                    Toaster({ type: "success", text: Texts.activity_successfully_shared, buttonText: "ok" })
+                    UpdatesDispatch.dispatchUpdate(requestObject.Updated(event_id,
+                        "",
+                        null,
+                        Updates.possibilites.published)).then(() => {
                             resolve()
                         })
-                    })
                 }).catch(error => {
                     reject(error)
                 })
@@ -107,23 +96,17 @@ class Requester {
             Join.event_id = EventID;
             Join.host = EventHost;
             requestData.joinEvent(Join, EventID + "join").then((JSONData) => {
+                console.warn("joining activity")
                 serverEventListener.sendRequest(JSONData, EventID + "join").then((SuccessMessage) => {
-                    Toaster({ text: "Activity Successfully Joint !", type: "success", buttonText: "ok" })
-                    AddParticipant(EventID, [Participant]).then((resp) => { })
-                    stores.Events.addParticipant(EventID, Participant, false).then(() => {
-                        let Change = {
-                            id: IDMaker.make(),
-                            title: "Updates On Main Activity",
-                            updated: "joint_paticipant",
-                            event_id: EventID,
-                            changed: "Joint The Activity",
-                            updater: stores.LoginStore.user.phone,
-                            new_value: { data: null, new_value: [Participant] },
-                            date: moment().format(),
-                        }
-                        stores.ChangeLogs.addChanges(Change).then(() => {
-                            resolve("ok")
-                        })
+                    Toaster({ text: Texts.activity_sucessfully_joined, type: "success", buttonText: "ok" })
+                    UpdatesDispatch.dispatchUpdate(requestObject.Updated(EventID,
+                        {host:Participant.host,
+                        status:Participant.status},
+                        Participant.phone,
+                        Updates.possibilites.joined
+                    )).then(() => {
+                        console.warn("completing join")
+                        resolve()
                     })
                 }).catch(error => {
                     reject(error)

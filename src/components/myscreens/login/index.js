@@ -77,15 +77,16 @@ export default class LoginView extends Component {
       this.setState({
         loading: true,
       });
-      if (this.state.value == "") {
-        throw new Error("Please provide phone number.");
+      if (!this.state.value) {
+        throw new Error(Texts.please_provide_a_valide_phone);
       } else if (this.state.valid == false || this.state.type != "MOBILE") {
-        throw new Error("Please provide a valid mobile phone number.");
+        throw new Error(Texts.please_provide_a_valide_phone);
       } else {
         UserService.checkUser(
           this.state.value.replace(/\s/g, "").replace("+", "00")
         )
           .then((response) => {
+            console.warn("check user response is: ",response)
             if (
               response.response !== "unknown_user" &&
               response.response !== "wrong server_key"
@@ -94,6 +95,7 @@ export default class LoginView extends Component {
                 .setUser({
                   phone: this.state.value.replace(/\s/g, "").replace("+", "00"),
                   password: "",
+                  status: response.status,
                   profile: response.profile,
                   profile_ext: response.profile_ext,
                   name: response.name,
@@ -122,9 +124,7 @@ export default class LoginView extends Component {
                 )
                 .then(() => {
                   this.setState({
-                    valid: null,
                     loading: false,
-                    type: null,
                   });
                   globalState.loading = false;
                   this.props.navigation.navigate("SignUp");
@@ -135,14 +135,14 @@ export default class LoginView extends Component {
             this.setState({
               loading: false,
             });
-            alert("Sorry Please Check your internet connection");
+            alert(Texts.unable_to_perform_request);
           });
       }
     } catch (e) {
       this.setState({
         loading: false,
       });
-      Alert.alert("Phone Error", "Please provide a valid mobile phone number", [
+      Alert.alert(Texts.phone_number,Texts.please_provide_a_valide_phone , [
         { text: "OK", onPress: () => console.log("OK Pressed") },
       ]);
     }
@@ -156,9 +156,9 @@ export default class LoginView extends Component {
   render() {
     return (
       <View style={stylesinter.container}>
-        <ScrollView showVerticalScrollIndicator={false}>
+        <ScrollView keyboardShouldPersistTaps={'hadled'} showVerticalScrollIndicator={false}>
           <HeaderHome></HeaderHome>
-          <Text style={stylesinter.headerText}>{"Enter Phone Number"}</Text>
+          <Text style={stylesinter.headerText}>{Texts.enter_your_phone_number}</Text>
           <View style={styles.phoneinput} rounded>
             <PhoneInput
               ref={this.setRef}

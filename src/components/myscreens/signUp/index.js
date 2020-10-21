@@ -148,7 +148,7 @@ export default class SignUpView extends BeComponent {
 
   render() {
     return (
-        <ScrollView showVerticalScrollIndicator={false}>
+      <ScrollView keyboardShouldPersistTaps={'hadled'} showVerticalScrollIndicator={false}>
           <CreationHeader title={Texts.sign_up} back={this.back.bind(this)}>
           </CreationHeader>
         <View style={styles.mainContainer}>

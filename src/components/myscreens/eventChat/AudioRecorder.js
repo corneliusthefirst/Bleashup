@@ -21,6 +21,7 @@ import GState from "../../../stores/globalState";
 import emitter from "../../../services/eventEmiter";
 import shadower from "../../shadower";
 import rounder from "../../../services/rounder";
+import Texts from '../../../meta/text';
 let dirs = rnFetchBlob.fs.dirs;
 export default class AudioRecorder extends BeComponent {
     constructor(props) {
@@ -63,7 +64,7 @@ export default class AudioRecorder extends BeComponent {
                 })
                 .catch((error) => {
                     this.props.justHideMe();
-                    Toaster({ duration: 4000, text: "cannot record due to " + error });
+                    Toaster({ duration: 4000, text: Texts.lang + error });
                 });
         });
     }
@@ -73,11 +74,10 @@ export default class AudioRecorder extends BeComponent {
             const granted = await PermissionsAndroid.request(
                 PermissionsAndroid.PERMISSIONS.RECORD_AUDIO,
                 {
-                    title: "Microphone Permission",
-                    message:
-                        "ExampleApp needs access to your microphone to test react-native-audio-toolkit.",
-                    buttonNeutral: "Ask Me Later",
-                    buttonNegative: "Cancel",
+                    title: Texts.microphone_permission,
+                    message: Texts.beup_needs_to_record,
+                    buttonNeutral: Texts.ask_me_later,
+                    buttonNegative: Texts.cancel,
                     buttonPositive: "OK",
                 }
             );

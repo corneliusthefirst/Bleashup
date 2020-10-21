@@ -109,9 +109,11 @@ export default class EventTasksCard extends BeComponent {
 
   componentDidUpdate(prevProps, prevState) {
     let canReload = (prevProps.members_state !== this.props.members_state) ||
-      (prevProps.intervals_updated_at !== this.props.intervals_updated_at)
+      (prevProps.update_state !== this.props.update_state)
     if (canReload) {
-      this.loadStates()
+      setTimeout(() => {
+        this.loadStates()
+      })
     }
   }
   saveAll(alarms) {

@@ -49,7 +49,7 @@ export default class TaskCreationExtra extends BleashupModal {
                         <Text style={{ ...GState.defaultTextStyle, fontWeight: 'normal', marginRight: '4%', ...this.center }}>{Texts.this_program}</Text>
                         <View style={{ ...this.center }}>
                             <TextMenu
-                                title={this.props.currentRemind.status}
+                                title={Texts[this.props.currentRemind.status]}
                                 menu={[{
                                     title: Texts.public,
                                     condition: true,

@@ -28,9 +28,10 @@ export default class RemindMembers extends BleashupModal {
                             adding: true,
                         });
                     }}
-                    removeMember={() => {
+                    removeMember={(selectedPhone) => {
                         this.setStatePure({
                             selectMemberState: true,
+                            selectedPhone,
                             adding: false,
                         });
                     }}
@@ -39,6 +40,7 @@ export default class RemindMembers extends BleashupModal {
                     creator={this.props.creator}
                 managing></ParticipantList>
                 <SelectableContactList
+                    firstMember={this.state.selectedPhone}
                     isOpen={this.state.selectMemberState}
                     close={() => {
                         this.setStatePure({

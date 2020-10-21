@@ -86,11 +86,13 @@ export default class PhotoInputModal extends BleashupModal {
                     flexDirection: 'row',
                     alignSelf: 'center',
                     alignItems: 'center',
+                    justifyContent: 'space-between',
                     marginLeft: "1%",
                     borderRadius: 4, width: '100%', height: 40,
                 }}>
                     <View style={{
-                        width: this.props.isRelation ? 35 : '60%',
+                        width: this.props.isRelation ? 35 : null,
+                        flex: !this.props.isRelation?1:null,
                         borderRadius: 35,
                         marginLeft: "1%",
                         flexDirection: 'row',
@@ -99,7 +101,7 @@ export default class PhotoInputModal extends BleashupModal {
                         ...shadower(1),
                         backgroundColor: ColorList.bodyBackground,
                     }}>
-                        {!this.props.isRelation && <View style={{ width: "75%" }}>
+                        {!this.props.isRelation && <View style={{ flex: 1, }}>
                             <PickersUpload
                                 withTrash={!this.props.isRelation && this.props.photo}
                                 currentURL={{ photo: this.props.photo }}
@@ -115,7 +117,12 @@ export default class PhotoInputModal extends BleashupModal {
                         </TouchableOpacity>
                     </View>
 
-                    <View style={{ flexDirection: 'row', flex: 1, justifyContent: 'flex-end', alignItems: 'center' }}>
+                    <View style={{ 
+                        flexDirection: 'row', 
+                        width:80, 
+                        justifyContent: 'flex-end', 
+                        alignItems: 'center' 
+                    }}>
 
                         <Entypo name="sound-mute" active={true} style={{ color: 'black', fontSize: 22 }} onPress={() => { }} />
                         <MaterialIcons name="block" active={true} style={{ color: 'red', fontSize: 22, marginLeft: 15, marginRight: 5 }} onPress={() => { }} />

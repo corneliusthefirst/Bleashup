@@ -14,6 +14,7 @@ import MainUpdater from './mainUpdater';
 import RemindRequest from '../components/myscreens/reminds/Requester';
 import IDMaker from './IdMaker';
 import UserInfoDispatcher from './UserInfoDispatcher';
+import Texts from '../meta/text';
 class UpdatesDispatcher {
   constructor() { }
   dispatchUpdates(updates, done) {
@@ -30,6 +31,7 @@ class UpdatesDispatcher {
 
   }
   dispatchUpdate(update, done) {
+    console.warn("dispatching update !")
     return this.UpdatePossibilities[update.update](update);
   }
   infomCurrentRoom(Change, commitee, event_id) {
@@ -91,21 +93,17 @@ class UpdatesDispatcher {
             updated: "title",
             event_id: update.event_id,
             updater: update.updater,
-            title: "Updates On Main Activity",
-            changed: "Changed The Title Of The Activity to: ",
+            title: Texts.update_on_main_activity,
+            changed: Texts.changed_the_title_to,
             new_value: { data: null, new_value: update.new_value },
             date: update.date,
             time: null
           }
           this.infomCurrentRoom(Change, Eve, update.event_id)
-          stores.ChangeLogs.addChanges(Change).then(() => {
-            Eve.calendar_id ? CalendarServe.saveEvent(Eve, Eve.alarms).then(() => {
-
-            }) : null
-            GState.eventUpdated = true;
-            resolve();
-          });
-        })
+          stores.ChangeLogs.addChanges(Change)
+          GState.eventUpdated = true;
+          resolve();
+        });
       });
     },
 
@@ -114,21 +112,20 @@ class UpdatesDispatcher {
         stores.Events.updateBackground(update.event_id, update.new_value, true).then(() => {
           let Change = {
             id: IDMaker.make(),
-            title: "Updates On Main Activity",
+            title: Texts.update_on_main_activity,
             updated: "background",
             event_id: update.event_id,
             updater: update.updater,
-            changed: update.new_value ? "Changed The Background Photo Of The Main Activity" :
-              "Removed The Activity Background Photo",
+            changed: update.new_value ? Texts.changed_background_photo :
+              Texts.removed_the_background_of_th_activity,
             new_value: { data: null, new_value: update.new_value },
             date: update.date,
             time: update.time
           };
           this.infomCurrentRoom(Change, Change, update.event_id)
-          stores.ChangeLogs.addChanges(Change).then(() => {
-            GState.eventUpdated = true;
-            resolve();
-          });
+          stores.ChangeLogs.addChanges(Change)
+          GState.eventUpdated = true;
+          resolve();
         });
       });
     },
@@ -142,21 +139,21 @@ class UpdatesDispatcher {
         ).then((Eve) => {
           let Change = {
             id: IDMaker.make(),
-            title: "Updates On Main Activity",
+            title: Texts.update_on_main_activity,
             updated: "description",
             updater: update.updater,
             event_id: update.event_id,
-            changed: update.new_value ? "Changed The Description Of The Activity To: " : "Removed The Description Of The Activity",
+            changed: update.new_value ? Texts.changed_the_description_the_activity :
+              Texts.removed_the_description_of_the_activity,
             new_value: { data: null, new_value: update.new_value },
             date: update.data,
             time: null
           }
           this.infomCurrentRoom(Change, Eve, update.event_id)
-          stores.ChangeLogs.addChanges(Change).then(() => {
-            GState.eventUpdated = true;
-            resolve('ok')
-          })
-        });
+          stores.ChangeLogs.addChanges(Change)
+          GState.eventUpdated = true;
+          resolve('ok')
+        })
       });
     },
     period: update => {
@@ -174,13 +171,12 @@ class UpdatesDispatcher {
             time: null
           }
           this.infomCurrentRoom(Change, Eve, update.event_id)
-          stores.ChangeLogs.addChanges(Change).then(() => {
-            Eve.calendar_id ? CalendarServe.saveEvent({ ...Eve, calendar_id: JSON.parse(calID).cal_id }, Eve.alarms).then(() => {
+          stores.ChangeLogs.addChanges(Change)
+          Eve.calendar_id ? CalendarServe.saveEvent({ ...Eve, calendar_id: JSON.parse(calID).cal_id }, Eve.alarms).then(() => {
 
-            }) : null
-            GState.eventUpdated = true;
-            resolve();
-          });
+          }) : null
+          GState.eventUpdated = true;
+          resolve();
         })
       });
 
@@ -190,45 +186,19 @@ class UpdatesDispatcher {
         stores.Events.openClose(update.event_id, update.new_value, true).then(() => {
           let Change = {
             id: IDMaker.make(),
-            title: "Updates On Main Activity",
+            title: Texts.update_on_main_activity,
             updated: "close",
             event_id: update.event_id,
             updater: update.updater,
-            changed: update.new_value == false ? 'Opened' + " The Main Activity" : 'Closed' + " The Main Activity",
+            changed: update.new_value == false ? Texts.opnened_the_main_activity : Texts.closed_activity,
             new_value: { data: null, new_value: null },
             date: update.date,
             time: null
           }
           this.infomCurrentRoom(Change, Change, update.event_id)
-          stores.ChangeLogs.addChanges(Change).then(() => {
-            GState.eventUpdated = true
-            resolve("ok")
-          })
-        })
-      })
-    },
-    notes: update => {
-      return new Promise((resolve, reject) => {
-        stores.Events.updateNotes(update.event_id, update.new_value).then((Eve) => {
-          let Change = {
-            id: IDMaker.make(),
-            title: "Updates on Main Activity",
-            updated: "notes",
-            event_id: update.event_id,
-            changed: "Changed The Notes of the Activity",
-            updater: update.updater,
-            new_value: { data: null, new_value: update.new_value },
-            date: update.date,
-            time: null
-          }
-          this.infomCurrentRoom(Change, Eve, update.event_id)
-          stores.ChangeLogs.addChanges(Change).then(() => {
-            Eve.calendar_id ? CalendarServe.saveEvent(Eve, Eve.alarms).then(() => {
-
-            }) : null
-            GState.eventUpdated = true
-            resolve('ok')
-          })
+          stores.ChangeLogs.addChanges(Change)
+          GState.eventUpdated = true
+          resolve("ok")
         })
       })
     },
@@ -251,10 +221,9 @@ class UpdatesDispatcher {
             time: null
           }
           this.infomCurrentRoom(Change, Eve, update.event_id)
-          stores.ChangeLogs.addChanges(Change).then(() => {
-            GState.eventUpdated = true;
-            resolve('ok')
-          })
+          stores.ChangeLogs.addChanges(Change)
+          GState.eventUpdated = true;
+          resolve('ok')
         });
       });
     },
@@ -273,10 +242,9 @@ class UpdatesDispatcher {
             time: null
           }
           this.infomCurrentRoom(Change, Change, update.event_id)
-          stores.ChangeLogs.addChanges(Change).then(() => {
-            GState.eventUpdated = true
-            resolve("ok")
-          })
+          stores.ChangeLogs.addChanges(Change)
+          GState.eventUpdated = true
+          resolve("ok")
         })
       })
     },
@@ -285,19 +253,18 @@ class UpdatesDispatcher {
         stores.Events.updateWhoCanManage(update.event_id, update.new_value, true).then(Eve => {
           let Change = {
             id: IDMaker.make(),
-            title: "Updates On Main Activity",
+            title: Texts.update_on_main_activity,
             updated: "who_can_update",
             event_id: update.event_id,
             updater: update.updater,
-            changed: "Changed The Manage Priviledges of The Activity To ...",
+            changed: Texts.changed_the_manage_previledge_of_the_activity,
             new_value: { data: null, new_value: update.new_value },
             date: update.date,
             time: null
           }
+          stores.ChangeLogs.addChanges(Change)
+          resolve()
           this.infomCurrentRoom(Change, Eve, update.event_id)
-          stores.ChangeLogs.addChanges(Change).then(() => {
-            resolve()
-          })
         })
       })
     },
@@ -306,7 +273,7 @@ class UpdatesDispatcher {
         stores.Events.updateRecurrency(update.event_id, update.new_value, true).then((Eve) => {
           let Change = {
             id: IDMaker.make(),
-            title: "Updates On Main Activity",
+            title: Texts.update_on_main_activity,
             updated: "recurrency",
             event_id: update.event_id,
             updater: update.updater,
@@ -316,58 +283,42 @@ class UpdatesDispatcher {
             time: null
           }
           this.infomCurrentRoom(Change, Eve, update.event_id)
-          stores.ChangeLogs.addChanges(Change).then(() => {
-            Eve.calendar_id ? CalendarServe.saveEvent(Eve, Eve.alarms).then(() => {
+          stores.ChangeLogs.addChanges(Change)
+          Eve.calendar_id ? CalendarServe.saveEvent(Eve, Eve.alarms).then(() => {
 
-            }) : null
-            GState.eventUpdated = true
-            resolve("ok")
-          })
+          }) : null
+          GState.eventUpdated = true
+          resolve("ok")
         })
       })
     },
     published: update => {
       return new Promise((resolve, reject) => {
-        stores.Events.isParticipant(update.event_id, stores.LoginStore.user.phone).then(
-          status => {
-            let EventID = requestObjects.EventID();
-            EventID.event_id = update.event_id;
-            stores.Events.loadCurrentEvent(update.event_id).then(event => {
-              stores.Events.publishEvent(update.event_id, true).then(() => {
-                let publisher = {
-                  period: {
-                    date: update.date,
-                    time: update.time
-                  },
-                  phone: update.updater
-                }
-                stores.Publishers.addPublisher(update.event_id, publisher).then(() => {
-                  let Change = {
-                    title: "Change On Main Activity",
-                    event_id: update.event_id,
-                    changed: "Published The Activity To His/Her Contacts",
-                    updater: update.updater,
-                    new_value: { data: null, new_value: [update.updater] },
-                    date: update.date,
-                    time: update.time
-                  };
-                  this.infomCurrentRoom(Change, update.event_id, update.event_id)
-                  stores.ChangeLogs.addChanges(Change).then(() => {
-                    GState.eventUpdated = true;
-                    resolve();
-                  });
-                })
-              });
-            })
-          }
-        );
-      });
+        let EventID = requestObjects.EventID();
+        EventID.event_id = update.event_id;
+        stores.Events.publishEvent(update.event_id, true).then(() => {
+          let Change = {
+            title: Texts.update_on_main_activity,
+            event_id: update.event_id,
+            changed: Texts.shared_the_activity_to_his_contacts,
+            updater: update.updater,
+            new_value: { data: null, new_value: true },
+            date: update.date,
+            time: update.time
+          };
+          this.infomCurrentRoom(Change, update.event_id, update.event_id)
+          stores.ChangeLogs.addChanges(Change)
+          GState.eventUpdated = true;
+          resolve();
+        })
+      }
+      );
     },
     adds: update => {
       return new Promise((resolve, reject) => {
         MainUpdater.addParticipants(update.event_id,
           update.new_value,
-          update.updater, update.updated,
+          update.updater, "adds",
           update.date).then(Change => {
             this.infomCurrentRoom(Change, update.event_id, update.event_id)
             resolve()
@@ -401,35 +352,23 @@ class UpdatesDispatcher {
     },
     unpublished: update => {
       return new Promise((resolve, reject) => {
-        stores.Events.isParticipant(update.event_id, stores.LoginStore.user.phone).then(
-          stat => {
-            if ((state = false)) {
-              stores.Events.removeEvent(update.event_id).then(() => {
-                resolve();
-              });
-            } else {
-              let Change = {
-                title: "Update On Main Activity",
-                event_id: update.event_id,
-                changed: "UnPublished The Activity",
-                updater: update.updater,
-                id: IDMaker.make(),
-                new_value: { data: null, new_value: null },
-                date: update.date,
-                time: update.time
-              };
-              stores.Events.unpublishEvent(update.event_id, true).then(
-                () => {
-                  this.infomCurrentRoom(Change, Change, update.event_id)
-                  stores.ChangeLogs.addChanges(Change).then(() => {
-                    GState.eventUpdated = true;
-                    resolve();
-                  }
-                  );
-                });
-            }
-          }
-        );
+        let Change = {
+          title: Texts.update_on_main_activity,
+          event_id: update.event_id,
+          changed: Texts.unpublished_the_activity,
+          updater: update.updater,
+          id: IDMaker.make(),
+          new_value: { data: null, new_value: false },
+          date: update.date,
+          time: update.time
+        };
+        stores.Events.unpublishEvent(update.event_id, true).then(
+          () => {
+            this.infomCurrentRoom(Change, Change, update.event_id)
+            stores.ChangeLogs.addChanges(Change)
+            GState.eventUpdated = true;
+            resolve();
+          });
       });
     },
     url: update => {
@@ -497,9 +436,9 @@ class UpdatesDispatcher {
               //console.warn(newEvent.commitee)
               this.applyToAllCommitees(newEvent.commitee, newParti, newEvent)
               let Change = {
-                title: "Updates On Main Activity",
+                title: Texts.update_on_main_activity,
                 event_id: update.event_id,
-                changed: "Changed Participant(s) Master Status",
+                changed: Texts.changed_participant_status,
                 updater: update.updater,
                 old_value: Participant.master,
                 new_value: { data: null, new_value: [newParti] },
@@ -507,11 +446,9 @@ class UpdatesDispatcher {
                 time: update.time
               };
               this.infomCurrentRoom(Change, newEvent, update.event_id)
-              stores.ChangeLogs.addChanges(Change).then(() => {
-                GState.eventUpdated = true;
-                // console.warn(e.commitee)
-                resolve();
-              });
+              stores.ChangeLogs.addChanges(Change)
+              GState.eventUpdated = true;
+              resolve();
             });
           } else {
             console.warn('participant does not exists');
@@ -528,19 +465,25 @@ class UpdatesDispatcher {
           true
         ).then((Event) => {
           let Change = {
-            title: "Updates on Main Activity",
+            title: Texts.update_on_main_activity,
             event_id: update.event_id,
-            changed: update.updater === update.new_value ? "Left The Activity" : "Removed Participant(s) From Main Activity",
+            changed: update.updater === update.new_value ?
+              Texts.left_the_activity :
+              Texts.removed_participants_from_activity,
             updater: update.updater,
-            new_value: { data: null, new_value: Array.isArray(update.new_value) ? update.new_value : [update.new_value] },
+            new_value: {
+              data: null, new_value:
+                Array.isArray(update.new_value) ?
+                  update.new_value :
+                  [update.new_value]
+            },
             date: update.date,
             time: update.time
           };
           this.infomCurrentRoom(Change, Event, update.event_id)
-          stores.ChangeLogs.addChanges(Change).then(() => {
-            GState.eventUpdated = true;
-            resolve();
-          });
+          stores.ChangeLogs.addChanges(Change)
+          GState.eventUpdated = true;
+          resolve();
         });
       });
     },
@@ -604,43 +547,43 @@ class UpdatesDispatcher {
       return new Promise((resolve, reject) => {
         let RequestObject = requestObjects.HID();
         RequestObject.h_id = update.new_value;
-        tcpRequestData.getHighlight(RequestObject, update.new_value + "highlight").then(JSONData => {
-          serverEventListener.sendRequest(JSONData, update.new_value + "highlight").then(Highlight => {
-            if (Highlight.data !== 'empty' && Highlight.data.length > 0) {
-              Highlight.data = Array.isArray(Highlight.data) ? Highlight.data[0] : Highlight.data
-              stores.Highlights.addHighlight(update.event_id, Highlight.data).then(() => {
-                stores.Events.addHighlight(
-                  Highlight.data.event_id,
-                  Highlight.data.id
-                ).then(() => {
-                  let Change = {
-                    id: IDMaker.make(),
-                    title: "Updates On Main Activity",
-                    updated: "add_highlight",
-                    event_id: update.event_id,
-                    updater: update.updater,
-                    changed: "Added A New Post To The Activity",
-                    new_value: { data: null, new_value: Highlight.data },
-                    date: update.date,
-                    time: null
-                  }
-                  this.infomCurrentRoom(Change, Highlight, update.event_id)
-                  stores.ChangeLogs.addChanges(Change).then(res => {
-                    GState.newHightlight = true;
-                    GState.eventUpdated = true;
-                    console.warn('resolving add highlight', res);
-                    resolve("ok")
-                  })
-                });
-              });
-            } else {
-              //!! heyyy case that highlight doesn't exists please think of handling this.
-              //!! a case where this scenario can occur is when the user add a highlight and imediately deletes it 
-              //!! such that when offline users will received their updates,they will be receiving of and 
-              //!! that doesn't exists. 
-            }
+        stores.Highlights.loadHighlight(update.event_id, update.new_value).then((data) => {
+          const Highlight = { data }
+          Highlight.data = Array.isArray(Highlight.data) ? Highlight.data[0] : Highlight.data
+          stores.Highlights.addHighlight(update.event_id, Highlight.data).then(() => {
+            stores.Events.addHighlight(
+              Highlight.data.event_id,
+              Highlight.data.id
+            ).then(() => {
+              let Change = {
+                id: IDMaker.make(),
+                title: Texts.update_on_main_activity,
+                updated: "add_highlight",
+                event_id: update.event_id,
+                updater: update.updater,
+                changed: Texts.added_highlight,
+                new_value: { data: null, new_value: Highlight.data },
+                date: update.date,
+                time: null
+              }
+              this.infomCurrentRoom(Change, Highlight, update.event_id)
+              stores.ChangeLogs.addChanges(Change)
+              GState.newHightlight = true;
+              GState.eventUpdated = true;
+              resolve("ok")
+            })
           });
-        });
+        }).catch(() => {
+          resolve()
+          //!! heyyy case that highlight doesn't exists please think of handling this.
+          //!! a case where this scenario can occur is when the user add a highlight and imediately deletes it 
+              //!! a case where this scenario can occur is when the user add a highlight and imediately deletes it 
+          //!! a case where this scenario can occur is when the user add a highlight and imediately deletes it 
+          //!! such that when offline users will received their updates,they will be receiving of and 
+          //!! that doesn't exists. 
+              //!! that doesn't exists. 
+          //!! that doesn't exists. 
+        })
       });
     },
 
@@ -655,21 +598,20 @@ class UpdatesDispatcher {
         ).then((Highlight) => {
           let Change = {
             id: IDMaker.make(),
-            title: `Update On ${Highlight.title} Post`,
+            title: `${Texts.updates_on} ${Highlight.title} (${Texts.star})`,
             updated: "highlight_decription",
             event_id: update.event_id,
             updater: update.updater,
-            changed: update.new_value.new_description ? `Changed The Content of ${Highlight.title} Post` :
-              `Removed The Content of ${Highlight.title}`,
+            changed: update.new_value.new_description ? `${Texts.changed_the_content} ${Highlight.title}` :
+              `${Texts.removed_the_content} ${Highlight.title}`,
             new_value: { data: null, new_value: update.new_value.new_description },
             date: update.date,
             time: null
           }
           this.infomCurrentRoom(Change, Highlight, update.event_id)
-          stores.ChangeLogs.addChanges(Change).then(res => {
-            GState.eventUpdated = true;
-            resolve("ok")
-          })
+          stores.ChangeLogs.addChanges(Change)
+          GState.eventUpdated = true;
+          resolve("ok")
         });
       });
     },
@@ -684,20 +626,19 @@ class UpdatesDispatcher {
         ).then((Highlight) => {
           let Change = {
             id: IDMaker.make(),
-            title: `Update On ${Highlight.title} Post`,
+            title: `${Texts.updates_on} ${Highlight.title} (${Texts.star})`,
             updated: "highlight_url",
             event_id: update.event_id,
             updater: update.updater,
-            changed: `Changed The Media specifications of ${Highlight.title} Post`,
+            changed: `${Texts.changed_the_media} ${Highlight.title}`,
             new_value: { data: null, new_value: update.new_value.new_url },
             date: update.date,
             time: null
           }
           this.infomCurrentRoom(Change, Highlight, update.event_id)
-          stores.ChangeLogs.addChanges(Change).then(res => {
-            GState.eventUpdated = true;
-            resolve("ok")
-          })
+          stores.ChangeLogs.addChanges(Change)
+          GState.eventUpdated = true;
+          resolve("ok")
         });
       });
     },
@@ -709,24 +650,23 @@ class UpdatesDispatcher {
             title: update.new_value.new_title
           },
           true
-        ).then((HighlightJS) => {
-          Highlight = JSON.parse(HighlightJS)
+        ).then((Highlight) => {
           let Change = {
             id: IDMaker.make(),
-            title: `Update On ${Highlight.title} Post`,
+            title: `${Texts.updates_on} ${Highlight.title} (${Texts.star})`,
             updated: "highlight_title",
             event_id: update.event_id,
             updater: update.updater,
-            changed: update.new_value.new_title ? `Changed The Title of ${Highlight.title} Post to ...` : `Removed The Title of ${Highlight.title} Post`,
+            changed: update.new_value.new_title ? `${Texts.changed_title} ${Highlight.title} ${Texts.to} :` :
+              `${Texts.removed_the_title} ${Highlight.title}`,
             new_value: { data: null, new_value: update.new_value.new_title },
             date: update.date,
             time: null
           }
           this.infomCurrentRoom(Change, Highlight, update.event_id)
-          stores.ChangeLogs.addChanges(Change).then(res => {
-            GState.eventUpdated = true;
-            resolve("ok")
-          })
+          stores.ChangeLogs.addChanges(Change)
+          GState.eventUpdated = true;
+          resolve("ok")
         });
       });
     },
@@ -735,11 +675,11 @@ class UpdatesDispatcher {
         stores.Highlights.updateHighlightPublicState(update.event_id, update.new_value).then((highlight) => {
           let Change = {
             id: IDMaker.make(),
-            title: `Update On ${highlight.title} Post`,
+            title: `${Texts.updates_on} ${highlight.title} (${Texts.star})`,
             updated: "highlight_public_state",
             event_id: update.event_id,
             updater: update.updater,
-            changed: `Changed The Privacy Level Of ${highlight.title} Post to`,
+            changed: `${Texts.changed_the_privacy_level} ${highlight.title}  ${Texts.to}: `,
             new_value: {
               data: null,
               new_value: update.new_value.public_State
@@ -748,10 +688,9 @@ class UpdatesDispatcher {
             time: null
           }
           this.infomCurrentRoom(Change, highlight, update.event_id)
-          stores.ChangeLogs.addChanges(Change).then(() => {
-            GState.eventUpdated = true
-            resolve("ok")
-          })
+          stores.ChangeLogs.addChanges(Change)
+          GState.eventUpdated = true
+          resolve("ok")
         })
       })
     },
@@ -764,20 +703,19 @@ class UpdatesDispatcher {
           ).then(() => {
             let Change = {
               id: IDMaker.make(),
-              title: `Update On Main Activity`,
+              title: Texts.update_on_main_activity,
               updated: "highlight_delete",
               event_id: update.event_id,
               updater: update.updater,
-              changed: `Deleted ${Highlight.title} Post`,
+              changed: `${Texts.deleted} ${Highlight.title} (${Texts.star})`,
               new_value: { data: null, new_value: Highlight },
               date: update.date,
               time: null
             }
             this.infomCurrentRoom(Change, Highlight, update.event_id)
-            stores.ChangeLogs.addChanges(Change).then(res => {
-              GState.eventUpdated = true;
-              resolve("ok")
-            })
+            stores.ChangeLogs.addChanges(Change)
+            GState.eventUpdated = true;
+            resolve("ok")
           });
         });
       });
@@ -788,20 +726,19 @@ class UpdatesDispatcher {
           stores.Events.addHighlight(update.event_id, update.new_value.id).then(() => {
             let Change = {
               id: IDMaker.make(),
-              title: `Update On Main Activity`,
+              title: Texts.update_on_main_activity,
               updated: "highlight_restored",
               event_id: update.event_id,
               updater: update.updater,
-              changed: `Restored ${update.new_value.title} Post`,
+              changed: `${Texts.restored} ${update.new_value.title} (${Texts.star})`,
               new_value: { data: null, new_value: update.new_value },
               date: update.date,
               time: null
             }
             this.infomCurrentRoom(Change, update.new_value, update.event_id)
-            stores.ChangeLogs.addChanges(Change).then(res => {
-              GState.eventUpdated = true;
-              resolve("ok")
-            })
+            stores.ChangeLogs.addChanges(Change)
+            GState.eventUpdated = true;
+            resolve("ok")
           })
         })
       })
@@ -981,10 +918,9 @@ class UpdatesDispatcher {
                   date: update.date,
                   time: null
                 };
-                stores.ChangeLogs.addChanges(Change).then(() => {
-                  this.infomCurrentRoom(Change, vote, update.event_id)
-                  resolve()
-                })
+                stores.ChangeLogs.addChanges(Change)
+                this.infomCurrentRoom(Change, vote, update.event_id)
+                resolve()
               } else {
                 resolve()
               }
@@ -1112,19 +1048,16 @@ class UpdatesDispatcher {
         Participant.status = update.new_value.status;
         let Change = {
           event_id: update.event_id,
-          changed: "New Participant",
+          changed: Texts.new_participant,
           updater: update.new_value.inviter,
           new_value: Participant,
           date: update.date,
           time: update.time
         };
         stores.ChangeLogs.addChanges(Change).then(() => {
-          stores.Events.addParticipant(update.event_id, Participant, true).then(
-            () => {
-              GState.eventUpdated = true;
-              resolve();
-            }
-          );
+          stores.Events.addParticipant(update.event_id, Participant, true)
+          GState.eventUpdated = true;
+          resolve();
         });
       })
 
@@ -1137,65 +1070,63 @@ class UpdatesDispatcher {
         Participant.status = update.new_value.status;
         let Change = {
           id: IDMaker.make(),
-          title: 'Update On Main Activity',
+          title: Texts.update_on_main_activity,
           event_id: update.event_id,
           updated: 'joint',
-          changed: "Joint The Activity",
+          changed: Texts.join_activity,
           updater: update.new_value.inviter,
           new_value: { data: null, new_value: [Participant] },
           date: update.date,
           time: update.time
         };
+        console.warn("activity joint")
         stores.Events.addParticipant(update.event_id, Participant, true).then(
           (event) => {
             this.infomCurrentRoom(Change, event, update.event_id)
-            stores.ChangeLogs.addChanges(Change).then(() => {
-              resolve();
-            }
-            );
+            stores.ChangeLogs.addChanges(Change)
+            resolve();
           });
       });
     },
     remind_added: update => {
       return new Promise((resolve, reject) => {
-        let RemindID = requestObjects.RemindID();
-        RemindID.remind_id = update.new_value;
-        tcpRequestData.getRemind(RemindID, update.new_value + "reminder").then(JSONData => {
-          serverEventListener.sendRequest(JSONData, update.new_value + "reminder").then(Remind => {
-            if (Remind.data && Remind.data !== 'empty') {
-              stores.Reminds.addReminds(update.event_id, Remind.data).then((rem) => {
-                stores.Events.addRemind(update.event_id, Remind.data[0].id).then(() => {
-                  let Change = {
-                    id: IDMaker.make(),
-                    title: "Updates On Main Activity",
-                    updated: "added_remind",
-                    updater: update.updater,
-                    event_id: update.event_id,
-                    changed: "Added A New Remind ",
-                    new_value: { data: update.new_value, new_value: Remind.data[0].title },
-                    date: update.date,
-                    time: null
-                  }
-                  stores.States.addNewReminds(update.event_id, Remind.data[0].id)
-                  RemindRequest.saveToCanlendar(update.event_id,
-                    Remind.data[0], Remind.data[0].extra && Remind.data[0].extra.alarms,
-                    Remind.data[0].title)
-                  this.infomCurrentRoom(Change, Remind.data[0], update.event_id)
-                  stores.ChangeLogs.addChanges(Change).then(() => {
-                    GState.newRemind = true;
-                    GState.eventUpdated = true;
-                    resolve('ok')
-                  })
-                });
-              });
-            } else {
-              //!! heyyy case that remind doesn't exists please think of handling this.
-              //!! a case where this scenario can occur is when the user add a remind and imediately deletes it 
-              //!! such that when offline users will received their updates,they will be receiving of and 
-              //!! that doesn't exists. 
-            }
+        stores.Reminds.loadRemind(update.event_id, update.new_value).then((Remind) => {
+          stores.Reminds.addReminds(update.event_id, Remind).then((rem) => {
+            stores.Events.addRemind(update.event_id, Remind.id).then(() => {
+              let Change = {
+                id: IDMaker.make(),
+                title: Texts.update_on_main_activity,
+                updated: "added_remind",
+                updater: update.updater,
+                event_id: update.event_id,
+                changed: Texts.added_remind,
+                new_value: { data: update.new_value, new_value: Remind.title },
+                date: update.date,
+                time: null
+              }
+              stores.States.addNewReminds(update.event_id, Remind.id)
+              this.infomCurrentRoom(Change, Remind, update.event_id)
+              RemindRequest.saveToCanlendar(update.event_id,
+                Remind, Remind.extra && Remind.extra.alarms,
+                Remind.title).then(() => {
+                  stores.ChangeLogs.addChanges(Change)
+                })
+              GState.newRemind = true;
+              GState.eventUpdated = true;
+              resolve('ok')
+            });
           });
-        });
+        }).catch(() => {
+          resolve()
+          //!! heyyy case that remind doesn't exists please think of handling this.
+          //!! a case where this scenario can occur is when the user add a remind and imediately deletes it 
+              //!! a case where this scenario can occur is when the user add a remind and imediately deletes it 
+          //!! a case where this scenario can occur is when the user add a remind and imediately deletes it 
+          //!! such that when offline users will received their updates,they will be receiving of and 
+          //!! that doesn't exists. 
+              //!! that doesn't exists. 
+          //!! that doesn't exists. 
+        })
       });
     },
     remind_location: update => {
@@ -1214,20 +1145,21 @@ class UpdatesDispatcher {
           update.new_value.remind_id,
           update.new_value.url,
           update.date, update.updater).then(Change => {
+            resolve()
             this.infomCurrentRoom(Change, update.new_value, update.event_id)
           })
       })
     },
     remind_period_updated: update => {
       return new Promise((resolve, reject) => {
-        stores.Reminds.updatePeriod(update.new_value, true).then((oldRemind) => {
+        stores.Reminds.updatePeriod(update.event_id, update.new_value, true).then((oldRemind) => {
           let Change = {
             id: IDMaker.make(),
-            title: `Updates On ${oldRemind.title} Remind`,
+            title: `${Texts.updates_on} ${oldRemind.title} (${Texts.remind})`,
             updated: `remind_period_updated`,
             updater: update.updater,
             event_id: update.event_id,
-            changed: "Changed Date/Time Of The Remind To ",
+            changed: Texts.change_the_date_of_remind,
             new_value: { data: update.new_value.remind_id, new_value: update.new_value.period },
             date: update.date,
             time: null
@@ -1240,41 +1172,42 @@ class UpdatesDispatcher {
             }, null).then(() => {
 
             })
-            resolve('ok')
           })
+          resolve('ok')
         });
       });
     },
     remind_description_updated: update => {
       return new Promise((resolve, reject) => {
-        stores.Reminds.updateDescription(update.new_value, true).then((oldRemind) => {
-          let Change = {
-            id: IDMaker.make(),
-            title: `Updates On ${oldRemind.title} Remind`,
-            updated: `remind_description_updated`,
-            updater: update.updater,
-            event_id: update.event_id,
-            changed: "Changed The Description To ",
-            new_value: {
-              data: update.new_value.remind_id,
-              new_value: update.new_value.description
-            },
-            date: update.date,
-            time: null
-          }
-          this.infomCurrentRoom(Change, oldRemind, update.event_id)
-          stores.ChangeLogs.addChanges(Change).then(() => {
+        stores.Reminds.updateDescription(update.event_id,
+          update.new_value, true).then((oldRemind) => {
+            let Change = {
+              id: IDMaker.make(),
+              title: `${Texts.updates_on} ${oldRemind.title} (${Texts.remind})`,
+              updated: `remind_description_updated`,
+              updater: update.updater,
+              event_id: update.event_id,
+              changed: update.new_value.description ? oldRemind.description ? Texts.changed_remind_description :
+                Texts.added_description_to_the_program : Texts.removed_description_from_program,
+              new_value: {
+                data: update.new_value.remind_id,
+                new_value: update.new_value.description
+              },
+              date: update.date,
+              time: null
+            }
+            this.infomCurrentRoom(Change, oldRemind, update.event_id)
+            stores.ChangeLogs.addChanges(Change)
             GState.eventUpdated = true;
             resolve('ok')
-          })
-        });
+          });
       });
     },
     remind_alarms: update => {
       return MainUpdater.updateRemindAlarms(update.event_id,
         update.new_value.remind_id,
-        update.new_value.data.alarms,
-        update.new_value.data.date,
+        update.new_value.data,
+        update.date,
         update.updater)
     },
     remind_title_updated: update => {
@@ -1283,11 +1216,11 @@ class UpdatesDispatcher {
           then((oldRemind) => {
             let Change = {
               id: IDMaker.make(),
-              title: `Updates On ${oldRemind.title} Remind`,
+              title: `${Texts.updates_on} ${oldRemind.title} (${Texts.remind})`,
               updated: `remind_title_updated`,
               updater: update.updater,
               event_id: update.event_id,
-              changed: "Changed The Title To ",
+              changed: Texts.changed_the_title_of_the_program,
               new_value: {
                 data: update.new_value.remind_id,
                 new_value: update.new_value.title
@@ -1296,37 +1229,33 @@ class UpdatesDispatcher {
               time: null
             }
             this.infomCurrentRoom(Change, oldRemind, update.event_id)
-            stores.ChangeLogs.addChanges(Change).then(() => {
-              GState.eventUpdated = true;
-              resolve('ok')
-            })
+            stores.ChangeLogs.addChanges(Change)
+            GState.eventUpdated = true;
+            resolve('ok')
           });
       });
     },
     remind_deleted: update => {
       return new Promise((resolve, reject) => {
         stores.Reminds.removeRemind(update.event_id, update.new_value, true).then((oldRemind) => {
+          stores.Events.removeRemind(update.event_id, update.new_value, false)
           let Change = {
             id: IDMaker.make(),
-            title: `Updates On ${oldRemind.title} Remind`,
+            title: Texts.update_on_main_activity,
             updated: `delete_remind`,
             updater: update.updater,
             event_id: update.event_id,
-            changed: "Removed The Remind ",
+            changed: `${Texts.deleted} ${oldRemind.title} (${Texts.remind}) `,
             new_value: { data: update.new_value, new_value: oldRemind },
             date: update.date,
             time: null
           }
           this.infomCurrentRoom(Change, oldRemind, update.event_id)
-          stores.ChangeLogs.addChanges(Change).then(() => {
-            RemindRequest.saveToCanlendar(oldRemind.event_id, { ...oldRemind, period: null }, null).
-              then(() => {
-                console.warn("calendar_id successfully removed")
-                resolve('ok')
-              })
-            resolve('ok')
-          })
+          stores.ChangeLogs.addChanges(Change)
+          RemindRequest.saveToCanlendar(oldRemind.event_id, { ...oldRemind, period: null }, null)
+          resolve('ok')
         });
+
       });
     },
     restored_remind: update => {
@@ -1336,11 +1265,11 @@ class UpdatesDispatcher {
             update.new_value.remind.event_id, true).then(() => {
               let Change = {
                 id: IDMaker.make(),
-                title: `Updates On ${update.new_value.remind.title} Remind`,
+                title: Texts.update_on_main_activity,
                 updated: `restored_remind`,
                 updater: update.updater,
                 event_id: update.event_id,
-                changed: "Restored The Remind ",
+                changed: `${Texts.restored} ${update.new_value.remind.title} (${Texts.remind})`,
                 new_value: { data: update.new_value.remind.id, new_value: null },
                 date: update.date,
                 time: null
@@ -1350,9 +1279,9 @@ class UpdatesDispatcher {
               stores.ChangeLogs.addChanges(Change).then(() => {
                 RemindRequest.saveToCanlendar(update.new_value.remind.event_id, update.new_value.remind, null).
                   then(calendar_id => {
-                    resolve()
                   })
               })
+              resolve()
             })
         })
       })
@@ -1362,11 +1291,11 @@ class UpdatesDispatcher {
         stores.Reminds.updateStatus(update.event_id, update.new_value, true).then((oldRemind) => {
           let Change = {
             id: IDMaker.make(),
-            title: `Updates On ${oldRemind.title} Remind`,
+            title: `${Texts.updates_on} ${oldRemind.title} (${Texts.remind})`,
             updated: `remind_public_state_updated`,
             updater: update.updater,
             event_id: update.event_id,
-            changed: "Changed Privacy Level Of The Remind To",
+            changed: Texts.changed_the_privacy_level_of_program,
             new_value: {
               data: update.new_value.remind_id,
               new_value: update.new_value.status
@@ -1375,10 +1304,9 @@ class UpdatesDispatcher {
             time: null
           }
           this.infomCurrentRoom(Change, oldRemind, update.event_id)
-          stores.ChangeLogs.addChanges(Change).then(() => {
-            GState.eventUpdated = true;
-            resolve('ok')
-          })
+          stores.ChangeLogs.addChanges(Change)
+          GState.eventUpdated = true;
+          resolve('ok')
         });
       });
     },
@@ -1387,14 +1315,14 @@ class UpdatesDispatcher {
         stores.Reminds.updateRecursiveFrequency(update.event_id, update.new_value, true).then((oldRemind) => {
           let Change = {
             id: IDMaker.make(),
-            title: `Updates On ${oldRemind.title} Remind`,
+            title: `${Texts.updates_on} ${oldRemind.title} (${Texts.remind})`,
             updated: `remind_reurrence_config_updated`,
             updater: update.updater,
             event_id: update.event_id,
-            changed: "Changed The Recurrency configuration",
+            changed: Texts.changed_recurrence_config,
             new_value: {
               data: update.new_value.remind_id,
-              new_value: update.new_value.recurrence
+              new_value: update.new_value.recursive_frequency
             },
             date: update.date,
             time: null
@@ -1403,13 +1331,13 @@ class UpdatesDispatcher {
           stores.ChangeLogs.addChanges(Change).then(() => {
             RemindRequest.saveToCanlendar(oldRemind.event_id, {
               ...oldRemind,
-              recursive_frequency: update.new_value.recurrence
+              recursive_frequency: update.new_value.recursive_frequency
             },
               null).then(() => {
                 GState.eventUpdated = true;
-                resolve('ok')
               })
-          });
+          })
+          resolve('ok')
         });
       });
     },
@@ -1418,11 +1346,11 @@ class UpdatesDispatcher {
         stores.Reminds.addMembers(update.event_id, update.new_value, true).then(oldRemind => {
           let Change = {
             id: IDMaker.make(),
-            title: `Updates On ${oldRemind.title} Remind`,
+            title: `${Texts.updates_on} ${oldRemind.title} (${Texts.remind})`,
             updated: `remind_member_added`,
             updater: update.updater,
             event_id: update.event_id,
-            changed: "Assigned The Remind To ",
+            changed: Texts.assigned_to,
             new_value: {
               data: update.new_value.remind_id,
               new_value: update.new_value.members
@@ -1430,40 +1358,44 @@ class UpdatesDispatcher {
             date: update.date,
             time: null
           }
-          this.infomCurrentRoom(Change, oldRemind, update.event_id)
-          stores.ChangeLogs.addChanges(Change).then(() => {
-            RemindRequest.saveToCanlendar(oldRemind.event_id,
-              oldRemind, oldRemind.extra && oldRemind.extra.alams).then(calendar_id => {
+          RemindRequest.saveToCanlendar(oldRemind.event_id,
+            oldRemind, (update.new_value.alarms || (oldRemind.extra &&
+              oldRemind.extra.alams))).then(calendar_id => {
+                this.infomCurrentRoom(Change, oldRemind, update.event_id)
+                stores.ChangeLogs.addChanges(Change).then(() => {
+
+                })
                 resolve('ok')
               })
-          });
         });
       });
     },
     members_removed_from_remind: update => {
       return new Promise((resolve, reject) => {
-        stores.Reminds.removeMember(update.event_id, update.new_value, true).then(oldRemind => {
-          let Change = {
-            id: IDMaker.make(),
-            title: `Updates On ${oldRemind.title} Remind`,
-            updated: `remind_member_removed`,
-            updater: update.updater,
-            event_id: update.event_id,
-            changed: "Unassigned This Task / Remind From ",
-            new_value: {
-              data: update.new_value.remind_id, new_value:
-                update.new_value.members.map(ele => { return { phone: ele } })
-            },
-            date: update.date,
-            time: null
-          }
-          this.infomCurrentRoom(Change, oldRemind, update.event_id)
-          stores.ChangeLogs.addChanges(Change).then(() => {
+        stores.Reminds.removeMember(update.event_id, update.new_value, true).
+          then(oldRemind => {
+            let Change = {
+              id: IDMaker.make(),
+              title: `${Texts.updates_on} ${oldRemind.title} (${Texts.remind})`,
+              updated: `remind_member_removed`,
+              updater: update.updater,
+              event_id: update.event_id,
+              changed: Texts.unassigned_from,
+              new_value: {
+                data: update.new_value.remind_id, new_value:
+                  update.new_value.members.map(ele => { return { phone: ele } })
+              },
+              date: update.date,
+              time: null
+            }
+            this.infomCurrentRoom(Change, oldRemind, update.event_id)
             RemindRequest.saveToCanlendar(oldRemind.event_id, { ...oldRemind, period: null }, null).then(() => {
+              stores.ChangeLogs.addChanges(Change).then(() => {
+
+              })
               resolve('ok')
             })
           })
-        })
       })
     },
     mark_as_done: update => {
@@ -1471,11 +1403,11 @@ class UpdatesDispatcher {
         stores.Reminds.makeAsDone(update.event_id, update.new_value, true).then(oldRemind => {
           let Change = {
             id: IDMaker.make(),
-            title: `Updates On ${oldRemind.title} Remind`,
+            title: `${Texts.updates_on} ${oldRemind.title} (${Texts.remind})`,
             updated: `remind_marked_as_done`,
             updater: update.updater,
             event_id: update.event_id,
-            changed: "Mark The Remind As Done",
+            changed: Texts.marked_remind_as_done,
             new_value: {
               data: update.new_value.remind_id,
               new_value: update.new_value.donners
@@ -1484,10 +1416,9 @@ class UpdatesDispatcher {
             time: null
           }
           this.infomCurrentRoom(Change, oldRemind, update.event_id)
-          stores.ChangeLogs.addChanges(Change).then(() => {
-            GState.eventUpdated = true;
-            resolve('ok')
-          })
+          stores.ChangeLogs.addChanges(Change)
+          GState.eventUpdated = true;
+          resolve('ok')
         })
       })
     },
@@ -1496,11 +1427,11 @@ class UpdatesDispatcher {
         stores.Reminds.confirm(update.event_id, update.new_value, true).then(oldRemind => {
           let Change = {
             id: IDMaker.make(),
-            title: `Updates On ${oldRemind.title} Remind`,
+            title: `${Texts.updates_on} ${oldRemind.title} (${Texts.remind})`,
             updated: `remind_confirmed`,
             updater: update.updater,
             event_id: update.event_id,
-            changed: "Confirmed The Task Completion Of ",
+            changed: Texts.confirmed_the_program_completion,
             new_value: {
               data: update.new_value.remind_id,
               new_value: update.new_value.confirmed
@@ -1509,10 +1440,9 @@ class UpdatesDispatcher {
             time: null
           }
           this.infomCurrentRoom(Change, oldRemind, update.event_id)
-          stores.ChangeLogs.addChanges(Change).then(() => {
-            GState.eventUpdated = true;
-            resolve('ok')
-          })
+          stores.ChangeLogs.addChanges(Change)
+          GState.eventUpdated = true;
+          resolve('ok')
         })
       })
     },
@@ -1521,11 +1451,11 @@ class UpdatesDispatcher {
         stores.Reminds.updateRequestReportOnComplete(update.event_id, update.new_value, true).then(oldRemind => {
           let Change = {
             id: IDMaker.make(),
-            title: `Updates On ${oldRemind.title} Remind`,
+            title: `${Texts.updates_on} ${oldRemind.title} (${Texts.remind})`,
             updated: `remind_confirmed`,
             updater: update.updater,
             event_id: update.event_id,
-            changed: "Changed The Must Report Status Of The Remind ",
+            changed: Texts.changed_the_must_report_status,
             new_value: {
               data: update.new_value.remind_id,
               new_value: update.new_value.must_report
@@ -1534,10 +1464,9 @@ class UpdatesDispatcher {
             time: null
           }
           this.infomCurrentRoom(Change, oldRemind, update.event_id)
-          stores.ChangeLogs.addChanges(Change).then(() => {
-            GState.eventUpdated = true;
-            resolve('ok')
-          })
+          stores.ChangeLogs.addChanges(Change)
+          GState.eventUpdated = true;
+          resolve('ok')
         })
       })
     },

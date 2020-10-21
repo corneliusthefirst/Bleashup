@@ -61,6 +61,7 @@ import message_types from "../eventChat/message_types";
 import DetailsModal from "../invitations/components/DetailsModal";
 import PrivateReplyModal from "../eventChat/PrivateReplyModal";
 import getRelation from "../Contacts/Relationer";
+import rounder from "../../../services/rounder";
 
 const screenWidth = Math.round(Dimensions.get("window").width);
 
@@ -218,7 +219,7 @@ export default class Event extends BeComponent {
   showDescription() {
     this.setStatePure({ viewdetail: true });
   }
-  getShareLink(link, extra, title,dontShowCode) {
+  getShareLink(link, extra, title, dontShowCode) {
     this.setStatePure({
       isShareLinkModalOpened: true,
       link,
@@ -643,6 +644,7 @@ export default class Event extends BeComponent {
     });
   }
   handleActivityUpdates(change, newValue) {
+    if(this.hideNotifTimeout) clearTimeout(this.hideNotifTimeout)
     this.setStatePure({
       change: change,
       showNotifiation: true,
@@ -696,12 +698,14 @@ export default class Event extends BeComponent {
       emitter.emit("votes-updated", newValue.committee_id);
     }
     emitter.emit("refresh-history");
-    setTimeout(() => {
+    this.hideNotifTimeout = setTimeout(() => {
       this.setStatePure({
         change: null,
         showNotifiation: false,
       });
-    }, 4000);
+      clearTimeout(this.hideNotifTimeout)
+      this.hideNotifTimeout = null
+    }, 6000);
   }
   computedMaster = false;
   member = false;
@@ -718,7 +722,7 @@ export default class Event extends BeComponent {
           ? this.master
           : this.event.who_can_update === "creator"
             ? this.event.creator_phone === this.user.phone
-          : true) && !this.event.closed;
+            : true) && !this.event.closed;
       this.member = member ? true : false;
       this.setStatePure({
         working: false,
@@ -921,9 +925,10 @@ export default class Event extends BeComponent {
   _allowScroll(scrollEnabled) {
     this.setStatePure({ scrollEnabled: scrollEnabled });
   }
-  showMembers() {
+  showMembers(phone) {
     this.isOpen = false;
     this.setStatePure({
+      firstPhone:phone,
       isManagementModalOpened: true,
       partimembers: this.event.participant,
     });
@@ -1613,52 +1618,12 @@ export default class Event extends BeComponent {
   goback() {
     this.props.navigation.goBack();
   }
-  renderExtra() {
-    return (
-      <View>
-        <View
-          style={{
-            position: "absolute",
-            width: "100%",
-            hight: 300,
-            marginRight: "3%",
-            marginTop: "12%",
-          }}
-        >
-          {this.state.showNotifiation ? (
-            <NotificationModal
-              change={this.state.change || {}}
-              onPress={() => {
-                this.setStatePure({
-                  showNotifiation: false,
-                  currentPage: ActivityPages.logs,
-                  forMember: !this.state.forMember,
-                });
-                this.resetSelectedCommitee();
-              }}
-              close={() => {
-                this.setStatePure({
-                  showNotifiation: false,
-                });
-              }}
-              isOpen={this.state.showNotifiation}
-            ></NotificationModal>
-          ) : (
-              false
-            )}
-          <View
-            style={{
-              marginRight: "95%",
-              width: "100%",
-              marginBottom: "5%",
-            }}
-          ></View>
-        </View>
-        {this.state.working ? (
-          <View style={{ position: "absolute", marginTop: "-8%" }}>
-            <Spinner size={"small"}></Spinner>
-          </View>
-        ) : null}
+
+  render() {
+    StatusBar.setHidden(false, true);
+    return !this.state.mounted ? null :
+      <View style={{ flex: 1, }}>
+        {this.renderMenu()}
         {this.state.showMembers ? (
           <ParticipantModal
             hideTitle={this.state.hideTitle}
@@ -1855,6 +1820,7 @@ export default class Event extends BeComponent {
             isOpen={this.state.isManagementModalOpened}
             checkActivity={(member) => this.checkActivity(member)}
             creator={this.event.creator_phone}
+            firstPhone={this.state.firstPhone}
             participants={this.event.participant}
             master={this.master}
             changeMasterState={(newState) =>
@@ -1896,7 +1862,7 @@ export default class Event extends BeComponent {
           <SettingsTabModal
             addMembers={() => this.startInvitation(true)}
             invite={() => this.startInvitation()}
-            remove={() => this.showMembers()}
+            remove={(phone) => this.showMembers(phone)}
             isOpen={this.state.isSettingsModalOpened}
             currentPhone={this.user.phone}
             leaveActivity={() => this.preleaveActivity()}
@@ -1926,31 +1892,32 @@ export default class Event extends BeComponent {
             closed={this.closeSettingModal.bind(this)}
           ></SettingsTabModal>
         ) : null}
+        {this.state.showNotifiation ? (
+          <NotificationModal
+            change={this.state.change || {}}
+            onPress={() => {
+              this.setCurrentPage(ActivityPages.logs)
+            }}
+            close={() => {
+              this.setStatePure({
+                showNotifiation: false,
+              });
+            }}
+          ></NotificationModal>
+        ) : (
+            null
+          )}
+        {this.state.working ? (
+          <View style={{ position: "absolute", padding: '1%', }}>
+            <View style={{
+              ...rounder(45, colorList.descriptionBody),
+              justifyContent: 'center',
+              alignItems: 'center',
+            }}>
+              <Spinner big></Spinner>
+            </View>
+          </View>
+        ) : null}
       </View>
-    );
-  }
-  render() {
-    StatusBar.setHidden(false, true);
-    return !this.state.mounted ? null : !this.isChat(this.state.currentPage) ? (
-      <View style={{ height: "100%" }}>
-        {this.renderMenu()}
-        {this.renderExtra()}
-      </View>
-    ) : (
-        <View>
-          {this.state.fresh ? (
-            <View
-              style={{
-                height: "100%",
-                width: "100%",
-                backgroundColor: colorList.bodyBackground,
-              }}
-            ></View>
-          ) : (
-              this.renderMenu()
-            )}
-          {this.renderExtra()}
-        </View>
-      );
   }
 }

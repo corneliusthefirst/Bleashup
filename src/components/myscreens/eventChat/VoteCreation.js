@@ -489,7 +489,7 @@ export default class VoteCreation extends BleashupModal {
                                             <Text style={{ fontWeight: "bold" }}>{"Ends: "}</Text>
                                             <Text>
                                                 {this.state.vote && this.state.vote.period
-                                                    ? moment(this.state.vote.period).format(format)
+                                                    ? moment(this.state.vote.period).calendar()
                                                     : "select voting end date"}
                                             </Text>
                                         </Button>

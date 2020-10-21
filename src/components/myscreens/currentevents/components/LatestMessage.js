@@ -73,8 +73,8 @@ class LatestMessage extends AnimatedComponent {
                 tags={this.message.tags}
                 notScallEmoji
                 text={change ? (this.change.changed +" "+
-                    (this.change.new_value &&
-                        this.change.new_value.new_value)) : this.message.text}
+                    (this.change.new_value && typeof this.change.new_value.new_value == "string" ?
+                        this.change.new_value.new_value:"")) : this.message.text}
                 numberOfLines={1}
                 style={this.textStyle}
             />

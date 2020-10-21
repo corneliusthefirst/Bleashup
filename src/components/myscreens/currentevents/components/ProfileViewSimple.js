@@ -92,7 +92,7 @@ class ProfileSimple extends BePureComponent {
     };
     let userName =
       user && user.phone === stores.LoginStore.user.phone
-        ? user.nickname + " (You)"
+        ? user.nickname + ` (${Texts.you})`
         : user && user.nickname;
     return (
       <View style={styles.mainContainer}>

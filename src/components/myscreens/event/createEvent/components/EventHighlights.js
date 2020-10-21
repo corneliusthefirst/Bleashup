@@ -109,8 +109,9 @@ export default class EventHighlights extends BleashupModal {
         this.setStatePure({
           newing: !this.state.newing,
           isMounted: true,
-          currentHighlight: this.star ? this.star : highlight ? highlight : request.Highlight(),
+          currentHighlight: this.star ? this.star : (highlight || request.Highlight()),
         });
+        !highlight && stores.Highlights.addHighlight(this.event_id,request.Highlight())
       });
     }, 100);
   }
@@ -328,7 +329,7 @@ export default class EventHighlights extends BleashupModal {
       <View>
         <CreationHeader
           back={this.back.bind(this)}
-          title={this.updateState ? "Update Post" : "Add New Post"}
+          title={this.updateState ? Texts.edit_post : Texts.add_highlight}
         >
         </CreationHeader>
         <View
@@ -386,37 +387,6 @@ export default class EventHighlights extends BleashupModal {
                   cleanMedia={() => this.cleanMedia()}
                 ></MediaPreviewer>
               </View>
-              {this.state.currentHighlight &&
-                this.state.currentHighlight.url &&
-                this.state.currentHighlight.url.audio ? (
-                  <View
-                    style={{
-                      height: height / 11,
-                      alignSelf: "center",
-                      backgroundColor: ColorList.bodyDarkWhite,
-                      ...shadower(2),
-                      margin: "3%",
-                      width: this.width,
-                    }}
-                  >
-                    <SimpleAudioPlayer
-                      url={this.state.currentHighlight.url}
-                    ></SimpleAudioPlayer>
-
-                    <EvilIcons
-                      name={"close"}
-                      type="EvilIcons"
-                      onPress={() => this.cleanAudio()}
-                      style={{
-                        color: "red",
-                        position: "absolute",
-                        alignSelf: "flex-end",
-                        fontSize: 20,
-                      }}
-                    />
-                  </View>
-                ) : null}
-
               <TouchableOpacity
                 transparent
                 onPress={() => {
@@ -447,7 +417,7 @@ export default class EventHighlights extends BleashupModal {
                     ...this.center
                   }}
                 />
-                <Text style={{ color: ColorList.bodyText, ...this.center }}>{`${this.state.currentHighlight.public_state}`}</Text>
+                <Text style={{ color: ColorList.bodyText, ...this.center }}>{`${Texts[this.state.currentHighlight.public_state]}`}</Text>
               </TouchableOpacity>
 
 
@@ -455,7 +425,7 @@ export default class EventHighlights extends BleashupModal {
                 <Spinner></Spinner>
               ) : <CreateButton
                 action={!this.updateState ? this.AddHighlight.bind(this) : this.updateHighlight.bind(this)}
-                title={!this.updateState ? "Add New Post" : "Update Post"}
+                title={!this.updateState ? Texts.add : Texts.edit}
                 width={this.width}
               >
                 </CreateButton>}

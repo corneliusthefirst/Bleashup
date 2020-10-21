@@ -105,6 +105,10 @@ export function calculateCurrentStates(currentDateIntervals, correspondingDateIn
             currentDateIntervals,
             correspondingDateInterval
         );
+        if (!moment(this.actualInterval.period).isValid() || 
+        !moment(this.actualInterval.recurrence).isValid()){
+            this.loadIntervals(false,true)
+        }
         this.realActualIntervals = this.returnRealActualIntervals(
             currentDateIntervals,
             correspondingDateInterval
@@ -182,9 +186,9 @@ function returnFrequency(frequency, dayOfWeek, date, enddate, interval) {
             case frequencies.monthly:
                 return `${Texts.every_month_on_the} ${getDayMonth(date)}`
             case frequencies.weekly:
-                return `${Texts.every} ${returnDays()} at ${moment(date).format(timeFormat)}`
+                return `${Texts.every} ${returnDays()} ${Texts.at} ${moment(date).format(timeFormat)}`
             case frequencies.yearly:
-                return occursOnce ? "" : `${Texts.yearly} ${getMonthDay(date)}`
+                return occursOnce ? "" : `${Texts.yearly_on} ${getMonthDay(date)}`
         }
     }
     return getFrequency() + final

@@ -17,8 +17,8 @@ import rounder from "../../../services/rounder";
 import replies from '../eventChat/reply_extern';
 import stores from "../../../stores";
 
-
 export function remindTime() {
+    //console.warn(this.props.item.title," ",this.actualInterval)
     return <View
         style={{
             justifyContent: "space-between",
@@ -38,9 +38,9 @@ export function remindTime() {
                     alignSelf: "flex-end",
                 }}
             >{`${writeDateTime(this.actualInterval)
-                .replace("Starting", this.isLastInterval ? "Ends" : "Due")
-                .replace("Ended", "Past")
-                .replace("Started", "Past")}`}</Text>
+                .replace("Starting", this.isLastInterval ? Texts.ends : Texts.deu)
+                .replace("Ended", Texts.past_since)
+                .replace("Started", Texts.past_since)}`}</Text>
         </View>
     </View>
 
@@ -118,6 +118,10 @@ export function remindMedia() {
                 activity_id={this.item.event_id}
                 updateSource={updateURL.bind(this)}
                 height={ColorList.containerHeight * 0.39}
+                style={{
+                    borderRadius: 5,
+                    ...shadower(2)
+                }}
                 width={"100%"}
                 url={this.item.remind_url}
                 showItem={this.showMedia.bind(this)}

@@ -1,11 +1,23 @@
 import React, { Component } from "react";
 import { InAppNotificationProvider } from "react-native-in-app-notification";
+import { Platform, NativeModules } from "react-native"
 import { createStackNavigator, createAppContainer } from "react-navigation";
 import { navigationRef, isMountedRef } from './RootNave';
 import ColorList from './components/colorList';
 import LoginHomeRouter from "./LoginHomeRouter";
 import GState from './stores/globalState/index';
-//import stores from "./stores";
+require('moment/locale/cs.js');
+require('moment/locale/es.js');
+require('moment/locale/fr.js');
+require('moment/locale/nl.js');
+import moment from 'moment';
+const deviceLanguage =
+  Platform.OS === 'ios'
+    ? NativeModules.SettingsManager.settings.AppleLocale ||
+    NativeModules.SettingsManager.settings.AppleLanguages[0] // iOS 13
+    : NativeModules.I18nManager.localeIdentifier;
+const lan = deviceLanguage && deviceLanguage.includes('fr') ? 'fr' : 'en'
+moment.locale([lan])
 const AppNavigator = createStackNavigator(
   {
     LoginHomeRouter: { screen: LoginHomeRouter },

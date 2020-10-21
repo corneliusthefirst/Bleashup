@@ -134,20 +134,22 @@ export default class Reminds {
   };
 
   issetRemindIntervals(remind) {
-    return (
-      this.remindsIntervals[remind.event_id] &&
+    const firstEndate = this.remindsIntervals[remind.event_id] &&
       this.remindsIntervals[remind.event_id][remind.id] &&
-      this.remindsIntervals[remind.event_id][remind.id].currentDateIntervals
-    );
+      this.remindsIntervals[remind.event_id][remind.id].currentDateIntervals 
+    return firstEndate && true
   }
   getRemindsIntervals(remind, fresh) {
+    //console.warn("getting remind interval of ", remind.title)
     return new Promise((resolve, reject) => {
       if (!this.issetRemindIntervals(remind) || fresh) {
         this.computeRemindIntervals(remind).then((vals) => {
+          //console.warn(remind.title, vals)
           resolve(vals);
         });
         //this.computeRemindIntervals(remind)
       } else {
+        //console.warn(remind.title," ", this.remindsIntervals[remind.event_id][remind.id].correspondingDateInterval)
         resolve(this.remindsIntervals[remind.event_id][remind.id]);
         setTimeout(() => {
           if (this.remindsIntervals[remind.event_id][remind.id].correspondingDateInterval) {
@@ -160,15 +162,19 @@ export default class Reminds {
   }
 
   setPropertyCleanForIntervals(remind, prop) {
+    let canUpdate = !this.remindsIntervals[remind.event_id][remind.id] ||
+      !this.remindsIntervals[remind.event_id][remind.id].correspondingDateInterval ||
+      !prop.correspondingDateInterval ||
+      (this.remindsIntervals[remind.event_id][remind.id].correspondingDateInterval.start
+        !== prop.correspondingDateInterval.start)
+    console.warn("can update", canUpdate, prop.correspondingDateInterval, remind.title, 
+    this.remindsIntervals[remind.event_id][remind.id].correspondingDateInterval)
     if (this.remindsIntervals[remind.event_id]) {
       this.remindsIntervals[remind.event_id][remind.id] = {
         ...this.remindsIntervals[remind.event_id][remind.id],
         ...prop,
-        updated_at: prop.correspondingDateInterval &&
-          prop.correspondingDateInterval.start ==
-          (this.remindsIntervals[remind.event_id][remind.id].correspondingDateInterval &&
-            this.remindsIntervals[remind.event_id][remind.id].correspondingDateInterval.start) ?
-          this.remindsIntervals[remind.event_id][remind.id].updated_at : moment().format(),
+        updated_at: canUpdate ? moment().format() :
+          this.remindsIntervals[remind.event_id][remind.id].updated_at,
       };
 
     } else {
@@ -183,10 +189,11 @@ export default class Reminds {
   }
   getCurrentInterval(remind, currentDateIntervals) {
     return new Promise((resolve, reject) => {
-      getCurrentDateInterval(currentDateIntervals, moment().format(format)).then((correspondingDateInterval) => {
-        this.setPropertyCleanForIntervals(remind, { correspondingDateInterval })
-        resolve({ correspondingDateInterval })
-      })
+      getCurrentDateInterval(currentDateIntervals,
+        moment().format(format)).then((correspondingDateInterval) => {
+          this.setPropertyCleanForIntervals(remind, { correspondingDateInterval })
+          resolve({ correspondingDateInterval })
+        })
     })
   }
   computeRemindIntervals(remind) {
@@ -546,6 +553,7 @@ export default class Reminds {
     return new Promise((resolve, reject) => {
       this.readFromStore().then((Reminds) => {
         let index = findIndex(Reminds[EventID], { id: remindUpdate.remind_id });
+        const oldMembers = Reminds[EventID][index].members
         Reminds[EventID][index].members = Reminds[EventID][
           index
         ].members.filter((ele) => ele &&
@@ -557,7 +565,7 @@ export default class Reminds {
         Reminds[EventID][index].updated = inform;
         this.setProperty(Reminds);
         GState.eventUpdated = true;
-        resolve(Reminds[EventID][index]);
+        resolve({ ...Reminds[EventID][index], members: oldMembers });
       });
     });
   }
@@ -632,7 +640,7 @@ export default class Reminds {
           alarms: newAlarm,
           date: newDate,
         };
-        Reminds[EventID][index].updated_at = moment().format();
+        reminds[EventID][index].updated_at = moment().format();
         this.setProperty(reminds);
         GState.eventUpdated = true;
         resolve(oldRemind);
@@ -662,37 +670,42 @@ export default class Reminds {
 
   loadRemind(EventID, id) {
     return new Promise((resolve, reject) => {
-      this.readFromStore().then((Rems) => {
-        let rem = find(Rems[EventID], { id: id });
-        if (rem) {
-          resolve(rem);
-        } else {
-          this.loadRemindFromRemote(EventID, id)
-            .then((Remind) => {
-              console.warn("loaded remind from remote ", id);
-              this.addReminds(EventID, Remind)
-                .then(() => {
-                  resolve(Remind.data);
-                })
-                .catch(() => {
-                  reject();
-                });
-            })
-            .catch((error) => {
-              if (id === request.Remind().id) {
-                this.addReminds(EventID, request.Remind())
+      if (typeof id == "object" && id.id) {
+        resolve(id)
+      } else {
+        this.readFromStore().then((Rems) => {
+          let rem = find(Rems[EventID], { id: id });
+          if (rem) {
+            resolve(rem);
+          } else {
+            this.loadRemindFromRemote(EventID, id)
+              .then((Remind) => {
+                console.warn("loaded remind from remote ", id);
+                this.addReminds(EventID, Remind)
                   .then(() => {
-                    resolve(request.Remind());
+                    Remind = Array.isArray(Remind) ? Remind[0] : Remind
+                    resolve(Remind);
                   })
                   .catch(() => {
-                    resolve(request.Remind());
+                    reject();
                   });
-              } else {
-                reject();
-              }
-            });
-        }
-      });
+              })
+              .catch((error) => {
+                if (id === request.Remind().id) {
+                  this.addReminds(EventID, request.Remind())
+                    .then(() => {
+                      resolve(request.Remind());
+                    })
+                    .catch(() => {
+                      resolve(request.Remind());
+                    });
+                } else {
+                  reject();
+                }
+              });
+          }
+        });
+      }
     });
   }
   persistDimenssion(index, eventID, layout) {

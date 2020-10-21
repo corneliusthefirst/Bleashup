@@ -889,7 +889,7 @@ class ChatRoom extends AnimatedComponent {
                                     }}></Options>
                             }
                             {this.state.showMessageActions ? <MessageActions
-                                title={"message actions"}
+                                title={Texts.message_actions}
                                 actions={this.messageActions}
                                 isOpen={this.state.showMessageActions}
                                 onClosed={() => {
@@ -1365,20 +1365,17 @@ class ChatRoom extends AnimatedComponent {
         }, 500)
     }
     onFlatlistItemsChange(info) {
-        console.warn("executing show current date")
         if (this.itemChangeTimeout) clearImmediate(this.itemChangeTimeout)
         this.itemChangeTimeout = setTimeout(() => {
             this.viewableItems = info.viewableItems
             this.currentSeparator = this.viewableItems && this.viewableItems.forEach(element => {
-                console.warn(element)
                 if (element.item.type == message_types.date_separator) {
-                    console.warn("trying to show current date")
                     this.showCurrentDay(element.item)
                 }
                 clearTimeout(this.itemChangeTimeout)
                 this.itemChangeTimeout = null
             });
-        }, 500)
+        }, 200)
 
     }
     viewabilityConfig = {

@@ -1,20 +1,21 @@
 import Texts from "../meta/text";
+import toTitleCase from "./toTitle";
 
 var moment = require("moment")
 var _ = require("lodash")
 const UTCFormat = "YYYY-MM-DDTHH:mm:ss.SSS[Z]"
 export const frequencyType = [{
-    value: 'Day(s)',
+    value: Texts.daily,
 }, {
-    value: 'Week(s)'
+    value: Texts.weekly
 }, {
-    value: 'Month(s)',
+    value: Texts.monthly,
 }, {
-    value: 'Year(s)',
+    value: Texts.yearly,
 }];
 
 export const frequencies = {
-    daily : "daily",
+    daily: "daily",
     weekly: 'weekly',
     monthly: 'monthly',
     yearly: 'yearly'
@@ -182,26 +183,26 @@ export function callculateAlarmOffset(offset) {
     return offset ? moment().subtract(offset, 'seconds') : moment().utc().format(UTCFormat)
 }
 export const daysOfWeeksDefault = [
-    { code: "SU", day: 'Sunday' },
-    { code: "MO", day: 'Monday' },
-    { code: "TU", day: 'Tuesday' },
-    { code: "WE", day: 'Wednesday' },
-    { code: "TH", day: 'Thursday' },
-    { code: "FR", day: 'Friday' },
-    { code: "SA", day: 'Saturday' },
+    { code: "SU", day: Texts['Sunday'] },
+    { code: "MO", day: Texts['Monday'] },
+    { code: "TU", day: Texts['Tuesday'] },
+    { code: "WE", day: Texts['Wednesday'] },
+    { code: "TH", day: Texts['Thursday'] },
+    { code: "FR", day: Texts['Friday'] },
+    { code: "SA", day: Texts['Saturday'] },
 ]
 
 export const FrequencyReverser = {
-    'weekly': 'Week(s)',
-    'daily': 'Day(s)',
-    'monthly': 'Month(s)',
-    'yearly': 'Year(s)'
+    'weekly': Texts.weekly,
+    'daily': Texts.daily,
+    'monthly': Texts.monthly,
+    'yearly': Texts.yearly
 }
 export const nameToDataMapper = {
-    'Week(s)': 'weekly',
-    'Day(s)': 'daily',
-    'Month(s)': 'monthly',
-    'Year(s)': 'yearly'
+    [Texts.weekly]: 'weekly',
+    [Texts.daily]: 'daily',
+    [Texts.monthly]: 'monthly',
+    [Texts.yearly]: 'yearly'
 }
 export const CorrectDays = {
     'SU': 0,
@@ -221,9 +222,10 @@ const wrongDays = {
     'FR': 4,
     'SA': 5
 }
-export const timeFormat = "h:mm a"
+const dayFormat = "dddd"
+export const timeFormat = "HH:mm"
 function daysOffseter(day) {
-    if (moment().startOf('week').format("dddd, MMMM Do YYYY, h:mm:ss a").split(",")[0] === "Monday") {
+    if (toTitleCase(moment().startOf('week').format(dayFormat)) === Texts["Monday"]) {
         return wrongDays[day]
     } else {
         return CorrectDays[day]
@@ -235,7 +237,7 @@ const intervaler = {
     'monthly': 'months',
     'yearly': 'y'
 }
-export const format = "dddd, MMMM Do YYYY, h:mm:ss a"
+export const format = ""
 
 
 /**
@@ -267,12 +269,13 @@ export function returnAllIntervals(period, interval, frequency, daysOfWeek) {
         daysOfWeek = daysOfWeek && daysOfWeek.filter(ele => ele)
         let sorter = (a, b) => (a > b ? 1 : a < b ? -1 : 0)
         let daysOffset = daysOfWeek && daysOfWeek.map(ele => daysOffseter(ele))
-        let startDateOffseset = daysOffseter(daysOfWeeksDefault.filter(ele => ele.day === start.split(",")[0])[0].code)
+        let startDateOffseset = daysOffseter(daysOfWeeksDefault.filter(ele => ele.day === toTitleCase(moment(start).format(dayFormat)))[0].code)
         return daysOffset && daysOffset.map((ele) => {
-            return ele - startDateOffseset
+            return Math.abs(ele - startDateOffseset)
         }).sort(sorter) // relative offset is very important for calculating 
     }
     let dayOfWeekOffset = returnDaysOfWeekOffset(daysOfWeek, period.start)
+    console.warn("days of week offset is: ", dayOfWeekOffset, daysOfWeek)
     for (let p = 0; p <= 366; p++) {
         date = returnFutureDate(i, frequency)
         compareDate = dates[dates.length - 1] && dates[dates.length - 1].end ?
@@ -308,7 +311,7 @@ export function returnAllIntervals(period, interval, frequency, daysOfWeek) {
         i = i + interval
     } //while ();
     return dates
-} 
+}
 /**
  * 
  * @param {Array} daysOfWeek 
@@ -359,7 +362,10 @@ export function filterWeekInervals(daysOfWeek, period, start) {
     return weeksIntervals.filter(ele =>
         moment(ele.end, format).format("x") <= moment(period.start, format).format("x") &&
         moment(ele.end, format).format("x") <= moment(period.end, format).format("x")).
-        map(ele => _.find(daysOfWeeksDefault, { day: ele.end.split(",")[0] }).code)
+        map(ele => {
+            let code = _.find(daysOfWeeksDefault, { day: toTitleCase(moment(ele.end).format(dayFormat)) }).code
+            return code
+        })
 }
 
 /**

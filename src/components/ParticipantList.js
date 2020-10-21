@@ -14,6 +14,10 @@ import Spinner from "./Spinner";
 import GState from "../stores/globalState";
 import BeComponent from "./BeComponent";
 import Texts from "../meta/text";
+import SideButton from "./sideButton";
+import rounder from "../services/rounder";
+import { _onScroll } from "./myscreens/currentevents/components/sideButtonService";
+import Vibrator from '../services/Vibrator';
 
 export default class ParticipantList extends BeComponent {
     constructor(props) {
@@ -21,7 +25,9 @@ export default class ParticipantList extends BeComponent {
         this.state = {
             publishers: [],
             hidden: {},
+            isActionButtonVisible: true
         };
+        this.onScroll = _onScroll.bind(this)
     }
     state = {
         isOpen: false,
@@ -29,11 +35,11 @@ export default class ParticipantList extends BeComponent {
     };
     writeParticant(participant) {
         return this.props.creator === participant.phone
-            ? "creator"
+            ? Texts["creator"]
             : participant.master == true
-                ? "Master"
+                ? Texts["master"]
                 : participant.master && participant.master !== "undefined"
-                    ? "Simple Member"
+                    ? Texts["member"]
                     : "";
     }
     componentDidUpdate(previousProps, previousState) {
@@ -76,6 +82,10 @@ export default class ParticipantList extends BeComponent {
             }
         }, 3);
     }
+    selectToRemove(phone) {
+        Vibrator.vibrateShort()
+        this.props.removeMember && this.props.removeMember(phone)
+    }
     center = { marginBottom: "auto", marginTop: "auto" };
     delay = 0;
     _keyExtractor = (item, index) => item.phone;
@@ -99,52 +109,9 @@ export default class ParticipantList extends BeComponent {
                                 marginTop: "auto",
                             }}
                         >
-                            {this.props.managing && (
-                                <View
-                                    style={{
-                                        flexDirection: "row",
-                                        alignItems: 'center',
-                                    }}
-                                >
-                                    <TouchableOpacity
-                                        transparent
-                                        style={{
-                                            backgroundColor: ColorList.bodyBackground,
-                                            width: 40,
-                                        }}
-                                        onPress={this.props.addMembers}
-                                    >
-                                        <AntDesign
-                                            name={"plus"}
-                                            style={{
-                                                ...GState.defaultIconSize,
-                                                color: ColorList.headerIcon,
-                                            }}
-                                        ></AntDesign>
-                                    </TouchableOpacity>
-                                    {this.state.participants &&
-                                        this.state.participants.length > 0 ? (
-                                            <TouchableOpacity
-                                                style={{
-                                                    width: 40,
-                                                    backgroundColor: ColorList.bodyBackground,
-                                                }}
-                                                onPress={this.props.removeMember}
-                                            >
-                                                <Entypo
-                                                    name={"circle-with-minus"}
-                                                    style={{
-                                                        ...GState.defaultIconSize,
-                                                        color: ColorList.headerIcon,
-                                                    }}
-                                                ></Entypo>
-                                            </TouchableOpacity>
-                                        ) : null}
-                                </View>
-                            )}
-                            <Text style={{ fontSize: 12 }} note>
+                            <Text style={{ fontSize: 12,fontWeight: 'bold', }} note>
                                 {this.state.participants ? this.state.participants.length : 0}
-                                {" " + Texts.members }
+                                {" " + Texts.members}
                             </Text>
                         </View>
                     }
@@ -161,8 +128,9 @@ export default class ParticipantList extends BeComponent {
                                 {Texts.loading_data}
                             </Text>
                         ) : (
-                                <View style={{ hight: "93%" }}>
+                                <View style={{ height: '93%', }}>
                                     <BleashupFlatList
+                                        onScroll={this.onScroll}
                                         firstIndex={0}
                                         renderPerBatch={7}
                                         initialRender={15}
@@ -178,10 +146,12 @@ export default class ParticipantList extends BeComponent {
                                             return item.phone &&
                                                 !(this.state.hidden && this.state.hidden[item.phone]) ? (
                                                     <View style={{ margin: "2%" }}>
-                                                        <View
+                                                        <TouchableOpacity
+                                                            onLongPress={() => this.selectToRemove(item.phone)}
                                                             style={{
                                                                 display: "flex",
                                                                 flexDirection: "row",
+                                                                alignItems: 'center',
                                                                 justifyContent: "space-between",
                                                             }}
                                                         >
@@ -223,11 +193,35 @@ export default class ParticipantList extends BeComponent {
                                                                     {this.writeParticant(item)}
                                                                 </Text>
                                                             </View>
-                                                        </View>
+                                                        </TouchableOpacity>
                                                     </View>
                                                 ) : null;
                                         }}
                                     ></BleashupFlatList>
+                                    {this.state.isActionButtonVisible && this.props.managing ? <SideButton
+                                        buttonColor={ColorList.bodyBackground}
+
+                                        position={"right"}
+                                        renderIcon={() => {
+                                            return <TouchableOpacity
+                                                transparent
+                                                style={{
+                                                    ...rounder(40, ColorList.bodyBackground)
+                                                }}
+                                                onPress={this.props.addMembers}
+                                            >
+                                                <AntDesign
+                                                    name={"plus"}
+                                                    style={{
+                                                        ...GState.defaultIconSize,
+                                                        color: ColorList.indicatorColor,
+                                                    }}
+                                                ></AntDesign>
+                                            </TouchableOpacity>
+                                        }}
+                                    >
+
+                                    </SideButton> : null}
                                 </View>
                             )}
                     </View>

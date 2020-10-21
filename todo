@@ -192,12 +192,12 @@ giving out a file wchich is stored drive. hence the app crashes
 [*] add the possibility to update a report. this is very important to remove stress on the users. 
 
 [*] add all reminds tabs. 
-[ ] make all changes for updates translatable. 
+[*] make all changes for updates translatable. 
 [*] ensure that whe the app boots for the first time, it boots with all the activities of the user loaded. 
-[ ] sure that massages in firebase are in sync with the messages on the user's interface 
+[*] sure that massages in firebase are in sync with the messages on the user's interface 
 [ ] make sure that when the user loads for the first time, if there's no message, messages are beign fetched from forebase 
-[ ] resovle issue of phone number code which is not usually properly saved when the user registers. 
-[ ] resolve the issue of login page crashing with user goes to the signin page and comes back to click on the continue buttom 
+[*] resovle issue of phone number code which is not usually properly saved when the user registers. 
+[*] resolve the issue of login page crashing with user goes to the signin page and comes back to click on the continue buttom 
 [*] ensure that all updates on reminds are channeled both to members and participants 
 [*] handle well notifications indicator in the app . 
 [*] make sure that when the app loads, all unsent messages are immidately sent.

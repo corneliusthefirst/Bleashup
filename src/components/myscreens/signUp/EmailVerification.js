@@ -39,19 +39,7 @@ export default class EmailVerificationView extends Component {
   componentWillUnmount() {
     //BackHandler.removeEventListener("hardwareBackPress", this.handleBackButton);
   }
-  handleBackButton() {
-    if (this.exiting) {
-      clearTimeout(this.timeout)
-      this.back()
-    } else {
-      this.exiting = true
-      Toaster({ text: "Press again to go to the previous page" });
-      this.timeout = setTimeout(() => {
-        this.exiting = false
-      }, 800)
-    }
-    return true;
-  }
+ 
   back(){
     this.props.navigation.goBack()
   }
@@ -64,7 +52,7 @@ export default class EmailVerificationView extends Component {
   }
   componentWillMount() {
     firebase.auth().onAuthStateChanged(user => {
-      console.warn(user)
+      this.authUser = user
       if (user) {
       this.state.mounted && this.registerUserAndClean()
       }
@@ -85,7 +73,7 @@ export default class EmailVerificationView extends Component {
       firebase.auth().signInWithPhoneNumber(user.phone.replace("00", "+")).then((confirmCode) => {
         this.temploginStore.confirmCode = confirmCode
       }).catch(e => {
-        alert("Verification Error", "Could not send verifiction code")
+        alert(Texts.verfication_error, Texts.unable_to_verify_account)
       })
   } 
   registerUserAndClean() {
@@ -123,14 +111,14 @@ export default class EmailVerificationView extends Component {
           loading: false
         })
         console.warn(e, "error here")
-        alert('wrong verification code; Please try again')
+        alert(Texts.wrong_verification_code)
         globalState.error = true;
       })
     } else {
       this.setState({
         loading: false
       })
-      alert("Please enter the confirmation Code")
+      alert(Texts.enter_verification_code)
     }
   }
 
@@ -142,11 +130,11 @@ export default class EmailVerificationView extends Component {
           <View
             style={{  marginTop: 50,  }}
           >
-            <Text style={{ ...GState.defaultTextStyle }}>Phone Number Verification {"    "}{this.temploginStore.user.phone.replace("00","+")} </Text>
+            <Text style={{ ...GState.defaultTextStyle }}>{Texts.phone_number_verification} {"    "}{this.temploginStore.user.phone.replace("00","+")} </Text>
           </View>
 
           <Text style={{ ...GState.defaultTextStyle, color: "skyblue", marginTop: 20 }}>
-            Please Comfirm your Account; A verification Code was sent to your number
+            {Texts.verfication_code_sent_to_you}
           </Text>
 
           <View rounded style={[styles.input, globalState.error?{backgroundColor: ColorList.errorColor,}:null]}>
@@ -159,8 +147,8 @@ export default class EmailVerificationView extends Component {
              }}
               placeholder={
                 globalState.error == false
-                  ? "Please enter email verification code"
-                  : "Invalid email Verification code"
+                  ? Texts.enter_verification_code
+                  : Texts.invalide_verification_code
               }
               keyboardType="number-pad"
               autoCapitalize="none"
@@ -197,7 +185,7 @@ export default class EmailVerificationView extends Component {
           >
           </CreateButton>:
           <View style={{...styles.spinner}}>
-              <Spinner color="#FEFFDE" /></View>}
+              <Spinner /></View>}
         </ScrollView>
       </View>
     );

@@ -14,6 +14,8 @@ import IDMaker from "../../../services/IdMaker";
 import Texts from "../../../meta/text";
 import notification_channels from "../eventChat/notifications_channels";
 import { observer } from "mobx-react";
+import UpdatesDispatch from "../../../services/updatesDispatcher";
+import Updates from '../../../services/updates-posibilites';
 const no_data_with_such_key = "no data with such id not found";
 class Request {
     constructor() { }
@@ -457,7 +459,7 @@ class Request {
                                 console.warn(res);
                                 //console.warn("invitations gone!!")
                                 Toaster({
-                                    text: "invitations was successfully sent !",
+                                    text: Texts.invitation_was_successfull,
                                     type: "success",
                                 });
                                 resolve("");
@@ -493,18 +495,15 @@ class Request {
                     serverEventListener
                         .sendRequest(JSONData, eventID + "_adds")
                         .then(() => {
-                            resolve("ok");
-                            MainUpdater.addParticipants(
-                                eventID,
-                                participants,
-                                updater,
-                                "new_participants",
-                                moment().format()
-                            ).then((Change) => { });
+                            UpdatesDispatch.dispatchUpdate(request.Updated(eventID, participants, null,
+                                Updates.possibilites.add_participant
+                            )).then(() => {
+                                resolve("ok");
+                            })
                         })
                         .catch((error) => {
                             console.warn(error);
-                            Toaster({ text: "unable to perform request" });
+                            Toaster({ text: Texts.unable_to_perform_request });
                             resolve();
                         });
                 });
@@ -544,21 +543,12 @@ class Request {
                     serverEventListener
                         .sendRequest(JSONData, event_id + "_update")
                         .then((response) => {
-                            stores.Events.removeParticipant(event_id, mem, true).then(() => {
-                                let Change = {
-                                    id: IDMaker.make(),
-                                    title: "Update On Main Activity",
-                                    updated: "removed",
-                                    event_id: event_id,
-                                    changed: "Banned Member(s)",
-                                    updater: stores.LoginStore.user.phone,
-                                    new_value: { data: null, new_value: members },
-                                    date: moment().format(),
-                                    time: null,
-                                };
-                                stores.ChangeLogs.addChanges(Change).then(() => { });
-                                resolve(mem);
-                            });
+                            UpdatesDispatch.dispatchUpdate(request.Updated(event_id,
+                                mem,
+                                null,
+                                Updates.possibilites.remove_paricipants)).then(() => {
+                                    resolve(mem)
+                                })
                         })
                         .catch((e) => {
                             console.warn(e);
@@ -576,30 +566,16 @@ class Request {
                 serverEventListener
                     .sendRequest(JSONData, event_id + "_leave")
                     .then(() => {
-                        Toaster({ text: "Activity Successfully Left", type: "success" });
-                        stores.Events.leaveEvent(event_id).then(() => {
-                            stores.Events.removeParticipant(event_id, [phone])
-                                .then(() => {
-                                    let Change = {
-                                        id: IDMaker.make(),
-                                        title: "Update On Main Activity",
-                                        updated: "removed",
-                                        event_id: event_id,
-                                        changed: "Left The Activity",
-                                        updater: stores.LoginStore.user.phone,
-                                        new_value: {
-                                            data: null,
-                                            new_value: [stores.LoginStore.user.phone],
-                                        },
-                                        date: moment().format(),
-                                        time: null,
-                                    };
-                                    stores.ChangeLogs.addChanges(Change).then(() => { });
-                                    resolve("done");
-                                })
-                                .catch((e) => {
-                                    reject(e);
-                                });
+                        Toaster({ text: Texts.activity_sucessfully_left, type: "success" });
+                        UpdatesDispatch.dispatchUpdate(request.Updated(
+                            event_id,
+                            [phone],
+                            null,
+                            Updates.possibilites.remove_paricipants
+                        )).then(() => {
+                            resolve()
+                        }).catch((e) => {
+                            reject(e);
                         });
                     })
                     .catch((e) => {
@@ -623,25 +599,12 @@ class Request {
                     serverEventListener
                         .sendRequest(JSONData, event_id + "_update_sate")
                         .then((response) => {
-                            stores.Events.updateEventParticipant(
-                                event_id,
-                                newState,
-                                true
-                            ).then(() => {
-                                let Change = {
-                                    id: IDMaker.make(),
-                                    title: "Update On Main Activity",
-                                    updated: "master",
-                                    event_id: event_id,
-                                    changed: "Changed Member Master Status",
-                                    updater: stores.LoginStore.user.phone,
-                                    new_value: { data: null, new_value: [newState] },
-                                    date: moment().format(),
-                                    time: null,
-                                };
-                                stores.ChangeLogs.addChanges(Change).then(() => { });
-                                resolve("done");
-                            });
+                            UpdatesDispatch.dispatchUpdate(request.Updated(event_id,
+                                newState.master,
+                                newState.phone,
+                                Updates.possibilites.master)).then(() => {
+                                    resolve()
+                                })
                         })
                         .catch((e) => {
                             console.warn(e);
@@ -652,38 +615,18 @@ class Request {
     }
     publish(event_id, name) {
         return new Promise((resolve, reject) => {
-            /*let notif = request.Notification()
-                  notif.notification.title = toTitleCase(name) + "Activity is Now Public"
-                  notif.notification.body = stores.LoginStore.user.nickname + " @ " + toTitleCase(name) + " Published the activity"
-                  notif.data.activity_id = event_id*/
             const id = event_id + "_publish";
             tcpRequest
-                .publishEvent({ event_id: event_id /*notif*/ }, id)
+                .publishEvent({ event_id: event_id }, id)
                 .then((JSONData) => {
                     serverEventListener
                         .sendRequest(JSONData, id)
                         .then(() => {
-                            Toaster({ text: "Published Successfully", type: "success" });
-                            stores.Events.publishEvent(event_id).then(() => {
-                                /* stores.Publishers.addPublisher(event_id, {
-                                            phone: stores.LoginStore.user.phone,
-                                            period: moment().format()
-                                        }).then(() => {*/
-                                let Change = {
-                                    id: IDMaker.make(),
-                                    title: "Update On The Main Activity",
-                                    updated: "publish",
-                                    event_id: event_id,
-                                    changed: "Published The Activity",
-                                    updater: stores.LoginStore.user.phone,
-                                    new_value: { data: null, new_value: true },
-                                    date: moment().format(),
-                                    time: null,
-                                };
-                                stores.ChangeLogs.addChanges(Change).then(() => { });
-                                resolve("done");
-                                //  })
-                            });
+                            Toaster({ text: Texts.published_successfully, type: "success" });
+                            UpdatesDispatch.dispatchUpdate(request.Updated(event_id, null, null,
+                                Updates.possibilites.published)).then(() => {
+                                    resolve("done");
+                                })
                         })
                         .catch((e) => {
                             console.warn(e);
@@ -700,73 +643,16 @@ class Request {
                     serverEventListener
                         .sendRequest(JSONData, event_id + "_unpublish")
                         .then(() => {
-                            stores.Events.unpublishEvent(event_id).then(() => {
-                                let Change = {
-                                    id: IDMaker.make(),
-                                    title: "Update On The Main Activity",
-                                    updated: "publish",
-                                    event_id: event_id,
-                                    changed: "UnPublished The Activity",
-                                    updater: stores.LoginStore.user.phone,
-                                    new_value: { data: null, new_value: true },
-                                    date: moment().format(),
-                                    time: null,
-                                };
-                                stores.ChangeLogs.addChanges(Change).then(() => { });
-                                resolve("done");
-                            });
+                            UpdatesDispatch.dispatchUpdate(request.Updated(event_id, null, null,
+                                Updates.possibilites.unpublish)).then(() => {
+                                    resolve("done");
+                                })
                         });
                 })
                 .catch((e) => {
                     console.warn(e);
                     reject(e);
                 });
-        });
-    }
-    update_notes(even, newNotes) {
-        return new Promise((resolve, reject) => {
-            let eqlty = isEqual(even.notes, newNotes);
-            console.warn(eqlty, "pppp", even.notes, newNotes);
-            if (eqlty === false) {
-                tcpRequest
-                    .UpdateCurrentEvent(
-                        stores.LoginStore.user.phone,
-                        even.id,
-                        "notes",
-                        newNotes,
-                        even.id + "_notes"
-                    )
-                    .then((JSONData) => {
-                        serverEventListener
-                            .sendRequest(JSONData, even.id + "_notes")
-                            .then((response) => {
-                                stores.Events.updateNotes(even.id, newNotes).then((Eve) => {
-                                    let Change = {
-                                        id: IDMaker.make(),
-                                        title: "Updates on Main Activity",
-                                        updated: "notes",
-                                        event_id: even.id,
-                                        changed: "Changed The Notes of the Activity",
-                                        updater: stores.LoginStore.user.phone,
-                                        new_value: { data: null, new_value: newNotes },
-                                        date: moment().format(),
-                                        time: null,
-                                    };
-                                    stores.ChangeLogs.addChanges(Change).then(() => {
-                                        Eve.calendar_id
-                                            ? CalendarServe.saveEvent(Eve, Eve.alarms).then(() => { })
-                                            : null;
-                                    });
-                                    resolve("ok");
-                                });
-                            })
-                            .catch((e) => {
-                                reject(e);
-                            });
-                    });
-            } else {
-                resolve();
-            }
         });
     }
     updateDescription(eventID, newDescription) {
@@ -784,134 +670,18 @@ class Request {
                         .sendRequest(JSONData, eventID + "_description")
                         .then((response) => {
                             console.warn(response);
-                            stores.Events.updateDescription(
-                                eventID,
-                                newDescription,
-                                false
-                            ).then(() => {
-                                let Change = {
-                                    id: IDMaker.make(),
-                                    title: "Updates On Main Activity",
-                                    updated: "description",
-                                    updater: stores.LoginStore.user.phone,
-                                    event_id: eventID,
-                                    changed: newDescription
-                                        ? "Changed The Description Of The Activity To: "
-                                        : "Removed The Description Of The Activity",
-                                    new_value: { data: null, new_value: newDescription },
-                                    date: moment().format(),
-                                    time: null,
-                                };
-                                stores.ChangeLogs.addChanges(Change).then(() => { });
-                                resolve("ok");
-                            });
+                            UpdatesDispatch.dispatchUpdate(request.Updated(eventID,
+                                newDescription, null,
+                                Updates.possibilites.description)).then(() => {
+                                    resolve("ok")
+                                })
                         })
                         .catch((e) => {
                             console.warn(e);
-                            Toaster({ text: "Unable To Perform Request" });
+                            Toaster({ text: Texts.unable_to_perform_request });
                             reject(e);
                         });
                 });
-        });
-    }
-    updateLocation(eventID, newLocation) {
-        return new Promise((resolve, reject) => {
-            tcpRequest
-                .UpdateCurrentEvent(
-                    stores.LoginStore.user.phone,
-                    eventID,
-                    "string",
-                    newLocation,
-                    eventID + "_location"
-                )
-                .then((JSONData) => {
-                    serverEventListener
-                        .sendRequest(JSONData, eventID + "_location")
-                        .then((response) => {
-                            console.warn(response);
-                            stores.Events.updateLocation(eventID, newLocation).then(() => {
-                                let Change = {
-                                    id: IDMaker.make(),
-                                    title: "Updates On Main Activity",
-                                    updated: "location",
-                                    updater: stores.LoginStore.user.phone,
-                                    event_id: eventID,
-                                    changed: newLocation
-                                        ? "Changed The Location Of The Activity To: "
-                                        : "Removed The Location Of The Activity",
-                                    new_value: { data: null, new_value: newLocation },
-                                    date: moment().format(),
-                                    time: null,
-                                };
-                                stores.ChangeLogs.addChanges(Change).then(() => { });
-                                resolve("ok");
-                            });
-                        })
-                        .catch((e) => {
-                            console.warn(error);
-                            Toaster({ text: "Unable To Perform Request" });
-                            reject(e);
-                        });
-                });
-        });
-    }
-    updatePeriod(event, newPeriod) {
-        return new Promise((resolve, reject) => {
-            if (event.period !== newPeriod) {
-                tcpRequest
-                    .UpdateCurrentEvent(
-                        stores.LoginStore.user.phone,
-                        event.id,
-                        "period",
-                        newPeriod,
-                        event.id + "_period"
-                    )
-                    .then((JSONData) => {
-                        serverEventListener
-                            .sendRequest(JSONData, event.id + "_period")
-                            .then((response) => {
-                                console.warn(response);
-                                stores.Events.updatePeriod(event.id, newPeriod, false).then(
-                                    (Eve) => {
-                                        let Change = {
-                                            id: IDMaker.make(),
-                                            title: "Updates On Main Activity",
-                                            updated: "period",
-                                            updater: stores.LoginStore.user.phone,
-                                            event_id: event.id,
-                                            changed: newPeriod
-                                                ? "Changed The Start Date Of The Activity To: "
-                                                : "Removed The Date Of The Activity",
-                                            new_value: {
-                                                data: null,
-                                                new_value: newPeriod
-                                                    ? moment(newPeriod).format(
-                                                        "dddd, MMMM Do YYYY, h:mm:ss a"
-                                                    )
-                                                    : null,
-                                            },
-                                            date: moment().format(),
-                                            time: null,
-                                        };
-                                        event.period
-                                            ? CalendarServe.saveEvent(
-                                                { ...event, period: newPeriod },
-                                                Eve.alarms
-                                            ).then(() => {
-                                                resolve("ok");
-                                            })
-                                            : resolve("ok");
-                                        stores.ChangeLogs.addChanges(Change).then(() => { });
-                                    }
-                                );
-                            })
-                            .catch((e) => {
-                                reject(e);
-                            });
-                    });
-            } else {
-                resolve();
-            }
         });
     }
     updateTitle(event, newTitle) {
@@ -931,34 +701,16 @@ class Request {
                             .sendRequest(JSONData, event.id + "_title")
                             .then((response) => {
                                 console.warn(response);
-                                stores.Events.updateTitle(event.id, newTitle, false).then(
-                                    (Eve) => {
-                                        console.warn("title updated successfully ......");
-                                        let Change = {
-                                            id: IDMaker.make(),
-                                            updated: "title",
-                                            event_id: event.id,
-                                            updater: stores.LoginStore.user.phone,
-                                            title: "Updates On Main Activity",
-                                            changed: "Changed The Title Of The Activity to: ",
-                                            new_value: { data: null, new_value: newTitle },
-                                            date: moment().format(),
-                                            time: null,
-                                        };
-                                        stores.ChangeLogs.addChanges(Change).then(() => {
-                                            console.warn(event.about.title, "-------");
-                                            Eve.calendar_id
-                                                ? CalendarServe.saveEvent(
-                                                    { old_title: event.about.title, ...Eve },
-                                                    Eve.alarms
-                                                ).then((resp) => {
-                                                    console.warn(resp);
+                                stores.Events.updateTitle(event.id,
+                                    newTitle, false).then(
+                                        (Eve) => {
+                                            UpdatesDispatch.dispatchUpdate(request.Updated(event.id,
+                                                newTitle, null,
+                                                Updates.possibilites.title)).then(() => {
+                                                    resolve("ok")
                                                 })
-                                                : null;
-                                        });
-                                        resolve("ok");
-                                    }
-                                );
+                                        }
+                                    );
                             })
                             .catch((e) => {
                                 reject(e);
@@ -984,24 +736,12 @@ class Request {
                         serverEventListener
                             .sendRequest(JSONData, event.id + "_who_can_update")
                             .then((response) => {
-                                stores.Events.updateWhoCanManage(event.id, whoCanManage).then(
-                                    (eve) => {
-                                        let Change = {
-                                            id: IDMaker.make(),
-                                            title: "Updates On Main Activity",
-                                            updated: "who_can_update",
-                                            event_id: event.id,
-                                            updater: stores.LoginStore.user.phone,
-                                            changed:
-                                                "Changed The Manage Priviledges of The Activity To ...",
-                                            new_value: { data: null, new_value: whoCanManage },
-                                            date: moment().format(),
-                                            time: null,
-                                        };
-                                        stores.ChangeLogs.addChanges(Change).then(() => { });
-                                        resolve("ok");
-                                    }
-                                );
+                                UpdatesDispatch.dispatchUpdate(request.Updated(event.id,
+                                    whoCanManage, null,
+                                    Updates.possibilites.who_can_manage
+                                )).then(() => {
+                                    resolve("ok")
+                                })
                             })
                             .catch((e) => {
                                 reject(e);
@@ -1012,68 +752,16 @@ class Request {
             }
         });
     }
-    updateRecurrency(event, recurrentUpdate) {
-        return new Promise((resolve, reject) => {
-            if (
-                event.recurrent !== recurrentUpdate.recurrent ||
-                event.frequency !== recurrentUpdate.frequency ||
-                event.interval !== recurrentUpdate.interval ||
-                event.days_of_week !== recurrentUpdate.days_of_week ||
-                event.week_start !== recurrentUpdate.week_start ||
-                event.recurrence !== recurrentUpdate.recurrence
-            ) {
-                tcpRequest
-                    .UpdateCurrentEvent(
-                        stores.LoginStore.user.phone,
-                        event.id,
-                        "recurrency",
-                        recurrentUpdate,
-                        event.id + "_recurrency"
-                    )
-                    .then((JSONData) => {
-                        serverEventListener
-                            .sendRequest(JSONData, event.id + "_recurrency")
-                            .then((response) => {
-                                stores.Events.updateRecurrency(event.id, recurrentUpdate).then(
-                                    (Eve) => {
-                                        let Change = {
-                                            id: IDMaker.make(),
-                                            title: "Updates On Main Activity",
-                                            updated: "recurrency",
-                                            event_id: event.id,
-                                            updater: stores.LoginStore.user.phone,
-                                            changed:
-                                                "Changed The Recurrency Configuration of the Activity",
-                                            new_value: { data: null, new_value: recurrentUpdate },
-                                            date: moment().format(),
-                                            time: null,
-                                        };
-                                        Eve.calendar_id
-                                            ? CalendarServe.saveEvent(Eve, Eve.alarms).then(() => {
-                                                stores.ChangeLogs.addChanges(Change).then(() => { });
-                                                resolve("ok");
-                                            })
-                                            : resolve("ok");
-                                    }
-                                );
-                            })
-                            .catch((e) => {
-                                reject(e);
-                            });
-                    });
-            } else {
-                resolve();
-            }
-        });
-    }
+
     updateCloseActivity(event, newState) {
         return new Promise((resolve, reject) => {
             if (event.closed !== newState) {
+                let state = !newState ? "open" : "close"
                 tcpRequest
                     .UpdateCurrentEvent(
                         stores.LoginStore.user.phone,
                         event.id,
-                        !newState ? "open" : "close",
+                        state,
                         newState,
                         event.id + "_close"
                     )
@@ -1081,67 +769,11 @@ class Request {
                         serverEventListener
                             .sendRequest(JSONData, event.id + "_close")
                             .then((response) => {
-                                console.warn(response);
-                                stores.Events.openClose(event.id, newState, false).then(() => {
-                                    let Change = {
-                                        id: IDMaker.make(),
-                                        title: "Updates On Main Activity",
-                                        updated: "close",
-                                        event_id: event.id,
-                                        updater: stores.LoginStore.user.phone,
-                                        changed: !newState
-                                            ? "Opened" + " The Main Activity"
-                                            : "Closed" + " The Main Activity",
-                                        new_value: { data: null, new_value: null },
-                                        date: moment().format(),
-                                        time: null,
-                                    };
-                                    stores.ChangeLogs.addChanges(Change).then(() => { });
-                                    resolve("ok");
-                                });
-                            })
-                            .catch((e) => {
-                                reject(e);
-                            });
-                    });
-            } else {
-                resolve();
-            }
-        });
-    }
-    addUpdateCalendarID(event, newCalendarID) {
-        return new Promise((resolve, reject) => {
-            if (event.calendar_id !== newCalendarID) {
-                tcpRequest
-                    .UpdateCurrentEvent(
-                        stores.LoginStore.user.phone,
-                        event.id,
-                        "calendar_id",
-                        newCalendarID,
-                        event.id + "_calendar_id"
-                    )
-                    .then((JSONData) => {
-                        serverEventListener
-                            .sendRequest(JSONData, event.id + "_calendar_id")
-                            .then((response) => {
-                                console.warn(response);
-                                stores.Events.updateCalendarID(event.id, newCalendarID).then(
-                                    () => {
-                                        let Change = {
-                                            id: IDMaker.make(),
-                                            title: "Updates On Main Activity",
-                                            updated: "calendar_id",
-                                            event_id: event.id,
-                                            updater: stores.LoginStore.user.phone,
-                                            changed: "Changed The Calendar The Main Activity",
-                                            new_value: { data: null, new_value: null },
-                                            date: moment().format(),
-                                            time: null,
-                                        };
-                                        stores.ChangeLogs.addChanges(Change).then(() => { });
-                                        resolve("ok");
-                                    }
-                                );
+                                UpdatesDispatch.dispatchUpdate(request.Updated
+                                    (event.id, newState, null,
+                                        Updates.possibilites.closed)).then(() => {
+                                            resolve("ok")
+                                        })
                             })
                             .catch((e) => {
                                 reject(e);
@@ -1157,64 +789,40 @@ class Request {
         return new Promise((resolve, reject) => {
             this.updateTitle(JSON.parse(event), settings.title_new)
                 .then((t1) => {
-                    this.updatePeriod(JSON.parse(event), settings.period_new)
-                        .then((t2) => {
-                            this.update_notes(JSON.parse(event), settings.notes_new)
-                                .then((t3) => {
-                                    this.updateWhoCanManage(
-                                        JSON.parse(event),
-                                        settings.who_can_update_new
-                                    )
-                                        .then((t6) => {
-                                            this.updateRecurrency(JSON.parse(event), {
-                                                recurrent: settings.recurrent_new,
-                                                interval: settings.interval_new,
-                                                frequency: settings.frequency_new,
-                                                recurrence: settings.recurrence_new,
-                                                week_start: settings.week_start,
-                                                days_of_week: settings.days_of_week,
-                                            })
-                                                .then((t4) => {
-                                                    event = JSON.parse(event);
-                                                    if (
-                                                        event.public !== settings.public_new &&
-                                                        settings.public_new
-                                                    )
-                                                        this.publish(event.id, event.about.title)
-                                                            .then((t5) => {
-                                                                resolve(t1 + t2 + t3 + t4 + t5 + t6);
-                                                            })
-                                                            .catch((e) => {
-                                                                reject(e);
-                                                            });
-                                                    else if (
-                                                        event.public !== settings.public_new &&
-                                                        !settings.public_new
-                                                    )
-                                                        this.unpublish(event.id)
-                                                            .then((t5) => {
-                                                                resolve(t1 + t2 + t3 + t4 + t5 + t6);
-                                                            })
-                                                            .catch((e) => {
-                                                                reject(e);
-                                                            });
-                                                    else resolve(t1 + t2 + t3 + t4);
-                                                })
-                                                .catch((e) => {
-                                                    reject(e);
-                                                });
-                                        })
-                                        .catch((e) => {
-                                            reject(e);
-                                        });
-                                })
-                                .catch((e) => {
-                                    reject(e);
-                                });
+                    this.updateWhoCanManage(
+                        JSON.parse(event),
+                        settings.who_can_update_new
+                    )
+                        .then((t6) => {
+                            event = JSON.parse(event);
+                            if (
+                                event.public !== settings.public_new &&
+                                settings.public_new
+                            )
+                                this.publish(event.id, event.about.title)
+                                    .then((t5) => {
+                                        resolve(t1 + + t5 + t6);
+                                    })
+                                    .catch((e) => {
+                                        reject(e);
+                                    });
+                            else if (
+                                event.public !== settings.public_new &&
+                                !settings.public_new
+                            )
+                                this.unpublish(event.id)
+                                    .then((t5) => {
+                                        resolve(t1 + t5 + t6);
+                                    })
+                                    .catch((e) => {
+                                        reject(e);
+                                    });
+                            else resolve(t1 + t6);
                         })
                         .catch((e) => {
                             reject(e);
                         });
+
                 })
                 .catch((e) => {
                     reject(e);
@@ -1236,25 +844,13 @@ class Request {
                     serverEventListener
                         .sendRequest(JSONData, event_id + "_background")
                         .then((response) => {
-                            stores.Events.updateBackground(event_id, background, false).then(
-                                () => {
-                                    let Change = {
-                                        id: IDMaker.make(),
-                                        title: "Updates On Main Activity",
-                                        updated: "background",
-                                        event_id: event_id,
-                                        updater: stores.LoginStore.user.phone,
-                                        changed: background
-                                            ? "Changed The Background Photo Of The Main Activity"
-                                            : "Removed The Background Photo Of The Activity",
-                                        new_value: { data: null, new_value: background },
-                                        date: moment().format(),
-                                        time: null,
-                                    };
-                                    stores.ChangeLogs.addChanges(Change).then(() => { });
-                                    resolve("ok");
-                                }
-                            );
+                            UpdatesDispatch.dispatchUpdate(request.Updated(
+                                event_id,
+                                background,
+                                null,
+                                Updates.possibilites.background)).then(() => {
+                                    resolve("ok")
+                                })
                         })
                         .catch((error) => {
                             console.warn(error);
@@ -1264,50 +860,21 @@ class Request {
         });
     }
     createHighlight(newHighlight, activityName) {
-        //   this.yourName = toTitleCase(stores.LoginStore.user.nickname)
-        //   this.shortName = this.yourName.split(" ")[0]
         return new Promise((resolve, reject) => {
-            /*let notif = request.Notification()
-                  notif.notification.body = activityName? this.shortName + 'Add a Star Message': this.yourName + 'Added a star message'
-                  notif.notification.title = 'New Star Message @ ' + activityName
-                  notif.notification.image = newHighlight.url && newHighlight.url.photo
-                  notif.notification.android_channel_id = notification_channels.stars
-                  notif.data.activity_id = newHighlight.event_id
-                  notif.data.post_id = newHighlight.id
-                  newHighlight.notif = notif*/
             tcpRequest
                 .addHighlight(newHighlight, newHighlight.id)
                 .then((JSONData) => {
                     serverEventListener
                         .sendRequest(JSONData, newHighlight.id)
                         .then((response) => {
-                            stores.Events.addHighlight(
-                                newHighlight.event_id,
-                                newHighlight.id
-                            ).then((res) => {
-                                stores.Highlights.addHighlight(
-                                    newHighlight.event_id,
-                                    newHighlight
-                                ).then((res) => {
-                                    let Change = {
-                                        id: IDMaker.make(),
-                                        title: "Updates On Main Activity",
-                                        updated: "add_highlight",
-                                        event_id: newHighlight.event_id,
-                                        updater: stores.LoginStore.user.phone,
-                                        changed: "Added A New Post To The Activity",
-                                        new_value: { data: null, new_value: newHighlight },
-                                        date: moment().format(),
-                                        time: null,
-                                    };
-                                    stores.ChangeLogs.addChanges(Change).then((res) => { });
-                                    resolve("ok");
-                                });
-                            });
+                            UpdatesDispatch.dispatchUpdate(request.Updated(newHighlight.event_id, newHighlight, null,
+                                Updates.possibilites.new_highlight)).then(() => {
+                                    resolve("ok")
+                                })
                         })
                         .catch((error) => {
                             Toaster({
-                                text: "Unable to perform this action",
+                                text: Texts.unable_to_perform_request,
                                 position: "top",
                             });
                             reject(error);
@@ -1329,31 +896,14 @@ class Request {
                         serverEventListener
                             .sendRequest(JSONData, highlightID + "_title")
                             .then((response) => {
-                                stores.Highlights.updateHighlightTitle(
-                                    eventID,
+                                UpdatesDispatch.dispatchUpdate(request.Updated(eventID,
                                     {
-                                        id: highlightID,
-                                        title: newTitle,
-                                    },
-                                    false
-                                ).then((HighlightJS) => {
-                                    let Highlight = HighlightJS; //changed json parse
-                                    let Change = {
-                                        id: IDMaker.make(),
-                                        title: `Update On ${Highlight.title} Post`,
-                                        updated: "highlight_title",
-                                        event_id: eventID,
-                                        updater: stores.LoginStore.user.phone,
-                                        changed: newTitle
-                                            ? `Changed The Title of ${Highlight.title} Post to ...`
-                                            : `Removed The Title of ${Highlight.title} Post`,
-                                        new_value: { data: null, new_value: newTitle },
-                                        date: moment().format(),
-                                        time: null,
-                                    };
-                                    stores.ChangeLogs.addChanges(Change).then((res) => { });
-                                    resolve("ok");
-                                });
+                                        new_title: higlightTitle.new_data,
+                                        highlight_id: higlightTitle.h_id
+                                    }, null,
+                                    Updates.possibilites.highlight_title)).then(() => {
+                                        resolve("ok")
+                                    })
                             })
                             .catch((error) => {
                                 console.warn(error);
@@ -1384,24 +934,12 @@ class Request {
                         serverEventListener
                             .sendRequest(JSONData, highlightID + "_public_state")
                             .then((response) => {
-                                stores.Highlights.updateHighlightPublicState(eventID, {
+                                UpdatesDispatch.dispatchUpdate(request.Updated(eventID, {
                                     highlight_id: higlightTitle.h_id,
-                                    public_state: higlightTitle.new_data,
-                                }).then((Highlight) => {
-                                    let Change = {
-                                        id: IDMaker.make(),
-                                        title: `Update On ${Highlight.title} Post`,
-                                        updated: "highlight_decription",
-                                        event_id: eventID,
-                                        updater: stores.LoginStore.user.phone,
-                                        changed: `Changed The Privacy Level Of ${Highlight.title} Post to`,
-                                        new_value: { data: null, new_value: newPublicState },
-                                        date: moment().format(),
-                                        time: null,
-                                    };
-                                    stores.ChangeLogs.addChanges(Change).then((res) => { });
-                                    resolve("ok");
-                                });
+                                    public_state: higlightTitle.new_data
+                                }, null, Updates.possibilites.highlight_public_state)).then(() => {
+                                    resolve("ok")
+                                })
                             })
                             .catch((error) => {
                                 console.warn(error);
@@ -1427,30 +965,15 @@ class Request {
                         serverEventListener
                             .sendRequest(JSONData, highlightID + "_description")
                             .then((response) => {
-                                stores.Highlights.updateHighlightDescription(
-                                    eventID,
-                                    {
-                                        id: higlightTitle.h_id,
-                                        description: higlightTitle.new_data,
-                                    },
-                                    false
-                                ).then((Highlight) => {
-                                    let Change = {
-                                        id: IDMaker.make(),
-                                        title: `Update On ${Highlight.title} Post`,
-                                        updated: "highlight_decription",
-                                        event_id: eventID,
-                                        updater: stores.LoginStore.user.phone,
-                                        changed: newDescription
-                                            ? `Changed The Content of ${Highlight.title} Post To`
-                                            : `Removed The Content of ${Highlight.title} Post`,
-                                        new_value: { data: null, new_value: newDescription },
-                                        date: moment().format(),
-                                        time: null,
-                                    };
-                                    stores.ChangeLogs.addChanges(Change).then((res) => { });
-                                    resolve("ok");
-                                });
+                                UpdatesDispatch.dispatchUpdate(request.Updated(eventID, {
+                                    highlight_id: higlightTitle.h_id,
+                                    new_description: higlightTitle.new_data
+                                },
+                                    null,
+                                    Updates.possibilites.highlight_update_description)).
+                                    then(() => {
+                                        resolve("ok")
+                                    })
                             })
                             .catch((error) => {
                                 console.warn(error);
@@ -1476,28 +999,13 @@ class Request {
                         serverEventListener
                             .sendRequest(JSONData, highlightID + "_url")
                             .then((response) => {
-                                stores.Highlights.updateHighlightUrl(
-                                    eventID,
-                                    {
-                                        id: newHighlightURL.h_id,
-                                        url: newHighlightURL.new_data,
-                                    },
-                                    false
-                                ).then((Highlight) => {
-                                    let Change = {
-                                        id: IDMaker.make(),
-                                        title: `Update On ${Highlight.title} Post`,
-                                        updated: "highlight_url",
-                                        event_id: eventID,
-                                        updater: stores.LoginStore.user.phone,
-                                        changed: `Changed The Media Specifications of ${Highlight.title} Post`,
-                                        new_value: { data: null, new_value: newURL },
-                                        date: moment().format(),
-                                        time: null,
-                                    };
-                                    stores.ChangeLogs.addChanges(Change).then((res) => { });
-                                    resolve("ok");
-                                });
+                                UpdatesDispatch.dispatchUpdate(request.Updated(eventID, {
+                                    highlight_id: newHighlightURL.h_id,
+                                    new_url: newHighlightURL.new_data
+                                }, null,
+                                    Updates.possibilites.highlight_update_url)).then(() => {
+                                        resolve()
+                                    })
                             })
                             .catch((error) => {
                                 console.warn(error);
@@ -1571,27 +1079,10 @@ class Request {
                     serverEventListener
                         .sendRequest(JSONData, highlightID + "_delete")
                         .then((response) => {
-                            stores.Highlights.removeHighlight(eventID, highlightID).then(
-                                (Highlight) => {
-                                    stores.Events.removeHighlight(eventID, highlightID).then(
-                                        (res) => {
-                                            let Change = {
-                                                id: IDMaker.make(),
-                                                title: `Update On Main Activity`,
-                                                updated: "highlight_delete",
-                                                event_id: eventID,
-                                                updater: stores.LoginStore.user.phone,
-                                                changed: `Deleted ${Highlight.title} Post`,
-                                                new_value: { data: null, new_value: Highlight },
-                                                date: moment().format(),
-                                                time: null,
-                                            };
-                                            stores.ChangeLogs.addChanges(Change).then((res) => { });
-                                            resolve("ok");
-                                        }
-                                    );
-                                }
-                            );
+                            UpdatesDispatch.dispatchUpdate(request.Updated(eventID, highlightID
+                                , null, Updates.possibilites.highlight_deleted)).then(() => {
+                                    resolve("ok")
+                                })
                         })
                         .catch((error) => {
                             if (error.data.data === no_data_with_such_key) {

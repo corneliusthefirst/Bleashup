@@ -868,7 +868,7 @@ class Reminds extends AnimatedComponent {
             callback={() => {
               this.deleteRemind();
             }}
-            message={Texts.are_you_sure_you_want_to_leave}
+            message={Texts.are_you_sure_to_delete}
           />
         ) : (
             false

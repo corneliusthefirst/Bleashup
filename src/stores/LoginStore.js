@@ -82,20 +82,7 @@ export default class LoginStore {
 
   @action async setUser(newUser) {
     return new Promise((resolve, reject) => {
-      this.user = {
-        phone: newUser.phone,
-        name: newUser.name,
-        status: newUser.status,
-        age: newUser.age,
-        nickname: newUser.nickname,
-        email: newUser.email,
-        created_at: newUser.created_at,
-        updated_at: newUser.updated_at,
-        password: newUser.password,
-        profile: newUser.profile,
-        profile_ext: newUser.profile_ext,
-        country_code: newUser.country_code
-      };
+      this.user = newUser;
       storage
         .save({
           key: "loginStore",
@@ -459,21 +446,7 @@ export default class LoginStore {
 
   @action getStatusOptions() {
     return new Promise((resolve, reject) => {
-
-      storage
-        .load({
-          key: "statusOptions",
-          autoSync: true
-        })
-        .then(data => {
-          resolve(data);
-        })
-        .catch(error => {
-          this.setStatusOptions(this.statusOptions).then((newArray) => {
-            resolve(newArray);
-          })
-
-        });
+      resolve(this.statusOptions)
     })
   }
 

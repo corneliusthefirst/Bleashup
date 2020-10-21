@@ -71,6 +71,7 @@ export default class BleashupAlert extends BleashupModal {
               width: "100%",
               height: 40,
               borderRadius: 15,
+              padding: 4,
               flexDirection: "row",
               borderColor: "red",
               backgroundColor: ColorList.indicatorColor,
@@ -85,10 +86,11 @@ export default class BleashupAlert extends BleashupModal {
             </Text>
           </TouchableOpacity>
         </TouchableOpacity>
-        <TouchableOpacity style={{ width: "20%", marginRight: "4%" }}>
+        <TouchableOpacity style={{ minWidth: "20%", marginRight: "4%" }}>
           <TouchableOpacity
             style={{
               width: "100%",
+              padding: 4,
               height: 40,
               flexDirection: "row",
               borderRadius: 15,

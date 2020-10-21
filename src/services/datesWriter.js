@@ -1,6 +1,7 @@
 
 import moment from 'moment';
 import { format } from './recurrenceConfigs';
+import toTitleCase from './toTitle';
 export function writeDateTime(event) {
     let date = event && event.period
     let statDate = moment(date)
@@ -46,5 +47,5 @@ export function getMonthDay(date) {
 }
 export function getDay(date) {
     return moment(date, format, true).isValid() ?
-        moment(date, format).format('dddd') : moment(date).format('dddd')
+        toTitleCase(moment(date, format).format('dddd')) : toTitleCase(moment(date).format('dddd'))
 }   

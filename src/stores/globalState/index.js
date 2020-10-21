@@ -1,5 +1,5 @@
 import GlobalState from "./globalState"
 
-const GState = new GlobalState("fr")
+const GState = new GlobalState()
 
 export default GState

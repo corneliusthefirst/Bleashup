@@ -119,62 +119,60 @@ export default class highlights {
   @action removeHighlight(EventID, HighlightId) {
     return new Promise((resolve, RejectPromise) => {
       this.readFromStore().then((Highlights) => {
-        Highlights[EventID] = reject(Highlights[EventID], ["id", HighlightId]);
-        HighlightId === request.Highlight().id
-          ? Highlights[EventID].unshift(request.Highlight())
-          : null;
+        const His = find(Highlights[EventID],{id:HighlightId})
+        Highlights[EventID] = reject(Highlights[EventID], {id: HighlightId});
         this.setProperty(Highlights);
-        resolve(Highlights[EventID]);
+        resolve(His);
       });
     });
   }
 
   fetchHighlightsFromRemote(EventID, fresh) {
-      return new Promise((resolve, reject) => {
-        let getHighlight = request.EventID();
-        getHighlight.event_id = EventID;
-        tcpRequest
-          .getHighlights(getHighlight, EventID + "highlights")
-          .then((JSONData) => {
-            serverEventListener
-              .sendRequest(JSONData, EventID + "highlights")
-              .then((response) => {
-                if (
-                  !response.data ||
-                  response.data === "empty" ||
-                  response.data === "no_such_value"
-                ) {
-                  resolve([]);
-                } else {
-                  this.addHighlights(EventID, response.data).then(() => {
-                    resolve(response.data);
-                  });
-                }
-              })
-              .catch(() => {
+    return new Promise((resolve, reject) => {
+      let getHighlight = request.EventID();
+      getHighlight.event_id = EventID;
+      tcpRequest
+        .getHighlights(getHighlight, EventID + "highlights")
+        .then((JSONData) => {
+          serverEventListener
+            .sendRequest(JSONData, EventID + "highlights")
+            .then((response) => {
+              if (
+                !response.data ||
+                response.data === "empty" ||
+                response.data === "no_such_value"
+              ) {
                 resolve([]);
-              });
-          });
-        
+              } else {
+                this.addHighlights(EventID, response.data).then(() => {
+                  resolve(response.data);
+                });
+              }
+            })
+            .catch(() => {
+              resolve([]);
+            });
+        });
+
     });
   }
 
   @action fetchHighlights(EventID) {
     let sorter = (a, b) =>
-       moment(a.created_at).format("x") >=
-       moment(b.created_at).format("x") ? -1 :1;
+      moment(a.created_at).format("x") >=
+        moment(b.created_at).format("x") ? -1 : 1;
     return new Promise((resolve, reject) => {
       if (this.highlights[EventID] && this.highlights[EventID].length > 1) {
-          let result = this.highlights[EventID].sort(sorter);
-            resolve(uniqBy(result, "id"));
+        let result = this.highlights[EventID].sort(sorter);
+        resolve(uniqBy(result, "id"));
       } else {
         this.fetchHighlightsFromRemote(EventID, true)
           .then((data) => {
             let newData = data.sort(sorter)
             resolve(newData);
           }).catch(() => {
-        resolve([]);
-      });
+            resolve([]);
+          });
       }
     });
   }
@@ -186,7 +184,7 @@ export default class highlights {
         let RemindIndex = findIndex(Highlights[EventID], {
           id: NewHighlight.id,
         });
-        //console.warn('here the remindIndex', RemindIndex);
+        console.warn('here the remindIndex', RemindIndex);
         Highlights[EventID][RemindIndex].title = NewHighlight.title;
         Highlights[EventID][RemindIndex].updated_date = moment().format();
         Highlights[EventID][RemindIndex].title_updated = inform;
@@ -255,22 +253,26 @@ export default class highlights {
 
   loadHighlight(EventID, id) {
     return new Promise((resolve, reject) => {
-      this.readFromStore().then((Highlights) => {
-        let high = find(Highlights[EventID], { id: id })
-        if (high) {
-          resolve(high);
-        } else {
-          this.loadHighlightFromRemote(EventID, id)
-            .then((highlight) => {
-              this.addHighlight(EventID, highlight).then(() => {
-                resolve(highlight);
+      if (typeof id == 'object' && id.id) {
+        resolve(id)
+      } else {
+        this.readFromStore().then((Highlights) => {
+          let high = find(Highlights[EventID], { id: id })
+          if (high) {
+            resolve(high);
+          } else {
+            this.loadHighlightFromRemote(EventID, id)
+              .then((highlight) => {
+                this.addHighlight(EventID, highlight).then(() => {
+                  resolve(highlight);
+                });
+              })
+              .catch((e) => {
+                resolve();
               });
-            })
-            .catch((e) => {
-              resolve();
-            });
-        }
-      });
+          }
+        });
+      }
     });
   }
 
@@ -296,8 +298,8 @@ export default class highlights {
         });
     });
   }
-  persistDimenssion(index,eventID,layout){
-    if (this.highlights[eventID] && this.highlights[eventID][index]){
+  persistDimenssion(index, eventID, layout) {
+    if (this.highlights[eventID] && this.highlights[eventID][index]) {
       this.highlights[eventID][index].dimensions = layout
       this.setProperty(this.highlights)
     }

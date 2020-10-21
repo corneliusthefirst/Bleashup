@@ -39,7 +39,7 @@ export default class CreatorModal extends BleashupModal {
       this.onClosedModal();
     }, 100);
   }
-  date = moment(this.props.created_at).format(format)
+  date = moment(this.props.created_at).calendar()
   modalBody() {
     return (
       <View>

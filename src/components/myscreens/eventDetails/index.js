@@ -82,6 +82,7 @@ let { height, width } = Dimensions.get('window');
     this.renderItem = this.renderItem.bind(this)
     this.defaultItem = this.defaultItem.bind(this)
     this.hideActions = this.hideActions.bind(this)
+    this.hideAreYouSure = this.hideAreYouSure.bind(this)
   }
   scrolled = 0
   initializer() {
@@ -220,15 +221,13 @@ let { height, width } = Dimensions.get('window');
   createStar(newHighlight) {
     Requester.createHighlight(newHighlight, this.props.isRelation ? false : this.props.Event.about.title)
       .then(() => {
+        this.props.stopLoader();
         MessageRequester.sendMessage(messagePreparer.formMessagefromStar(newHighlight),
           this.props.Event.id, this.props.Event.id,
           true,
-          this.props.Event.about.title)
-        this.resetHighlight();
-        stores.Highlights.removeHighlight(newHighlight.event_id, request.Highlight().id).then(() => {
-          this.props.stopLoader();
-
-        });
+          this.props.Event.about.title).then(() => {
+            stores.Highlights.removeHighlight(newHighlight.event_id, request.Highlight().id)
+          })
       })
       .catch(() => {
         this.props.stopLoader();
@@ -379,6 +378,9 @@ let { height, width } = Dimensions.get('window');
       showActions: false
     })
   }
+  hideAreYouSure(){
+    this.setStatePure({ isAreYouSureModalOpened: false })
+  }
   getItemLayout = (item, index) => GState.getItemLayout(item, index, this.data, 70, 0)
   renderPosts() {
     this.data = (stores.Highlights.highlights[this.props.Event.id] || []).
@@ -441,11 +443,10 @@ let { height, width } = Dimensions.get('window');
         </View>
         {!this.state.isMounted ? <View style={{
           height: colorList.containerHeight,
-          backgroundColor: colorList.bodyBackground,
           flex: 1,
           width: '100%'
         }}>
-          <Spinner></Spinner>
+          <Spinner big color={ColorList.bodyBackground}></Spinner>
         </View> :
           <View style={{
             flex: 1,
@@ -471,13 +472,13 @@ let { height, width } = Dimensions.get('window');
             >
             </BleashupFlatList>
           </View>}
-        {this.state.showActions ? <MessageActions title={"star actions"} actions={this.action} onClosed={this.hideActions} isOpen={this.state.showActions}></MessageActions> : null}
-        {this.props.isAreYouSureModalOpened ? <BleashupAlert
+        {this.state.showActions ? <MessageActions title={Texts.highlights_actions} actions={this.action} onClosed={this.hideActions} isOpen={this.state.showActions}></MessageActions> : null}
+        {this.state.isAreYouSureModalOpened ? <BleashupAlert
           title={Texts.delete_highlight}
           accept={Texts.yes} refuse={Texts.no}
           message={Texts.are_you_sure_to_delete_this_highlight}
           deleteFunction={() => this.deleteHighlight(this.state.current_highlight)}
-          isOpen={this.state.isAreYouSureModalOpened} onClosed={() => { this.setStatePure({ isAreYouSureModalOpened: false }) }} /> : null}
+          isOpen={this.state.isAreYouSureModalOpened} onClosed={this.hideAreYouSure} /> : null}
         {this.state.isActionButtonVisible && this.props.computedMaster ? <SideButton
           buttonColor={ColorList.transparent}
           position={"right"}

@@ -873,7 +873,7 @@ export default class TasksCreation extends BleashupModal {
                         {this.state.date
                           ? `${moment(this.state.date).format(
                             "dddd, MMMM Do YYYY"
-                          )} at ${moment(this.state.date).format("hh:mm a")}`
+                          )} ${Texts.at} ${moment(this.state.date).format("hh:mm")}`
                           : Texts.remind_date}
                       </Text>
                     </TouchableOpacity>
@@ -944,7 +944,7 @@ export default class TasksCreation extends BleashupModal {
                         >
                           <View style={{ flexDirection: "column" }}>
                             <View
-                              style={{ marginLeft: "1%", flexDirection: "row" }}
+                              style={{ marginLeft: "1%", flexDirection: "row" ,alignItems: 'center',}}
                             >
                               <Text
                                 style={{
@@ -953,7 +953,7 @@ export default class TasksCreation extends BleashupModal {
                                   marginTop: 3,
                                 }}
                               >
-                                Every{" "}
+                                {Texts.every}{" "}
                               </Text>
                               <View
                                 pointerEvents={
@@ -1048,6 +1048,7 @@ export default class TasksCreation extends BleashupModal {
                               {this.state.currentRemind.recursive_frequency
                                 .frequency === "weekly" ? (
                                   <TouchableOpacity
+                                  style={{flex:1,flexShrink: 1,}}
                                     onPress={() =>
                                       requestAnimationFrame(() => {
                                         this.setStatePure({
@@ -1056,7 +1057,9 @@ export default class TasksCreation extends BleashupModal {
                                       })
                                     }
                                   >
-                                    <Text style={{ ...GState.defaultTextStyle }}>
+                                    <Text 
+                                    ellipsizeMode={'tail'} 
+                                    style={{ ...GState.defaultTextStyle }}>
                                       {this.state.ownership
                                         ? Texts.select_days
                                         : Texts.view_days}
@@ -1095,7 +1098,7 @@ export default class TasksCreation extends BleashupModal {
                                         >
                                           <Text
                                             style={{ ...GState.defaultTextStyle }}
-                                          >{`on ${getMonthDay(
+                                          >{`${Texts.on} ${getMonthDay(
                                             this.state.date
                                           )}`}</Text>
                                         </TouchableOpacity>
@@ -1122,7 +1125,7 @@ export default class TasksCreation extends BleashupModal {
                               color: ColorList.bodyText,
                             }}
                           >
-                            End Date:
+                            {Texts.end_date}:
                           </Text>
                           <TouchableOpacity
                             pointerEvents={this.state.ownership ? null : "none"}
@@ -1134,13 +1137,13 @@ export default class TasksCreation extends BleashupModal {
                               {this.state.date &&
                                 this.state.currentRemind.recursive_frequency
                                   .recurrence
-                                ? `On ${moment(
+                                ? `${Texts.on} ${moment(
                                   this.state.currentRemind.recursive_frequency
                                     .recurrence
-                                ).format("dddd, MMMM Do YYYY")} at  ${moment(
+                                ).format("dddd, MMMM Do YYYY")} ${Texts.at}  ${moment(
                                   this.state.currentRemind.recursive_frequency
                                     .recurrence
-                                ).format("hh:mm a")}`
+                                ).format("hh:mm")}`
                                 : Texts.selete_recurrence_stop_date}
                             </Text>
                           </TouchableOpacity>

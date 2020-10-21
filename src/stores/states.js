@@ -85,15 +85,16 @@ export default class States {
     }
     getNewMessagesCount(id) {
         if (id) {
-            return this.states && this.states.newMessages && 
-            this.states.newMessages[id] && this.states.newMessages[id].length
+            return this.states && this.states.newMessages &&
+                this.states.newMessages[id] && this.states.newMessages[id].length
         } else {
             return this.states && this.states.newMessages &&
                 Object.keys(this.states.newMessages).length
         }
     }
     getNewRemindsCount() {
-        return  this.states && this.states.newReminds && Object.keys(this.states.newReminds)
+        return this.states && this.states.newReminds &&
+            Object.values(this.states.newReminds).reduce((a, b) => a + b.length, 0)
     }
     setAppLanguage(lan) {
         this.states.lan = lan
@@ -131,13 +132,17 @@ export default class States {
         }
         this.setProperties(this.states)
     }
+    removeNewReminds(){
+        delete this.states.newReminds
+        this.setProperties(this.states)
+    }
     removeNewMessage(committee_id, id) {
         if (id) {
             this.states.newMessages[committee_id] =
                 this.states.newMessages && this.states.newMessages[committee_id] ?
                     this.states.newMessages[committee_id].filter(ele => ele !== id) : []
         } else {
-           delete this.states.newMessages[committee_id]
+            delete this.states.newMessages[committee_id]
         }
         this.setProperties(this.states)
     }

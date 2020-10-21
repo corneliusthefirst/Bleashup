@@ -108,6 +108,8 @@ export default class InviteParticipantModal extends BleashupModal {
           >
             {this.state.searching ? null : <View style={{ flexDirection: "column", flex: 1, }}>
               <Text
+              ellipsizeMode={"tail"}
+              numberOfLines={1}
                 style={{
                   ...GState.defaultTextStyle,
                   fontWeight: "bold",
@@ -129,7 +131,7 @@ export default class InviteParticipantModal extends BleashupModal {
                   this.state.selected.filter((ele) => ele.master == true)
                     .length
                 }
-                {Texts.masters}
+                {" "+Texts.masters}
               </Text>
             </View>}
             {this.state.selected.length > 0 && !this.state.searching && <View>

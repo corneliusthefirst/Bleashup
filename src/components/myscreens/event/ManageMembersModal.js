@@ -81,6 +81,7 @@ export default class ManageMembersModal extends BleashupModal {
                         ele.phone !== stores.LoginStore.user.phone
                 ),
                 event_id: this.props.event_id,
+                selected: this.props.firstPhone ? [{ phone: this.props.firstPhone }] : [],
                 loaded: true,
                 hideTitle: this.props.hideTitle,
             });
@@ -101,8 +102,8 @@ export default class ManageMembersModal extends BleashupModal {
                                 height: ColorList.headerHeight,
                             }}
                         >
-                            <CreationHeader back={this.onClosedModal.bind(this)} 
-                            title={this.state.searching?"":Texts.remove_member}
+                            <CreationHeader back={this.onClosedModal.bind(this)}
+                                title={this.state.searching ? "" : Texts.remove_member}
                                 extra={<View style={{
                                     flexDirection: 'row',
                                     marginBottom: 'auto',
@@ -124,7 +125,7 @@ export default class ManageMembersModal extends BleashupModal {
                                     </View>
                                     {this.state.selected.length > 0 && this.props.master && !this.state.searching ? (
                                         <TouchableOpacity
-                                            style={{ marginTop: 'auto', marginBottom: 'auto', marginRight: "3%",marginLeft: "10%", }}
+                                            style={{ marginTop: 'auto', marginBottom: 'auto', marginRight: "3%", marginLeft: "10%", }}
                                             onPress={() => requestAnimationFrame(() => this.apply())}
                                         >
                                             <Text style={{ color: "red", fontWeight: "bold" }}>
@@ -146,7 +147,8 @@ export default class ManageMembersModal extends BleashupModal {
                                     this.delay = this.delay >= 15 ? 0 : this.delay + 1;
                                     return (
                                         <SelectableProfileWithOptions
-                                        searchString={this.state.searchString}
+                                            checked={this.state.selected.find(ele => ele.phone == item.phone)}
+                                            searchString={this.state.searchString}
                                             delay={this.delay}
                                             toggleMaster={(member) => this.toggleMaster(member)}
                                             selected={(member) => {
@@ -169,8 +171,14 @@ export default class ManageMembersModal extends BleashupModal {
                             ></BleashupFlatList>
                         </View>
                     </View>
-                ) : (
-                        <Spinner size={"small"}></Spinner>
+                ) : (<View style={{
+                    width: '100%',
+                    height: '100%',
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                }}>
+                    <Spinner size={"small"}></Spinner>
+                </View>
                     )}
             </View>
         );

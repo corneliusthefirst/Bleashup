@@ -184,18 +184,6 @@ export default class events {
       });
     });
   }
-  @action updateNotes(eventID, Notes) {
-    return new Promise((resolve, reject) => {
-      this.readFromStore().then(Events => {
-        let index = findIndex(Events, { id: eventID });
-        Events[index].notes = Notes;
-        Events[index].updated_at = moment().format();
-        this.saveKey.data = Events;
-        this.setProperties(this.saveKey.data, false);
-        resolve(Events[index]);
-      });
-    });
-  }
   @action markAsSeen(EventID) {
     return new Promise((resolve, reject) => {
       this.readFromStore().then((Events) => {

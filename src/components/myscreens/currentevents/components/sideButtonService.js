@@ -10,5 +10,6 @@ export function _onScroll(event) {
     if (isActionButtonVisible !== this.state.isActionButtonVisible) {
         this.setStatePure({ isActionButtonVisible })
     }
+    this.cleanStates && this.cleanStates()
     this._listViewOffset = currentOffset
 }

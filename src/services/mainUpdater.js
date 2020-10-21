@@ -9,6 +9,7 @@ import {
 import Requester from "../components/myscreens/eventChat/Requester";
 import emitter from './eventEmiter';
 import { typing } from "../meta/events";
+import Texts from '../meta/text';
 class mainUpdater {
   addParticipants(eventID, participants, updater, updated, date) {
     return new Promise((resolve, reject) => {
@@ -19,14 +20,13 @@ class mainUpdater {
             updater: updater,
             updated: updated,
             event_id: eventID,
-            title: "Updates on Main Activity",
-            changed: "Added new members to the activity",
+            title: Texts.update_on_main_activity,
+            changed: Texts.added_members_to_the_activity,
             new_value: { data: null, new_value: participants },
             date: date,
           };
-          stores.ChangeLogs.addChanges(Change).then(() => {
-            resolve(Change);
-          });
+          stores.ChangeLogs.addChanges(Change)
+          resolve(Change);
         }
       );
     });
@@ -40,11 +40,11 @@ class mainUpdater {
       ).then((oldRemind) => {
         let Change = {
           id: IDMaker.make(),
-          title: `Updates On ${oldRemind.title} Remind`,
+          title: `${Texts.update_remind} ${oldRemind.title} (${Texts.remind})`,
           updated: "remind_location",
           updater: updater,
           event_id: eventID,
-          changed: "Changed the venue Of The Program To ",
+          changed: Texts.changed_program_location,
           new_value: { data: remindID, new_value: newLocation },
           date: date,
           time: null,
@@ -71,13 +71,13 @@ class mainUpdater {
       ).then((oldRemind) => {
         let Change = {
           id: IDMaker.make(),
-          title: `Updates On ${oldRemind.title} Remind`,
+          title: `${Texts.updates_on} ${oldRemind.title} (${Texts.remind})`,
           updated: "remind_url",
           updater: updater,
           event_id: eventID,
           changed:
-            'Changed the media specification  ' +
-            (newURL.video ? "video" : "photo"),
+            Texts.changed_media_specifications_of_program +
+            (newURL.video ? ": video" : ": photo"),
           new_value: { data: remindID, new_value: newURL },
           date: date,
           time: null,
@@ -154,14 +154,14 @@ class mainUpdater {
             date: date,
             updated: share.type,
             updater: updater,
-            title: 'Updates on Main Activity',
+            title: Texts.update_on_main_activity,
             event_id: eventID,
             changed:
-              'Shared ' +
+              Texts.shared +
               toTitleCase(title.item_title) +
               ' (' +
               shareTitle +
-              ') to his ' +
+              `) ${Texts.to_his} ` +
               (scope === 'Some' ? 'Contacts' : scope),
             new_value: { data: share.id, new_value: title.item_title },
           };
@@ -262,14 +262,13 @@ class mainUpdater {
             date: date,
             updated: "remind_alarms",
             updater: updater,
-            title: `Updates on ${oldRemind.title} Program`,
+            title: `${Texts.updates_on} ${oldRemind.title} (${Texts.remind})`,
             event_id: eventID,
-            changed: "Changed the default alarms definition of the propgram",
+            changed: Texts.changed_the_default_alarm_settings,
             new_value: { data: null, new_value: newAlarms },
           };
-          stores.ChangeLogs.addChanges(change).then(() => {
-            resolve()
-          })
+          resolve()
+          stores.ChangeLogs.addChanges(change)
         })
     })
   }

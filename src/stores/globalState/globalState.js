@@ -4,14 +4,20 @@ import replies from "../../components/myscreens/eventChat/reply_extern";
 import stores from "..";
 import Toaster from "../../services/Toaster";
 import Texts from "../../meta/text";
-import { Dimensions, } from "react-native"
+import { Dimensions, Platform, NativeModules } from "react-native"
 import shadower from "../../components/shadower";
 import active_types from '../../components/myscreens/eventChat/activity_types';
 const { height, width } = Dimensions.get('window');
-
+import  moment  from 'moment';
+const deviceLanguage =
+  Platform.OS === 'ios'
+    ? NativeModules.SettingsManager.settings.AppleLocale ||
+    NativeModules.SettingsManager.settings.AppleLanguages[0] // iOS 13
+    : NativeModules.I18nManager.localeIdentifier;
+const lan = deviceLanguage && deviceLanguage.includes('fr') ? 'fr' : 'en'
 export default class globalState {
-  constructor(lang) {
-    this.lang = lang
+  constructor() {
+    this.lang = lan
     Dimensions.addEventListener('change', (e) => {
       const { width, height } = e.window;
       this.width = width

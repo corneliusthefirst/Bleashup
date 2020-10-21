@@ -114,10 +114,10 @@ class Functions {
   }
   byTitleAndDesc(ele, search) {
     search = search ? search.toLowerCase() : ""
-    return (ele.title && ele.title.toLowerCase && ele.title.toLowerCase().includes(search) ||
+    return (search && (ele.title && ele.title.toLowerCase && ele.title.toLowerCase().includes(search) ||
       ele.description && ele.description.toLowerCase && ele.description.toLowerCase().includes(search)) ||
       (ele.location && ele.location.toLowerCase && ele.location.toLowerCase().includes(search)) ||
-      (ele.members && ele.members.length && search.includes(ele.members.length.toString()))
+      (ele.members && ele.members.length && search.includes(ele.members.length.toString()))) || true
   }
   filterStars(ele, search) {
     return ele && ele.id !== request.Highlight().id && this.byTitleAndDesc(ele, search)
@@ -190,8 +190,8 @@ class Functions {
   }
 
   sortActivityForRemindCreation() {
-    const acts = stores.Events.events.filter(ele => actFilterFunc(ele) && 
-    ele.type !== active_types.relation)
+    const acts = stores.Events.events.filter(ele => actFilterFunc(ele) &&
+      ele.type !== active_types.relation)
     const me = stores.LoginStore.user.phone
     const findMe = (act) => act.participant.find(ele => ele.phone == me)
     const isMeMaster = (act) => {

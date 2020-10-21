@@ -10,6 +10,7 @@ import  EvilIcons from 'react-native-vector-icons/EvilIcons';
 import GState from '../../../stores/globalState';
 import TextContent from '../eventChat/TextContent';
 import BePureComponent from '../../BePureComponent';
+import { writeChangeWithContent } from '../changelogs/change.services';
 
 export default class ContentModal extends BePureComponent {
     constructor(props) {
@@ -26,7 +27,7 @@ export default class ContentModal extends BePureComponent {
         return map(content, (value, key) => 
             <View style={{ flexDirection: 'row', }}>
                 <Text style={{...GState.defaultTextStyle, fontWeight: 'bold', fontStyle: 'italic', }}>{key}{": "}</Text>
-                <Text style={{...GState.defaultTextStyle}}>{Array.isArray(value) ? value.join(',') : key === 'recurrence' ? moment(value).format(format) : value}</Text>
+                <Text style={{...GState.defaultTextStyle}}>{Array.isArray(value) ? value.join(',') : key === 'recurrence' ? moment(value).calendar() : value}</Text>
             </View>)
     }
     render() {
@@ -68,7 +69,7 @@ export default class ContentModal extends BePureComponent {
                         typeof this.state.content === 'object' ?
                             this.renderObject(this.state.content) : Array.isArray(this.state.content) ?
                                 this.renderContentItems(this.state.content) :
-                                <TextContent style={{...GState.defaultTextStyle,}}>{this.state.content}</TextContent>}
+                                <TextContent style={{...GState.defaultTextStyle,}}>{writeChangeWithContent(this.state.content)}</TextContent>}
                     {this.props.votable ? <TouchableOpacity onPress={this.props.vote} style={styles.voteButton}><Text style={{marginBottom: 'auto',color:ColorList.bodyBackground}}>Vote</Text>
                     </TouchableOpacity> :
                     this.props.trashable?<EvilIcons

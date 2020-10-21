@@ -5,6 +5,7 @@ import moment from "moment";
 import { format } from "../../../services/recurrenceConfigs";
 import ColorList from "../../colorList";
 import BePureComponent from "../../BePureComponent";
+import Texts from '../../../meta/text';
 
 export default class IntervalSeparator extends BePureComponent {
   constructor(props) {
@@ -63,10 +64,10 @@ export default class IntervalSeparator extends BePureComponent {
           note
         >
           {this.props.actualInterval
-            ? `from ${"now"} -> ${moment(this.props.to, format).calendar()}`
+            ? `${Texts.from} ${Texts.now} -> ${moment(this.props.to, format).calendar()}`
             : this.props.first
-            ? `started ${moment(this.props.to, format).calendar()}`
-            : `from ${moment(
+            ? `${Texts.started} ${moment(this.props.to, format).calendar()}`
+            : `${Texts.from} ${moment(
                 this.props.from,
                 format
               ).calendar()}   ->  ${moment(this.props.to, format).calendar()}`}

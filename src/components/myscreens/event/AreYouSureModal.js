@@ -51,7 +51,7 @@ export default class AreYouSure extends BleashupModal {
             message={this.props.message}
             onClosed={this.onClosedModal.bind(this)}
             refuse={Texts.cancel}
-            accept={this.props.ok ? this.props.ok : "Leave"}
+            accept={this.props.ok ? this.props.ok : Texts.leave}
             deleteFunction={() => {
                 this.props.callback()
                 this.onClosedModal()

@@ -7,6 +7,7 @@ import stores from "../../../stores";
 import ColorList from '../../colorList';
 import BeComponent from '../../BeComponent';
 import TextContent from './TextContent';
+import Texts from '../../../meta/text';
 
 @observer class ChatUser extends BeComponent {
     constructor(props) {
@@ -17,7 +18,7 @@ import TextContent from './TextContent';
         let phone = this.props.phone && this.props.phone.replace && this.props.phone.replace("+", "00")
         let user = (phone && stores.TemporalUsersStore.Users[phone]) || {}
         let isMe = stores.LoginStore.user.phone == phone
-        user = { ...user, nickname: isMe ? "You " : user.nickname }
+        user = { ...user, nickname: isMe ? Texts.you : user.nickname }
         return <TouchableOpacity
             onPress={this.props.showProfile}
             onPressIn={this.props.onPressIn}
