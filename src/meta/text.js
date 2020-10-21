@@ -1573,6 +1573,10 @@ class TEXTS {
         en: 'forwarded',
         fr: 'transmis'
     }[GState.lang]
+    years_ago = {
+        en:'long times ago',
+        fr: "il y a longtemps"
+    }[GState.lang]
 }
 const Texts = new TEXTS()
 export default Texts

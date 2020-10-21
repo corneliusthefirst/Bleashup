@@ -29,7 +29,7 @@ export function checkUserOnlineStatus(phone, curentRef, refManager) {
                 const isOnline = status.status == "online"
                 const hasEverConnected = status.last_seen && status.last_seen !== "undefined" ? true : false
                 this.setStatePure({
-                    last_seen: isOnline ? "Online" : hasEverConnected ? moment(status.last_seen).calendar() : "years ago",
+                    last_seen: isOnline ? "Online" : hasEverConnected ? moment(status.last_seen).calendar() : Texts.years_ago,
                     is_online: isOnline
                 })
 

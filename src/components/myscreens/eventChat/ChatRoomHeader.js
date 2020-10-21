@@ -22,12 +22,13 @@ import testForURL from '../../../services/testForURL';
 import shadower from '../../shadower';
 import TextContent from './TextContent';
 import BeComponent from '../../BeComponent';
+import Texts from '../../../meta/text';
 
 export default class ChatRoomHeader extends BeComponent {
     constructor(props) {
         super(props);
         this.state = {
-            last_seen: "years ago"
+            last_seen: Texts.years_ago
         };
         this.searchToolsParts = searchToolsParts.bind(this)
         this.pushUp = this.props.pushUp
