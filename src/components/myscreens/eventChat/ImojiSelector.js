@@ -18,6 +18,7 @@ export default class ImojieSelector extends AnimatedPureComponent {
     render(){
        return <View style={{ 
            width: "90%", 
+           overflow: 'hidden',
            height: 300,
            backgroundColor: 
            ColorList.bodyBackground, 
@@ -25,8 +26,12 @@ export default class ImojieSelector extends AnimatedPureComponent {
            borderRadius: 15,
            alignSelf: 'center',}}>
             <EmojiSelector
+               nestedScrollEnabled
                 onEmojiSelected={(emoji) => this.props.handleEmojiSelected(emoji)}
                 enableSearch={false}
+                style={{
+                    height:'100%'
+                }}
                 ref={(emojiInput) => (this._emojiInput = emojiInput)}
                 resetSearch={this.state.reset}
                 showSearchBar={false}

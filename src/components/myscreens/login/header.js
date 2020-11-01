@@ -18,7 +18,7 @@ export default class HeaderHome extends Component {
                   style={styles.icon}/>
               </View> :null}
               <View style={styles.image}>
-                <Image resizeMode={"cover"} source={GState.bleashupImage} style={{width:120,height:48}}></Image>
+                <Image resizeMode={"cover"} source={GState.bleashupImage} style={{width:100,height:50}}></Image>
               </View>
 
           </View>
@@ -38,7 +38,7 @@ const styles = StyleSheet.create({
     },
     image: {
         justifyContent: "center",
-        height: "95%",
+        height: "100%",
         marginLeft: "5%"
     }
 })

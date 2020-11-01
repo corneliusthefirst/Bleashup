@@ -1523,7 +1523,7 @@ class TEXTS {
     }[GState.lang]
     two_days_ago = {
         en: '2 Days Ago',
-        fr: 'Il y a deux jours'
+        fr: 'Il y a 2 jours'
     }[GState.lang]
     three_days_ago = {
         en: '3 Days Ago',
@@ -1576,6 +1576,166 @@ class TEXTS {
     years_ago = {
         en:'long times ago',
         fr: "il y a longtemps"
+    }[GState.lang]
+    uploads_possibilities = {
+        en:'files possibilities',
+        fr: 'possibilités de fichiers'
+    }[GState.lang]
+    photo_downloaded = {
+        en:'The image has already been downloaded',
+        fr: "L'image a déjà été téléchargée"
+    }[GState.lang]
+    photo_successfully_downloaded = {
+        en: 'The image has been downloaded successfully',
+        fr: "L'image a été téléchargée avec succès"
+    }[GState.lang]
+    bup_photo_download = {
+        en: 'Photo Download',
+        fr: 'Télécharger la photo'
+    }[GState.lang]
+    file_downloaded_by_bup ={
+        en: 'File Downloaded by BeUp',
+        fr: 'Fichier téléchargé par BeUp'
+    }[GState.lang]
+    audio_message = {
+        en: "Audio message",
+        fr: 'Audio message'
+    }[GState.lang]
+    file_message = {
+        fr: 'Message fichier',
+        en:'File Message'
+    }[GState.lang]
+    video_message = {
+        en: "Video message",
+        fr: "Message vidéo"
+    }[GState.lang]
+    photo_message = {
+        en: "Photo message",
+        fr: "Message photo"
+    }[GState.lang]
+    remind_message = {
+        en: "New program",
+        fr: "Nouveau programme"
+    }[GState.lang]
+    star_message = {
+        en: 'New highlight',
+        fr: 'Nouveau moment fort'
+    }[GState.lang]
+    text_message = {
+        en: "Text message",
+        fr: 'Message texte'
+    }[GState.lang]
+    new_ = {
+        en:"New",
+        fr: "Nouveau"
+    }[GState.lang]
+    cannot_forward_unsent_message = {
+        en: 'cannot forward unsent messages',
+        fr: 'impossible de transférer les messages non envoyés'
+    }[GState.lang]
+    export_ = {
+        en:'Export',
+        fr:'Exportation'
+    }[GState.lang]
+    export_report = {
+        en:'Export the report(s)',
+        fr: 'Exporter le(s) rapport(s)'
+    }[GState.lang]
+    chose_export_method = {
+        en:'choose export method',
+        fr: "choisissez la méthode d'exportation"
+    }[GState.lang]
+    export_as_csv = {
+        en: 'Export as CSV',
+        fr:'Exporter au format CSV'
+    }[GState.lang]
+    export_as_xls = {
+        en: 'Export as excel',
+        fr:'Exporter comme Excel'
+    }[GState.lang]
+    view_report = {
+        en:'View report',
+        fr: 'Voir le rapport'
+    }[GState.lang]
+    issue_date= {
+        en:'Issued date',
+        fr: 'Date de publication'
+    }[GState.lang]
+    program_report = {
+        en:'Program report',
+        fr: 'Rapport de programme'
+    }[GState.lang]
+    reported_at = {
+        en:'Reported at',
+        fr: 'Rapporté à'
+    }[GState.lang]
+    last_upate = {
+        en:'last update',
+        fr:'dernière mise à jour'
+    }[GState.lang]
+    confirmed_at = {
+        en:'Confirmed at',
+        fr: 'Confirmé à'
+    }[GState.lang]
+    audio = {
+        en:'Audio',
+        fr: "L'audio"
+    }[GState.lang]
+    image = {
+        en:'Image',
+        fr:'Image'
+    }[GState.lang]
+    video = {
+        en:'video',
+        fr:'Vidéo'
+    }[GState.lang]
+    file = {
+        en:'File',
+        fr:'Fichier'
+    }[GState.lang]
+    text = {
+        en:'text',
+        fr: 'texte'
+    }[GState.lang]
+    add_members = {
+        en:'Add members',
+        fr: 'Ajouter des membres'
+    }[GState.lang]
+    export_members = {
+        en:'Export members list',
+        fr: 'Exporter la liste des membres'
+    }[GState.lang]
+    new_members_in = {
+        fr: 'Nouveau(s) membre(s) dans',
+        en:'New member(s) in'
+    }[GState.lang]
+    have_add_members_to_the_program = {
+        fr:'a ajouté des membres au programme',
+        en:'added members to the Program'
+    }[GState.lang]
+    added_members = {
+        en:'added member(s)',
+        fr: 'membre (s) ajouté (s)'
+    }[GState.lang]
+    completed_program = {
+        en:'Program completed',
+        fr: 'Programme terminé'
+    }[GState.lang]
+    have_completed_the_program = {
+        en:'has completed the program',
+        fr: 'a terminé le programme'
+    }[GState.lang]
+    media_too_large_compression = {
+        fr:'ce média est trop grand; compression en cours',
+        en: 'this media is too large; compression running'
+    }[GState.lang]
+    media_too_large = {
+        fr:'ce média est trop grand',
+        en:'this media is too large'
+    }[GState.lang]
+    file_too_large = {
+        en: 'this file is too large',
+        fr: 'ce fichier est trop volumineux'
     }[GState.lang]
 }
 const Texts = new TEXTS()

@@ -27,6 +27,7 @@ export default class HighlightCard extends BeComponent {
       check: false,
       master: this.props.participant && this.props.participant.master
     };
+    this.updateSource = this.updateSource.bind(this)
   }
   shouldComponentUpdate(nextProps, nextState) {
     return this.props.updateState !== nextProps.updateState ? true : false
@@ -61,10 +62,16 @@ export default class HighlightCard extends BeComponent {
     //borderColor: "ivory",
   };
   updateSource(aid, data) {
-    stores.Highlights.updateHighlightUrl(aid, data)
+    stores.Highlights.updateHighlightUrl(aid, {
+      ...data, url:
+      {
+        ...data.url,
+        main_source: this.props.item.url.source,
+      }
+    })
   }
   render() {
-    console.warn("rendering post: ",this.props.item.title)
+    console.warn("rendering post: ", this.props.item.title)
     return this.state.mounted ? (
       <View
         onLayout={(e) => {

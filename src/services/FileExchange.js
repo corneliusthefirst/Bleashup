@@ -2,6 +2,7 @@
 import rnFetchBlob from 'rn-fetch-blob';
 import * as configs from "../config/bleashup-server-config.json"
 import Toaster from './Toaster';
+import GState from '../stores/globalState/index';
 const { fs, config } = rnFetchBlob
 let dirs = fs.dirs
 const AppDir = fs.dirs.SDCardDir + '/Bleashup'
@@ -15,14 +16,18 @@ export default class FileExachange {
         this.total = total
         this.failHandleFunc = onFail
         this.received = received
-        this.url = url
-        this.path = AppDir + dir
-        this.base = dir
+        if (dir && url) {
+            let splitedDir = dir.split('/')
+            let name_from_dir = splitedDir.pop()
+            let extention = name_from_dir.split('.').pop()
+            splitedDir = splitedDir.join('/') + "/" + url.split('/').pop() + '.' + extention
+            this.url = url
+            this.path = AppDir + splitedDir
+            this.base = dir
+        }
         this.tempPath = this.path + '.download'
-        this.uploadURL = configs.file_server.protocol +
-            "://" + configs.file_server.host + ":" + configs.file_server.port + baseurl + "/save"
-        this.baseURL = configs.file_server.protocol +
-            "://" + configs.file_server.host + ":" + configs.file_server.port + baseurl + '/get/'
+        this.uploadURL = GState.baseURL + baseurl + "/save"
+        this.baseURL = GState.baseURL + baseurl + '/get/'
         this.content_type = content_type
         this.filename = filename
         this.store = store
@@ -43,7 +48,7 @@ export default class FileExachange {
     task = null
     received = 0
     total = 0
-    startDownload(received,total){
+    startDownload(received, total) {
         received ? this.received = received : null
         total ? this.total = total : null
         this.DetemineRange(this.tempPath).then(size => {
@@ -79,12 +84,24 @@ export default class FileExachange {
                 temp3 = Math.ceil(temper2)
                 if (temp1 == temp2 || temp1 == temp3) {
                     fs.appendFile(this.tempPath, res.path(), 'uri').then(() => {
-                        fs.unlink(this.path)
-                        fs.appendFile(this.path, this.tempPath, 'uri').then(() => {
-                            fs.unlink(this.tempPath)
-                            fs.unlink(res.path())
-                            this.successFunc ? this.successFunc(this.path, temper1, temper2) : null
+                        const conclude = () => {
+                            fs.appendFile(this.path, this.tempPath, 'uri').then(() => {
+                                fs.unlink(this.tempPath).then(() => {
+                                    fs.unlink(res.path()).then(() => {
+                                        this.successFunc ? this.successFunc(this.path, temper1, temper2) : null
+                                    })
+                                })
+                            })
+                        }
+                        fs.exists(this.path).then((status) => {
+                            if (status) fs.unlink(this.path).then(() => {
+                                conclude()
+                            })
+                            else {
+                                conclude()
+                            }
                         })
+
                     })
                 } else {
                     fs.appendFile(this.tempPath, res.path(), 'uri').then(() => {
@@ -97,13 +114,22 @@ export default class FileExachange {
         })
     }
     download(received, total) {
-        this.startDownload(received,total)
+        fs.exists(this.path).then((state) => {
+            if (state) {
+
+                this.successFunc(this.path, 
+                    total ? total / 1000000 : 0, 
+                    received ? received / 1000000 : 0)
+            } else {
+                this.startDownload(received, total)
+            }
+        })
     }
     upload(written, total) {
         this.written = written
         this.total = total
         fs.exists(this.url).then(state => {
-            console.warn("does file exists? ",state)
+            console.warn("does file exists? ", state)
             /*if (state) {
                 fs.unlink(this.url).then(() => {
 
@@ -129,11 +155,11 @@ export default class FileExachange {
                     temp1 = Math.floor(temper1)
                     temp2 = Math.floor(temper2)
                     temp3 = Math.ceil(temper2)
-                    console.warn(this.url,response.data)
+                    console.warn(this.url, response.data)
                     let newDir = `file://` + AppDir + this.base + this.filename
-                    !this.store ? fs.writeFile(newDir.split(`file://`)[1], this.url.split(`file://`)[1], 'uri').then((status) => {
-                        this.successFunc ? this.successFunc(newDir, this.baseURL + response.data, response.data, this.baseURL) : null
-                    }) : this.successFunc(newDir, this.baseURL + response.data, response.data, this.baseURL)
+                    //!this.store ? fs.writeFile(newDir.split(`file://`)[1], this.url.split(`file://`)[1], 'uri').then((status) => {
+                    this.successFunc ? this.successFunc(this.url, this.baseURL + response.data, response.data, this.baseURL) : null
+                    // }) : this.successFunc(newDir, this.baseURL + response.data, response.data, this.baseURL)
                 }
             })
             this.task.catch((error) => {
@@ -142,10 +168,10 @@ export default class FileExachange {
         })
     }
 
-    deleteFile(source,notCallSuccss) {
+    deleteFile(source, notCallSuccss) {
         let temp = source.split('/')
         let filename = temp[temp.length - 1];
-        return new Promise((resolve,reject) => {
+        return new Promise((resolve, reject) => {
             this.deleteURL = configs.file_server.protocol +
                 "://" + configs.file_server.host + ":" +
                 configs.file_server.port + '/delete/' + filename
@@ -160,8 +186,8 @@ export default class FileExachange {
             })
         })
     }
-    cachFile(source){
-        return new Promise((resolve,reject) => {
+    cachFile(source) {
+        return new Promise((resolve, reject) => {
             this.appdir = this.appDir + '/cache/'
             this.tempDir = this.appdir + source.split('/').pop()
             fs.exists(source).then((state) => {
@@ -171,12 +197,12 @@ export default class FileExachange {
                         if (!state) {
                             fs.mkdir(this.appdir).then(() => {
                                 fs.cp(source, this.tempDir).then(() => {
-                                   resolve(this.tempDir)
+                                    resolve(this.tempDir)
                                 })
                             })
                         } else {
                             fs.cp(source, this.tempDir).then(() => {
-                               resolve(this.tempDir)
+                                resolve(this.tempDir)
                             })
                         }
                     })
@@ -186,15 +212,15 @@ export default class FileExachange {
             })
         })
     }
-    formCacheURL(source){
+    formCacheURL(source) {
         let appdir = this.appDir + '/cache/'
         return this.appdir + source.split('/').pop()
     }
-    clearCache(url){
+    clearCache(url) {
         fs.unlink(this.formCacheURL(url))
     }
-    doFileExists(url){
-       return fs.exists(url)
+    doFileExists(url) {
+        return fs.exists(url)
     }
 
 } 

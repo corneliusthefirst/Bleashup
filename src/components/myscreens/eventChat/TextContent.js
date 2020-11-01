@@ -2,6 +2,7 @@ import React, { Component } from "react";
 import {
   View,
   TouchableOpacity,
+  TouchableWithoutFeedback,
   Linking,
   Clipboard,
   StyleSheet,
@@ -101,7 +102,7 @@ export default class TextContent extends BeComponent {
     //console.warn(this.props.text.length,this.props.text)
     let text = this.props.text || this.props.children
     return (
-      <TouchableOpacity
+      <TouchableWithoutFeedback
         onLongPress={() =>
           this.props.handleLongPress ? this.props.handleLongPress() : null
         }
@@ -210,13 +211,15 @@ export default class TextContent extends BeComponent {
           >
             {text}
           </ParsedText>
+          {this.state.showContacts ? 
+            <ProfileModal
+            isOpen={this.state.showContacts}
+            onClosed={this.hideContact}
+            profile={this.state.profile}>
+          </ProfileModal> : null
+        }
         </View>
-        {this.state.showContacts ? <ProfileModal
-          isOpen={this.state.showContacts}
-          onClosed={this.hideContact}
-          profile={this.state.profile}>
-        </ProfileModal> : null}
-      </TouchableOpacity>
+      </TouchableWithoutFeedback>
     );
   }
 }

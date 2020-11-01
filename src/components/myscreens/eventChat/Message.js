@@ -596,7 +596,7 @@ export default class Message extends BeComponent {
                                                                 }}
                                                                 note
                                                             >
-                                                                {'(' + Texts.forwarded + ')'}
+                                                                {'(' + Texts.forwarded + ') ' + (this.props.message.report ? ('(' + Texts.report + ')'):'')}
                                                             </Text>
                                                         ) : null}
                                                         {this.state.different &&

@@ -28,7 +28,12 @@ import Spinner from "../../Spinner";
 import Pickers from "../../../services/Picker";
 import testForURL from "../../../services/testForURL";
 import FileExachange from "../../../services/FileExchange";
-import Texts from '../../../meta/text';
+import Entypo from "react-native-vector-icons/Entypo";
+import Texts from "../../../meta/text";
+import ShareWithYourContacts from './ShareWithYourContacts';
+import request from '../../../services/requestObjects';
+import IDMaker from '../../../services/IdMaker';
+import message_types from './message_types';
 export default class VideoController extends BeComponent {
   static defaultProps = {
     toggleResizeModeOnFullscreen: true,
@@ -159,6 +164,8 @@ export default class VideoController extends BeComponent {
       videoStyle: this.props.videoStyle || {},
       containerStyle: this.props.style || {},
     };
+    this.showForwarder = this.showForwarder.bind(this)
+    this.hideForworder = this.hideForworder.bind(this)
   }
 
   /**
@@ -485,12 +492,12 @@ export default class VideoController extends BeComponent {
     return this.formatTime(this.state.currentTime);
   }
   returnCurrentTime() {
-    const time = this.state.currentTime
-    return `${this.formatTime(time)}`
+    const time = this.state.currentTime;
+    return `${this.formatTime(time)}`;
   }
   returnTotalTime() {
-    const time = this.state.duration
-    return `${this.formatTime(time)}`
+    const time = this.state.duration;
+    return `${this.formatTime(time)}`;
   }
   /**
    * Format a time string as mm:ss
@@ -676,7 +683,11 @@ export default class VideoController extends BeComponent {
    * @param {string} url
    * checking weather the video is accessible(locally or throw network) before playing
    * This is very important because, react-native-video is going to crash if the url is not readable
-   */
+   * 
+
+
+   * */
+
 
   checkIFVideoExists(url) {
     return new Promise((resolve, reject) => {
@@ -969,32 +980,60 @@ export default class VideoController extends BeComponent {
   /**
    * Render fullscreen toggle and set icon based on the fullscreen state.
    */
+  mainFullScreenStyle = {
+    width: 50,
+    flexDirection: "row",
+    justifyContent: "center",
+    ...this.props.expandContainerStyle,
+  };
+  showForwarder() {
+    this.setStatePure({
+      showSharer: true
+    })
+  }
+  hideForworder() {
+    this.setStatePure({
+      showSharer: false
+    })
+  }
   renderFullscreen() {
     return this.renderControl(
       <View style={{ flexDirection: "row" }}>
         {this.props.extra ? (
           this.props.extra
         ) : (
-            <TouchableOpacity
-              onPress={this.methods.toggleFullscreen}
-              style={{
-                width: 50,
-                flexDirection: "row",
-                justifyContent: "center",
-                ...this.props.expandContainerStyle,
-              }}
-            >
-              <MaterialIcons
-                style={{
-                  ...GState.defaultIconSize,
-                  color: ColorList.bodyBackground,
-                  marginBottom: "auto",
-                  marginTop: "auto",
-                }}
-                type="MaterialIcons"
-                name="fullscreen"
-              />
-            </TouchableOpacity>
+            <View style={{
+              flexDirection: 'row',
+              alignItems: 'center',
+            }}>
+              <TouchableOpacity
+                style={[this.mainFullScreenStyle, { marginRight: 5 }]}
+                onPress={this.showForwarder}
+              >
+                <Entypo
+                  name={'forward'}
+                  style={{
+                    ...GState.defaultIconSize,
+                    color: ColorList.bodyBackground
+                  }}
+                ></Entypo>
+              </TouchableOpacity>
+              <TouchableOpacity
+                onPress={this.methods.toggleFullscreen}
+                style={this.mainFullScreenStyle}
+              >
+                <MaterialIcons
+                  style={{
+                    ...GState.defaultIconSize,
+                    color: ColorList.bodyBackground,
+                    marginBottom: "auto",
+                    marginTop: "auto",
+                  }}
+                  type="MaterialIcons"
+                  name="fullscreen"
+                />
+              </TouchableOpacity>
+            </View>
           )}
       </View>,
       !this.props.extra ? this.methods.toggleFullscreen : () => { },
@@ -1009,9 +1048,9 @@ export default class VideoController extends BeComponent {
     const currentTime = this.props.disableTimer
       ? this.renderNullControl()
       : this.renderCurrentTime();
-    const TotalTime = this.props.disableTimer ?
-      this.renderNullControl() :
-      this.renderTotalTime()
+    const TotalTime = this.props.disableTimer
+      ? this.renderNullControl()
+      : this.renderTotalTime();
     const seekbarControl = this.props.disableSeekbar
       ? this.renderNullControl()
       : this.renderSeekbar();
@@ -1063,7 +1102,7 @@ export default class VideoController extends BeComponent {
       >
         {playPauseControl}
       </Animated.View>
-    );;
+    );
   }
 
   /**
@@ -1120,14 +1159,19 @@ export default class VideoController extends BeComponent {
    * Render the play/pause button and show the respective icon
    */
   renderPlayPause() {
-    return this.renderControl(<View style={{
-      ...rounder(50, ColorList.buttonerBackground), justifyContent: 'center',
-    }}>
-      <MaterialCommunityIcons
-        type="MaterialCommunityIcons"
-        name={!this.state.paused ? "pause" : "play-circle-outline"}
-        style={{ ...GState.defaultIconSize, color: "white", fontSize: 40, }}
-      /></View>,
+    return this.renderControl(
+      <View
+        style={{
+          ...rounder(50, ColorList.buttonerBackground),
+          justifyContent: "center",
+        }}
+      >
+        <MaterialCommunityIcons
+          type="MaterialCommunityIcons"
+          name={!this.state.paused ? "pause" : "play-circle-outline"}
+          style={{ ...GState.defaultIconSize, color: "white", fontSize: 40 }}
+        />
+      </View>,
       this.methods.togglePlayPause,
       styles.controls.playPause
     );
@@ -1213,10 +1257,21 @@ export default class VideoController extends BeComponent {
       width: "100%",
       position: "absolute",
     },
-  ]
+  ];
   /**
    * Provide all of our options and render the whole component.
    */
+  returnPhoto(){
+    let video = this.props.source.uri
+    video = this.props.source.uri.split('.')
+    video.pop()
+    video = video.join('.') +'_thumbnail.jpeg'
+    return video
+  }
+  getFileName(){
+    let filename = this.props.source.uri 
+    return filename.split("/").pop()
+  }
   render() {
     return (
       <TouchableWithoutFeedback
@@ -1230,23 +1285,36 @@ export default class VideoController extends BeComponent {
             this.props.messaging && {
               borderRadius: !this.props.fScreen ? 5 : null,
               marginTop: !this.props.fScreen ? 5 : null,
-              backgroundColor: this.props.fScreen ? 'black' : ColorList.buttonerBackground,
-              ...shadower(4)
+              backgroundColor: this.props.fScreen
+                ? "black"
+                : ColorList.buttonerBackground,
+              ...shadower(4),
             },
           ]}
         >
           {!this.state.mounted ? (
             <View
-              style={[...this.videoStyle, this.styles.videoStyle, {
-                backgroundColor: ColorList.bodyIcon,
-                flex: 1,
-                flexDirection: "column",
-                justifyContent: "center",
-                alignItems: "center",
-              }]}
+              style={[
+                ...this.videoStyle,
+                this.styles.videoStyle,
+                {
+                  backgroundColor: ColorList.bodyIcon,
+                  flex: 1,
+                  flexDirection: "column",
+                  justifyContent: "center",
+                  alignItems: "center",
+                },
+              ]}
             >
               <Spinner></Spinner>
-              <Text style={{ ...GState.defaultTextStyle, color: ColorList.bodyBackground }}>{Texts.loading_video + " ..."}</Text>
+              <Text
+                style={{
+                  ...GState.defaultTextStyle,
+                  color: ColorList.bodyBackground,
+                }}
+              >
+                {Texts.loading_video + " ..."}
+              </Text>
             </View>
           ) : (
               <Video
@@ -1273,6 +1341,23 @@ export default class VideoController extends BeComponent {
             ? this.renderLoader()
             : this.renderCenterControls()}
           {this.renderBottomControls()}
+          {this.state.showSharer && testForURL(this.props.source.uri) ? <ShareWithYourContacts
+            isOpen={this.state.showSharer}
+            message={{ 
+              ...request.Message(), id: 
+              IDMaker.make(), 
+              sent:true,
+              file_name:this.getFileName(),
+              type:message_types.video,
+              thumbnailSource: this.returnPhoto(),
+              source:this.props.source.uri
+             }}
+            activity_id={""}
+            sender={request.Message().sender}
+            committee_id={""}
+            onClosed={this.hideForworder}
+          >
+          </ShareWithYourContacts> : null}
         </View>
       </TouchableWithoutFeedback>
     );
@@ -1375,11 +1460,11 @@ const styles = {
     },
     center: {
       width: "100%",
-      alignSelf: 'center',
-      justifyContent: 'flex-end',
-      flexDirection: 'column',
+      alignSelf: "center",
+      justifyContent: "flex-end",
+      flexDirection: "column",
       flex: 2,
-      alignItems: 'center',
+      alignItems: "center",
     },
     topControlGroup: {
       alignSelf: "stretch",

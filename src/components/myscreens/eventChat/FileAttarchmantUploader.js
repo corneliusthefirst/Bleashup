@@ -104,10 +104,7 @@ export default class FileAttarchementUploader extends BePureComponent {
             downloading: false
         })
     }
-    toMB(data) {
-        mb = 1000 * 1000
-        return data / mb
-    }
+    toMB = GState.toMB
     render() {
         return (
             <View>

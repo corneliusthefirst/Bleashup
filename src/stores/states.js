@@ -214,6 +214,7 @@ export default class States {
 
     }
     unPersistRequest(id) {
+        console.warn("unpersisting request: ",id)
         if (this.states.requests && this.states.requests[id]) {
             delete this.states.requests[id]
         }

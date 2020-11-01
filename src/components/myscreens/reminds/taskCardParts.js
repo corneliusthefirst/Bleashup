@@ -105,7 +105,8 @@ export function remindTitle() {
     </View>
 }
 function updateURL(aid, data) {
-    stores.Reminds.updateURL(aid, { ...data, url: { ...data.url, main_source: this.item.source } })
+    stores.Reminds.updateURL(aid, { ...data, url: { ...data.url, 
+        main_source: this.item.remind_url.source } })
 }
 export function remindMedia() {
     this.item = this.props.item || this.item

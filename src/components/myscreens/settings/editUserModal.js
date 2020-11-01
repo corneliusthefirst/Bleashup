@@ -109,11 +109,11 @@ export default class EditUserModal extends BeComponent {
           backgroundColor: ColorList.bodyBackground,
           alignItems: 'center',
           height: height / 4,
-          borderTopLeftRadius: 8,
-          borderTopRightRadius: 8,
+          borderTopLeftRadius: 0,
+          borderTopRightRadius: 0,
           width: '100%',
         }}
-        position={this.props.position}
+        position={this.center}
         coverScreen={this.props.coverscreen}
         backdropPressToClose={true}
       >

@@ -23,6 +23,7 @@ import EvilIcons from 'react-native-vector-icons/EvilIcons';
 import Spinner from '../../Spinner';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 import Texts from "../../../meta/text";
+import CreateTextInput from './createEvent/components/CreateTextInput';
 
 var event = null;
 export default class Settings extends Component {
@@ -230,19 +231,20 @@ export default class Settings extends Component {
                     marginLeft: "10%",
                   }}
                 >
-                  <TextInput
+                  <CreateTextInput
                     disabled={this.computedMaster}
-                    maxLength={31}
+                    maxLength={100}
+                    height={45}
                     style={{
                       width: "80%",
                       fontSize: 16,
                       color: colorList.bodyText,
                       fontWeight: "300",
                     }}
-                    onChangeText={(e) => this.changeActivityName(e)}
+                    onChange={(e) => this.changeActivityName(e)}
                     value={this.state.activityName}
                     placeholder={Texts.activity_name}
-                  ></TextInput>
+                  ></CreateTextInput>
                 </View>
               </View>
               <View

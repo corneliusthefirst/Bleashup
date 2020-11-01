@@ -62,6 +62,7 @@ import DetailsModal from "../invitations/components/DetailsModal";
 import PrivateReplyModal from "../eventChat/PrivateReplyModal";
 import getRelation from "../Contacts/Relationer";
 import rounder from "../../../services/rounder";
+import globalFunctions from '../../globalFunctions';
 
 const screenWidth = Math.round(Dimensions.get("window").width);
 
@@ -1414,28 +1415,6 @@ export default class Event extends BeComponent {
       Toaster({ text: Texts.app_busy });
     }
   }
-  /*publish() {
-    if (!this.state.working) {
-      this.setStatePure({
-        working: true,
-      });
-      if (this.event.public) {
-        Requester.publish(this.event.id, this.event.about.title).then(() => {
-          this.initializeMaster();
-        });
-      } else {
-        this.setStatePure({
-          working: false,
-        });
-        Toaster({
-          text: "Cannot perform this action; the activity is not public",
-          duration: 5000,
-        });
-      }
-    } else {
-      Toaster({ text: "App Busy " });
-    }
-  }*/
   saveSettings(original, newSettings) {
     if (!this.state.working) {
       this.setStatePure({
@@ -1512,22 +1491,11 @@ export default class Event extends BeComponent {
     BeNavigator.pushActivity(this.event, page);
   }
   replyWith(phone) {
-    getRelation(phone).then((relation) => {
-      GState.reply.activity_id = relation.id;
-      setTimeout(() => {
-        BeNavigator.pushToChat(relation);
-      })
-    });
+    replies.replyWith(phone)
   }
-  authorFirstWithouMe(members, author) {
-    members = reject(
-      [find(members, { phone: author }), ...reject(members, { phone: author })],
-      { phone: stores.LoginStore.user.phone }
-    );
-    return members;
-  }
+  
   showPrivateReply(members, author) {
-    members = this.authorFirstWithouMe(
+    members = globalFunctions.authorFirstWithouMe(
       members || this.event.participant,
       author
     );
@@ -1620,6 +1588,7 @@ export default class Event extends BeComponent {
   }
 
   render() {
+    console.warn("current remind user is: ",this.getParam("type"))
     StatusBar.setHidden(false, true);
     return !this.state.mounted ? null :
       <View style={{ flex: 1, }}>

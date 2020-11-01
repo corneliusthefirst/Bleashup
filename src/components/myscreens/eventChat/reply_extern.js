@@ -1,4 +1,7 @@
 import ActivityPages from './chatPages';
+import getRelation from '../Contacts/Relationer';
+import GState from '../../../stores/globalState/index';
+import BeNavigator from '../../../services/navigationServices';
 
 class reply_extern {
     posts = 'Posts'
@@ -12,9 +15,17 @@ class reply_extern {
     changes = 'Updates'
     committees = 'Commitees'
     committee  = "Committee"
-    confirmed = "remind_confirmed"
-    done = "remind_done"
-    member = "remind_member"
+    confirmed = "confirmed"
+    done = "done"
+    member = "member"
+    replyWith(phone) {
+        getRelation(phone).then((relation) => {
+            GState.reply.activity_id = relation.id;
+            setTimeout(() => {
+                BeNavigator.pushToChat(relation);
+            })
+        });
+    }
 }
 const replies = new reply_extern()
 export default replies 

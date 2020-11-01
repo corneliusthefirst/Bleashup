@@ -9,6 +9,7 @@ import message_types from "./message_types";
 import notification_channels from './notifications_channels';
 import emitter from "../../../services/eventEmiter";
 import persistTypes from './persisTypes';
+import Texts from '../../../meta/text';
 
 const received = "received";
 const newMes = "new";
@@ -19,26 +20,30 @@ const seen = "seen";
 const react = "reaction";
 const typing = "typing";
 class MessageRequest {
-  constructor(){
-     
-     this.notif_channel = notification_channels.messaging
+  constructor() {
+
+    this.notif_channel = notification_channels.messaging
   }
-  cancelMessageSent(messageID){
+  cancelMessageSent(messageID) {
     const id = messageID + deleteMes
     emitter.emit(EventListener.events.unsuccessful_ + id)
   }
   determineMessageType(type) {
     switch (type) {
       case message_types.audio:
-        return "Audio message";
+        return Texts.audio_message;
       case message_types.video:
-        return "Video message";
+        return Texts.video_message;
       case message_types.photo:
-        return "Photo message";
+        return Texts.photo_message;
+      case message_types.remind_message:
+        return Texts.remind_message;
+      case message_types.star_message:
+        return Texts.star_message
       case message_types.file:
-        return "File message";
+        return Texts.file_message;
       default:
-        return "Text message";
+        return Texts.text_message;
     }
   }
   sendMessage(message, CommitteeID, EventID, notme, activity_name) {
@@ -48,17 +53,17 @@ class MessageRequest {
       let messageData = request.MessageAction();
       let notif = request.Notification();
       notif.notification.title = activity_name
-        ? `New ${this.determineMessageType(message.type)} @ ${activity_name}`
-        : `New ${this.determineMessageType(message.type)} from ${this.yourName}`;
+        ? `${Texts.new_} ${this.determineMessageType(message.type)} @ ${activity_name}`
+        : `${Texts.new_} ${this.determineMessageType(message.type)} ${Texts.from} ${this.yourName}`;
       notif.notification.image =
         message.type == message_types.photo ||
-        message.type == message_types.video
+          message.type == message_types.video
           ? message.photo || message.video
           : null;
       notif.notification.body = activity_name
         ? `${this.shortName}: ${message.text}`
         : message.text;
-        notif.notification.android_channel_id = this.notif_channel
+      notif.notification.android_channel_id = this.notif_channel
       notif.data.activity_id = EventID;
       notif.data.message_id = message.id;
       messageData.action = newMes;
@@ -68,7 +73,7 @@ class MessageRequest {
       messageData.event_id = EventID;
       messageData.notif = notif;
       tcpRequest.messaging(messageData, message.id).then((JSONdata) => {
-        EventListener.sendRequest(JSONdata, message.id,persistTypes.messaging)
+        EventListener.sendRequest(JSONdata, message.id, persistTypes.messaging)
           .then((response) => {
             MainUpdater.saveMessage(
               message,
@@ -214,7 +219,7 @@ class MessageRequest {
       });
     });
   }
-  reactMessage(messageID, committeeID, reactio, eventID,activity_name) {
+  reactMessage(messageID, committeeID, reactio, eventID, activity_name) {
     this.yourName = toTitleCase(stores.LoginStore.user.nickname);
     this.shortName = this.yourName.split(" ")[0];
     return new Promise((resolve, reject) => {
@@ -229,10 +234,10 @@ class MessageRequest {
 
       notif.notification.title = `Message Reaction`
       notif.notification.android_channel_id = this.notif_channel
-      notif.notification.body  = activity_name? 
-      `${this.shortName} @ ${activity_name} reacted to a message`:
-      `${this.yourName} reacted to your message`
-      notif.data.activity_id = eventID 
+      notif.notification.body = activity_name ?
+        `${this.shortName} @ ${activity_name} reacted to a message` :
+        `${this.yourName} reacted to your message`
+      notif.data.activity_id = eventID
       notif.data.message_id = messageID
       messageData.action = react;
       messageData.data = reacter;

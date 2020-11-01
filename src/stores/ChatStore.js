@@ -360,13 +360,14 @@ class ChatStore {
             });
         });
     }
-    addVideoProperties(roomID, id, path, total, received) {
+    addVideoProperties(roomID, id, path, total, received,origin) {
         return new Promise((resolve, reject) => {
             this.readFromStore().then((data) => {
                 let index = findIndex(data[roomID], { id: id });
                 if (data[roomID][index]) {
                     data[roomID][index].total = total;
                     data[roomID][index].updated_at = moment().format()
+                    data[roomID][index].temp = origin
                     data[roomID][index].received = received;
                     data[roomID][index].source = path;
                     this.addToStore(data);

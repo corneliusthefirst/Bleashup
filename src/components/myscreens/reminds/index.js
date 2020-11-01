@@ -66,7 +66,7 @@ import {
 } from "../eventChat/searchServices";
 import Spinner from "../../Spinner";
 import AnimatedPureComponent from "../../AnimatedPureComponent";
-import { returnCurrentPatterns, sendRemindAsMessage } from "./remindsServices";
+import { returnCurrentPatterns, sendRemindAsMessage, intervalFilterFunc, returnActualDonners } from "./remindsServices";
 import messagePreparer from "../eventChat/messagePreparer";
 import { constructProgramLink } from "../eventChat/services";
 import { members_updated } from "../../../meta/events";
@@ -93,6 +93,8 @@ class Reminds extends AnimatedComponent {
     this.editReport = this.editReport.bind(this);
     this.defaultItem = this.defaultItem.bind(this)
     this.AddRemind = this.AddRemind.bind(this)
+    this.intervalFilterFunc = intervalFilterFunc.bind(this)
+    this.returnActualDonners = returnActualDonners.bind(this)
   }
   addMembers(currentMembers, item) {
     this.setStatePure({
@@ -145,7 +147,7 @@ class Reminds extends AnimatedComponent {
   componentDidMount() {
     this.initReminds();
   }
-  startRemindUpdateListener(){
+  startRemindUpdateListener() {
     emitter.on("remind-updated", () => {
       this.refreshReminds();
     });
@@ -326,12 +328,12 @@ class Reminds extends AnimatedComponent {
         RemindRequest.confirm(
           [{
             ...request.Participant(),
-            phone:user.phone,
-            status:{
-              date:user.status.date
+            phone: user.phone,
+            status: {
+              date: user.status.date
             },
-            host:user.host,
-            master:user.master
+            host: user.host,
+            master: user.master
           }],
           this.state.currentTask.id,
           this.state.currentTask.event_id
@@ -360,17 +362,7 @@ class Reminds extends AnimatedComponent {
       });
       RemindRequest.markAsDone(
         [
-          {
-            ...(this.state.currentDonner || member),
-            status: {
-              date: moment().format(),
-              status: member.status,
-              ...(this.state.currentDonner && this.state.currentDonner.status),
-              latest_edit: this.state.currentDonner && moment().format(),
-              report: report,
-              url
-            },
-          },
+          this.returnActualDonners(member, report, url)
         ],
         this.state.currentTask,
         null
@@ -464,13 +456,7 @@ class Reminds extends AnimatedComponent {
     );
     return donners;
   }
-  intervalFilterFunc(el, ele) {
-    return (
-      moment(el.status.date).format("x") >
-      (ele && moment(ele.start, format).format("x")) &&
-      moment(el.status.date).format("x") <= (ele && moment(ele.end, format).format("x"))
-    );
-  }
+
   filterConfirmed(interval) {
     return this.state.currentTask.confirmed.filter((ele) =>
       this.intervalFilterFunc(ele, interval)
@@ -492,6 +478,7 @@ class Reminds extends AnimatedComponent {
       removeMember: (firstMem) => {
         this.callRemoveMembers(firstMem.phone);
       },
+      shareReport: this.showSharer.bind(this),
       addMembers: () => {
         this.callAddMembers();
       },
@@ -502,6 +489,7 @@ class Reminds extends AnimatedComponent {
       refresh: this.refreshReminds.bind(this),
       activity_id: this.props.event_id,
       remind_id: this.state.remind.id,
+      program_name: this.state.remind.title,
       confirmed: this.filterConfirmed.bind(this),
       replyPrivate: this.replyPrivate.bind(this),
       donners: this.filterDonners.bind(this),
@@ -545,16 +533,13 @@ class Reminds extends AnimatedComponent {
   showReport(intervals, thisInterval, type) {
     let item = this.state.remind;
     let members = uniq(item.members.map((ele) => ele && ele.phone));
-    BeNavigator.pushTo(
-      "Report",
-      this.returnRouteActions(
-        members,
-        item,
-        thisInterval || this.state.actualInterval,
-        intervals || this.state.intervals,
-        type
-      )
-    );
+    BeNavigator.goToRemindReport(this.returnRouteActions(
+      members,
+      item,
+      thisInterval || this.state.actualInterval,
+      intervals || this.state.intervals,
+      type
+    ))
     this.setStatePure({
       members: this.members,
       currentTask: item,
@@ -564,19 +549,23 @@ class Reminds extends AnimatedComponent {
   addNewRemind() {
     this.scrollRemindListToTop();
     let remind = { ...this.state.currentRemind, id: IDMaker.make() };
+    this.props.startLoader && this.props.startLoader()
     RemindRequest.CreateRemind(remind).then(() => {
       stores.Reminds.removeRemind(
         this.props.event.id,
         request.Remind().id
       ).then(() => {
+        this.props.stopLoader && this.props.stopLoader()
         sendRemindAsMessage(
           remind,
           this.props.event.about.title
         ).then(() => { });
       });
-    }); /*.catch(() => {
+    }).catch(() => {
+      Toaster({ text: Texts.unable_to_perform_request })
+      this.props.stopLoader && this.props.stopLoader()
       console.warn("an error occured while creating the remind")
-    })*/
+    })
   }
   scrollRemindListToTop() {
     this.refs.RemindsList.scrollToEnd();
@@ -586,7 +575,7 @@ class Reminds extends AnimatedComponent {
   delay = 1;
   getRemindData = () => {
     let RemindData = (stores.Reminds.Reminds
-      ? (stores.Reminds.Reminds[this.props.event_id]||[])
+      ? (stores.Reminds.Reminds[this.props.event_id] || [])
       : []
     ).filter((ele) =>
       globalFunctions.filterReminds(ele, this.state.searchString || "")
@@ -755,9 +744,13 @@ class Reminds extends AnimatedComponent {
     });
     this.props.clearIndexedRemind && this.props.clearIndexedRemind();
   }
-  showSharer() {
-    let message = messagePreparer.formMessageFromRemind(this.state.remind);
-    this.props.showSharer && this.props.showSharer(message);
+  showSharer(message) {
+    if (message) {
+      this.props.showSharer && this.props.showSharer(message);
+    } else {
+      let message = messagePreparer.formMessageFromRemind(this.state.remind);
+      this.props.showSharer && this.props.showSharer(message);
+    }
   }
   hideSharing() {
     this.setStatePure({
@@ -1010,30 +1003,30 @@ class Reminds extends AnimatedComponent {
       />
     );
   }
-  defaultItem(){
+  defaultItem() {
     return <View style={{
       ...GState.descriptBoxStyle
     }}>
-    <View style={{
-      alignSelf: 'center',
-      marginBottom: "3%",
-    }}>
-    <Text style={{...GState.featureBoxTitle}}>{Texts.be_up_reminds}</Text>
-    </View>
-    <View style={{ marginBottom: "2%",}}>
-    <Text style={{
-      ...GState.defaultTextStyle,
-      fontWeight: 'bold',
-    }}>{Texts.program_descriptions}</Text>
-    </View>
-    <View style={{
-      alignSelf: 'center',
-    }}>
-    {this.plusButtom()}
-    </View>
+      <View style={{
+        alignSelf: 'center',
+        marginBottom: "3%",
+      }}>
+        <Text style={{ ...GState.featureBoxTitle }}>{Texts.be_up_reminds}</Text>
+      </View>
+      <View style={{ marginBottom: "2%", }}>
+        <Text style={{
+          ...GState.defaultTextStyle,
+          fontWeight: 'bold',
+        }}>{Texts.program_descriptions}</Text>
+      </View>
+      <View style={{
+        alignSelf: 'center',
+      }}>
+        {this.plusButtom()}
+      </View>
     </View>
   }
-  plusButtom(){
+  plusButtom() {
     return <TouchableOpacity
       style={{
         backgroundColor: colorList.bodyBackground,
@@ -1061,114 +1054,113 @@ class Reminds extends AnimatedComponent {
     this.data = this.getRemindData();
     return (
       <ImageBackground style={GState.imageBackgroundContainer} source={GState.backgroundImage}>
-      <View style={{ width: "100%", height: "100%" }}>
-        {this.props.removeHeader ? null : (
-          <View
-            style={{
-              height: colorList.headerHeight,
-              width: "100%",
-              //paddingLeft: "1%",
-              //paddingRight: "1%",
-            }}
-          >
+        <View style={{ width: "100%", height: "100%" }}>
+          {this.props.removeHeader ? null : (
             <View
               style={{
-                ...bleashupHeaderStyle,
-                backgroundColor: colorList.headerBackground,
-                flexDirection: "row",
-                alignItems: "center",
+                height: colorList.headerHeight,
+                width: "100%",
+                //paddingLeft: "1%",
+                //paddingRight: "1%",
               }}
             >
-              <TouchableOpacity
-                onPress={this.props.goback}
+              <View
                 style={{
-                  width: 60,
-                  paddingLeft: "3%",
-                  height: "100%",
-                  justifyContent: "center",
+                  ...bleashupHeaderStyle,
+                  backgroundColor: colorList.headerBackground,
+                  flexDirection: "row",
+                  alignItems: "center",
                 }}
               >
-                <MaterialIcons
+                <TouchableOpacity
+                  onPress={this.props.goback}
                   style={{
-                    ...GState.defaultIconSize,
-                    color: colorList.headerIcon,
-                  }}
-                  type={"MaterialIcons"}
-                  name={"arrow-back"}
-                />
-              </TouchableOpacity>
-
-              {!this.state.searching ? (
-                <View
-                  style={{
-                    flex: 1,
-                    justifyContent: "flex-start",
+                    width: 60,
+                    paddingLeft: "3%",
                     height: "100%",
                     justifyContent: "center",
                   }}
                 >
-                  <Text
+                  <MaterialIcons
                     style={{
-                      fontWeight: "bold",
-                      alignSelf: "flex-start",
-                      color: colorList.headerText,
-                      fontSize: colorList.headerFontSize,
+                      ...GState.defaultIconSize,
+                      color: colorList.headerIcon,
+                    }}
+                    type={"MaterialIcons"}
+                    name={"arrow-back"}
+                  />
+                </TouchableOpacity>
+
+                {!this.state.searching ? (
+                  <View
+                    style={{
+                      flex: 1,
+                      justifyContent: "flex-start",
+                      height: "100%",
+                      justifyContent: "center",
                     }}
                   >
-                    {Texts.reminds_at + " " + this.props.event.about.title}
-                  </Text>
+                    <Text
+                      style={{
+                        fontWeight: "bold",
+                        alignSelf: "flex-start",
+                        color: colorList.headerText,
+                        fontSize: colorList.headerFontSize,
+                      }}
+                    >
+                      {Texts.reminds_at + " " + this.props.event.about.title}
+                    </Text>
+                  </View>
+                ) : null}
+                <View
+                  style={{
+                    height: 35,
+                    flex: this.state.searching ? 1 : null,
+                    width: this.state.searching ? null : 35,
+                    marginRight: 5,
+                  }}
+                >
+                  <Searcher
+                    searchString={this.state.searchString}
+                    searching={this.state.searching}
+                    search={this.search}
+                    startSearching={this.startSearching}
+                    cancelSearch={this.cancelSearch}
+                  ></Searcher>
                 </View>
-              ) : null}
-              <View
-                style={{
-                  height: 35,
-                  flex: this.state.searching ? 1 : null,
-                  width: this.state.searching ? null : 35,
-                  marginRight: 5,
-                }}
-              >
-                <Searcher
-                  searchString={this.state.searchString}
-                  searching={this.state.searching}
-                  search={this.search}
-                  startSearching={this.startSearching}
-                  cancelSearch={this.cancelSearch}
-                ></Searcher>
               </View>
             </View>
-          </View>
-        )}
+          )}
 
-        <View style={{ height: "92%" }}>
-          {this.state.mounted ? (
-            <BleashupFlatList
-             backgroundColor={colorList.transparent}
-              onScroll={this.onScroll}
-              defaultItem={this.defaultItem}
-              fit={this.props.fit}
-              getItemLayout={this.getItemLayout}
-              initialRender={6}
-              ref="RemindsList"
-              renderPerBatch={10}
-              firstIndex={0}
-              //showVerticalScrollIndicator={false}
-              keyExtractor={this._keyExtractor}
-              dataSource={this.data}
-              renderItem={this.renderItem}
-              numberOfItems={this.data}
-            />
-          ) : (
-              <Spinner big color={ColorList.bodyBackground}></Spinner>
-            )}
+          <View style={{ height: "92%" }}>
+            {this.state.mounted ? (
+              <BleashupFlatList
+                backgroundColor={colorList.transparent}
+                onScroll={this.onScroll}
+                defaultItem={this.defaultItem}
+                fit={this.props.fit}
+                getItemLayout={this.getItemLayout}
+                initialRender={6}
+                ref="RemindsList"
+                renderPerBatch={10}
+                firstIndex={0}
+                keyExtractor={this._keyExtractor}
+                dataSource={this.data}
+                renderItem={this.renderItem}
+                numberOfItems={this.data}
+              />
+            ) : (
+                <Spinner big color={ColorList.bodyBackground}></Spinner>
+              )}
+          </View>
+          {this.state.isActionButtonVisible ? (
+            <SideButton
+              buttonColor={colorList.transparent}
+              action={this.AddRemind}
+              renderIcon={() => this.plusButtom()}
+            ></SideButton>
+          ) : null}
         </View>
-        {this.state.isActionButtonVisible ? (
-          <SideButton
-            buttonColor={colorList.transparent}
-            action={this.AddRemind}
-            renderIcon={() => this.plusButtom()}
-          ></SideButton>
-        ) : null}
-      </View>
       </ImageBackground>
     );
   }

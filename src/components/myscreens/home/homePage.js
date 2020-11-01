@@ -259,8 +259,12 @@ class Home extends BeComponent {
                 style={styles.headerImage}
               />}
             </View>
-            {!this.state.searching ? <View style={{
-              marginLeft: 150,
+            <View style={{ 
+              flexDirection:'row',
+              alignItems:'center'
+              
+             }}>{!this.state.searching ? <View style={{
+              marginRight:10
             }}><TouchableOpacity
               style={styles.settingsIconStyleContainerSub}
               onPress={this.settings}
@@ -286,6 +290,7 @@ class Home extends BeComponent {
                 searchString={this.state.searchString}
               >
               </Searcher>
+            </View>
             </View>
           </View>
         </View>
@@ -328,12 +333,14 @@ const styles = StyleSheet.create({
   },
   headerImageContainer: {
     alignSelf: "flex-start",
+    marginLeft:5,
+    alignItems:'center',
     justifyContent: "center",
     height: "100%",
   },
   headerImage: {
-    width: 120,
-    height: 50,
+    width: 100,
+    height: "100%",
   },
   settingsIconStyleContainer: {
     height: "100%",

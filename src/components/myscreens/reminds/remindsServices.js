@@ -246,3 +246,23 @@ export function sendRemindAsMessage(remind, activity_name) {
     return Requester.sendMessage(message, remind.event_id, remind.event_id, true, activity_name)
 }
 
+export function intervalFilterFunc(el, ele) {
+    return (
+        moment(el.status.date).format("x") >
+        (ele && moment(ele.start, format).format("x")) &&
+        moment(el.status.date).format("x") <= (ele && moment(ele.end, format).format("x"))
+    );
+}
+export function returnActualDonners(member,report,url){
+    return {
+        ...(this.state.currentDonner || member),
+        status: {
+            date: moment().format(),
+            status: member.status,
+            ...(this.state.currentDonner && this.state.currentDonner.status),
+            latest_edit: this.state.currentDonner && moment().format(),
+            report: report,
+            url
+        },
+    }
+}

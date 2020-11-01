@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import {
-  View, TouchableOpacity,
+  View, TouchableOpacity, ScrollView,
   TouchableWithoutFeedback, Dimensions, //Keyboard
 } from 'react-native';
 import Modal from 'react-native-modalbox';
@@ -33,7 +33,7 @@ export default class EventDescription extends BleashupModal {
   componentDidMount() {
     this.init()
   }
-  
+
   componentDidUpdate(prevProps, prevState) {
     if (this.props.event.about.description !== prevProps.event.about.description) {
       this.init()
@@ -48,18 +48,19 @@ export default class EventDescription extends BleashupModal {
   }
   keyboardDissmissed = false
   updateDescription() {
-      this.state.description !== this.props.event.about.description ? this.props.updateDesc(this.state.description) : null
-      this.props.onClosed();
+    this.state.description !== this.props.event.about.description ? this.props.updateDesc(this.state.description) : null
+    this.props.onClosed();
   }
 
   position = "center"
   entry = "top"
-  borderRadius = 25
-  borderTopLeftRadius = 25
-  borderTopRightRadius = 25
-  modalHeight = 310
+  borderRadius = 0
+  backdropOpacity=.3
+  borderTopLeftRadius = 0
+  borderTopRightRadius = 0
+  modalHeight = 295
   swipeToClose = false
-  modalWidth = "82%"
+  modalWidth = "100%"
   borderWidth = 1
   onClosedModal() {
     this.props.onClosed(this.state.description)
@@ -68,23 +69,24 @@ export default class EventDescription extends BleashupModal {
 
 
     return (
-      <View style={{ height: "100%", flexDirection: "column" }}>
-        <View style={{ height: "70%", borderRadius: 25, marginTop: "5%" }}>
+      <View style={{ height: "100%", flexDirection: "column",justifyContent: 'space-between', }}>
+        <ScrollView keyboardShouldPersistTaps={"handled"}
+          style={{ height: "60%", borderRadius: 0, marginTop: "5%" }}>
           <CreateTextInput
-            height={"100%"}
+            height={"75%"}
             multiline
             maxLength={1000}
             style={{
               margin: 1,
-              width:'95%',
+              width: '95%',
               alignSelf: 'center',
               textAlignVertical: 'top',  // hack android
-              backgroundColor: "#f5fffa", borderRadius: 25,
+              backgroundColor: "#f5fffa", borderRadius: 0,
             }}
             placeholder={Texts.activity_description} value={this.state.description} keyboardType="default"
             onChange={(value) => this.onChangedEventDescription(value)} />
 
-        </View>
+        </ScrollView>
 
         <View style={{ height: "25%", justifyContent: "center", }}>
           <CreateButton style={{ width: '90%' }} title={Texts.edit} action={this.updateDescription.bind(this)}></CreateButton>

@@ -8,7 +8,8 @@ import { Dimensions, Platform, NativeModules } from "react-native"
 import shadower from "../../components/shadower";
 import active_types from '../../components/myscreens/eventChat/activity_types';
 const { height, width } = Dimensions.get('window');
-import  moment  from 'moment';
+import * as configs from "../../config/bleashup-server-config.json"
+import moment from 'moment';
 const deviceLanguage =
   Platform.OS === 'ios'
     ? NativeModules.SettingsManager.settings.AppleLocale ||
@@ -29,6 +30,11 @@ export default class globalState {
   }
   @observable scrollOuter = true;
   @observable writing = false;
+  @observable isDarkMode = true
+  toMB(data) {
+    const divider = 1000 * 1000
+    return data / divider
+  }
   @observable eventUpdated = false;
   @observable isScrolling = true;
   @observable loading = false;
@@ -226,6 +232,8 @@ export default class globalState {
     width: '100%',
     justifyContent: 'center',
   }
+  baseURL = configs.file_server.protocol +
+    "://" + configs.file_server.host + ":" + configs.file_server.port
   backgroundImage = require('../../../assets/chat_screen.jpg')
   featureBoxTitle = {
     ...this.defaultTextStyle,

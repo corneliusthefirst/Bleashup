@@ -97,10 +97,7 @@ export default class PhotoUploader extends BePureComponent {
         GState.downlading = false;
         // })
     }
-    toMB(data) {
-        mb = 1000 * 1000;
-        return data / mb;
-    }
+    toMB = GState.toMB
     cancelUpLoad() {
         this.exchanger.task.cancel((err, taskID) => {
             GState.downlading = false;

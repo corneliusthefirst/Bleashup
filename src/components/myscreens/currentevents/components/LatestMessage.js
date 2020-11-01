@@ -19,6 +19,7 @@ import MessageState from "../../eventChat/MessageState";
 import Moment from "react-moment";
 import rounder from "../../../../services/rounder";
 import AnimatedPureComponent from '../../../AnimatedPureComponent';
+import { writeChangeWithContent } from "../../changelogs/change.services";
 
 @observer
 class LatestMessage extends AnimatedComponent {
@@ -72,9 +73,7 @@ class LatestMessage extends AnimatedComponent {
             <TextContent
                 tags={this.message.tags}
                 notScallEmoji
-                text={change ? (this.change.changed +" "+
-                    (this.change.new_value && typeof this.change.new_value.new_value == "string" ?
-                        this.change.new_value.new_value:"")) : this.message.text}
+                text={change ? (this.change.changed + writeChangeWithContent(this.change.new_value.new_value)) : this.message.text}
                 numberOfLines={1}
                 style={this.textStyle}
             />

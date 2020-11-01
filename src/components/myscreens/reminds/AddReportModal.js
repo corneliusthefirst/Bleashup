@@ -18,10 +18,18 @@ let { height, width } = Dimensions.get('window');
 export default class AddReport extends BleashupModal {
     initialize() {
         this.state = {
-            description: ''
+            description: '',
+            position: 'bottom'
         }
         this.saveURL = this.saveURL.bind(this)
         this.cleanMedia = this.cleanMedia.bind(this)
+        this.changePosition = this.changePosition.bind(this)
+        this.position = this.state.position
+    }
+    changePosition(state) {
+        this.setStatePure({
+            position: state ? 'center' : 'bottom'
+        })
     }
     saveURL(url) {
         this.setStatePure({
@@ -30,6 +38,9 @@ export default class AddReport extends BleashupModal {
     }
     state = {
 
+    }
+    componentwillUpdate(nextProp, nextState) {
+        this.position = nextState.position
     }
     report() {
         this.props.report(this.state.description)
@@ -51,14 +62,16 @@ export default class AddReport extends BleashupModal {
         this.refs.picker &&
             this.refs.picker.cleanMedia &&
             this.refs.picker.cleanMedia()
+        this.saveURL({})
     }
     swipeToClose = false
-    modalHeight = 300
-    modalWidth = "90%"
-    borderTopLeftRadius = 8
-    borderTopRightRadius = 8
-    position = "bottom"
-    entry = "bottom"
+    modalHeight = GState.height * .5
+    modalWidth = "100%"
+    backdropOpacity = .2
+    borderTopLeftRadius = 0
+    borderTopRightRadius = 0
+    position = "center"
+    entry = "top"
     modalBody() {
         let canShowURL = this.state.url && (
             this.state.url.photo ||
@@ -68,10 +81,10 @@ export default class AddReport extends BleashupModal {
         let canEdit = (this.state.description &&
             this.state.description !== this.props.currentReport) ||
             (this.state.url && this.props.currentReportURL && (this.state.url.photo !== this.props.currentReportURL.photo ||
-                 this.props.currentReportURL.video 
+                this.props.currentReportURL.video
                 !== this.state.url.video ||
-                 this.props.currentReportURL.source !== this.state.url.source))||
-                  (this.state.url && !this.props.currentReportURL)
+                this.props.currentReportURL.source !== this.state.url.source)) ||
+            (this.state.url && !this.props.currentReportURL)
         return (
             <ScrollView keyboardShouldPersistTaps={"handled"}
                 nestedScrollEnabled showsVerticalScrollIndicator={false} style={{ flex: 1, flexDirection: "column" }}>
@@ -92,12 +105,13 @@ export default class AddReport extends BleashupModal {
                     >}
                 </MediaPreviewer> : null}
                 </View>
-                <View style={{ 
-                    height: 155, 
-                    width: "95%", 
-                    alignSelf: 'center', 
+                <View style={{
+                    height: 155,
+                    width: "95%",
+                    alignSelf: 'center',
                 }}>
                     <CreateTextInput
+                        changePosition={this.changePosition}
                         height={150}
                         multiline
                         placeholder={Texts.add_report}
@@ -105,11 +119,12 @@ export default class AddReport extends BleashupModal {
                         onChange={(value) => this.onChangedEventDescription(value)} />
 
                 </View>
-                { canEdit ?
+                {canEdit ?
                     <View style={{
                         width: width / 4,
                         flexDirection: 'row',
                         alignItems: 'flex-end',
+                        margin: '3%',
                         alignSelf: 'flex-end',
                         marginRight: "1%"
                     }} >
@@ -119,11 +134,11 @@ export default class AddReport extends BleashupModal {
                             borderColor: ColorList.bodyIcon, alignSelf: 'flex-end',
                             width: 90, height: 40, justifyContent: "center"
                         }}>
-                            <Text style={{ 
-                                ...GState.defaultTextStyle, 
-                                color: ColorList.bodyIcon, 
-                                marginRight: "auto", 
-                                marginLeft: "auto", 
+                            <Text style={{
+                                ...GState.defaultTextStyle,
+                                color: ColorList.bodyIcon,
+                                marginRight: "auto",
+                                marginLeft: "auto",
                             }}>{Texts.report}</Text>
                         </TouchableOpacity>
                     </View> : null}

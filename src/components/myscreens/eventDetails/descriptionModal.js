@@ -30,12 +30,13 @@ export default class DescriptionModal extends BleashupModal {
   backButtonClose = false;
   swipeToClose = false;
   position = "center";
-  modalWidth = "80%";
+  modalWidth = "100%";
   modalHeight = 250;
   modalMinHieight = 50
-  borderRadius = 20;
-  borderTopLeftRadius = 20;
-  borderTopRightRadius = 20;
+  borderRadius = 0;
+  backdropOpacity=.3
+  borderTopLeftRadius = 0;
+  borderTopRightRadius = 0;
   items = () => [
     {
       title: Texts.reply,
@@ -54,18 +55,18 @@ export default class DescriptionModal extends BleashupModal {
         style={{
           height: "100%",
           width: "100%",
-          borderRadius: 20,
+          borderRadius: 0,
           flexDirection: "column",
         }}
       >
         <View
           style={{
             height: 250 * .90,
-            width: "98%",
+            width: "100%",
             padding: "2%",
             margin: "1%",
             alignSelf: "center",
-            borderRadius: 20,
+            borderRadius: 0,
             backgroundColor: ColorList.descriptionBody,
             ...shadower(1),
           }}
@@ -93,14 +94,15 @@ export default class DescriptionModal extends BleashupModal {
           <ScrollView
             keyboardShouldPersistTaps={"handled"}
             nestedScrollEnabled
+            style={{flex: 1,}}
             showsVerticalScrollIndicator={false}
           >
-            <View style={{ height: "80%" }}>
+            <View style={{ height: "80%" ,flex: 1,}}>
               <TextContent
                 style={{
                   fontSize: 16,
                   fontWeight: "400",
-                  margin: "1%",
+                  padding: "1%",
                   ...(!this.props.Event.about.description
                     ? { color: colorList.darkGrayText, fontStyle: "italic" }
                     : {}),

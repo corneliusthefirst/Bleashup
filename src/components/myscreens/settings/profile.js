@@ -106,7 +106,8 @@ let { height, width } = Dimensions.get('window');
             <View style={{
               alignItems: "center",
               backgroundColor: ColorList.bodyBackground,
-              width: 100,
+              minWidth: 90,
+              maxWidth: 200,
               ...shadower(2),
               borderRadius: 50,
               flexDirection: "row",

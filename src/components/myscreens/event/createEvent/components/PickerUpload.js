@@ -17,6 +17,10 @@ import BleashupAlert from "./BleashupAlert";
 import Texts from '../../../../../meta/text';
 import AudioRecorder from '../../../eventChat/AudioRecorder';
 import IDMaker from '../../../../../services/IdMaker';
+import MessageActions from "../../../eventChat/MessageActons";
+import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
+import GState from "../../../../../stores/globalState";
+import Entypo from 'react-native-vector-icons/Entypo';
 
 export default class PickersUpload extends BeComponent {
   constructor(props) {
@@ -25,6 +29,9 @@ export default class PickersUpload extends BeComponent {
       downloadProgess: 0,
       newing: false,
     };
+    this.hideActions = this.hideActions.bind(this)
+    this.showActions = this.showActions.bind(this)
+    this.actions = this.actions.bind(this)
   }
   componentDidMount() {
     if (this.props.creating) {
@@ -137,6 +144,10 @@ export default class PickersUpload extends BeComponent {
       isVideo ? "/video" : "/photo"
     );
     this.exchanger.upload();
+  }
+  iconStyle = {
+    ...GState.defaultIconSize,
+    color: ColorList.indicatorColor
   }
   openCamera() {
     BeNavigator.pushTo("CameraScreen", {
@@ -344,6 +355,82 @@ export default class PickersUpload extends BeComponent {
       </View>
     );
   }
+  get_random_color() {
+    return ColorList.colorArray[Math.floor(Math.random() * (ColorList.colorArray.length - 1))]
+  }
+  hideActions() {
+    this.setStatePure({
+      showMediaPossibilities: false
+    })
+  }
+  showActions() {
+    this.setStatePure({
+      showMediaPossibilities: true
+    })
+  }
+  actions() {
+    return [
+      {
+        iconName: 'camera',
+        iconType: 'Entypo',
+        color: this.get_random_color(),
+        title: Texts.camera,
+        condition: () => this.props.notCamera ? false : true,
+        callback: () => this.openCamera()
+      },
+      {
+        iconName: 'ios-albums',
+        iconType: 'Ionicons',
+        color: this.get_random_color(),
+        title: Texts.galery,
+        condition: () => this.props.notGalery ? false : true,
+        callback: () => this.TakePhotoFromLibrary(false),
+      },
+      {
+        iconName: 'web',
+        iconType: 'Foundation',
+        color: this.get_random_color(),
+        title: Texts.take_photo_from_internet,
+        condition: () => this.props.notInternet ? false : true,
+        callback: () =>
+          this.setStatePure({
+            searchImageState: true,
+          }),
+      },
+      {
+        iconName: 'folder-video',
+        iconType: 'Entypo',
+        color: this.get_random_color(),
+        title: Texts.add_video,
+        condition: () => this.props.notVideo || this.props.onlyPhotos ? false : true,
+        callback: () => this.TakePhotoFromLibrary(true),
+      },
+      {
+        iconName: 'sound',
+        iconType: 'Entypo',
+        color: this.get_random_color(),
+        title: Texts.add_audio,
+        condition: () => (this.props.notAudio||this.props.onlyPhotos) ? false : true,
+        callback: () => this.takeAudio(),
+      },
+      {
+        iconName: 'microphone',
+        iconType: 'FontAwesome',
+        color: this.get_random_color(),
+        title: Texts.record_audio,
+        condition: () => (this.props.notAudio || this.props.onlyPhotos) ? false : true,
+        callback: () => this.toggleAudioRecorder()
+      },
+      {
+        iconName: 'file',
+        iconType: 'FontAwesome',
+        color: this.get_random_color(),
+        title: Texts.add_file,
+        condition: () => (this.props.notFile || this.props.onlyPhotos) ? false : true,
+        callback: () => this.takeFile(),
+      }
+    ]
+  }
   render() {
     return (
 
@@ -352,75 +439,38 @@ export default class PickersUpload extends BeComponent {
         alignSelf: 'flex-start',
         alignItems: 'center',
         ...this.props.withTrash || this.state.uploading ? {
-          justifyContent: 'space-between',
-          width: '100%'
+          //justifyContent: 'space-between',
         } : null
       }}>
 
 
-        <View style={{ width: 45, ...this.center,alignSelf: 'flex-start', }}>
-          <PickersMenu
-            color={this.props.color}
-            fontSize={this.props.fontSize}
-            menu={[
-              {
-                title: Texts.camera,
-                condition: this.props.notCamera ? false : true,
-                callback: () => this.openCamera()
-              },
-              {
-                title: Texts.galery,
-                condition: this.props.notGalery ? false : true,
-                callback: () => this.TakePhotoFromLibrary(false),
-              },
-            ]}
-            icon={{
-              name: "camera",
-              type: "EvilIcons",
-            }}
-          ></PickersMenu>
-        </View>
-        {!this.props.onlyPhotos && <View style={{ width: 45, ...this.center }}>
-          <PickersMenu
-            menu={[
-              {
-                title: Texts.take_photo_from_internet,
-                condition: this.props.notInternet ? false : true,
-                callback: () =>
-                  this.setStatePure({
-                    searchImageState: true,
-                  }),
-              },
-              {
-                title: Texts.add_video,
-                condition: this.props.notVideo ? false : true,
-                callback: () => this.TakePhotoFromLibrary(true),
-              },
-              {
-                title: Texts.add_audio,
-                condition: this.props.notAudio ? false : true,
-                callback: () => this.takeAudio(),
-              },
-              {
-                title: Texts.record_audio,
-                condition: this.props.notAudio ? false : true,
-                callback: () => this.toggleAudioRecorder()
-              },
-              {
-                title: Texts.add_file,
-                condition: this.props.notFile ? false : true,
-                callback: () => this.takeFile(),
-              }
-            ]}
-            icon={{
-              name: "plus-small",
-              type: "Octicons",
-            }}
-          ></PickersMenu>
-        </View>}
+        <TouchableOpacity onPress={this.showActions}
+          style={{
+            width: 45,
+            ...this.center,
+            alignSelf: 'flex-start',
+            marginRight: 10,
+          }}>
+          <View style={{
+            ...rounder(40, ColorList.descriptionBody),
+            justifyContent: 'center',
+          }}>
+            {this.props.onlyPhotos ||
+              (this.props.notAudio && this.props.notFile) ?
+              <MaterialIcons
+                name={'insert-photo'}
+                style={this.iconStyle}
+              >
+              </MaterialIcons> :
+              <Entypo
+                style={this.iconStyle}
+                name={"attachment"}>
+              </Entypo>}
+          </View>
+        </TouchableOpacity>
         {this.state.showAudioRecorder ? this.audioRecorder() : null}
         {!this.state.uploading ? null : (
-          <View style={{ ...rounder((this.props.fontSize || 26) || 5, ColorList.bodyBackground) }}>
+          <View style={{ ...rounder((this.props.fontSize || 26) || 5, ColorList.bodyBackground),marginRight: 10, }}>
             <AnimatedCircularProgress
               size={this.props.fontSize || 26}
               width={2}
@@ -463,6 +513,12 @@ export default class PickersUpload extends BeComponent {
             });
           }}
         /> : null}
+        {this.state.showMediaPossibilities ? <MessageActions
+          actions={this.actions}
+          isOpen={this.state.showMediaPossibilities}
+          onClosed={this.hideActions}
+          title={Texts.uploads_possibilities}
+        ></MessageActions> : null}
         {
           this.state.showAlert ? <BleashupAlert isOpen={this.state.showAlert}
             title={this.state.alert.title}

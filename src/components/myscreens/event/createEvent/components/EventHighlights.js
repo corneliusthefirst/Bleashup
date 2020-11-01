@@ -221,85 +221,7 @@ export default class EventHighlights extends BleashupModal {
       ).then(() => { });
     }
   }
-
-  swipeToClose = false
-  cleanAudio() {
-    if (!this.updateState) {
-      stores.Highlights.updateHighlightUrl(this.event_id, {
-        ...this.state.currentHighlight,
-        url: {
-          ...this.state.currentHighlight.url,
-          audio: null,
-          duration: null
-        },
-      },
-        false
-      ).then(() => {
-        this.setStatePure({
-          newing: !this.state.newing,
-          currentHighlight: {
-            ...this.state.currentHighlight,
-            url: {
-              ...this.state.currentHighlight.url,
-              audio: null,
-              duration: null
-            },
-          },
-        });
-      });
-    } else {
-      this.setStatePure({
-        newing: !this.state.newing,
-        currentHighlight: {
-          ...this.state.currentHighlight,
-          url: {
-            ...this.state.currentHighlight.url,
-            audio: null,
-            duration: null
-          },
-        },
-      });
-    }
-  }
-  exchanger = null;
-  cleanMedia() {
-    if (!this.updateState) {
-      this.setStatePure({
-        newing: !this.state.newing,
-        currentHighlight: {
-          ...this.state.currentHighlight,
-          url: {
-            ...this.state.currentHighlight.url,
-            photo: null,
-            video: null,
-            //audio: null,
-            //duration: null
-          },
-        },
-      });
-      !this.updateState &&
-        stores.Highlights.updateHighlightUrl(this.event_id, {
-          ...this.state.currentHighlight,
-          url: {
-            ...this.state.currentHighlight.url,
-            photo: null,
-            video: null,
-          },
-        });
-    } else {
-      this.setStatePure({
-        newing: !this.state.newing,
-        currentHighlight: {
-          ...this.state.currentHighlight,
-          url: {
-            ...this.state.currentHighlight.url,
-            photo: null,
-            video: null,
-          },
-        },
-      });
-    }
-  }
+ 
   deleteHighlight(id) {
     this.state.highlightData = reject(this.state.highlightData, { id, id });
     this.setStatePure({
@@ -310,11 +232,6 @@ export default class EventHighlights extends BleashupModal {
 
   _keyExtractor = (item, index) => item.id;
 
-  _getItemLayout = (data, index) => ({
-    length: 100,
-    offset: 100 * index,
-    index,
-  });
   rendering = 0;
   onClosedModal() {
     this.props.onClosed();
@@ -384,7 +301,7 @@ export default class EventHighlights extends BleashupModal {
                   height={ColorList.containerHeight * 0.22}
                   defaultPhoto={this.state.defaultUrl}
                   url={this.state.currentHighlight.url || {}}
-                  cleanMedia={() => this.cleanMedia()}
+                  cleanMedia={() => this.applySave({})}
                 ></MediaPreviewer>
               </View>
               <TouchableOpacity

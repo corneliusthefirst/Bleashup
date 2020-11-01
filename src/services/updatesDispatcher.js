@@ -146,7 +146,7 @@ class UpdatesDispatcher {
             changed: update.new_value ? Texts.changed_the_description_the_activity :
               Texts.removed_the_description_of_the_activity,
             new_value: { data: null, new_value: update.new_value },
-            date: update.data,
+            date: update.date,
             time: null
           }
           this.infomCurrentRoom(Change, Eve, update.event_id)
@@ -458,6 +458,9 @@ class UpdatesDispatcher {
       });
     },
     removed: update => {
+      const newValue = Array.isArray(update.new_value) ?
+        update.new_value :
+        [update.new_value]
       return new Promise((resolve, reject) => {
         stores.Events.removeParticipant(
           update.event_id,
@@ -467,15 +470,14 @@ class UpdatesDispatcher {
           let Change = {
             title: Texts.update_on_main_activity,
             event_id: update.event_id,
-            changed: update.updater === update.new_value ?
+            changed: update.updater === newValue[0] ?
               Texts.left_the_activity :
               Texts.removed_participants_from_activity,
             updater: update.updater,
             new_value: {
-              data: null, new_value:
-                Array.isArray(update.new_value) ?
-                  update.new_value :
-                  [update.new_value]
+              data: null, 
+              new_value:newValue,
+                
             },
             date: update.date,
             time: update.time
@@ -1074,7 +1076,7 @@ class UpdatesDispatcher {
           event_id: update.event_id,
           updated: 'joint',
           changed: Texts.join_activity,
-          updater: update.new_value.inviter,
+          updater: update.updater || update.new_value.inviter,
           new_value: { data: null, new_value: [Participant] },
           date: update.date,
           time: update.time

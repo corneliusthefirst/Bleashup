@@ -720,6 +720,7 @@ export default class TasksCreation extends BleashupModal {
     return !this.state.mounted ? null : (
       <ScrollView
         keyboardShouldPersistTaps={"handled"}
+        nestedScrollEnabled
         showsVerticalScrollIndicator={false}
       >
         <View style={{ flex: 1, justifyContent: "flex-end" }}>
@@ -795,16 +796,18 @@ export default class TasksCreation extends BleashupModal {
 
           <View style={{ marginTop: 20 }}>
             <ScrollView
+              nestedScrollEnabled
               keyboardShouldPersistTaps={"handled"}
               ref={"scrollView"}
               showsVerticalScrollIndicator={false}
             >
               <View
                 pointerEvents={this.state.ownership ? null : "none"}
-                style={{ height: height / 12, alignItems: "center" }}
+                style={{  alignItems: "center" }}
               >
                 <View style={{ width: "90%", alignSelf: "center" }}>
                   <CreateTextInput
+                    animateUI={this.animateUI.bind(this)}
                     height={50}
                     maxLength={100}
                     value={this.state.currentRemind.title}
@@ -817,6 +820,24 @@ export default class TasksCreation extends BleashupModal {
                   />
                 </View>
               </View>
+              {this.isEvent() && (
+                <View
+                  pointerEvents={!this.state.ownership ? "none" : null}
+                  style={{ width: "90%", alignSelf: "center", marginTop: 20 }}
+                >
+                  <CreateTextInput
+                    multiline
+                    numberOfLines={30}
+                    autogrow
+                    animateUI={this.animateUI.bind(this)}
+                    height={60}
+                    disabled={!this.state.ownership}
+                    value={this.state.currentRemind.description}
+                    placeholder={Texts.details}
+                    onChange={(value) => this.onChangedDescription(value)}
+                  />
+                </View>
+              )}
               <View
                 style={{
                   flexDirection: "column",
@@ -1181,6 +1202,8 @@ export default class TasksCreation extends BleashupModal {
                   >
                     <CreateTextInput
                       height={50}
+                      noEmoji
+                      animateUI={this.animateUI.bind(this)}
                       maxLength={100}
                       placeholder={Texts.venue}
                       value={this.state.currentRemind.location}
@@ -1207,28 +1230,13 @@ export default class TasksCreation extends BleashupModal {
                   style={{ width: "90%", alignSelf: "center" }}
                 >
                   <MediaPreviewer
+                    //activity_id={this.event_id}
+                    //updateSource={(aid,url) => this.saveURL(url.url)}
                     data={{ id: this.state.currentRemind.id + '_create' }}
                     cleanMedia={() => this.saveURL(request.Remind().remind_url)}
                     height={180}
                     defaultPhoto={require("../../../../assets/new-event.png")}
                     url={this.state.currentRemind.remind_url || {}}
-                  />
-                </View>
-              )}
-              {this.isEvent() && (
-                <View
-                  pointerEvents={!this.state.ownership ? "none" : null}
-                  style={{ width: "90%", alignSelf: "center", marginTop: 20 }}
-                >
-                  <CreateTextInput
-                    multiline
-                    numberOfLines={30}
-                    autogrow
-                    height={60}
-                    disabled={!this.state.ownership}
-                    value={this.state.currentRemind.description}
-                    placeholder={Texts.details}
-                    onChange={(value) => this.onChangedDescription(value)}
                   />
                 </View>
               )}

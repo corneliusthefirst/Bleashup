@@ -14,6 +14,7 @@ import Texts from "../../../meta/text";
 import notification_channels from "../eventChat/notifications_channels";
 import UpdatesDispatch from '../../../services/updatesDispatcher';
 import Updates from '../../../services/updates-posibilites';
+import replies from "../eventChat/reply_extern";
 class Requester {
   constructor() {
     this.notif_channel = notification_channels.reminds;
@@ -26,13 +27,13 @@ class Requester {
       ) {
         CalendarServe.saveEvent(remind, alarms, "reminds", newRemindName).then(
           (calendar_id) => {
-            /*stores.Reminds.updateCalendarID(
+            stores.Reminds.updateCalendarID(
               eventID,
               { remind_id: remind.id, calendar_id: calendar_id },
               alarms
-            ).then(() => {*/
+            ).then(() => {
               resolve(calendar_id);
-           // });
+            });
           }
         );
       } else {
@@ -101,20 +102,23 @@ class Requester {
         newRemindName.data = newDescription;
         newRemindName.event_id = eventID;
         newRemindName.remind_id = remindID;
+        const id = remindID + "_description"
         tcpRequest
-          .updateRemind(newRemindName, remindID + "_description")
+          .updateRemind(newRemindName, id)
           .then((JSONData) => {
-            UpdatesDispatch.dispatchUpdate(request.Updated(eventID, {
-              remind_id: remindID,
-              description: newDescription,
-            }, null, Updates.possibilites.remind_description_updated)).then(() => {
-              resolve("ok")
-            })
-          }).catch((error) => {
-            Toaster({ text: Texts.unable_to_perform_request });
-            console.warn(error);
-            reject(error);
-          });
+            EventListener.sendRequest(JSONData, id).then(() => {
+              UpdatesDispatch.dispatchUpdate(request.Updated(eventID, {
+                remind_id: remindID,
+                description: newDescription,
+              }, null, Updates.possibilites.remind_description_updated)).then(() => {
+                resolve("ok")
+              })
+            }).catch((error) => {
+              Toaster({ text: Texts.unable_to_perform_request });
+              console.warn(error);
+              reject(error);
+            });
+          })
       } else {
         resolve();
       }
@@ -127,20 +131,23 @@ class Requester {
       newRemindName.data = Member;
       newRemindName.event_id = eventID;
       newRemindName.remind_id = remindID;
+      const id = remindID + "_confirm"
       tcpRequest
-        .updateRemind(newRemindName, remindID + "_confirm")
+        .updateRemind(newRemindName, id)
         .then((JSONData) => {
-          UpdatesDispatch.dispatchUpdate(request.Updated(eventID, {
-            remind_id: remindID,
-            confirmed: Member,
-          }, null, Updates.possibilites.confirm)).then(() => {
-            resolve("ok")
-          })
-        }).catch((error) => {
-          Toaster({ text: Texts.unable_to_perform_request });
-          console.warn(error);
-          reject(error);
-        });
+          EventListener.sendRequest(JSONData, id).then(() => {
+            UpdatesDispatch.dispatchUpdate(request.Updated(eventID, {
+              remind_id: remindID,
+              confirmed: Member,
+            }, null, Updates.possibilites.confirm)).then(() => {
+              resolve("ok")
+            })
+          }).catch((error) => {
+            Toaster({ text: Texts.unable_to_perform_request });
+            console.warn(error);
+            reject(error);
+          });
+        })
     });
   }
   updateRemindRecurrentcyConfig(newConfigs, oldConfig, remindID, eventID) {
@@ -313,14 +320,17 @@ class Requester {
         newRemindName.data = newLocation;
         newRemindName.event_id = eventID;
         newRemindName.remind_id = remindID;
+        const id = remindID + "_location"
         tcpRequest
-          .updateRemind(newRemindName, remindID + "_location")
+          .updateRemind(newRemindName, id)
           .then((JSONData) => {
-            UpdatesDispatch.dispatchUpdate(request.Updated(eventID,
-              { remind_id: remindID, location: newLocation }, null,
-              Updates.possibilites.remind_location)).then(() => {
-                resolve("ok")
-              })
+            EventListener.sendRequest(JSONData, id).then(() => {
+              UpdatesDispatch.dispatchUpdate(request.Updated(eventID,
+                { remind_id: remindID, location: newLocation }, null,
+                Updates.possibilites.remind_location)).then(() => {
+                  resolve("ok")
+                })
+            })
               .catch(() => {
                 Toaster({ text: Texts.unable_to_perform_request });
                 reject();
@@ -340,16 +350,20 @@ class Requester {
         newRemindName.data = newURL;
         newRemindName.event_id = eventID;
         newRemindName.remind_id = remindID;
+        const id = remindID + "_remind_url"
         tcpRequest
-          .updateRemind(newRemindName, remindID + "_remind_url")
+          .updateRemind(newRemindName, id)
           .then((JSONData) => {
-            UpdatesDispatch.dispatchUpdate(request.Updated(eventID,
-              { url: newURL, remind_id: remindID },
-              null,
-              Updates.possibilites.remind_url)).then(() => {
-                resolve("ok")
-              })
+            EventListener.sendRequest(JSONData, id).then(() => {
+              UpdatesDispatch.dispatchUpdate(request.Updated(eventID,
+                { url: newURL, remind_id: remindID },
+                null,
+                Updates.possibilites.remind_url)).then(() => {
+                  resolve("ok")
+                })
+            })
               .catch(() => {
+                Toaster({ text: Texts.unable_to_perform_request });
                 reject();
               });
           });
@@ -365,17 +379,21 @@ class Requester {
       let newRemindName = request.RemindUdate();
       let notif = request.Notification();
       notif.notification.body = activity_name
-        ? `${this.shortName} @ ${activity_name} added members to the Program`
-        : `${this.yourName} added member(s)`;
+        ? `${this.shortName} @ ${activity_name} ${Texts.have_add_members_to_the_program}`
+        : `${this.yourName} ${Texts.added_members}`;
       notif.notification.android_channel_id = this.notif_channel;
-      notif.notification.title = `New member(s) in ${remind.title} Progam`;
+      notif.notification.title = `${Texts.new_members_in} ${remind.title} ${Texts.program}`;
       notif.data.activity_id = remind.event_id;
+      notif.data.reply = { type: replies.member,[replies.member]:{
+          phone: remind.members[0].phone
+        } 
+      }
       notif.data.remind_id = remind.id;
       newRemindName.action = "add_members";
       const id = remind.id + "_add_members"
       if (stores.States.requestExists(id) && persist) {
         const data = EventListener.returnRequestData(stores.States.getRequest(id)).data
-        reminds.members = uniqBy([...data, ...reminsd.members], "phone");
+        remind.members = uniqBy([...data, ...remind.members], "phone");
       }
       newRemindName.data = remind.members;
       newRemindName.event_id = remind.event_id;
@@ -606,12 +624,21 @@ class Requester {
     return new Promise((resolve, reject) => {
       let newRemindName = request.RemindUdate();
       let notif = request.Notification();
-      (notif.notification.title = `${remind.title} Program Completed`),
+      (notif.notification.title = `${remind.title}; ${Texts.completed_program}`),
         (notif.notification.body = activity_name
-          ? `${this.shortName} @ ${activity_name} has completed the program`
-          : `${this.yourName} has completed the program`);
+          ? `${this.shortName} @ ${activity_name} ${Texts.have_completed_the_program}`
+          : `${this.yourName} ${Texts.have_completed_the_program}`);
       notif.notification.android_channel_id = this.notif_channel;
       notif.data.activity_id = remind.event_id;
+      notif.data.reply = {
+        type: replies.done,
+        [replies.done]: {
+          phone: member[0].phone,
+          status: {
+            date: member[0].status.date
+          }
+        }
+      }
       notif.data.remind_id = remind.id;
       newRemindName.action = "mark_as_done";
       newRemindName.data = member;

@@ -201,22 +201,22 @@ giving out a file wchich is stored drive. hence the app crashes
 [*] ensure that all updates on reminds are channeled both to members and participants 
 [*] handle well notifications indicator in the app . 
 [*] make sure that when the app loads, all unsent messages are immidately sent.
-[] add imoji keyboard on create text input 
-[] change picker upload view so that it should look nice 
-[] handle device mode that is night and light mode. 
-[] make available ReportTabModal from remind details and handle all the possible front actions. 
-[] make report text copiable. 
-[] handle sharing of video and photo as message
-[] make program report exportable 
-    [] - export members 
-    [] - export single report 
-    [] - export reports for an interval 
-    [] - export reports fro all intervals 
+[*] add imoji keyboard on create text input 
+[*] change picker upload view so that it should look nice 
+[-] handle device mode that is night and light mode. 
+[*] make available ReportTabModal from remind details and handle all the possible front actions. 
+[*] make report text copiable. 
+[*] handle sharing of video and photo as message
+[*] make program report exportable 
+    [*] - export members 
+    [*] - export single report 
+    [*] - export reports for an interval 
+    [*] - export reports fro all intervals 
 [] handle video saving and playing from saved director 
-[] handle duplicate files created by file exchanger while uploading files 
-[] handle notification on done so that onClick it should take the user directly to the report concerned
-[] handle translation for notifications and notification for remind messsage, star message and relation shared 
-[] ensure that forwared messages goes with the remote media url
+[*] handle duplicate files created by file exchanger while uploading files 
+[*] handle notification on done so that onClick it should take the user directly to the report concerned
+[*] handle translation for notifications and notification for remind messsage, star message and relation shared 
+[*] ensure that forwared messages goes with the remote media url
 
 
 

@@ -6,6 +6,7 @@ import active_types from './myscreens/eventChat/activity_types';
 import moment from 'moment';
 import { format } from "../services/recurrenceConfigs";
 import actFilterFunc from './myscreens/currentevents/activityFilterFunc';
+import { reject, find } from 'lodash';
 
 class Functions {
   constructor() { }
@@ -114,10 +115,14 @@ class Functions {
   }
   byTitleAndDesc(ele, search) {
     search = search ? search.toLowerCase() : ""
-    return (search && (ele.title && ele.title.toLowerCase && ele.title.toLowerCase().includes(search) ||
-      ele.description && ele.description.toLowerCase && ele.description.toLowerCase().includes(search)) ||
-      (ele.location && ele.location.toLowerCase && ele.location.toLowerCase().includes(search)) ||
-      (ele.members && ele.members.length && search.includes(ele.members.length.toString()))) || true
+    if (search) {
+      return (search && (ele.title && ele.title.toLowerCase && ele.title.toLowerCase().includes(search) ||
+        ele.description && ele.description.toLowerCase && ele.description.toLowerCase().includes(search)) ||
+        (ele.location && ele.location.toLowerCase && ele.location.toLowerCase().includes(search)) ||
+        (ele.members && ele.members.length && search.includes(ele.members.length.toString())))
+    } else {
+      return true
+    }
   }
   filterStars(ele, search) {
     return ele && ele.id !== request.Highlight().id && this.byTitleAndDesc(ele, search)
@@ -163,6 +168,14 @@ class Functions {
     } else {
       return 0
     }
+  }
+  authorFirstWithouMe(members, author) {
+    members = reject(
+      [find(members, { phone: author }), ...reject(members, { phone: author }),
+        ...reject(stores.Contacts.contacts.contacts,{phone:author})],
+      { phone: stores.LoginStore.user.phone }
+    ).filter(ele => ele);
+    return members;
   }
   sortRemind(a, b) {
     const thisIntervalA = a && stores.Reminds.remindsIntervals &&

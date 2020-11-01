@@ -91,7 +91,7 @@ export default class AudioMessage extends BePureComponent {
         });
     }
     componentDidUpdate(prevPro, prevState) {
-        console.warn("component updating: ",prevPro.message.source, this.props.message.source)
+        //console.warn("component updating: ",prevPro.message, this.props.message)
         if (this.props.message.source !== prevPro.message.source) {
             if (testForURL(this.props.message.source)) {
                 this.startDownloader(true)

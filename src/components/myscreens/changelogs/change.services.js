@@ -12,6 +12,6 @@ export function writeChange() {
     return moment(change).isValid() ? moment(change).calendar() : change
 }
 export function writeChangeWithContent(content){
-    const change = typeof this.state.content == 'string' && !testForURL(content)?content:""
+    const change = typeof content == 'string' && !testForURL(content)?content:""
     return moment(change).isValid() ? moment(change).calendar() : change
 }

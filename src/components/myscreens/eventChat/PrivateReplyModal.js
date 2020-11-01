@@ -122,7 +122,7 @@ export default class PrivateReplyModal extends BleashupModal {
                         }}>
                             <Text style={{
                                 ...GState.defaultTextStyle,
-                                color: "orange",
+                                color: ColorList.orangeColor,
                                 fontWeight: 'bold',
 
                             }}>{Texts.author}</Text>

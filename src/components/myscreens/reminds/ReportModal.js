@@ -18,6 +18,20 @@ import BeMenu from '../../Menu';
 import TextContent from '../eventChat/TextContent';
 import MedaiView from '../event/createEvent/components/MediaView';
 import BeNavigator from '../../../services/navigationServices';
+import { copyText } from '../eventChat/services';
+import request from '../../../services/requestObjects';
+import messagePreparer from '../eventChat/messagePreparer';
+import { containsMedia, 
+    containsAudio, 
+    containsFile, 
+    containsVideo, 
+    containsPhoto, 
+    calculateType 
+} from '../event/createEvent/components/mediaTypes.service';
+import { TouchableWithoutFeedback } from 'react-native-gesture-handler';
+import IDMaker from '../../../services/IdMaker';
+import Swipeout from '../eventChat/Swipeout';
+import Vibrator from '../../../services/Vibrator';
 
 export default class RemindReportContent extends BleashupModal {
     initialize() {
@@ -26,6 +40,19 @@ export default class RemindReportContent extends BleashupModal {
         }
         this.editReport = this.editReport.bind(this)
         this.showItem = this.showItem.bind(this)
+        this.copyReportText = this.copyReportText.bind(this)
+        this.containsMedia = containsMedia.bind(this)
+        this.containsAudio = containsAudio.bind(this)
+        this.containsFile = containsFile.bind(this)
+        this.containsVideo = containsVideo.bind(this)
+        this.containsPhoto = containsPhoto.bind(this)
+        this.handleSwipe = this.handleSwipe.bind(this)
+        this.calculateType = calculateType.bind(this)
+        this.exportReport = this.exportReport.bind(this)
+        this.url = this.props.report.url
+    }
+    copyReportText() {
+        copyText(this.props.report.report)
     }
     onClosedModal() {
         this.props.closed()
@@ -53,22 +80,54 @@ export default class RemindReportContent extends BleashupModal {
     position = "center"
     modalHeight = GState.height * .65
     modalMinHieight = 100
-    modalWidth = "90%"
+    borderTopRightRadius = 0
+    borderTopLeftRadius = 0
+    modalWidth = "100%"
     entry = "top"
+    exportReport(){
+        this.props.exportReport && this.props.exportReport(this.props.report)
+    }
     editReport() {
         this.props.editReport(this.props.user)
     }
     items = () => [
         {
             title: Texts.reply,
-            condition: true,
+            condition: this.props.reply && true,
             action: this.props.reply
         },
         {
             title: Texts.edit,
             condition: this.props.user.phone == stores.LoginStore.user.phone,
             action: this.editReport
+        },{
+            title:Texts.export_,
+            condition: this.props.master,
+            action:this.exportReport
         }
+            /*, {
+            title: Texts.share,
+            condition: this.props.shareReport && true,
+            action: () => this.props.shareReport && this.props.shareReport(
+                {
+                    ...request.Message(),
+                    id: IDMaker.make(),
+                    sent: true,
+                    from_activity: this.props.activity_id,
+                    from_commitee: this.props.activity_id,
+                    report: true,
+                    forwarded: true,
+                    type: this.calculateType(),
+                    text: this.props.report.report,
+                    source: (this.url && this.url.main_source || 
+                        (this.url && this.url.source)) || 
+                    (this.url && this.url.video),
+                    photo: this.url && this.url.photo,
+                    file_name: this.url && this.url.file_name,
+                    filename: this.url && this.url.file_name,
+                }
+            )
+        }*/
     ]
     editButton() {
         return <View style={{ flexDirection: 'row', alignItems: 'center', }}>
@@ -134,8 +193,13 @@ export default class RemindReportContent extends BleashupModal {
             </TouchableOpacity>
         </View>
     }
-    borderRadius = 10
+    handleSwipe(){
+        Vibrator.vibrateShort()
+        this.props.reply && this.props.reply()
+    }
+    borderRadius = 0
     modalBody() {
+        this.url = this.props.report.url
         let canShowReport = this.props.report.url || this.props.report.report
         return (
             <View>
@@ -166,17 +230,29 @@ export default class RemindReportContent extends BleashupModal {
                                 activity_id={this.props.activity_id}
 
                             /></View> : null}
-                        {this.props.report.report ? <View style={{ ...this.flexContainerStyle, marginVertical: '1%', }}>
-                            <ScrollView showsVerticalScrollIndicator={false} nestedScrollEnabled={true} style={{
-                                maxHeight: GState.height * .2,
-                                minHeight: 50,
-                                borderRadius: 10,
-                                ...shadower(1),
-                                backgroundColor: ColorList.descriptionBody,
-                                padding: '2%',
-                            }}>
-                                <TextContent style={{ ...GState.defaultTextStyle, marginBottom: "2%", }}>{this.props.report.report}</TextContent>
-                            </ScrollView></View> : null}
+                        {this.props.report.report ? <Swipeout
+                            swipeRight={this.handleSwipe}
+                            onLongPress={this.copyReportText}
+                            style={{ ...this.flexContainerStyle, marginVertical: '1%', }}
+                        >
+                            <ScrollView
+                                showsVerticalScrollIndicator={false}
+                                nestedScrollEnabled={true}
+                                style={{
+                                    maxHeight: GState.height * .2,
+                                    minHeight: 50,
+                                    borderRadius: 2,
+                                    ...shadower(1),
+                                    backgroundColor: ColorList.descriptionBody,
+                                    padding: '2%',
+                                }}>
+                                <TextContent
+                                    onLongPress={this.copyReportText}
+                                    style={{
+                                        ...GState.defaultTextStyle,
+                                        marginBottom: "2%",
+                                    }}>{this.props.report.report}</TextContent>
+                            </ScrollView></Swipeout> : null}
                     </View>
                 </ScrollView> : null}
                 <View style={{ ...this.flexContainerStyle, marginVertical: '1%', }}>

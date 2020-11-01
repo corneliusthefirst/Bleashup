@@ -12,6 +12,7 @@ import FileAttarchementMessaege from '../../../eventChat/FileAttarchtmentMessage
 import { containsFile, containsAudio } from "./mediaTypes.service";
 import AudioMessage from "../../../eventChat/AudioMessage";
 import BeNavigator from '../../../../../services/navigationServices';
+import GState from "../../../../../stores/globalState";
 
 export default class MediaPreviewer extends BeComponent {
   constructor(props) {
@@ -30,6 +31,7 @@ export default class MediaPreviewer extends BeComponent {
   }
 
   render() {
+    this.url = this.props.url
     return (
       <View
         style={{
@@ -51,10 +53,12 @@ export default class MediaPreviewer extends BeComponent {
           }}
         >
           {this.constainsFile() ?
-            <FileAttarchementMessaege message={{ total: 0, received: 0, ...this.props.url }}>
+            <FileAttarchementMessaege activity_id={this.props.activity_id} updateSource={this.props.updateSource} message={{ total: 0, received: 0, ...this.props.url }}>
             </FileAttarchementMessaege> : this.containsAudio() ?
-              <AudioMessage message={{ total: 0, recieved: 0, ...this.props.url, 
-                id: this.props.url.id || this.props.data.id || this.props.remind_id }}></AudioMessage> :
+              <AudioMessage activity_id={this.props.activity_id} updateSource={this.props.updateSource} message={{
+                total: 0, recieved: 0, ...this.props.url,
+                id: this.props.url.id || this.props.data.id || this.props.remind_id
+              }}></AudioMessage> :
               <TouchableOpacity onPress={() => this.choseAction(this.props.url)}>
                 {this.props.url &&
                   this.props.url.photo &&
@@ -93,55 +97,61 @@ export default class MediaPreviewer extends BeComponent {
                   )}
               </TouchableOpacity>
           }
-          {this.props.url && this.props.url.video ? (
-            <View
-              style={{
-                ...buttoner,
-                alignSelf: "center",
-                position: "absolute",
-              }}
-            >
-              {this.props.url.video ?
-                <Ionicons onPress={() => {
-                  this.choseAction(this.props.url);
-                }} name="ios-play" style={{
-                  fontSize: 43, color: ColorList.bodyBackground
-                }} type="Ionicons" />
-                :
-                <MaterialIcons onPress={() => {
-                  this.choseAction(this.props.url);
-                }} name="headset" style={{
-                  fontSize: 40, color: ColorList.bodyBackground
-                }} type="MaterialIcons" />
-              }
+          {this.props.url && this.props.url.video && !GState.isUndefined(this.props.url.video)
+            ? (
+              <View
+                style={{
+                  ...buttoner,
+                  alignSelf: "center",
+                  position: "absolute",
+                }}
+              >
+                {this.props.url.video ?
+                  <Ionicons onPress={() => {
+                    this.choseAction(this.props.url);
+                  }} name="ios-play" style={{
+                    fontSize: 43, color: ColorList.bodyBackground
+                  }} type="Ionicons" />
+                  :
+                  <MaterialIcons onPress={() => {
+                    this.choseAction(this.props.url);
+                  }} name="headset" style={{
+                    fontSize: 40, color: ColorList.bodyBackground
+                  }} type="MaterialIcons" />
+                }
 
-            </View>
-          ) : null}
+              </View>
+            ) : null}
         </View>
 
-        {this.props.url && (this.props.url.video || this.props.url.photo) ? (
-          <View style={{ position: "absolute", alignSelf: "flex-end", height: 30, width: 30, margin: "1%", }}>
-            <TouchableOpacity
-              style={{
-                ...buttoner,
-                width: 30,
-                height: 30,
-                borderRadius: 20,
-
-              }}
-            >
-              <EvilIcons
-                name={"close"}
-                type="EvilIcons"
+        {this.props.url &&
+          (this.props.url.video || this.props.url.photo || this.props.url.source) &&
+          !GState.isUndefined(this.props.url.video || this.props.url.photo || this.props.url.source) ? (
+            <View style={{
+              position: "absolute", alignSelf: this.constainsFile() || this.containsAudio() ?
+                "flex-start" : "flex-end", height: 30, width: 30, margin: "1%",
+            }}>
+              <TouchableOpacity
                 onPress={this.props.cleanMedia}
                 style={{
-                  color: ColorList.bodyBackground,
-                  fontSize: 30,
+                  ...buttoner,
+                  width: 30,
+                  height: 30,
+                  borderRadius: 20,
+
                 }}
-              />
-            </TouchableOpacity>
-          </View>
-        ) : null}
+              >
+                <EvilIcons
+                  name={"close"}
+                  type="EvilIcons"
+                  style={{
+                    color: ColorList.bodyBackground,
+                    fontSize: 30,
+                  }}
+                />
+              </TouchableOpacity>
+            </View>
+          ) : null}
       </View>
     );
   }

@@ -371,7 +371,8 @@ class ChatRoom extends AnimatedComponent {
     }
     playVideo(video, message, index) {
         if (testForURL(video)) {
-            this.concludePlay(video, message, index)
+            BeNavigator.openVideo(video, message.created_at)
+            //this.concludePlay(video, message, index)
         } else {
             (new FileExachange()).doFileExists(video).then(status => {
                 if (status) {
@@ -614,8 +615,8 @@ class ChatRoom extends AnimatedComponent {
             title: 'Voters list ',
         });
     }
-    shareWithContacts(message) {
-        this.forwardToContacts(this.state.currentMessage)
+    shareWithContacts(message, prepared) {
+        this.forwardToContacts(message || this.state.currentMessage, prepared)
     }
     scrollToIndex(index) {
         this.refs.bleashupSectionListOut &&
@@ -944,12 +945,21 @@ class ChatRoom extends AnimatedComponent {
         this.props.startThis(star);
 
     }
-    forwardToContacts(message) {
-        if (message && message.sent) {
+    forwardToContacts(message, prepared) {
+        if (prepared) {
+            this.props.showShare(message)
+        } else if (message && message.sent) {
             this.props.showShare && this.props.showShare({
+                ...message,
                 id: IDMaker.make(),
+                seen: request.Message().seen,
+                receive: request.Message().receive,
+                thumbnailSource: message.thumbnailSource,
                 created_at: moment().format(),
                 sender: this.props.user,
+                photo: message.source,
+                sent: true,
+                source: message.temp || message.source,
                 type: message.type === 'image' ? 'photo' :
                     message.type,
                 reply: null,
@@ -965,7 +975,7 @@ class ChatRoom extends AnimatedComponent {
                     : message.sender,
             })
         } else {
-            Toaster({ text: 'cannot forward unsent messages' });
+            Toaster({ text: Texts.cannot_forward_unsent_message });
         }
 
     }
@@ -1165,11 +1175,11 @@ class ChatRoom extends AnimatedComponent {
         }, 500)
 
     }
-    handleForward(item) {
+    handleForward(item, prepared) {
         this.setStatePure({
-            currentMessage: item
+            currentMessage: !prepared && item
         }, () => {
-            this.shareWithContacts(item)
+            this.shareWithContacts(item, prepared)
         })
     }
     showStar(item) {
@@ -1198,7 +1208,7 @@ class ChatRoom extends AnimatedComponent {
                         BeNavigator.pushActivityWithIndex(event, { remind_id: item.remind_id }, true)
                     } else {
                         BeNavigator.goToRemindDetail(item.remind_id, item.activity_id, {
-                            forward: () => this.handleForward(item),
+                            forward: (newItem) => this.handleForward(newItem || item, newItem && true),
                             room: this.roomID,
                             reply: () => this.checkForReply(),
                             reply_privately: (members, creator) => this.props.replyPrivately([...members,
@@ -1355,7 +1365,7 @@ class ChatRoom extends AnimatedComponent {
         }, 500)
     }
     hideDayDate() {
-        if(this.hideDaydateTimout) clearTimeout(this.hideDaydateTimout)
+        if (this.hideDaydateTimout) clearTimeout(this.hideDaydateTimout)
         this.hideDaydateTimout = setTimeout(() => {
             this.setStatePure({
                 showCurrentDay: false,
@@ -1384,7 +1394,7 @@ class ChatRoom extends AnimatedComponent {
         viewAreaCoveragePercentThreshold: 95,
         itemVisiblePercentThreshold: 100
     }
-    
+
     messageList() {
         this.data = stores.Messages.messages[this.roomID]
             ? stores.Messages.messages[this.roomID] : []

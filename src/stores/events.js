@@ -976,16 +976,20 @@ export default class events {
   changeUpdatedStatus(EventID, revert) {
     return new Promise((resolve, reject) => {
       this.readFromStore().then(Events => {
-        
+
         let index = findIndex(Events, {
           id: EventID,
         });
-        const previousUpdate = Events[index].previous_updated
-        const currentUpdate = Events[index].updated_at
-        Events[index].updated_at = revert ? previousUpdate : moment().format();
-        Events[index].previous_updated = currentUpdate
-        this.setProperties(Events, true);
-        resolve();
+        if (index >= 0) {
+          const previousUpdate = Events[index].previous_updated
+          const currentUpdate = Events[index].updated_at
+          Events[index].updated_at = revert ? previousUpdate : moment().format();
+          Events[index].previous_updated = currentUpdate
+          this.setProperties(Events, true);
+          resolve();
+        } else {
+          resolve()
+        }
       });
     });
   }

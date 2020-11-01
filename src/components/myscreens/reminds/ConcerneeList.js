@@ -13,20 +13,32 @@ import Spinner from '../../Spinner';
 import Texts from '../../../meta/text';
 import MessageActions from '../eventChat/MessageActons';
 import Vibrator from '../../../services/Vibrator';
-import SideButton from '../../sideButton';
-import AntDesign from 'react-native-vector-icons/AntDesign';
 import GState from '../../../stores/globalState';
 import rounder from '../../../services/rounder';
 import shadower from '../../shadower';
 import { _onScroll } from '../currentevents/components/sideButtonService';
 import emitter from '../../../services/eventEmiter';
 import { members_updated } from '../../../meta/events';
+import ConcludeExportModal from './ConcludeExportModal';
+import ConcerneeActions from '../event/createEvent/ConcerneeAction';
 
 
 export default class ConcerneeList extends BeComponent {
     constructor(props) {
         super(props)
         this.onScroll = _onScroll.bind(this)
+        this.hideExportMembers = this.hideExportMembers.bind(this)
+        this.showExporter = this.showExporter.bind(this)
+    }
+    showExporter(){
+        this.setStatePure({
+            exportMembers:true
+        })
+    }
+    hideExportMembers(){
+        this.setStatePure({
+            exportMembers:false
+        })
     }
     state = {
         index: null,
@@ -186,35 +198,23 @@ export default class ConcerneeList extends BeComponent {
 
                 }}
             />
-            {this.state.isActionButtonVisible ? <SideButton
-                buttonColor={ColorList.transparent}
-                renderIcon={() => {
-                    return <TouchableOpacity
-                        onPress={this.props.addMembers}
-                        style={{
-                            ...rounder(50, ColorList.bodyBackground),
-                            justifyContent: 'center',
-                            ...shadower(2)
-                        }}
-                    >
-                        <AntDesign
-                            name={"addusergroup"}
-                            style={{
-                                ...GState.defaultIconSize,
-                                color: ColorList.indicatorColor
-                            }}
-                        >
-                        </AntDesign>
-                    </TouchableOpacity>
-                }}
+            {this.state.isActionButtonVisible && this.props.master ? <ConcerneeActions
+                exportMembers={this.showExporter}
+                addMembers={this.props.addMembers}
             >
-            </SideButton> : null}
-            {this.state.showAction ? <MessageActions
+            </ConcerneeActions> : null}
+            {this.state.showAction  ? <MessageActions
                 title={Texts.remind_member_action}
                 actions={this.MembersAction}
                 isOpen={this.state.showAction}
                 onClosed={this.hideAction.bind(this)}
             ></MessageActions> : null}
+            {this.state.exportMembers? <ConcludeExportModal
+            donners={this.props.getMembers()}
+            isOpen={this.state.exportMembers}
+            onClosed={this.hideExportMembers}
+            >
+            </ConcludeExportModal>:null}
         </View> : <Spinner></Spinner>
     }
 }

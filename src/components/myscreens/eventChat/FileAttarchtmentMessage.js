@@ -102,10 +102,7 @@ export default class FileAttarchementMessaege extends BePureComponent {
         })
         this.props.room && stores.Messages.SetCancledState(this.props.room, this.props.message.id)
     }
-    toMB(data) {
-        mb = 1000 * 1000
-        return data / mb
-    }
+    toMB = GState.toMB
     progress(received, total) {
         let newTotal = this.state.total && this.state.total > 0 && this.state.total > total ? this.state.total : total
         newTotal = parseInt(newTotal)

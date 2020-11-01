@@ -134,22 +134,21 @@ export default class Reminds {
   };
 
   issetRemindIntervals(remind) {
-    const firstEndate = this.remindsIntervals[remind.event_id] &&
-      this.remindsIntervals[remind.event_id][remind.id] &&
+    const firstEndate = this.issetRemindInterval(remind) &&
       this.remindsIntervals[remind.event_id][remind.id].currentDateIntervals 
     return firstEndate && true
   }
+  issetRemindInterval(remind){
+    return this.remindsIntervals[remind.event_id] &&
+      this.remindsIntervals[remind.event_id][remind.id] 
+  }
   getRemindsIntervals(remind, fresh) {
-    //console.warn("getting remind interval of ", remind.title)
     return new Promise((resolve, reject) => {
       if (!this.issetRemindIntervals(remind) || fresh) {
         this.computeRemindIntervals(remind).then((vals) => {
-          //console.warn(remind.title, vals)
           resolve(vals);
         });
-        //this.computeRemindIntervals(remind)
       } else {
-        //console.warn(remind.title," ", this.remindsIntervals[remind.event_id][remind.id].correspondingDateInterval)
         resolve(this.remindsIntervals[remind.event_id][remind.id]);
         setTimeout(() => {
           if (this.remindsIntervals[remind.event_id][remind.id].correspondingDateInterval) {
@@ -162,13 +161,11 @@ export default class Reminds {
   }
 
   setPropertyCleanForIntervals(remind, prop) {
-    let canUpdate = !this.remindsIntervals[remind.event_id][remind.id] ||
+    let canUpdate = !this.issetRemindInterval(remind)||
       !this.remindsIntervals[remind.event_id][remind.id].correspondingDateInterval ||
       !prop.correspondingDateInterval ||
       (this.remindsIntervals[remind.event_id][remind.id].correspondingDateInterval.start
         !== prop.correspondingDateInterval.start)
-    console.warn("can update", canUpdate, prop.correspondingDateInterval, remind.title, 
-    this.remindsIntervals[remind.event_id][remind.id].correspondingDateInterval)
     if (this.remindsIntervals[remind.event_id]) {
       this.remindsIntervals[remind.event_id][remind.id] = {
         ...this.remindsIntervals[remind.event_id][remind.id],

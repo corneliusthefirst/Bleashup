@@ -57,6 +57,7 @@ export default class InChatVideoPlayer extends BeComponent {
 
         return <View
             style={{
+                zIndex: 2,
                 height: this.props.fullScreen
                     ? "100%"
                     : "40%",

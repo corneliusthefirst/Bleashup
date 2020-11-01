@@ -31,6 +31,7 @@ import {
   calculateCurrentStates,
   returnRealActualIntervals,
   returnActualDatesIntervals,
+  returnActualDonners,
 } from "../reminds/remindsServices";
 import RemindRequest from "../reminds/Requester";
 import request from "../../../services/requestObjects";
@@ -61,6 +62,12 @@ import {
 import { remindTime } from "../reminds/taskCardParts";
 import public_states from "../reminds/public_states";
 import BeMenu from "../../Menu";
+import emitter from '../../../services/eventEmiter';
+import { members_updated } from "../../../meta/events";
+import { intervalFilterFunc } from '../reminds/remindsServices';
+import PrivateReplyModal from './PrivateReplyModal';
+import replies from './reply_extern';
+import globalFunctions from '../../globalFunctions';
 
 let { height, width } = Dimensions.get("window");
 
@@ -85,6 +92,9 @@ export default class RemindDetail extends AnimatedPureComponent {
     this.remindActions = remindActons.bind(this);
     this.remindCreator = remindCreator.bind(this);
     this.unAssignAction = UnAssignAction.bind(this);
+    this.intervalFilterFunc = intervalFilterFunc.bind(this)
+    this.returnActualDonners = returnActualDonners.bind(this)
+    this.startSharing = this.startSharing.bind(this)
   }
   refreshStates() {
     this.setStatePure({
@@ -92,8 +102,9 @@ export default class RemindDetail extends AnimatedPureComponent {
       mounted: true,
     });
   }
-  showMembers() {
-    BeNavigator.gotoContactList(this.item.members, Texts.program_members);
+  showMembers(type) {
+    this.showReport(type)
+    //BeNavigator.gotoContactList(this.item.members, Texts.program_members);
   }
   loadInitialStates() {
     stores.Events.loadCurrentEvent(this.activity_id)
@@ -120,23 +131,78 @@ export default class RemindDetail extends AnimatedPureComponent {
       this.loadStates();
     });
   }
+  editReport(donner) {
+    this.setStatePure({
+      currentDonner: donner,
+      currentReport: donner.status.report,
+      currentReportURL: donner.status.url,
+      showAddReportModal: true,
+      reportEditing: true
+    })
+  }
+  refreshReminds() {
+    this.setStatePure({
+      newing: !this.state.newing
+    })
+    setTimeout(() => {
+      emitter.emit(members_updated)
+    })
+  }
+  filterDonners(interval) {
+    let donners = this.item.donners.filter((ele) =>
+      this.intervalFilterFunc(ele, interval)
+    );
+    return donners;
+  }
+
+  filterConfirmed(interval) {
+    return this.item.confirmed.filter((ele) =>
+      this.intervalFilterFunc(ele, interval)
+    );
+  }
+  returnRouteActions(type) {
+    return {
+      type: type,
+      editReport: this.editReport.bind(this),
+      shareReport: this.startSharing.bind(this),
+      getMembers: () => this.item.members,
+      concernees: this.item.members,
+      reply: this.startReply.bind(this),
+      refresh: this.refreshReminds.bind(this),
+      activity_id: this.activity_id,
+      remind_id: this.item_id,
+      confirmed: this.filterConfirmed.bind(this),
+      replyPrivate: this.startPrivateReply.bind(this),
+      donners: this.filterDonners.bind(this),
+      intervals: this.currentDateIntervals,
+      isRelation: false,
+      master: false,
+      must_report: this.item && this.item.must_report,
+      actualInterval: this.correspondingDateInterval,
+    };
+  }
+  showReport(type) {
+    BeNavigator.goToRemindReport(this.returnRouteActions(type))
+  }
+
   loadStatesFromRemote() {
     stores.Events.loadCurrentEventFromRemote(this.activity_id)
       .then((event) => {
         this.activity = event;
         stores.Reminds.loadRemindFromRemote(this.activity_id, this.item_id)
           .then((remind) => {
-            this.item = Array.isArray(remind) ? remind[0] : remind;
+            remind = Array.isArray(remind) ? remind[0] : remind;
+            if (this.item.remind_url.main_source == remind.remind_url.source) {
+              remind.remind_url = this.item.remind_url
+            }
+            this.item = remind
             this.message_id &&
               sstores.Messages.updateRemindInfoInMessage(
                 this.activity_id,
                 this.message_id,
                 this.item
               );
-            if(this.item.remind_url.main_source == remind.remind_url.source){
-              remind.remind_url = this.item.remind_url
-            }
-            stores.Reminds.addReminds(this.activity_id, remind).then(() => { });
+            stores.Reminds.addReminds(this.activity_id, this.item).then(() => { });
             this.loadStates(false, true);
           })
           .catch(() => {
@@ -167,27 +233,21 @@ export default class RemindDetail extends AnimatedPureComponent {
     this.markAsDone(this.item);
   }
   concludeDone(member) {
-    this.item.donners = [...this.item.donners, member];
-    this.loadStates();
+    stores.Reminds.loadRemind(this.activity_id, this.item_id).then(rem => {
+      this.item = rem
+      this.loadStates();
+      this.refreshReminds()
+    })
   }
-  markAsDoneWithReport(report) {
+  markAsDoneWithReport(report, url) {
     let member = find(this.item.members, {
       phone: stores.LoginStore.user.phone,
     });
-    (member = {
-      ...member,
-      status: {
-        date: moment().format(),
-        status: {
-          report: report,
-          date: moment().format(),
-          status: member.status,
-        },
-      },
-    }),
+    (member = this.returnActualDonners(member, report, url)),
       RemindRequest.markAsDone(
         [member],
         this.item,
+        null,
         this.activity.about.title
       ).then(() => {
         this.concludeDone(member);
@@ -249,7 +309,7 @@ export default class RemindDetail extends AnimatedPureComponent {
   remind = this.getParam("remind");
   reply = this.getParam("reply");
   reply_privately = this.getParam("reply_privately");
-  forward = this.getParam("forward") || this.startSharing.bind(this);
+  forward = this.getParam("forward")
   activity_id = this.getParam("activity_id");
   handleReply() { }
   handlePrivateReply() { }
@@ -298,10 +358,27 @@ export default class RemindDetail extends AnimatedPureComponent {
       showAlarmsPattern: false,
     });
   }
-  startSharing() {
-    this.setStatePure({
-      isSharing: true,
-    });
+  prepareMessageForForward() {
+    return {
+      ...messagePreparer.formMessageFromRemind(this.item),
+      forwarded: true,
+      reply: null,
+      from_activity: this.activity_id,
+      from_committee: this.activity_id,
+      from: null,
+    }
+  }
+  startSharing(newMess) {
+    //console.error(newMess)
+    const mess = newMess || this.prepareMessageForForward()
+    if (this.forward) {
+      this.forward(mess)
+    } else {
+      this.setStatePure({
+        isSharing: true,
+        mess
+      });
+    }
   }
   goback() {
     this.props.navigation.goBack();
@@ -311,8 +388,9 @@ export default class RemindDetail extends AnimatedPureComponent {
       isSharing: false,
     });
   }
-  formReply() {
-    let reply = GState.prepareRemindsForMetion(this.item);
+  formReply(item) {
+    let reply = item ? GState.prepareMentionForRemindsMembers(item, this.item) : 
+    GState.prepareRemindsForMetion(this.item);
     reply.from_activity = this.item.event_id;
     reply.activity_id = this.roomID;
     reply.activity_name = this.activity.about.title;
@@ -320,12 +398,37 @@ export default class RemindDetail extends AnimatedPureComponent {
   }
   startReply() {
     GState.reply = this.formReply();
-    this.reply();
-    this.goback();
+    if (this.reply) {
+      this.reply && this.reply();
+      this.goback();
+    }
   }
-  startPrivateReply() {
-    GState.reply = this.formReply();
-    this.reply_privately(this.item.members, this.item.creator);
+  showPrivateReply(members, author) {
+    members = globalFunctions.authorFirstWithouMe(
+      members,
+      author
+    );
+    this.setStatePure({
+      replyMembers: members,
+      author,
+      showPrivateReply: true,
+    });
+  }
+  replyWith(phone) {
+    replies.replyWith(phone)
+  }
+  hideReply() {
+    this.setStatePure({
+      showPrivateReply: false,
+    });
+  }
+  startPrivateReply(item) {
+    GState.reply = this.formReply(item);
+    if (this.reply_privately) {
+      this.reply_privately(this.item.members, item.phone || this.item.creator);
+    } else {
+      this.showPrivateReply(this.item.members, item.phone || this.item.creator)
+    }
   }
   isMember() {
     return this.activity.participant.find(
@@ -438,7 +541,7 @@ export default class RemindDetail extends AnimatedPureComponent {
               >
                 {this.canShare ? (
                   <TouchableOpacity
-                    onPress={this.forward}
+                    onPress={() => this.startSharing()}
                     style={{
                       ...rounder(40),
                       justifyContent: "center",
@@ -498,11 +601,22 @@ export default class RemindDetail extends AnimatedPureComponent {
             isOpen={this.state.showAlarmsPattern}
             closed={this.hideAlarmsModal.bind(this)}
           ></SetAlarmPatternModal>
+          {this.state.showPrivateReply ? (
+            <PrivateReplyModal
+              isOpen={this.state.showPrivateReply}
+              author={this.state.author}
+              members={this.state.replyMembers}
+              onClosed={this.hideReply.bind(this)}
+              replyWith={(phone) => this.replyWith(phone)}
+            ></PrivateReplyModal>
+          ) : null}
           <AddReport
+            currentReportURL={this.state.currentReportURL}
+            currentReport={this.state.currentReport || ""}
             isOpen={this.state.showAddReportModal}
-            report={(report) => {
+            report={(report, url) => {
               this.hideAddReportModal();
-              this.markAsDoneWithReport(report);
+              this.markAsDoneWithReport(report, url);
             }}
             onClosed={this.hideAddReportModal.bind(this)}
           ></AddReport>
@@ -513,21 +627,14 @@ export default class RemindDetail extends AnimatedPureComponent {
             isOpen={this.state.showDetailsModal}
             onClosed={this.hideDetailModal.bind(this)}
           ></DetailsModal>
-          <ShareWithYourContacts
+          {this.state.isSharing ? <ShareWithYourContacts
             isOpen={this.state.isSharing}
             activity_id={this.activity_id}
             sender={request.Message().sender}
             committee_id={this.activity_id}
-            message={{
-              ...messagePreparer.formMessageFromRemind(this.item),
-              forwarded: true,
-              reply: null,
-              from_activity: this.activity,
-              from_committee: this.activity,
-              from: null,
-            }}
+            message={this.state.mess}
             onClosed={this.hideSharing.bind(this)}
-          ></ShareWithYourContacts>
+          ></ShareWithYourContacts> : null}
         </ScrollView>
       );
   }

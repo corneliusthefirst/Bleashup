@@ -80,6 +80,8 @@ export default class ReportTabModal extends TabModal {
   confirm = this.getParam("confirm") || this.props.confirm
   editReport = this.getParam("editReport") || this.props.editReport
   reply = this.getParam("reply") || this.props.reply
+  program_name = this.getParam('program_name') || this.props.program_name
+  shareReport = this.getParam("shareReport") || this.props.shareReport
   addMembers = this.getParam("addMembers") || this.props.addMembers
   removeMember = this.getParam("removeMember") || this.props.removeMember
   getMembers = this.getParam("getMembers") || this.props.getMembers
@@ -139,9 +141,11 @@ export default class ReportTabModal extends TabModal {
         this.state.mounted ? <View style={{ height: "100%" }}>
           <DonnersList
             refresh={this.refresh}
+            shareReport={this.shareReport}
             editReport={this.editReport}
             replyPrivate={this.replyPrivate.bind(this)}
             isRelation={this.isRelation}
+            program_name={this.program_name}
             currentRemindUser={this.currentRemindUser}
             type={replies.done}
             reply={this.reply}
@@ -171,6 +175,7 @@ export default class ReportTabModal extends TabModal {
       screen: () => (
         this.state.mounted ? <View style={{ height: "100%" }}>
           <DonnersList
+            shareReport={this.shareReport}
             refresh={this.refresh}
             editReport={this.editReport}
             activity_id={this.activity_id}
@@ -179,6 +184,7 @@ export default class ReportTabModal extends TabModal {
             isRelation={this.isRelation}
             currentRemindUser={this.currentRemindUser}
             type={replies.confirmed}
+            program_name={this.program_name}
             reply={this.reply}
             cannotReport
             intervals={this.intervals}

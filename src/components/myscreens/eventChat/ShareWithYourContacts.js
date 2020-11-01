@@ -58,9 +58,9 @@ export default class ShareWithYourContacts extends TabModal {
   position = "center";
   borderTopLeftRadius = 0;
   borderTopRightRadius = 0;
-  borderRadius = 10;
+  borderRadius = 0;
   modalHeight = 400;
-  modalWidth = "98%";
+  modalWidth = "100%";
   onClosedModal() {
     this.props.onClosed();
   }

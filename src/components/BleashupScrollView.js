@@ -69,6 +69,7 @@ export default class BleashupScrollView extends BeComponent {
             }}>
                 <ScrollView
                     ref={"scrollViewRef"}
+                    onScroll={this.props.onScroll}
                     alwaysBounceVertical
                     nestedScrollEnabled={true}
                     onScrollEndDrag={({ nativeEvent }) => {

@@ -16,12 +16,19 @@ import BleashupScrollView from '../../BleashupScrollView';
 import AntDesign  from 'react-native-vector-icons/AntDesign';
 import GState from '../../../stores/globalState';
 import AnimatedComponent from '../../AnimatedComponent';
+import { _onScroll } from '../currentevents/components/sideButtonService';
+import SideButton from '../../sideButton';
+import  MaterialCommunityIcons  from 'react-native-vector-icons/MaterialCommunityIcons';
+import rounder from '../../../services/rounder';
+import shadower from '../../shadower';
 
 export default class AccordionModuleNative extends AnimatedComponent {
  initialize(){
    this.state = {
      expanded: false,
+     isActionButtonVisible:true
    };
+   this.onScroll = _onScroll.bind(this)
  }
   
   componentDidMount(){
@@ -67,9 +74,35 @@ export default class AccordionModuleNative extends AnimatedComponent {
   scrollToIndex(index){
     this.refs.accordion && this.refs.accordion.scrollToIndex(index)
   }
+  plusButtom() {
+    return <TouchableOpacity
+      style={{
+        backgroundColor: ColorList.indicatorInverted,
+        ...rounder(50, ColorList.indicatorInverted),
+        ...shadower(2),
+        justifyContent: "center",
+      }}
+      onPress={() => requestAnimationFrame(() => this.props.exportReports && this.props.exportReports())}
+    >
+      <MaterialCommunityIcons
+        type="AntDesign"
+        name="file-export"
+        style={{
+          ...GState.defaultIconSize,
+          color: ColorList.indicatorColor,
+          alignSelf: "center",
+        }}
+      />
+    </TouchableOpacity>
+  }
   render() {
-    return <BleashupScrollView
+    return <View><BleashupScrollView
+      onScroll={this.onScroll}
       ref="accordion"
+      style={{
+        height:'100%',
+        width:'100%'
+      }}
       firstIndex={0}
       renderPerBatch={7}
       initialRender={15}
@@ -79,7 +112,12 @@ export default class AccordionModuleNative extends AnimatedComponent {
       dataSource={this.props.dataSource}
       backgroundColor={this.props.backgroundColor}
       renderItem={(item, key,index) => this.renderItem(item,key,index)}
-     />;
+    />
+      {this.state.isActionButtonVisible && this.props.master? <SideButton
+        buttonColor={ColorList.transparent}
+        renderIcon={() => this.plusButtom()}
+        ></SideButton>:null}
+    </View>;
   }
   toggleExpand = (item) => {
    this.animateUI()

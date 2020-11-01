@@ -4,9 +4,11 @@ import FileViewer from 'react-native-file-viewer';
 import { LogLevel, RNFFmpeg, RNFFprobe } from 'react-native-ffmpeg';
 import { PermissionsAndroid } from 'react-native';
 import Texts from '../meta/text';
+import GState from '../stores/globalState/index';
+import Toaster from './Toaster';
 
 class Picker {
-  constructor() {}
+  constructor() { }
 
   SnapPhoto(crop) {
     return new Promise((resolve, reject) => {
@@ -16,39 +18,47 @@ class Picker {
         //openCameraOnStart: true,
         includeBase64: false,
         returnAfterShot: true,
-        title: "Selecet Photo",
         // returnAfterShot:true,
         compressQuality: 0.5,
       }).then((response) => {
         this.uploaded = true;
         //console.warn("opening camera")
-        let temp = response.path.split('/');
-        resolve({
+        const resolver = (response) => resolve({
           source: response.path,
           filename: temp[temp.length - 1],
           content_type: response.mime,
           size: response.size,
         });
+        let temp = response.path.split('/');
+        const size = GState.toMB(response.size)
+        console.warn("file size is: ",size)
+        if (size > 100 ) {
+          Toaster({ text: Texts.media_too_large })
+          reject({ error: 'this file is extra large' })
+        } else {
+          resolver(response)
+        }
       });
     });
   }
 
   CompressVideo(response) {
+    console.warn("response to compress is: ",response)
     return new Promise((resolve, reject) => {
       let size = 0;
-      let file = response.source.split('/');
+      let file = response.path.split('/');
       let temp = file[file.length - 1].split('.');
       let ext = temp.pop();
       let nameString = temp.join('.');
       let fileinfo = {
         name: nameString,
         ext: ext,
-        url: response.source,
+        url: response.path,
         base: file.join('/'),
       };
       fileinfo.response =
         fileinfo.base + '/' + fileinfo.name + '_wb_compress.' + fileinfo.ext;
-      RNFFmpeg.executeWithArguments([
+      RNFFprobe.executeWithArguments([
         '-i',
         fileinfo.url.replace('file://', ''),
         '-c:v',
@@ -57,8 +67,8 @@ class Picker {
       ]).then((result) => {
         this.uploaded = true;
         //console.warn("opening camera")
-        let temp = response.source.split('/');
-        RNFFmpeg.resetStatistics();
+        let temp = response.path.split('/');
+        RNFFprobe.resetStatistics && RNFFprobe.resetStatistics();
         resolve({
           source: fileinfo.response,
           filename: response.filename,
@@ -77,7 +87,7 @@ class Picker {
         '-i',
         file.replace('file://', ''),
         '-vf',
-        'scale=300:-1',
+        'scale=500:-1',
         compressed.replace('file://', ''),
       ]).then(() => {
         resolve(compressed);
@@ -87,31 +97,6 @@ class Picker {
   CancleCompression() {
     RNFFmpeg.cancel();
   }
-  SnapVideo() {
-    return new Promise((resolve, reject) => {
-      ImagePicker.openPicker({
-        cropping: false,
-        //isCamera: true,
-        mediaType: "video",
-        //openCameraOnStart: true,
-        includeBase64: false,
-        returnAfterShot: true,
-        title: "Select A Video",
-        // returnAfterShot:true,
-        compressQuality: 0.5,
-      }).then((response) => {
-        console.warn(response);
-        let temp = response.path.split('/');
-        resolve({
-          source: response.path,
-          filename: temp[temp.length - 1],
-          content_type: response.mime,
-          size: response.size,
-        });
-      });
-    });
-  }
-  
   /**
    * Picks multiple photos from the phone
    */
@@ -151,7 +136,7 @@ class Picker {
       const res = await DocumentPicker.pick({
         type: [DocumentPicker.types.audio],
       });
-      return res;
+      this.concludeSize(res)
     } catch (err) {
       if (DocumentPicker.isCancel(err)) {
         return null;
@@ -160,7 +145,15 @@ class Picker {
       }
     }
   }
-
+  concludeSize(res){
+    const size = GState.toMB(res.size)
+    if (size > 100) {
+      Toaster({ text: Texts.file_too_large })
+      throw { error: 'file is too large' }
+    } else {
+      return res;
+    }
+  }
   /**
    * Picks file from the phone
    */
@@ -169,8 +162,7 @@ class Picker {
       const res = await DocumentPicker.pick({
         type: [DocumentPicker.types.allFiles],
       });
-      //res.uri = res.uri.replace('content://', 'file://')
-      return res;
+      return this.concludeSize(res)
     } catch (err) {
       if (DocumentPicker.isCancel(err)) {
         return null;
@@ -185,22 +177,22 @@ class Picker {
    * checks the duration of a media be it locally or web. 
    * But so far, only web is tested and confirmed as working. 
    */
-  determineMediaDuration(url){
+  determineMediaDuration(url) {
     return RNFFprobe.getMediaInformation(url)
   }
   openFile(source) {
     FileViewer.open(
       source
     ).then(
-      () => {}
+      () => { }
     ).catch((e) => {
-            PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.MANAGE_DOCUMENTS, {
-                title: Texts.write_to_disk_permission,
-                message: Texts.writ_to_disk_permission_message
-            }).then(pers => {
-                console.warn(pers)
-            })
-        })
+      PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.MANAGE_DOCUMENTS, {
+        title: Texts.write_to_disk_permission,
+        message: Texts.writ_to_disk_permission_message
+      }).then(pers => {
+        console.warn(pers)
+      })
+    })
   }
   CleanAll() {
     if (this.uploaded) {

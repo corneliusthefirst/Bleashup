@@ -40,6 +40,7 @@ export default class StarDetail extends AnimatedComponent {
             isOpen: false,
             check: false,
         };
+        this.updateSource = this.updateSource.bind(this)
     }
 
     containsMedia() {
@@ -81,7 +82,11 @@ export default class StarDetail extends AnimatedComponent {
                 this.activity_id,
                 this.item_id
             ).then((star) => {
-                this.item = Array.isArray(star) && star[0];
+                star = Array.isArray(star) && star[0];
+                if (this.item.url.main_source == star.url.source) {
+                    star.url = this.item.url
+                }
+                this.item = star
                 stores.Messages.updateStarMessageInfoMessage(
                     this.activity_id,
                     this.item_id,
@@ -187,7 +192,13 @@ export default class StarDetail extends AnimatedComponent {
         ];
     }
     updateSource(aid, data) {
-        stores.Highlights.updateHighlightUrl(aid, data);
+        stores.Highlights.updateHighlightUrl(aid, {
+            ...data, url:
+            {
+                ...data.url,
+                main_source: this.item.url.source,
+            }
+        });
     }
     render() {
         return this.state.mounted ? (

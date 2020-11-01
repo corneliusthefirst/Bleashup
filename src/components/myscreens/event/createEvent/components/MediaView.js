@@ -21,6 +21,7 @@ export default class MedaiView extends Component {
     }
 
     render() {
+        this.url = this.props.url
         return this.containsFile() ? <FileAttarchementMessaege
             data={this.props.data}
             activity_id={this.props.activity_id}

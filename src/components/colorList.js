@@ -1,11 +1,10 @@
 /* eslint-disable prettier/prettier */
 import React, { Component } from 'react';
 import { Dimensions } from 'react-native';
-
 let { height, width } = Dimensions.get('window');
 class colorlist {
   constructor() {
-
+    this.isDarkMode = true
   }
   errorColor = '#A91A84';
   containerHeight = height;
@@ -20,6 +19,7 @@ class colorlist {
   replyColor = "#56B671"
   iconGray = '#555756';
   iconActive = '#1FABAB';
+  orangeColor = "orange"
   iconInactive = '#ADE3D2';
   transparentWhite = 'rgba(255, 255, 252,.4)';
   replyBackground = 'rgba(34, 0, 0, 0.1)';

@@ -100,7 +100,7 @@ class CalendarService {
                     endDate: (new Date()).toISOString(),
                 }
             }*/
-      console.warn(calendarEvent);
+      //console.warn(calendarEvent);
       return RNCalendarEvents.saveEvent(calendarEvent.title, {
         ...calendarEvent,
         title: newName || calendarEvent.title,

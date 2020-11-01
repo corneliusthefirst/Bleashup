@@ -78,8 +78,8 @@ export default class VideoUploader extends BePureComponent {
         this.props.message.source = "file://" + newDir;
         this.props.message.thumbnailSource =
             baseUrl + filename.split(".")[0] + "_thumbnail.jpeg";
-        (this.props.message.temp = path),
-            (this.props.message.total = this.state.total);
+        this.props.message.temp = path
+        this.props.message.total = this.state.total;
         this.props.message.received = 0;
         this.props.message.file_name = filename;
         this.props.replaceMessage(this.props.message);
@@ -98,10 +98,7 @@ export default class VideoUploader extends BePureComponent {
             uploading: false,
         });
     }
-    toMB(data) {
-        mb = 1000 * 1000;
-        return data / mb;
-    }
+    toMB = GState.toMB
     cancelUpLoad() {
         //Pickers.CancleCompression()
         this.exchanger.task && this.exchanger.task.cancel((err, taskID) => { });

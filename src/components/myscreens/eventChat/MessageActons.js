@@ -16,6 +16,7 @@ import  Entypo  from 'react-native-vector-icons/Entypo';
 import GState from "../../../stores/globalState";
 import Fontisto from "react-native-vector-icons/Fontisto"
 import Feather  from 'react-native-vector-icons/Feather';
+import Foundation from 'react-native-vector-icons/Foundation';
 
 export default class MessageActions extends BleashupModal {
 
@@ -23,7 +24,7 @@ export default class MessageActions extends BleashupModal {
     modalWidth = "100%"
     modalMinHieight=50
     borderRadius = 0
-
+    backdropOpacity=.3
     actionsContainerStyles = {
         width: '95%',
         height: 60,
@@ -54,22 +55,27 @@ export default class MessageActions extends BleashupModal {
             color: color || ColorList.bodyIcon
         }
         let iconName = name
-        switch (type){
-           case "Ionicons": return <Ionicons name={iconName} style={style}></Ionicons>;
-           case "Entypo": return <Entypo name={iconName} style={style}></Entypo>;
-           case "FontAwesome5": return <FontAwesome5 name={iconName} style={style}></FontAwesome5>;
-           case "FontAwesome": return <FontAwesome name={iconName} style={style}></FontAwesome>;
-           case "SimpleLineIcons": return <SimpleLineIcons name={iconName} style={style}></SimpleLineIcons>;
-           case "MaterialIcons": return <MaterialIcons name={iconName} style={style}></MaterialIcons>;
-           case "Octicons": return <Octicons name={iconName} style={style}></Octicons>;
-           case "AntDesign": return <AntDesign name={iconName} style={style}></AntDesign>;
-           case "MaterialCommunityIcons": return <MaterialCommunityIcons name={iconName} style={style}></MaterialCommunityIcons>;
-           case "EvilIcons": return <EvilIcons name={iconName} style={style}></EvilIcons>;
-           case "Ionicons": <Ionicons name={iconName} style={style}></Ionicons>;
-           case "Fontisto": <Fontisto name={iconName} style={style}></Fontisto>;
-           case "Feather": return <Feather name={iconName} style={style}></Feather>;
-           default: return <View><Text style={{...GState.defaultTextStyle}}>{type}</Text></View>
+        const types = {
+           ["Ionicons"]: () => <Ionicons name={iconName} style={style}></Ionicons>,
+           ["Entypo"]: () => <Entypo name={iconName} style={style}></Entypo>,
+           ["FontAwesome5"]: () => <FontAwesome5 name={iconName} style={style}></FontAwesome5>,
+           ["FontAwesome"]: () => <FontAwesome name={iconName} style={style}></FontAwesome>,
+           ["SimpleLineIcons"]: () => <SimpleLineIcons name={iconName} style={style}></SimpleLineIcons>,
+           ["MaterialIcons"]: () => <MaterialIcons name={iconName} style={style}></MaterialIcons>,
+           ["Octicons"]: () => <Octicons name={iconName} style={style}></Octicons>,
+            ["AntDesign"]: () => <AntDesign name={iconName} style={style}></AntDesign>,
+           ["MaterialCommunityIcons"]:() => <MaterialCommunityIcons name={iconName} 
+           style={style}></MaterialCommunityIcons>,
+           ["EvilIcons"]: () => <EvilIcons name={iconName} style={style}></EvilIcons>,
+           ["Ionicons"]: () => <Ionicons name={iconName} style={style}></Ionicons>,
+           ["Fontisto"]: () => <Fontisto name={iconName} style={style}></Fontisto>,
+           ["Feather"]:  () => <Feather name={iconName} style={style}></Feather>,
+            ["Foundation"]: () => <Foundation name={iconName} style={style}></Foundation>
         }
+        const defaultVal = <View><Text style={{ ...GState.defaultTextStyle }}>{type}</Text></View>
+        return (types[type] && types[type]()) || defaultVal
+           
+        
     }
     renderActions(){
         return this.props.actions && 

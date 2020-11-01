@@ -4,34 +4,58 @@ import { View, TextInput, Text } from "react-native";
 import colorList from "./../../../../colorList";
 import GState from "../../../../../stores/globalState";
 import Texts from '../../../../../meta/text';
+import Entypo from 'react-native-vector-icons/Entypo';
+import ColorList from "./../../../../colorList";
+import { TouchableOpacity } from 'react-native';
+import BePureComponent from '../../../../BePureComponent';
+import ImojieSelector from "../../../eventChat/ImojiSelector";
+import EmojiModal from './EmojiModal';
 
-export default class CreateTextInput extends Component {
+export default class CreateTextInput extends BePureComponent {
   constructor(props) {
     super(props);
     this.state = {
       height: this.props.height
         ? this.props.height
         : colorList.containerHeight / 9,
+      isEmojiInputOpened: false
     };
+    this.showEmojiInpit = this.showEmojiInpit.bind(this)
+    this.handleEmojiSelected = this.handleEmojiSelected.bind(this)
   }
-
+  showEmojiInpit() {
+    if (this.state.isEmojiInputOpened) {
+      this.refs.input.focus()
+      this.props.changePosition && this.props.changePosition(false)
+    } else {
+      this.refs.input.blur()
+      this.props.changePosition && this.props.changePosition(true)
+    }
+    setTimeout(() => {
+      this.setStatePure({
+        isEmojiInputOpened: !this.state.isEmojiInputOpened
+      })
+    }, !this.state.isEmojiInputOpened ? 400 : 20)
+  }
   updateSize = (height) => {
     if (this.props.multiline == true) {
-      this.setState({ height: height >= 300 ? 300 : height });
+      this.setStatePure({ height: height >= 300 ? 300 : height });
     }
   };
-
+  handleEmojiSelected(imo) {
+    this.props.onChange && this.props.onChange((this.props.value||"") + imo)
+  }
   render() {
     return (
       <View
         style={{
-          height: this.state.height,
           alignItems: 'center',
+          margin: 3,
           width: "100%",
           backgroundColor: this.props.backgroundColor
             ? this.props.backgroundColor
             : colorList.bodyBackground,
-            ...this.props.style
+          ...this.props.style
         }}
       >
         <TextInput
@@ -44,9 +68,8 @@ export default class CreateTextInput extends Component {
           autoCorrect={true}
           selectTextOnFocus
           style={{
+            height: this.state.height,
             width: '100%',
-            height: '100%',
-
             borderBottomWidth: 1,
             borderColor: this.props.color
               ? this.props.color
@@ -66,6 +89,7 @@ export default class CreateTextInput extends Component {
               ? this.props.placeholderTextColor
               : colorList.bodyText
           }
+          ref={"input"}
           autoCapitalize="sentences"
           autoFocus={this.props.autoFocus}
           returnKeyType="next"
@@ -77,9 +101,22 @@ export default class CreateTextInput extends Component {
             this.props.numberOfLines ? this.props.numberOfLines : 1
           }
         />
+        {this.state.isEmojiInputOpened ? <EmojiModal
+          isOpen={this.state.isEmojiInputOpened}
+          onClosed={this.showEmojiInpit}
+          handleEmojiSelected={this.handleEmojiSelected}
+        >
+        </EmojiModal> : null}
         <View
           style={{
             position: "absolute",
+            backgroundColor: ColorList.descriptionBody,
+            flexDirection: 'row',
+            borderRadius: 5,
+            padding: '2%',
+            alignItems: 'center',
+            height: 20,
+            justifyContent: 'flex-end',
             alignSelf: "flex-end",
             marginRight: "1%",
           }}
@@ -90,14 +127,28 @@ export default class CreateTextInput extends Component {
               color: this.props.color
                 ? this.props.color
                 : colorList.bodySubtext,
-                fontSize: 12,
+              fontSize: 12,
               /*backgroundColor: this.props.multiline
                 ? "rgba(0, 0, 0, 0.1)"
                 : null,*/
             }}
-          note>{`${(this.props.value && this.props.value.length) || 0} / ${
-            this.props.maxLength || Texts.infinity
-          }`}</Text>
+            note>{`${(this.props.value && this.props.value.length) || 0} / ${
+              this.props.maxLength || Texts.infinity
+              }`}</Text>
+          {!this.props.noEmoji ? <TouchableOpacity
+            onPress={this.showEmojiInpit}
+          >
+            <Entypo
+              name={"emoji-happy"}
+              style={{
+                marginLeft: 6,
+                ...GState.defaultIconSize,
+                color: ColorList.indicatorColor,
+                fontSize: 16,
+              }}
+            >
+            </Entypo>
+          </TouchableOpacity> : null}
         </View>
       </View>
     );
