@@ -1235,7 +1235,7 @@ export default class TasksCreation extends BleashupModal {
                     data={{ id: this.state.currentRemind.id + '_create' }}
                     cleanMedia={() => this.saveURL(request.Remind().remind_url)}
                     height={180}
-                    defaultPhoto={require("../../../../assets/new-event.png")}
+                    defaultPhoto={require("../../../../assets/new-event.webp")}
                     url={this.state.currentRemind.remind_url || {}}
                   />
                 </View>

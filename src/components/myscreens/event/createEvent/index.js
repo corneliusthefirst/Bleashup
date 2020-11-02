@@ -53,7 +53,7 @@ export default class CreateEventView extends AnimatedComponent {
       title: "",
       showMore: false,
       photo: "",
-      DefaultPhoto: require("../../../../../Images/activity_post.png"),
+      DefaultPhoto: require("../../../../../Images/activity_post.webp"),
       searchImageState: false,
     };
     this.togglMore = this.togglMore.bind(this)

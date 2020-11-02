@@ -49,9 +49,9 @@ export default class globalState {
   @observable initialized = false;
   @observable currentRoom = null;
   @observable lang = "en";
-  profilePlaceHolder = require("../../../Images/images.jpeg");
-  bleashupImage = require("../../../assets/bleashuptitle1.png");
-  activity_place_holder = require("../../../assets/default_event_image.jpeg");
+  profilePlaceHolder = require("../../../Images/images.webp");
+  bleashupImage = require("../../../assets/bleashuptitle1.webp");
+  activity_place_holder = require("../../../assets/default_event_image.webp");
   @observable reply = null;
   @observable success = false;
   @observable previousCommitee = null;
@@ -234,7 +234,7 @@ export default class globalState {
   }
   baseURL = configs.file_server.protocol +
     "://" + configs.file_server.host + ":" + configs.file_server.port
-  backgroundImage = require('../../../assets/chat_screen.jpg')
+  backgroundImage = require('../../../assets/chat_screen.webp')
   featureBoxTitle = {
     ...this.defaultTextStyle,
     fontSize: 20,

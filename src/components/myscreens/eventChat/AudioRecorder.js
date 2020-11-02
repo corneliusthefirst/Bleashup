@@ -91,7 +91,7 @@ export default class AudioRecorder extends BeComponent {
             return false;
         }
     }
-    filename = dirs.DocumentDir + "/test.mp3";
+    filename = dirs.SDCardDir + '/Bleashup/Sound' + "/test.mp3";
     unmountingComponent() {
         SoundRecorder.stop().catch(() => { });
     }

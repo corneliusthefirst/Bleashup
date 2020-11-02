@@ -128,6 +128,7 @@ class AllReminds extends AnimatedComponent {
               <Image
                 source={GState.bleashupImage}
                 style={{
+                  marginLeft: 5,
                   width: 100,
                   height: 50,
                 }}

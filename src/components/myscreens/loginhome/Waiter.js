@@ -22,7 +22,7 @@ export default class Waiter extends Component{
             <Image style={{
                 width: GState.width * .8,
                 height: GState.height * .5,
-            }} resizeMode={"contain"} source={require("../../../../assets/Bleashup.png")}></Image>
+            }} resizeMode={"contain"} source={require("../../../../assets/Bleashup.webp")}></Image>
             {!this.props.dontshowSpinner?<Text style={styles.watingText} note>loading ...</Text>:null}
         </View>
     }

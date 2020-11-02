@@ -71,7 +71,7 @@ export default class EventHighlights extends BleashupModal {
       title: "",
       description: "",
       url: "",
-      defaultUrl: require("../../../../../../Images/post.png"),
+      defaultUrl: require("../../../../../../Images/post.webp"),
       initialScrollIndex: 2,
       highlightData: [],
       animateHighlight: false,
