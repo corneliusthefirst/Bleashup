@@ -196,6 +196,7 @@ class MessageRequest {
     });
   }
   seenMessage(messageID, committeeID, eventID) {
+    console.warn("calling seen on: ",messageID)
     return new Promise((resolve, reject) => {
       let seer = {
         phone: stores.LoginStore.user.phone,

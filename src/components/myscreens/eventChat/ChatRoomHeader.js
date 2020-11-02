@@ -117,7 +117,7 @@ export default class ChatRoomHeader extends BeComponent {
                         )}
                 </TouchableOpacity>}
                 {this.props.searching ? null : <TouchableOpacity onPress={() => {
-                    requestAnimationFrame(this.props.openSettings)
+                   !this.props.isRelation && requestAnimationFrame(this.props.openSettings)
                 }} style={{
                     flexDirection: 'column',
                     flex: 1,

@@ -57,7 +57,7 @@ export default class ConcerneeActions extends BeComponent {
                 <ActionButton.Item
                     buttonColor={ColorList.indicatorColor}
                     title={Texts.add_members}
-                    onPress={this.props.add_members}
+                    onPress={this.props.addMembers}
                     size={60}
                 >
 

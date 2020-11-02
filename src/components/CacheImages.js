@@ -87,9 +87,9 @@ class CacheImages extends BeComponent {
               !(this.props.style && this.props.style.width)) ||
             (this.props.source.uri &&
               this.props.source.uri.includes("thumbnail"))
-              ? this.getPhotoSmall(this.props.source.uri, 20)
+              ? this.getPhotoSmall(this.props.source.uri, 60)
               : this.props.thumbnails && testForURL(this.props.source.uri)
-              ? this.getPhotoSmall(this.props.source.uri, 100)
+              ? this.getPhotoSmall(this.props.source.uri, 200)
               : this.getRealURL(this.props.source.uri),
           priority: FastImage.priority.high,
         }}

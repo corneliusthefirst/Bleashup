@@ -91,7 +91,6 @@ export default class AudioMessage extends BePureComponent {
         });
     }
     componentDidUpdate(prevPro, prevState) {
-        //console.warn("component updating: ",prevPro.message, this.props.message)
         if (this.props.message.source !== prevPro.message.source) {
             if (testForURL(this.props.message.source)) {
                 this.startDownloader(true)
@@ -104,11 +103,11 @@ export default class AudioMessage extends BePureComponent {
     setAfterSuccess(path) {
         GState.downlading = false;
         this.source =
-            Platform.OS === "android" ? path + "/" : "" + path;
+            Platform.OS === "android" ? path  : "" + path;
         if (this.props.room) {
             stores.Messages.addStaticFilePath(
                 this.props.room,
-                this.props.message.source,
+                this.source,
                 this.props.message.id
             ).then(() => {
                 stores.Messages.addAudioSizeProperties(
@@ -140,7 +139,8 @@ export default class AudioMessage extends BePureComponent {
 
     }
     success(path, total, received) {
-        this.props.message.duration = this.exchanger.duration;
+        console.warn("download attempted! ",path,this.props.message.source)
+        this.props.message.duration = this.props.message.duration || this.exchanger.duration;
         this.setStatePure({
             total: total,
             received: received,
@@ -182,8 +182,7 @@ export default class AudioMessage extends BePureComponent {
         });
     }
     onFail(received, total) {
-        //console.warn(total,received)
-        this.props.message.duration = this.exchanger.duration;
+        this.props.message.duration = this.props.message.duration || this.exchanger.duration;
         this.setStatePure({
             received: received,
             downloading: false,
@@ -240,7 +239,6 @@ export default class AudioMessage extends BePureComponent {
                 this.player && this.player.getCurrentTime((time) => {
                     if (this.previousTime == time) clearInterval(this.refreshID);
                     else {
-                        console.warn(time / this.props.message.duration)
                         this.previousTime = time;
                         this.setStatePure({
                             currentPosition: (time / this.props.message.duration) || .02,

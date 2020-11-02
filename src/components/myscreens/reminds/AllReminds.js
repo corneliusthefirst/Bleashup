@@ -98,7 +98,7 @@ class AllReminds extends AnimatedComponent {
   render() {
     GState.setBeroute(this.props.navigation)
     this.data = stores.Reminds.allReminds.filter((ele) =>
-      globalFunctions.filterReminds(ele, this.state.searchString || "")
+      globalFunctions.filterReminds({...ele,description:null}, this.state.searchString || "")
     );
     
     return (

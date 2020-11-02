@@ -958,6 +958,7 @@ class ChatRoom extends AnimatedComponent {
                 created_at: moment().format(),
                 sender: this.props.user,
                 photo: message.source,
+                duration:message.duration,
                 sent: true,
                 source: message.temp || message.source,
                 type: message.type === 'image' ? 'photo' :

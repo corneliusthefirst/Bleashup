@@ -15,13 +15,13 @@ export default class AnimatedComponent extends BeComponent {
     initialize(){
 
     }
-    defaultAnimationDuration = 250
-    animationDuration = 250
+    defaultAnimationDuration = 100
+    animationDuration = 100
     animateUI(){
         //if(this.animationTimeout) clearTimeout(this.animationTimeout)
         //this.animationTimeout = setTimeout(() => {
             LayoutAnimation.configureNext({
-                duration: 250,
+                duration: 200,
                 create: {
                     type: LayoutAnimation.Types.easeInEaseOut,
                     property: LayoutAnimation.Properties.scaleX,

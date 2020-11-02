@@ -71,6 +71,7 @@ import messagePreparer from "../eventChat/messagePreparer";
 import { constructProgramLink } from "../eventChat/services";
 import { members_updated } from "../../../meta/events";
 import ColorList from "../../colorList";
+import public_states from './public_states';
 
 @observer
 class Reminds extends AnimatedComponent {
@@ -96,6 +97,14 @@ class Reminds extends AnimatedComponent {
     this.intervalFilterFunc = intervalFilterFunc.bind(this)
     this.returnActualDonners = returnActualDonners.bind(this)
   }
+  isCurrentRemindPublic(){
+    return this.state.currentTask.status == public_states.public_
+  }
+  getMyContacts(){
+    return stores.Contacts.contacts &&
+      stores.Contacts.contacts.contacts.length > 0 ?
+      stores.Contacts.contacts.contacts : []
+  }
   addMembers(currentMembers, item) {
     this.setStatePure({
       isSelectableContactsModalOpened: true,
@@ -103,7 +112,8 @@ class Reminds extends AnimatedComponent {
       adding: true,
       removing: false,
       notcheckAll: false,
-      contacts: this.props.event.participant.filter(
+      contacts: uniqBy([...this.props.event.participant, 
+        ...this.isCurrentRemindPublic() && this.getMyContacts() ],"phone").filter(
         (e) => findIndex(currentMembers, { phone: e.phone }) < 0
       ),
     });

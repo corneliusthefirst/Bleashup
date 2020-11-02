@@ -18,7 +18,7 @@ export default class AnimatedPureComponent extends BePureComponent {
         //if(this.animationTimeout) clearTimeout(this.animationTimeout)
         //this.animationTimeout = setTimeout(() => {
         LayoutAnimation.configureNext({
-            duration: 250,
+            duration: 200,
             create: {
                 type: LayoutAnimation.Types.easeInEaseOut,
                 property: LayoutAnimation.Properties.scaleX,

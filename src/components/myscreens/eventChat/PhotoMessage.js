@@ -26,7 +26,7 @@ export default class PhotoMessage extends BePureComponent {
         };
     }
     getPhotoSmall() {
-        return this.props.message.photo || this.props.message.source
+        return this.props.message.source
     }
     messageWidth = "100%"
     path = '/Photo/' + this.props.message.filename

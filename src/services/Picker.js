@@ -136,7 +136,7 @@ class Picker {
       const res = await DocumentPicker.pick({
         type: [DocumentPicker.types.audio],
       });
-      this.concludeSize(res)
+     return this.concludeSize(res)
     } catch (err) {
       if (DocumentPicker.isCancel(err)) {
         return null;

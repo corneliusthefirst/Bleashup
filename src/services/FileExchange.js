@@ -20,7 +20,7 @@ export default class FileExachange {
             let splitedDir = dir.split('/')
             let name_from_dir = splitedDir.pop()
             let extention = name_from_dir.split('.').pop()
-            splitedDir = splitedDir.join('/') + "/" + url.split('/').pop() + '.' + extention
+            splitedDir = splitedDir.join('/') + "/" + url.split('/').pop()
             this.url = url
             this.path = AppDir + splitedDir
             this.base = dir
