@@ -34,7 +34,8 @@ export default class Swipeout extends BePureComponent {
               alignSelf: "center",
               flexDirection: "row",
               justifyContent: "space-between",
-              width: "90%",
+              width: "100%",
+              ...this.props.style
             }}
           ></View>
           {this.props.children}

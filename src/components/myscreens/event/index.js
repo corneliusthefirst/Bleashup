@@ -186,7 +186,10 @@ export default class Event extends BeComponent {
       this.openPhotoSelectorModal();
     } else if (reply.type_extern.includes(replies.description)) {
       this.showDescription();
-    } else if (reply.type_extern.toLowerCase().includes("remind")) {
+    } else if (reply.type_extern.toLowerCase().includes("remind") 
+    || reply.type_extern == replies.member || 
+    reply.type_extern == replies.done || 
+    reply.type_extern == replies.confirmed) {
       const reply_options = {
         [reply.type_extern]: reply[reply.type_extern],
         type: reply.type_extern,
@@ -1588,7 +1591,6 @@ export default class Event extends BeComponent {
   }
 
   render() {
-    console.warn("current remind user is: ",this.getParam("type"))
     StatusBar.setHidden(false, true);
     return !this.state.mounted ? null :
       <View style={{ flex: 1, }}>

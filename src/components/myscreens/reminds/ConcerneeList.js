@@ -149,7 +149,7 @@ export default class ConcerneeList extends BeComponent {
                             from={item.from}>
                         </IntervalSeparator> :
                             <View style={{
-                                width: '90%',
+                                width: '100%',
                                 alignSelf: 'center',
                                 minHeight: 53,
                             }}
@@ -171,13 +171,18 @@ export default class ConcerneeList extends BeComponent {
                                 margin: '1%',
                                 minHeight: 53,
                                 padding: "1%",
-                                backgroundColor: isCurrentIndex ? ColorList.remindsTransparent : ColorList.bodyBackground,
+                                backgroundColor: isCurrentIndex ? 
+                                ColorList.remindsTransparent : 
+                                ColorList.bodyBackground,
                                 borderRadius: 5,
                                 alignItems: 'center',
                                 flexDirection: 'row',
-                                width: "90%"
+                                width: "100%"
                             }}
-                            key={index.toString()}><Swipeout onLongPress={() => {
+                            key={index.toString()}
+                            ><Swipeout style={{ 
+                                flex: 1,
+                             }} onLongPress={() => {
                                 Vibrator.vibrateShort()
                                 this.showAction(this.returnDataForRepply(item))
                             }} swipeRight={() => {
@@ -192,9 +197,11 @@ export default class ConcerneeList extends BeComponent {
                                         showHighlighter={() => this.props.currentRemindUser &&
                                             this.props.currentRemindUser.phone == item &&
                                             this.highlightItem(index)}
-                                        delay={this.delay} phone={item}></ProfileView>
+                                        delay={this.delay} phone={item}>
+                                    </ProfileView>
                                 </View>
-                            </Swipeout></View>)
+                            </Swipeout>
+                        </View>)
 
                 }}
             />
