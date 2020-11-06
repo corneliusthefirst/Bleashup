@@ -22,6 +22,7 @@ import SelectRelation  from './components/myscreens/eventChat/SelectRelation';
 import ContactsModal from './components/ContactsModal';
 import EventHighlights from './components/myscreens/event/createEvent/components/EventHighlights';
 import HomeTabs from './HomeTabs';
+import BackgroundImageChanger from './components/myscreens/settings/PageBackgroundChanger';
 
 enableScreens()
 const HomeNavigator = createStackNavigator({
@@ -43,6 +44,7 @@ const HomeNavigator = createStackNavigator({
     SelectRelation: { screen: SelectRelation },
     Actu: { screen: ActuView },
     PhotoViewer: { screen: PhotoViewer },
+    Background: {screen: BackgroundImageChanger},
     Video: { screen: VideoViewer },
     Event: { screen: Event },
 }, {

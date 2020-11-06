@@ -2,6 +2,7 @@
 import storage from './Storage';
 import { observable } from 'mobx';
 import moment from 'moment';
+import GState from './globalState';
 export default class States {
     constructor() {
         this.initializeStore()
@@ -44,6 +45,20 @@ export default class States {
     setProperties(states) {
         this.states = states;
         this.currentModif = moment().format();
+    }
+    initBackgroundImage() {
+        GState.backgroundImage = (this.states && this.states.app_background) ||
+            GState.defaultBackground
+    }
+    persistNewBackground(path) {
+        this.states.app_background = { uri: 'file://' + path }
+        this.initBackgroundImage()
+        this.setProperties(this.states)
+    }
+    removeBackground(){
+        this.states.app_background = null 
+        this.initBackgroundImage()
+        this.setProperties(this.states)
     }
     requestExists(id) {
         if (this.states.requests && this.states.requests[id]) {
@@ -132,7 +147,7 @@ export default class States {
         }
         this.setProperties(this.states)
     }
-    removeNewReminds(){
+    removeNewReminds() {
         delete this.states.newReminds
         this.setProperties(this.states)
     }
@@ -179,6 +194,7 @@ export default class States {
             .load({ key: this.key })
             .then((states) => {
                 states ? (this.states = states) : (this.states = {});
+                this.initBackgroundImage()
             })
             .catch((error) => {
                 this.states = {};
@@ -214,7 +230,7 @@ export default class States {
 
     }
     unPersistRequest(id) {
-        console.warn("unpersisting request: ",id)
+        console.warn("unpersisting request: ", id)
         if (this.states.requests && this.states.requests[id]) {
             delete this.states.requests[id]
         }

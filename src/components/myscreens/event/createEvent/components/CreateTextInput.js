@@ -28,7 +28,7 @@ export default class CreateTextInput extends BePureComponent {
       this.refs.input.focus()
       this.props.changePosition && this.props.changePosition(false)
     } else {
-      this.refs.input.blur()
+      if(this.refs && this.refs.input && this.refs.input.blur) this.refs.input.blur()
       this.props.changePosition && this.props.changePosition(true)
     }
     setTimeout(() => {

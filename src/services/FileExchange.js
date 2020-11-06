@@ -3,6 +3,7 @@ import rnFetchBlob from 'rn-fetch-blob';
 import * as configs from "../config/bleashup-server-config.json"
 import Toaster from './Toaster';
 import GState from '../stores/globalState/index';
+import Texts from '../meta/text';
 const { fs, config } = rnFetchBlob
 let dirs = fs.dirs
 const AppDir = fs.dirs.SDCardDir + '/Bleashup'
@@ -186,7 +187,7 @@ export default class FileExachange {
             })
         })
     }
-    cachFile(source) {
+    cachFile(source,back) {
         return new Promise((resolve, reject) => {
             this.appdir = this.appDir + '/cache/'
             this.tempDir = this.appdir + source.split('/').pop()
@@ -207,7 +208,7 @@ export default class FileExachange {
                         }
                     })
                 } else {
-                    Toaster({ text: "Audio Picking failed", duration: 4000 })
+                    Toaster({ text: Texts.audio_picking_failed, duration: 4000 })
                 }
             })
         })

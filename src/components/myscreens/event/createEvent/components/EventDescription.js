@@ -73,7 +73,7 @@ export default class EventDescription extends BleashupModal {
         <ScrollView keyboardShouldPersistTaps={"handled"}
           style={{ height: "60%", borderRadius: 0, marginTop: "5%" }}>
           <CreateTextInput
-            height={"75%"}
+            height={200}
             multiline
             maxLength={1000}
             style={{

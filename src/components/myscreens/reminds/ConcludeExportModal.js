@@ -31,8 +31,7 @@ export default class ConcludeExportModal extends BleashupModal {
         const doExport = (typer) => {
             calculateAndExportReport(
                 this.props.allreport ? null : this.props.donners,
-                this.props.allreport ? this.props.intervals ?
-                    this.props.intervals : [this.props.interval] : null,
+                this.props.allreport ? this.props.intervals : this.props.interval ? [this.props.interval] : null,
                 this.props.program_name, this.props.type, this.props.donnersFunc, typer).then((path) => {
                     this.setStatePure({
                         exporting: false

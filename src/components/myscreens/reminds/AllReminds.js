@@ -2,7 +2,7 @@ import React from "react";
 
 import BeComponent from "../../BeComponent";
 import TaskCardminimal from "./TaskCardMinimal";
-import { View, Text, Image, ImageBackground } from "react-native";
+import { View, Text, Image, ImageBackground,TouchableOpacity } from "react-native";
 import ColorList from "../../colorList";
 import bleashupHeaderStyle from "../../../services/bleashupHeaderStyle";
 import GState from "../../../stores/globalState";
@@ -26,6 +26,7 @@ import { _onScroll } from "../currentevents/components/sideButtonService";
 import SelectActivityToCreateRemind from "./SelectActivityToCreateRemind";
 import Spinner from "../../Spinner";
 import RemindMembers from "./RemindMembers";
+import EvilIcons  from 'react-native-vector-icons/EvilIcons';
 
 @observer
 class AllReminds extends AnimatedComponent {
@@ -43,6 +44,7 @@ class AllReminds extends AnimatedComponent {
     this.startAnim = this.startAnim.bind(this);
     this.createRemind = this.createRemind.bind(this);
     this.hideNewRemindModal = this.hideNewRemindModal.bind(this);
+    this.settings = this.settings.bind(this)
   }
   getItemLayout(item, index) {
     return { length: 80, offset: index * 80, index };
@@ -95,6 +97,9 @@ class AllReminds extends AnimatedComponent {
       />
     ) : null;
   }
+  settings(){
+    BeNavigator.navigateTo("Profile");
+  }
   render() {
     GState.setBeroute(this.props.navigation)
     this.data = stores.Reminds.allReminds.filter((ele) =>
@@ -134,20 +139,41 @@ class AllReminds extends AnimatedComponent {
                 }}
               ></Image>
             ) : null}
-            <View
-              style={{
-                flex: this.state.searching ? 1 : null,
-                width: this.state.searching ? null : 35,
-                height: 35,
-              }}
-            >
-              <Searcher
-                search={this.search}
-                startSearching={this.startSearching}
-                cancelSearch={this.cancelSearch}
-                searching={this.state.searching}
-                searchString={this.searchString}
-              />
+            <View style={{
+              flexDirection:'row',
+              alignItems: 'center',
+            }}>
+              {!this.state.searching ? <View style={{
+                marginRight: 10
+              }}><TouchableOpacity
+                style={{ 
+                  alignSelf: 'center',
+                 }}
+                onPress={this.settings}
+              >
+                  <EvilIcons
+                    name="gear"
+                    style={{ 
+                      ...GState.defaultIconSize
+                     }}
+                    onPress={this.settings}
+                  />
+                </TouchableOpacity></View> : null}
+              <View
+                style={{
+                  flex: this.state.searching ? 1 : null,
+                  width: this.state.searching ? null : 35,
+                  height: 35,
+                }}
+              >
+                <Searcher
+                  search={this.search}
+                  startSearching={this.startSearching}
+                  cancelSearch={this.cancelSearch}
+                  searching={this.state.searching}
+                  searchString={this.searchString}
+                />
+              </View>
             </View>
           </View>
           <View

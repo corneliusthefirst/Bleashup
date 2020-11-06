@@ -316,16 +316,14 @@ class ChatStore {
         data: {},
     };
     initializeStore() {
-        setTimeout(() => {
-            storage
-                .load({ key: this.key })
-                .then((chats) => {
-                    chats ? (this.messages = chats) : (this.messages = {});
-                })
-                .catch((error) => {
-                    this.messages = {};
-                });
-        })
+        storage
+            .load({ key: this.key })
+            .then((chats) => {
+                chats ? (this.messages = chats) : (this.messages = {});
+            })
+            .catch((error) => {
+                this.messages = {};
+            });
     }
     readFromStore() {
         return new Promise((resolve, reject) => {
@@ -360,7 +358,7 @@ class ChatStore {
             });
         });
     }
-    addVideoProperties(roomID, id, path, total, received,origin) {
+    addVideoProperties(roomID, id, path, total, received, origin) {
         return new Promise((resolve, reject) => {
             this.readFromStore().then((data) => {
                 let index = findIndex(data[roomID], { id: id });

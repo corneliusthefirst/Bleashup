@@ -64,6 +64,8 @@ class colorlist {
   recorderColor = 'rgba(92, 185, 158,1)'
   sendRand = () => Math.floor(Math.random() * (this.senTBoxColor.length - 1))
   senTBoxColor = ["#EFF8FE"]
+  transparentSentBox = 'rgba(239, 248, 254,.5)'
+  transparentReceivedBox = 'rgba(255, 255, 255,.5)'
   receivedBox = 'white';
   colorArray = ['#1e90ff', '#cd5c5c', '#48d1cc', '#663399', '#4682b4', '#663399', '#00ced1', '#7b68ee', '#5f9ea0', '#6495ed'];
 

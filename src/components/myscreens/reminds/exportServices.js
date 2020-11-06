@@ -17,7 +17,7 @@ function getDateKey(type) {
     [replies.member]: ''
   }[type] || ""
 }
-function computeIntervalRows(reports,type) {
+function computeIntervalRows(reports, type) {
   const getUserName = (phone) =>
     stores.TemporalUsersStore.Users[phone] &&
     stores.TemporalUsersStore.Users[phone].nickname;
@@ -66,15 +66,15 @@ function computeIntervalRows(reports,type) {
 }
 
 const dateFormat = 'YYYY-MM-DD HH:mm'
-const formInterval = (interval) => Texts.from + ' ' +
+const formInterval = (interval,currentDay) => Texts.from + ' ' +
   moment(interval.start).format(dateFormat) + ' ' + Texts.to + ' ' +
-  moment(interval.end).format(dateFormat)
+  moment(interval.end).format(dateFormat) + ' (' + `${Texts.day} ${currentDay}` + ')'
 
 function formExportabledData(reports, intervals, type, currentIndex,
   get_report_func, exportable, callback) {
   let interval = intervals && intervals[currentIndex]
-  const intervalString = interval && formInterval(interval)
-  const reportsXLSX = computeIntervalRows(reports,type)
+  const intervalString = interval && formInterval(interval,currentIndex+1)
+  const reportsXLSX = computeIntervalRows(reports, type)
   const tobeSaveInterval = [{
     [Texts.name]: ''
   }, intervalString ? {
@@ -83,8 +83,8 @@ function formExportabledData(reports, intervals, type, currentIndex,
   const XLSXData = [...tobeSaveInterval, ...reportsXLSX]
   exportable = [...(exportable || []), ...XLSXData]
   currentIndex = currentIndex + 1
-  if ((intervals &&
-    currentIndex >= intervals.length) || 
+  if (!intervals || (intervals &&
+    currentIndex >= intervals.length) ||
     !get_report_func) {
     callback(exportable)
   } else {
@@ -113,25 +113,24 @@ function saveToFile(XLSXData, program_name, type, interval, fileType) {
       Promise.resolve(pathToWrite)
     })
     .catch(error => {
-      console.error(error,"error")
       Promise.reject(error)
     });
 }
 
 export function calculateAndExportReport(reports, intervals,
-  program_name, type, get_report_func) {
+  program_name, type, get_report_func, file_type) {
   return new Promise((resolve, reject) => {
     formExportabledData(reports || get_report_func(intervals[0]),
       intervals, type,
       0,
       get_report_func,
       [], (data) => {
-        saveToFile(data, 
+        saveToFile(data,
           program_name,
-          type, 
-          intervals && intervals.length <= 1 && intervals[0]).then((path) => {
-          resolve(path)
-        })
+          type,
+          intervals && intervals.length <= 1 && intervals[0], file_type).then((path) => {
+            resolve(path)
+          })
       })
   })
 }

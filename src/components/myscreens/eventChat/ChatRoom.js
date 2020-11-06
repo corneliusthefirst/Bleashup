@@ -1373,7 +1373,7 @@ class ChatRoom extends AnimatedComponent {
             })
             clearTimeout(this.hideDaydateTimout)
             this.hideDaydateTimout = null
-        }, 500)
+        }, 100)
     }
     onFlatlistItemsChange(info) {
         if (this.itemChangeTimeout) clearImmediate(this.itemChangeTimeout)
@@ -1511,6 +1511,7 @@ class ChatRoom extends AnimatedComponent {
             <ChatRoomHeader
                 openDescription={this.props.openDescription}
                 getShareLink={this.props.getShareLink}
+                showProfile={this.props.showProfile}
                 openPage={this.props.openPage}
                 openSettings={this.props.openSettings}
                 showActivityPhotoAction={this.props.showActivityPhotoAction}

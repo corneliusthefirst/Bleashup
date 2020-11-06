@@ -13,6 +13,7 @@ import ActivityPages from './chatPages';
 import rounder from "../../../services/rounder";
 import { constructActivityLink } from './services';
 import BeComponent from '../../BeComponent';
+import BeNavigator from "../../../services/navigationServices";
 
 export default class ChatroomMenu extends BeComponent {
     constructor(props) {
@@ -107,6 +108,12 @@ export default class ChatroomMenu extends BeComponent {
                     }}>{Texts.get_share_link}
                     </MenuItem>
                         <MenuDivider color={ColorList.bodyText} /></View> : null}
+                    {<View><MenuItem textStyle={{ color: ColorList.bodyText }} onPress={() => {
+                        this.hideMenu()
+                        BeNavigator.gotoBackgroundChanger()
+                    }}>{Texts.background_image_settings}
+                    </MenuItem>
+                        <MenuDivider color={ColorList.bodyText} /></View>}
                 </Menu>
             </View>
         ) : <ImageActivityIndicator />;

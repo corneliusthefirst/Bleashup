@@ -176,7 +176,9 @@ export default class highlights {
       }
     });
   }
-
+  canUpdate(index){
+    return index >= 0
+  }
   @action updateHighlightTitle(EventID, NewHighlight, inform) {
     //console.warn('here im checking', EventID,NewHighlight);
     return new Promise((resolve, Reject) => {
@@ -184,14 +186,17 @@ export default class highlights {
         let RemindIndex = findIndex(Highlights[EventID], {
           id: NewHighlight.id,
         });
-        console.warn('here the remindIndex', RemindIndex);
-        Highlights[EventID][RemindIndex].title = NewHighlight.title;
-        Highlights[EventID][RemindIndex].updated_date = moment().format();
-        Highlights[EventID][RemindIndex].title_updated = inform;
-        Highlights[EventID][RemindIndex].updated = inform;
-
-        this.setProperty(Highlights);
-        resolve(Highlights[EventID][RemindIndex]);
+        if(this.canUpdate(RemindIndex)){
+          console.warn('here the remindIndex', RemindIndex);
+          Highlights[EventID][RemindIndex].title = NewHighlight.title;
+          Highlights[EventID][RemindIndex].updated_date = moment().format();
+          Highlights[EventID][RemindIndex].title_updated = inform;
+          Highlights[EventID][RemindIndex].updated = inform;
+          this.setProperty(Highlights);
+          resolve(Highlights[EventID][RemindIndex]);
+        } else {
+          resolve({})
+        }
       });
     });
   }
@@ -202,13 +207,16 @@ export default class highlights {
         let RemindIndex = findIndex(Highlights[EventID], {
           id: NewHighlight.id,
         });
-        Highlights[EventID][RemindIndex].description = NewHighlight.description;
-        Highlights[EventID][RemindIndex].updated_date = moment().format();
-        Highlights[EventID][RemindIndex].description_updated = inform;
-        Highlights[EventID][RemindIndex].updated = inform;
-
-        this.setProperty(Highlights);
-        resolve(Highlights[EventID][RemindIndex]);
+        if(this.canUpdate(RemindIndex)){
+          Highlights[EventID][RemindIndex].description = NewHighlight.description;
+          Highlights[EventID][RemindIndex].updated_date = moment().format();
+          Highlights[EventID][RemindIndex].description_updated = inform;
+          Highlights[EventID][RemindIndex].updated = inform;
+          this.setProperty(Highlights);
+          resolve(Highlights[EventID][RemindIndex]);
+        }else{
+          resolve({})
+        }
       });
     });
   }
@@ -219,14 +227,17 @@ export default class highlights {
         let RemindIndex = findIndex(Highlights[EventID], {
           id: NewHighlight.id,
         });
-        console.warn("updating heighlight url")
-        Highlights[EventID][RemindIndex].url = NewHighlight.url;
-        Highlights[EventID][RemindIndex].updated_date = moment().format();
-        Highlights[EventID][RemindIndex].url_updated = inform;
-        Highlights[EventID][RemindIndex].updated = inform;
+        if(this.canUpdate(RemindIndex)){
+          Highlights[EventID][RemindIndex].url = NewHighlight.url;
+          Highlights[EventID][RemindIndex].updated_date = moment().format();
+          Highlights[EventID][RemindIndex].url_updated = inform;
+          Highlights[EventID][RemindIndex].updated = inform;
 
-        this.setProperty(Highlights);
-        resolve(Highlights[EventID][RemindIndex]);
+          this.setProperty(Highlights);
+          resolve(Highlights[EventID][RemindIndex]);
+        }else{
+          resolve({})
+        }
       });
     });
   }
@@ -237,16 +248,18 @@ export default class highlights {
         let RemindIndex = findIndex(Highlights[EventID], {
           id: NewHighlight.id,
         });
-
-        Highlights[EventID][RemindIndex].title = NewHighlight.title;
-        Highlights[EventID][RemindIndex].url = NewHighlight.url;
-        Highlights[EventID][RemindIndex].description = NewHighlight.description;
-        Highlights[EventID][RemindIndex].updated_date = moment().format();
-        Highlights[EventID][RemindIndex].all_updated = inform;
-        Highlights[EventID][RemindIndex].updated = inform;
-
-        this.setProperty(Highlights);
-        resolve(Highlights[EventID][RemindIndex]);
+        if(this.canUpdate(RemindIndex)){
+          Highlights[EventID][RemindIndex].title = NewHighlight.title;
+          Highlights[EventID][RemindIndex].url = NewHighlight.url;
+          Highlights[EventID][RemindIndex].description = NewHighlight.description;
+          Highlights[EventID][RemindIndex].updated_date = moment().format();
+          Highlights[EventID][RemindIndex].all_updated = inform;
+          Highlights[EventID][RemindIndex].updated = inform;
+          this.setProperty(Highlights);
+          resolve(Highlights[EventID][RemindIndex]);
+        }else{
+          resolve({})
+        }
       });
     });
   }
@@ -311,90 +324,3 @@ export default class highlights {
     });
   }
 }
-
-/**
- *
-  @action addHighlights(EventID, Highlight) {
-    return new Promise((resolve, Reject) => {
-      this.readFromStore().then((Highlights) => {
-        if (!Highlights[EventID] || Highlights[EventID].length !== 0) {
-          if (Highlight.length === 1) {
-            Highlights = reject(Highlights, { id: Highlight[0].id });
-          }
-          Highlights = uniqBy(Highlight.concat(Highlights), 'id');
-        } else {
-          Highlights = Highlight;
-        }
-        this.saveKey.data = Highlights;
-        storage.save(this.saveKey).then(() => {
-          this.highlights = this.saveKey.data;
-          resolve();
-        });
-      });
-    });
-  }
-
-
-  fetchHighlightsFromRemote(EventID) {
-    let sorter = (a, b) =>
-      a.created_at > b.created_at ? -1 : a.created_at < b.created_at ? 1 : 0;
-    return new Promise((resolve, reject) => {
-      if (
-        this.curentTemporalHighlight[EventID] &&
-        this.curentTemporalHighlight[EventID].length > 0
-      ) {
-        resolve(this.curentTemporalHighlight[EventID]);
-      } else {
-        let eventid = request.EventID();
-        eventid.event_id = EventID;
-        tcpRequest
-          .getHighlights(eventid, eventid.event_id + 'highlights')
-          .then((JSONDATA) => {
-            serverEventListener
-              .sendRequest(JSONDATA, eventid.event_id + 'highlights')
-              .then((Data) => {
-                if (Data.data === 'empty') {
-                  resolve([]);
-                } else {
-                  this.replaceHighlights(
-                    Array.isArray(Data.data)
-                      ? uniqBy(Data.data, 'id')
-                      : [Data.data],
-                    EventID
-                  ).then(() => {
-                    this.curentTemporalHighlight[EventID] = Data.data;
-                    resolve(
-                      uniqBy(
-                        (Array.isArray(Data.data)
-                          ? uniqBy(Data.data, 'id')
-                          : [Data.data]
-                        ).sort(sorter),
-                        'id'
-                      )
-                    );
-                  });
-                }
-              })
-              .catch((error) => {
-                resolve([]);
-              });
-          });
-      }
-    });
-  }
-
-  @action updateEventHighlights(EventID, newHighlights) {
-    return new Promise((resolve, reject) => {
-      this.readFromStore().then((Highlights) => {
-        Highlights = reject(Highlights, ["event_id", EventID]);
-        Highlights = Highlights.concat(newHighlights);
-        this.saveKey.data = sortBy(Highlights, "update_date");
-        storage.save(this.saveKey).then(() => {
-          this.highlights = this.saveKey.data;
-          resolve();
-        });
-      });
-    });
-  }
-
- */

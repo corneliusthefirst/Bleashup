@@ -9,6 +9,7 @@ import GState from '../../../stores/globalState/index';
 import ColorList from '../../colorList';
 import rounder from "../../../services/rounder";
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
+import Texts from "../../../meta/text";
 
 let { height, width } = Dimensions.get('window');
 
@@ -47,7 +48,7 @@ export default class SettingView extends Component {
               }}>
                  <View style={{flex:1,flexDirection:"row",width:width/3,marginLeft:width/25,justifyContent:"space-between",alignItems:"center"}}>
                  <MaterialIcons name="arrow-back" active={true} type="MaterialIcons" style={{...GState.defaultIconSize, color:ColorList.headerIcon, }} onPress={() => this.props.navigation.navigate("Home")} />
-                 <Text style={{...GState.defaultTextStyle,fontSize:18,fontWeight:"bold",marginRight:"8%"}}>Settings</Text>
+                 <Text style={{...GState.defaultTextStyle,fontSize:18,fontWeight:"bold",marginRight:"8%"}}>{Texts.settings}</Text>
                  </View>
           </View>
         </View>

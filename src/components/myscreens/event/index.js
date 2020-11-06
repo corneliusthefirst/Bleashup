@@ -1589,7 +1589,6 @@ export default class Event extends BeComponent {
   goback() {
     this.props.navigation.goBack();
   }
-
   render() {
     StatusBar.setHidden(false, true);
     return !this.state.mounted ? null :

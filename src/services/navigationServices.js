@@ -8,8 +8,8 @@ class NavigatorClass {
     constructor() {
         //this.navigation = GState.nav
     }
-    navigateToActivity(tab, event) {
-        GState.nav.navigate('Event', { Event: event, tab: tab })
+    navigateToActivity(tab, event, withReply) {
+        GState.nav.navigate('Event', { Event: event, tab: tab, reply: withReply ? (reply) => this.handleReply(event) : null })
     }
     navigateTo(page, param) {
         GState.nav.navigate(page, param)
@@ -31,7 +31,7 @@ class NavigatorClass {
             if (data.message_id) {
                 this.goToChatWithIndex(activity, data.message_id)
             } else if (data.remind_id) {
-                this.gotoRemindsWithIndex(activity, data.remind_id, !noreply, JSON.parse(data.reply||"{}"))
+                this.gotoRemindsWithIndex(activity, data.remind_id, !noreply, JSON.parse(data.reply || "{}"))
             } else if (data.post_id) {
                 this.gotoStarWithIndex(activity, data.post_id, !noreply, data.reply)
             } else {
@@ -72,7 +72,7 @@ class NavigatorClass {
         GState.setPointedID(id)
         this.pushActivity(event, ActivityPages.reminds, {
             id,
-            reply: withReply ? (reply) => this.handleReply(event) : null, 
+            reply: withReply ? (reply) => this.handleReply(event) : null,
             ...options
         })
     }
@@ -110,6 +110,9 @@ class NavigatorClass {
     pushTo(page, param) {
         this.pushRoute(page, param, page)
     }
+    gotoBackgroundChanger() {
+        this.navigateTo('Background')
+    }
     leave_route_event = "leave_route"
     pushToChat(event, options) {
         emitter.emit(this.leave_route_event)
@@ -129,7 +132,7 @@ class NavigatorClass {
         this.navigateTo("QR")
     }
     navigateToCreateEvent(d) {
-        this.navigateTo("CreateEventView",d)
+        this.navigateTo("CreateEventView", d)
     }
     gotoStarDetail(post_id, activity_id, more) {
         let route = "StarDetail"
@@ -149,8 +152,8 @@ class NavigatorClass {
         this.pushTo("StarCreation", data)
 
     }
-    goToRemindReport(options){
-        this.pushTo("Report",options)
+    goToRemindReport(options) {
+        this.pushTo("Report", options)
     }
 }
 const BeNavigator = new NavigatorClass()

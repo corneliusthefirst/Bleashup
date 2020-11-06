@@ -262,7 +262,8 @@ export default class Message extends BeComponent {
                     stores.LoginStore.user.phone
                 )
             ) {
-                Requester.seenMessage(
+                //console.warn("sending seen message ", this.props.message.id)
+                this.props.message.id && Requester.seenMessage(
                     this.props.message.id,
                     this.props.firebaseRoom,
                     this.props.activity_id
@@ -437,6 +438,9 @@ export default class Message extends BeComponent {
         let color = this.state.sender
             ? ColorList.receivedBox
             : ColorList.senTBoxColor[ColorList.sendRand()];
+        let timeColor = !this.state.sender ? 
+        ColorList.transparentReceivedBox:
+        ColorList.transparentReceivedBox
         let GeneralMessageBoxStyle = {
             maxWidth: GState.width * .78,
             flexDirection: "column",
@@ -491,7 +495,7 @@ export default class Message extends BeComponent {
             padding: 2,
             ...reactionContanerStyle,
             borderRadius: 20,
-            backgroundColor: color,
+            backgroundColor: timeColor,
             ...shadower(1),
             alignItems: 'center',
             marginBottom: null,

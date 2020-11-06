@@ -434,7 +434,7 @@ class UpdatesDispatcher {
               true
             ).then((newEvent) => {
               //console.warn(newEvent.commitee)
-              this.applyToAllCommitees(newEvent.commitee, newParti, newEvent)
+              //this.applyToAllCommitees(newEvent.commitee, newParti, newEvent)
               let Change = {
                 title: Texts.update_on_main_activity,
                 event_id: update.event_id,

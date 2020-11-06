@@ -379,9 +379,7 @@ class LatestMessage extends AnimatedComponent {
                 moment(this.message.created_at).format("x") <=
                 moment(this.change.date).format("x")) ||
             (!this.message.created_at && this.change.date);
-        this.created_at = this.canShowChanges
-
-            ? this.change.date
+        this.created_at = this.canShowChanges ? this.change.date
             : this.message.created_at;
         this.unreadMessages = stores.States.getNewMessagesCount(this.props.id)
         return this.canShowDates ? (

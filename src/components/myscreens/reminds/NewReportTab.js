@@ -113,6 +113,7 @@ export default class ReportTabModal extends TabModal {
             getMembers={this.getMembers}
             removeMember={this.removeMember}
             addMembers={this.addMembers}
+            program_name={this.program_name}
             replyPrivate={this.replyPrivate.bind(this)}
             isRelation={this.isRelation}
             initDate={this.actualInterval ? this.actualInterval.start : moment().format(format)}

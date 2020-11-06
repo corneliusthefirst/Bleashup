@@ -85,7 +85,8 @@ class MessageRequest {
             });
           })
           .catch((error) => {
-            console.warn(error);
+            console.warn("sending message error: ", error);
+            reject()
           });
       });
     });
@@ -269,10 +270,11 @@ class MessageRequest {
       (messageData.action = typing), (messageData.data = typer);
       messageData.committee_id = committeeID;
       messageData.event_id = eventID;
+      const id = committeeID + typing
       tcpRequest
-        .messaging(messageData, committeeID + typing)
+        .messaging(messageData, id)
         .then((JSONdata) => {
-          EventListener.sendRequest(JSONdata, committeeID + typing).then(
+          EventListener.sendRequest(JSONdata, id).then(
             (res) => {
               MainUpdater.sayTyping(committeeID, typer).then(() => {
                 resolve();

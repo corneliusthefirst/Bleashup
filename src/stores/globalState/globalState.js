@@ -10,6 +10,7 @@ import active_types from '../../components/myscreens/eventChat/activity_types';
 const { height, width } = Dimensions.get('window');
 import * as configs from "../../config/bleashup-server-config.json"
 import moment from 'moment';
+import { containsAudio, containsPhoto, containsVideo, containsFile } from "../../components/myscreens/event/createEvent/components/mediaTypes.service";
 const deviceLanguage =
   Platform.OS === 'ios'
     ? NativeModules.SettingsManager.settings.AppleLocale ||
@@ -232,9 +233,26 @@ export default class globalState {
     width: '100%',
     justifyContent: 'center',
   }
+  buttonStyle = {
+    borderRadius: 10,
+    ...shadower(2),
+    backgroundColor: ColorList.descriptionBody,
+    padding: 5,
+    marginRight: 4,
+    alignSelf: 'center',
+    justifyContent: 'center',
+    flexDirection: 'row'
+
+  }
+  buttonTextStyle = {
+    ...this.defaultTextStyle,
+    color: ColorList.indicatorColor,
+    fontWeight: 'bold',
+  }
   baseURL = configs.file_server.protocol +
     "://" + configs.file_server.host + ":" + configs.file_server.port
-  backgroundImage = require('../../../assets/chat_screen.webp')
+  @observable backgroundImage = (stores && stores.States && stores.States.states && stores.States.states.app_background) || this.defaultBackground
+  defaultBackground = require('../../../assets/chat_screen.webp')
   featureBoxTitle = {
     ...this.defaultTextStyle,
     fontSize: 20,
@@ -253,17 +271,15 @@ export default class globalState {
   prepareStarForMention(replyer) {
     return {
       id: replyer.id,
-      video: replyer.url && replyer.url.video ? true : false,
-      audio:
-        (!replyer.url || !replyer.url.video) && replyer.url && replyer.url.audio
-          ? true
-          : false,
-      photo:
-        (!replyer.url || !replyer.url.video) && replyer.url && replyer.url.photo
-          ? true
-          : false,
-      sourcer: replyer.url && replyer.url.photo ? replyer.url.photo : null,
+      video: containsVideo(replyer.url) ? true : false,
+      audio: containsAudio(replyer.url) ? true : false,
+      photo: containsPhoto(replyer.url) ? true : false,
+      file: containsFile(replyer.url) ? true : false,
+      sourcer: replyer.url ? replyer.url.photo || 
+      replyer.url.video ? replyer.url.photo : 
+      replyer.url.source : null,
       title: `${replyer.title} : \n ${replyer.description}`,
+      duration: replyer.url && replyer.url.duration,
       replyer_phone: stores.LoginStore.user.phone,
       //replyer_name: stores.LoginStore.user.name,
       change_date: replyer.created_at,
@@ -277,23 +293,15 @@ export default class globalState {
     return {
       id: itemer.id,
       replyer_phone: itemer.creator.phone,
-      video: itemer.remind_url && itemer.remind_url.video ? true : false,
-      audio:
-        itemer.remind_url && !itemer.remind_url.video && itemer.remind_url.audio
-          ? true
-          : false,
-      photo:
-        itemer.remind_url && !itemer.remind_url.video && itemer.remind_url.photo
-          ? true
-          : false,
+      video: containsVideo(itemer.remind_url) ? true : false,
+      audio: containsAudio(itemer.remind_url) ? true : false,
+      photo: containsPhoto(itemer.remind_url) ? true : false,
+      file: containsFile(itemer.remind_url) ? true : false,
+      duration: itemer.remind_url && itemer.remind_url.duration,
       sourcer:
-        itemer.remind_url && itemer.remind_url.video
+        itemer.remind_url ? itemer.remind_url.video || itemer.remind_url.photo
           ? itemer.remind_url.photo
-          : itemer.remind_url && itemer.remind_url.photo
-            ? itemer.remind_url.photo
-            : itemer.remind_url && itemer.remind_url.audio
-              ? itemer.remind_url.audio
-              : null,
+          : itemer.remind_url.source : null,
       type_extern: replies.reminds,
       title: itemer.title + ": \n" + itemer.description,
       change_date: itemer.current_date,

@@ -98,7 +98,8 @@ class Reminds extends AnimatedComponent {
     this.returnActualDonners = returnActualDonners.bind(this)
   }
   isCurrentRemindPublic(){
-    return this.state.currentTask.status == public_states.public_
+    const rem = this.state.currentTask || this.state.remind
+    return (rem).status == public_states.public_
   }
   getMyContacts(){
     return stores.Contacts.contacts &&

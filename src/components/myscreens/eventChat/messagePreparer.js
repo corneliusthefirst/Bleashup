@@ -10,7 +10,6 @@ class preparer {
         message.sent = true
         message.type = message_types.remind_message
         message.activity_id = remind.event_id
-        message.forwarded = true
         message.from_activity = remind.event_id
         message.remind_id = remind.id
         message.committee_id = remind.event_id
@@ -24,7 +23,6 @@ class preparer {
         let message = request.Message()
         message.text = start.title
         message.sent = true
-        message.forwarded = true
         message.from_activity = start.event_id
         message.committee_id = start.event_id
         message.type = message_types.star_message

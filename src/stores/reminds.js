@@ -32,17 +32,15 @@ export default class Reminds {
   currentSaveTime = moment().format();
   previousSaveTime = moment().format();
   initializeReminds() {
-    setTimeout(() => {
-      storage
-        .load(this.readKey)
-        .then((data) => {
-          this.Reminds = data;
-          this.initallReminds()
-        })
-        .catch(() => {
-          this.Reminds = {};
-        });
-    }, 100)
+    storage
+      .load(this.readKey)
+      .then((data) => {
+        this.Reminds = data;
+        this.initallReminds()
+      })
+      .catch(() => {
+        this.Reminds = {};
+      });
   }
   initallReminds(justAll) {
     if (this.initTimeout) clearTimeout(this.initTimeout)
@@ -60,16 +58,14 @@ export default class Reminds {
     }, justAll ? 1000 : 0)
   }
   initializeRemindsIntervals() {
-    setTimeout(() => {
-      storage
-        .load(this.saveIntervalsKeys)
-        .then((data) => {
-          this.remindsIntervals = data;
-        })
-        .catch((err) => {
-          this.remindsIntervals = {};
-        });
-    }, 500)
+    storage
+      .load(this.saveIntervalsKeys)
+      .then((data) => {
+        this.remindsIntervals = data;
+      })
+      .catch((err) => {
+        this.remindsIntervals = {};
+      });
   }
   timer = () => {
     setInterval(() => {
@@ -135,12 +131,12 @@ export default class Reminds {
 
   issetRemindIntervals(remind) {
     const firstEndate = this.issetRemindInterval(remind) &&
-      this.remindsIntervals[remind.event_id][remind.id].currentDateIntervals 
+      this.remindsIntervals[remind.event_id][remind.id].currentDateIntervals
     return firstEndate && true
   }
-  issetRemindInterval(remind){
+  issetRemindInterval(remind) {
     return this.remindsIntervals[remind.event_id] &&
-      this.remindsIntervals[remind.event_id][remind.id] 
+      this.remindsIntervals[remind.event_id][remind.id]
   }
   getRemindsIntervals(remind, fresh) {
     return new Promise((resolve, reject) => {
@@ -161,7 +157,7 @@ export default class Reminds {
   }
 
   setPropertyCleanForIntervals(remind, prop) {
-    let canUpdate = !this.issetRemindInterval(remind)||
+    let canUpdate = !this.issetRemindInterval(remind) ||
       !this.remindsIntervals[remind.event_id][remind.id].correspondingDateInterval ||
       !prop.correspondingDateInterval ||
       (this.remindsIntervals[remind.event_id][remind.id].correspondingDateInterval.start
@@ -299,7 +295,9 @@ export default class Reminds {
       });
     });
   }
-
+  canUpdate(index) {
+    return index >= 0
+  }
   @action updateDescription(EventID, NewRemind, inform) {
     return new Promise((resolve, Reject) => {
       this.readFromStore().then((Reminds) => {
@@ -307,13 +305,17 @@ export default class Reminds {
         let RemindIndex = findIndex(Reminds[EventID], {
           id: NewRemind.remind_id,
         });
-        console.warn(RemindIndex, NewRemind);
-        Reminds[EventID][RemindIndex].description = NewRemind.description;
-        Reminds[EventID][RemindIndex].updated_at = moment().format();
-        Reminds[EventID][RemindIndex].description_updated = inform;
-        Reminds[EventID][RemindIndex].updated = inform;
-        this.setProperty(Reminds);
-        resolve(Reminds[EventID][RemindIndex]);
+        if (this.canUpdate(RemindIndex)) {
+          console.warn(RemindIndex, NewRemind);
+          Reminds[EventID][RemindIndex].description = NewRemind.description;
+          Reminds[EventID][RemindIndex].updated_at = moment().format();
+          Reminds[EventID][RemindIndex].description_updated = inform;
+          Reminds[EventID][RemindIndex].updated = inform;
+          this.setProperty(Reminds);
+          resolve(Reminds[EventID][RemindIndex]);
+        } else {
+          resolve({})
+        }
       });
     });
   }
@@ -323,18 +325,22 @@ export default class Reminds {
         let RemindIndex = findIndex(Reminds[EventID], {
           id: NewRemind.remind_id,
         });
-        Reminds[EventID][RemindIndex].calendar_id = !NewRemind.calendar_id
-          ? null
-          : NewRemind.calendar_id;
-        Reminds[EventID][RemindIndex].alarms = Reminds[EventID][RemindIndex]
-          .alarms
-          ? Reminds[EventID][RemindIndex].alarms
-          : alarms;
-        Reminds[EventID][RemindIndex].updated_at = moment().format();
-        Reminds[EventID][RemindIndex].description_updated = inform;
-        Reminds[EventID][RemindIndex].updated = inform;
-        this.setProperty(Reminds);
-        resolve(Reminds[EventID][RemindIndex]);
+        if (this.canUpdate(RemindIndex)) {
+          Reminds[EventID][RemindIndex].calendar_id = !NewRemind.calendar_id
+            ? null
+            : NewRemind.calendar_id;
+          Reminds[EventID][RemindIndex].alarms = Reminds[EventID][RemindIndex]
+            .alarms
+            ? Reminds[EventID][RemindIndex].alarms
+            : alarms;
+          Reminds[EventID][RemindIndex].updated_at = moment().format();
+          Reminds[EventID][RemindIndex].description_updated = inform;
+          Reminds[EventID][RemindIndex].updated = inform;
+          this.setProperty(Reminds);
+          resolve(Reminds[EventID][RemindIndex]);
+        } else {
+          resolve({})
+        }
       });
     });
   }
@@ -344,14 +350,18 @@ export default class Reminds {
         let RemindIndex = findIndex(Reminds[EventID], {
           id: NewRemind.remind_id,
         });
-        const oldRem = JSON.stringify(Reminds[EventID][RemindIndex]);
-        Reminds[EventID][RemindIndex].title = NewRemind.title;
-        Reminds[EventID][RemindIndex].updated_at = moment().format();
-        Reminds[EventID][RemindIndex].description_updated = inform;
-        Reminds[EventID][RemindIndex].updated = inform;
-        this.setProperty(Reminds);
-        GState.eventUpdated = true;
-        resolve(JSON.parse(oldRem));
+        if (this.canUpdate(RemindIndex)) {
+          const oldRem = JSON.stringify(Reminds[EventID][RemindIndex]);
+          Reminds[EventID][RemindIndex].title = NewRemind.title;
+          Reminds[EventID][RemindIndex].updated_at = moment().format();
+          Reminds[EventID][RemindIndex].description_updated = inform;
+          Reminds[EventID][RemindIndex].updated = inform;
+          this.setProperty(Reminds);
+          GState.eventUpdated = true;
+          resolve(JSON.parse(oldRem));
+        } else {
+          resolve({})
+        }
       });
     });
   }
@@ -362,15 +372,19 @@ export default class Reminds {
         let RemindIndex = findIndex(Reminds[EventID], {
           id: NewRemind.remind_id,
         });
-        Reminds[EventID][RemindIndex].status = NewRemind.status;
-        Reminds[EventID][RemindIndex].updated_at = moment().format();
-        Reminds[EventID][RemindIndex].description_updated = inform;
-        Reminds[EventID][RemindIndex].updated = inform;
-        //Reminds[EventID].splice(RemindIndex, 1, Reminds[EventID][RemindIndex]);
+        if (this.canUpdate(RemindIndex)) {
+          Reminds[EventID][RemindIndex].status = NewRemind.status;
+          Reminds[EventID][RemindIndex].updated_at = moment().format();
+          Reminds[EventID][RemindIndex].description_updated = inform;
+          Reminds[EventID][RemindIndex].updated = inform;
+          //Reminds[EventID].splice(RemindIndex, 1, Reminds[EventID][RemindIndex]);
 
-        this.setProperty(Reminds);
-        GState.eventUpdated = true;
-        resolve(Reminds[EventID][RemindIndex]);
+          this.setProperty(Reminds);
+          GState.eventUpdated = true;
+          resolve(Reminds[EventID][RemindIndex]);
+        } else {
+          resolve({})
+        }
       });
     });
   }
@@ -381,15 +395,17 @@ export default class Reminds {
         let RemindIndex = findIndex(Reminds[EventID], {
           id: NewRemind.remind_id,
         });
-        Reminds[EventID][RemindIndex].isDone = NewRemind.isDone;
-        Reminds[EventID][RemindIndex].updated_at = moment().format();
-        Reminds[EventID][RemindIndex].description_updated = inform;
-        Reminds[EventID][RemindIndex].updated = inform;
-        //Reminds[EventID].splice(RemindIndex, 1, Reminds[EventID][RemindIndex]);
-
-        this.setProperty(Reminds);
-        GState.eventUpdated = true;
-        resolve(Reminds[EventID][RemindIndex]);
+        if (this.canUpdate(RemindIndex)) {
+          Reminds[EventID][RemindIndex].isDone = NewRemind.isDone;
+          Reminds[EventID][RemindIndex].updated_at = moment().format();
+          Reminds[EventID][RemindIndex].description_updated = inform;
+          Reminds[EventID][RemindIndex].updated = inform;
+          this.setProperty(Reminds);
+          GState.eventUpdated = true;
+          resolve(Reminds[EventID][RemindIndex]);
+        } else {
+          resolve({})
+        }
       });
     });
   }
@@ -400,15 +416,19 @@ export default class Reminds {
         let RemindIndex = findIndex(Reminds[EventID], {
           id: NewRemind.remind_id,
         });
-        Reminds[EventID][RemindIndex].recursive_frequency =
-          NewRemind.recursive_frequency;
-        Reminds[EventID][RemindIndex].updated_at = moment().format();
-        Reminds[EventID][RemindIndex].updated = inform;
-        // Reminds[EventID].splice(RemindIndex, 1, Reminds[EventID][RemindIndex]);
-        this.computeRemindIntervals(Reminds[EventID][RemindIndex]);
-        this.setProperty(Reminds);
-        GState.eventUpdated = true;
-        resolve(Reminds[EventID][RemindIndex]);
+        if (this.canUpdate(RemindIndex)) {
+          Reminds[EventID][RemindIndex].recursive_frequency =
+            NewRemind.recursive_frequency;
+          Reminds[EventID][RemindIndex].updated_at = moment().format();
+          Reminds[EventID][RemindIndex].updated = inform;
+          // Reminds[EventID].splice(RemindIndex, 1, Reminds[EventID][RemindIndex]);
+          this.computeRemindIntervals(Reminds[EventID][RemindIndex]);
+          this.setProperty(Reminds);
+          GState.eventUpdated = true;
+          resolve(Reminds[EventID][RemindIndex]);
+        } else {
+          resolve({})
+        }
       });
     });
   }
@@ -419,15 +439,17 @@ export default class Reminds {
         let RemindIndex = findIndex(Reminds[EventID], {
           id: NewRemind.remind_id,
         });
-        Reminds[EventID][RemindIndex].location = NewRemind.location;
-        Reminds[EventID][RemindIndex].updated_at = moment().format();
-        Reminds[EventID][RemindIndex].description_updated = inform;
-        Reminds[EventID][RemindIndex].updated = inform;
-        //Reminds[EventID].splice(RemindIndex, 1, Reminds[EventID][RemindIndex]);
-
-        this.setProperty(Reminds);
-        GState.eventUpdated = true;
-        resolve(Reminds[EventID][RemindIndex]);
+        if (this.canUpdate(RemindIndex)) {
+          Reminds[EventID][RemindIndex].location = NewRemind.location;
+          Reminds[EventID][RemindIndex].updated_at = moment().format();
+          Reminds[EventID][RemindIndex].description_updated = inform;
+          Reminds[EventID][RemindIndex].updated = inform;
+          this.setProperty(Reminds);
+          GState.eventUpdated = true;
+          resolve(Reminds[EventID][RemindIndex]);
+        } else {
+          resolve({})
+        }
       });
     });
   }
@@ -438,15 +460,17 @@ export default class Reminds {
         let RemindIndex = findIndex(Reminds[EventID], {
           id: NewRemind.remind_id,
         });
-        Reminds[EventID][RemindIndex].remind_url = NewRemind.url;
-        Reminds[EventID][RemindIndex].updated_at = moment().format();
-        Reminds[EventID][RemindIndex].description_updated = inform;
-        Reminds[EventID][RemindIndex].updated = inform;
-        //Reminds[EventID].splice(RemindIndex, 1, Reminds[EventID][RemindIndex]);
-
-        this.setProperty(Reminds);
-        GState.eventUpdated = true;
-        resolve(Reminds[EventID][RemindIndex]);
+        if (this.canUpdate(RemindIndex)) {
+          Reminds[EventID][RemindIndex].remind_url = NewRemind.url;
+          Reminds[EventID][RemindIndex].updated_at = moment().format();
+          Reminds[EventID][RemindIndex].description_updated = inform;
+          Reminds[EventID][RemindIndex].updated = inform;
+          this.setProperty(Reminds);
+          GState.eventUpdated = true;
+          resolve(Reminds[EventID][RemindIndex]);
+        } else {
+          resolve({})
+        }
       });
     });
   }
@@ -457,14 +481,18 @@ export default class Reminds {
         let RemindIndex = findIndex(Reminds[EventID], {
           id: NewRemind.remind_id,
         });
-        Reminds[EventID][RemindIndex].period = NewRemind.period;
-        Reminds[EventID][RemindIndex].updated_at = moment().format();
-        Reminds[EventID][RemindIndex].description_updated = inform;
-        Reminds[EventID][RemindIndex].updated = inform;
-        this.setProperty(Reminds);
-        GState.eventUpdated = true;
-        this.computeRemindIntervals(Reminds[EventID][RemindIndex]);
-        resolve(Reminds[EventID][RemindIndex]);
+        if (this.canUpdate(RemindIndex)) {
+          Reminds[EventID][RemindIndex].period = NewRemind.period;
+          Reminds[EventID][RemindIndex].updated_at = moment().format();
+          Reminds[EventID][RemindIndex].description_updated = inform;
+          Reminds[EventID][RemindIndex].updated = inform;
+          this.setProperty(Reminds);
+          GState.eventUpdated = true;
+          this.computeRemindIntervals(Reminds[EventID][RemindIndex]);
+          resolve(Reminds[EventID][RemindIndex]);
+        } else {
+          resolve({})
+        }
       });
     });
   }
@@ -474,15 +502,17 @@ export default class Reminds {
         let RemindIndex = findIndex(Reminds[EventID], {
           id: NewRemind.remind_id,
         });
-        Reminds[EventID][RemindIndex].members = NewRemind.members;
-        Reminds[EventID][RemindIndex].updated_at = moment().format();
-        Reminds[EventID][RemindIndex].description_updated = inform;
-        Reminds[EventID][RemindIndex].updated = inform;
-        //Reminds[EventID].splice(RemindIndex, 1, Reminds[EventID][RemindIndex]);
-
-        this.setProperty(Reminds);
-        GState.eventUpdated = true;
-        resolve(Reminds[EventID][RemindIndex]);
+        if (this.canUpdate(RemindIndex)) {
+          Reminds[EventID][RemindIndex].members = NewRemind.members;
+          Reminds[EventID][RemindIndex].updated_at = moment().format();
+          Reminds[EventID][RemindIndex].description_updated = inform;
+          Reminds[EventID][RemindIndex].updated = inform;
+          this.setProperty(Reminds);
+          GState.eventUpdated = true;
+          resolve(Reminds[EventID][RemindIndex]);
+        } else {
+          resolve({})
+        }
       });
     });
   }
@@ -493,21 +523,23 @@ export default class Reminds {
         let RemindIndex = findIndex(Reminds[EventID], {
           id: NewRemind.remind_id,
         });
-        Reminds[EventID][RemindIndex].title = NewRemind.title;
-        Reminds[EventID][RemindIndex].description = NewRemind.description;
-        Reminds[EventID][RemindIndex].recursive_frequency =
-          NewRemind.recursive_frequency;
-        Reminds[EventID][RemindIndex].period = NewRemind.period;
-        Reminds[EventID][RemindIndex].status = NewRemind.status;
-        Reminds[EventID][RemindIndex].members = NewRemind.members;
-        Reminds[EventID][RemindIndex].updated_at = moment().format();
-        Reminds[EventID][RemindIndex].description_updated = inform;
-        Reminds[EventID][RemindIndex].updated = inform;
-        //Reminds[EventID].splice(RemindIndex, 1, Reminds[EventID][RemindIndex]); !this is not neccessary . replacing by index is ok.
-
-        this.setProperty(Reminds);
-        GState.eventUpdated = true;
-        resolve(Reminds[EventID][RemindIndex]);
+        if (this.canUpdate(RemindIndex)) {
+          Reminds[EventID][RemindIndex].title = NewRemind.title;
+          Reminds[EventID][RemindIndex].description = NewRemind.description;
+          Reminds[EventID][RemindIndex].recursive_frequency =
+            NewRemind.recursive_frequency;
+          Reminds[EventID][RemindIndex].period = NewRemind.period;
+          Reminds[EventID][RemindIndex].status = NewRemind.status;
+          Reminds[EventID][RemindIndex].members = NewRemind.members;
+          Reminds[EventID][RemindIndex].updated_at = moment().format();
+          Reminds[EventID][RemindIndex].description_updated = inform;
+          Reminds[EventID][RemindIndex].updated = inform;
+          this.setProperty(Reminds);
+          GState.eventUpdated = true;
+          resolve(Reminds[EventID][RemindIndex]);
+        } else {
+          resolve({})
+        }
       });
     });
   }
@@ -516,19 +548,23 @@ export default class Reminds {
     return new Promise((resolve, reject) => {
       this.readFromStore().then((Reminds) => {
         let index = findIndex(Reminds[EventID], { id: Remind.remind_id });
-        Reminds[EventID][index].members &&
-          Reminds[EventID][index].members.length > 0
-          ? (Reminds[EventID][index].members = Array.isArray(Remind.members)
-            ? Remind.members.concat(Reminds[EventID][index].members)
-            : [Remind.members].concat(Reminds[EventID][index].members))
-          : (Reminds[EventID][index].members = Array.isArray(Remind.members)
-            ? Remind.members
-            : [Remind.members]);
-        Reminds[EventID][index].updated_at = moment().format();
-        Reminds[EventID][index].updated = true;
-        this.setProperty(Reminds);
-        GState.eventUpdated = true;
-        resolve(Reminds[EventID][index]);
+        if (this.canUpdate(index)) {
+          Reminds[EventID][index].members &&
+            Reminds[EventID][index].members.length > 0
+            ? (Reminds[EventID][index].members = Array.isArray(Remind.members)
+              ? Remind.members.concat(Reminds[EventID][index].members)
+              : [Remind.members].concat(Reminds[EventID][index].members))
+            : (Reminds[EventID][index].members = Array.isArray(Remind.members)
+              ? Remind.members
+              : [Remind.members]);
+          Reminds[EventID][index].updated_at = moment().format();
+          Reminds[EventID][index].updated = true;
+          this.setProperty(Reminds);
+          GState.eventUpdated = true;
+          resolve(Reminds[EventID][index]);
+        } else {
+          resolve({})
+        }
       });
     });
   }
@@ -537,11 +573,15 @@ export default class Reminds {
     return new Promise((resolve, reject) => {
       this.readFromStore().then((Reminds) => {
         let index = findIndex(Reminds[EventID], { id: Remind.remind_id });
-        Reminds[EventID][index].must_report = Remind.must_report;
-        Reminds[EventID][index].updated_at = moment().format();
-        this.setProperty(Reminds);
-        GState.eventUpdated = true;
-        resolve(Reminds[EventID][index]);
+        if (this.canUpdate(index)) {
+          Reminds[EventID][index].must_report = Remind.must_report;
+          Reminds[EventID][index].updated_at = moment().format();
+          this.setProperty(Reminds);
+          GState.eventUpdated = true;
+          resolve(Reminds[EventID][index]);
+        } else {
+          resolve({})
+        }
       });
     });
   }
@@ -550,19 +590,23 @@ export default class Reminds {
     return new Promise((resolve, reject) => {
       this.readFromStore().then((Reminds) => {
         let index = findIndex(Reminds[EventID], { id: remindUpdate.remind_id });
-        const oldMembers = Reminds[EventID][index].members
-        Reminds[EventID][index].members = Reminds[EventID][
-          index
-        ].members.filter((ele) => ele &&
-          Array.isArray(remindUpdate.members)
-          ? remindUpdate.members.indexOf(ele.phone) < 0
-          : ele.phone !== remindUpdate.members
-        );
-        Reminds[EventID][index].updated_at = moment().format();
-        Reminds[EventID][index].updated = inform;
-        this.setProperty(Reminds);
-        GState.eventUpdated = true;
-        resolve({ ...Reminds[EventID][index], members: oldMembers });
+        if (this.canUpdate(index)) {
+          const oldMembers = Reminds[EventID][index].members
+          Reminds[EventID][index].members = Reminds[EventID][
+            index
+          ].members.filter((ele) => ele &&
+            Array.isArray(remindUpdate.members)
+            ? remindUpdate.members.indexOf(ele.phone) < 0
+            : ele.phone !== remindUpdate.members
+          );
+          Reminds[EventID][index].updated_at = moment().format();
+          Reminds[EventID][index].updated = inform;
+          this.setProperty(Reminds);
+          GState.eventUpdated = true;
+          resolve({ ...Reminds[EventID][index], members: oldMembers });
+        } else {
+          resolve({})
+        }
       });
     });
   }
@@ -572,21 +616,25 @@ export default class Reminds {
     return new Promise((resolve, rejec) => {
       this.readFromStore().then((Reminds) => {
         let index = findIndex(Reminds[EventID], { id: Remind.remind_id });
-        if (Reminds[EventID][index].donners &&
-          Reminds[EventID][index].donners.length > 0) {
-          Reminds[EventID][index].donners = reject(Reminds[EventID][index].donners,
-            ele => ele && ele.phone == Remind.donners[0].phone && ele.status &&
-              ele.status.date == Remind.donners[0].status.date)
-          Reminds[EventID][index].donners =
-            Remind.donners.concat(Reminds[EventID][index].donners)
+        if (this.canUpdate(index)) {
+          if (Reminds[EventID][index].donners &&
+            Reminds[EventID][index].donners.length > 0) {
+            Reminds[EventID][index].donners = reject(Reminds[EventID][index].donners,
+              ele => ele && ele.phone == Remind.donners[0].phone && ele.status &&
+                ele.status.date == Remind.donners[0].status.date)
+            Reminds[EventID][index].donners =
+              Remind.donners.concat(Reminds[EventID][index].donners)
+          } else {
+            Reminds[EventID][index].donners = Remind.donners
+          }
+          Reminds[EventID][index].updated_at = moment().format();
+          Reminds[EventID][index].updated = true;
+          this.setProperty(Reminds);
+          GState.eventUpdated = true;
+          resolve(Reminds[EventID][index]);
         } else {
-          Reminds[EventID][index].donners = Remind.donners
+          resolve({})
         }
-        Reminds[EventID][index].updated_at = moment().format();
-        Reminds[EventID][index].updated = true;
-        this.setProperty(Reminds);
-        GState.eventUpdated = true;
-        resolve(Reminds[EventID][index]);
       });
     });
   }
@@ -595,19 +643,23 @@ export default class Reminds {
     return new Promise((resolve, reject) => {
       this.readFromStore().then((Reminds) => {
         let index = findIndex(Reminds[EventID], { id: Remind.remind_id });
-        Reminds[EventID][index].confirmed &&
-          Reminds[EventID][index].confirmed.length > 0
-          ? (Reminds[EventID][index].confirmed = Array.isArray(Remind.confirmed)
-            ? [...Remind.confirmed, ...Reminds[EventID][index].confirmed]
-            : [...[Remind.confirmed], ...Reminds[EventID][index].confirmed])
-          : (Reminds[EventID][index].confirmed = Array.isArray(Remind.confirmed)
-            ? Remind.confirmed
-            : [Remind.confirmed]);
-        Reminds[EventID][index].updated_at = moment().format();
-        Reminds[EventID][index].updated = true;
-        this.setProperty(Reminds);
-        GState.eventUpdated = true;
-        resolve(Reminds[EventID][index]);
+        if (this.canUpdate(index)) {
+          Reminds[EventID][index].confirmed &&
+            Reminds[EventID][index].confirmed.length > 0
+            ? (Reminds[EventID][index].confirmed = Array.isArray(Remind.confirmed)
+              ? [...Remind.confirmed, ...Reminds[EventID][index].confirmed]
+              : [...[Remind.confirmed], ...Reminds[EventID][index].confirmed])
+            : (Reminds[EventID][index].confirmed = Array.isArray(Remind.confirmed)
+              ? Remind.confirmed
+              : [Remind.confirmed]);
+          Reminds[EventID][index].updated_at = moment().format();
+          Reminds[EventID][index].updated = true;
+          this.setProperty(Reminds);
+          GState.eventUpdated = true;
+          resolve(Reminds[EventID][index]);
+        } else {
+          resolve({})
+        }
       });
     });
   }
@@ -616,14 +668,18 @@ export default class Reminds {
     return new Promise((resolve, RejectPromise) => {
       this.readFromStore().then((Reminds) => {
         let index = findIndex(Reminds[EventID], { id: RemindId });
-        const oldRem = Reminds[EventID][index];
-        Reminds[EventID] = reject(Reminds[EventID], { id: RemindId });
-        RemindId === request.Remind().id
-          ? Reminds[EventID].unshift(request.Remind())
-          : null;
-        this.setProperty(Reminds);
-        GState.eventUpdated = true;
-        resolve(oldRem);
+        if (this.canUpdate(index)) {
+          const oldRem = Reminds[EventID][index];
+          Reminds[EventID] = reject(Reminds[EventID], { id: RemindId });
+          RemindId === request.Remind().id
+            ? Reminds[EventID].unshift(request.Remind())
+            : null;
+          this.setProperty(Reminds);
+          GState.eventUpdated = true;
+          resolve(oldRem);
+        } else {
+          resolve({})
+        }
       });
     });
   }
@@ -631,16 +687,20 @@ export default class Reminds {
     return new Promise((resolve, reject) => {
       this.readFromStore().then((reminds) => {
         let index = findIndex(reminds[EventID], { id: remindId });
-        const oldRemind = reminds[EventID][index];
-        reminds[EventID][index].extra = {
-          ...reminds[EventID][index].extra,
-          alarms: newAlarm,
-          date: newDate,
-        };
-        reminds[EventID][index].updated_at = moment().format();
-        this.setProperty(reminds);
-        GState.eventUpdated = true;
-        resolve(oldRemind);
+        if (this.canUpdate(index)) {
+          const oldRemind = reminds[EventID][index];
+          reminds[EventID][index].extra = {
+            ...reminds[EventID][index].extra,
+            alarms: newAlarm,
+            date: newDate,
+          };
+          reminds[EventID][index].updated_at = moment().format();
+          this.setProperty(reminds);
+          GState.eventUpdated = true;
+          resolve(oldRemind);
+        } else {
+          resolve({})
+        }
       });
     });
   }

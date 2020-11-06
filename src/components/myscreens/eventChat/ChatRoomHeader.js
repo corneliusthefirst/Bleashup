@@ -36,6 +36,7 @@ export default class ChatRoomHeader extends BeComponent {
         this.props.isRelation ? this.onlinePart = onlinePart.bind(this) : null
         this.props.isRelation && !this.checkUseOnlineStatus ?
             this.checkUseOnlineStatus = checkUserOnlineStatus.bind(this) : null
+        this.showOponent = this.showOponent.bind(this)
     }
     componentDidMount() {
         if (this.props.isRelation) {
@@ -49,6 +50,9 @@ export default class ChatRoomHeader extends BeComponent {
             clearInterval(this.checker)
             this.checker = null
         }
+    }
+    showOponent() {
+        this.props.showProfile(this.props.oponent)
     }
     color = ColorList.colorArray[Math.floor(Math.random() * (ColorList.colorArray.length - 1))]
     render() {
@@ -100,24 +104,25 @@ export default class ChatRoomHeader extends BeComponent {
                     ) : (
                             <View
                                 resizeMode={"cover"}
-                                style={{ ...rounder(30,this.color),
+                                style={{
+                                    ...rounder(30, this.color),
                                 }}
                                 source={this.props.isRelation ? GState.profilePlaceHolder : GState.activity_place_holder}
                             >
-                            <MaterialIcons
-                            style={{
-                                ...GState.defaultIconSize,
-                                color:ColorList.bodyBackground,
+                                <MaterialIcons
+                                    style={{
+                                        ...GState.defaultIconSize,
+                                        color: ColorList.bodyBackground,
                                         fontSize: 22,
-                            }}
-                            name={'chat-bubble'}
-                            >
-                            </MaterialIcons>
+                                    }}
+                                    name={'chat-bubble'}
+                                >
+                                </MaterialIcons>
                             </View>
                         )}
                 </TouchableOpacity>}
                 {this.props.searching ? null : <TouchableOpacity onPress={() => {
-                   !this.props.isRelation && requestAnimationFrame(this.props.openSettings)
+                    !this.props.isRelation ? requestAnimationFrame(this.props.openSettings) : this.showOponent()
                 }} style={{
                     flexDirection: 'column',
                     flex: 1,
@@ -126,7 +131,7 @@ export default class ChatRoomHeader extends BeComponent {
                     <View>
                         <TextContent
                             numberOfLines={1}
-                            onPress={!this.props.isRelation && this.props.openSettings}
+                            onPress={!this.props.isRelation ? this.props.openSettings : this.showOponent}
                             style={{
                                 alignSelf: 'center',
                                 color: ColorList.headerText,

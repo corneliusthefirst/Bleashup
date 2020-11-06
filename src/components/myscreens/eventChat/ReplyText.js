@@ -252,14 +252,8 @@ export default class ReplyText extends BePureComponent {
                             style={{ ...GState.defaultTextStyle }}
                             numberOfLines={1}
                           >
-                            {(this.props.reply.url &&
-                              this.props.reply.url.duration) ||
-                              this.props.reply.duration
-                              ? converToHMS(
-                                this.props.reply.type_extern === replies.posts
-                                  ? this.props.reply.url.duration
-                                  : this.props.reply.duration
-                              )
+                            {this.props.reply.duration
+                              ? converToHMS(this.props.reply.duration)
                               : null}
                           </Text>
                         ) : (

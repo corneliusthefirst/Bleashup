@@ -7,6 +7,7 @@ import BeNavigator from "../../../../services/navigationServices";
 import RelationProfile from "../../../RelationProfile";
 import BeComponent from "../../../BeComponent";
 import Swipeout from "../../eventChat/Swipeout";
+import ActivityPreview from "../ActivityPreview";
 
 let globalFunctions = GlobalFunctions;
 class PublicEvent extends BeComponent {
@@ -18,11 +19,14 @@ class PublicEvent extends BeComponent {
       swipeClosed: true,
       master: false,
     };
+    this.handlePhotoPressed = this.handlePhotoPressed.bind(this) 
+    this.hideActDetail = this.hideActDetail.bind(this)
   }
   shouldComponentUpdate(nextState, nextProps) {
     const shouldUpdate =
       !this.props.Event ||
       !nextProps.Event ||
+      this.state.showActDetails !== nextState.showActDetails ||
       this.props.Event.background !== nextProps.Event.background ||
       this.props.Event.about.title !== nextProps.Event.about.title;
     if (shouldUpdate) {
@@ -47,7 +51,16 @@ class PublicEvent extends BeComponent {
       </View>
     );
   }
-
+  handlePhotoPressed() {
+    this.setStatePure({
+      showActDetails: true
+    })
+  }
+  hideActDetail() {
+    this.setStatePure({
+      showActDetails: false
+    })
+  }
   renderTitle() {
     return (
       <View style={styles.mainContainer}>
@@ -63,7 +76,7 @@ class PublicEvent extends BeComponent {
                 navigate
                 searchString={this.props.searchString}
                 dim={50}
-                showPhoto={this.props.showPhoto}
+                showPhoto={this.handlePhotoPressed}
                 openDetails={this.props.openDetails}
                 Event={this.props.Event || {}}
               ></ActivityProfile>
@@ -79,6 +92,12 @@ class PublicEvent extends BeComponent {
       <View style={styles.renderContainer}>
         <View style={styles.renderSubContainer}>{this.renderTitle()}</View>
         <View style={styles.separator}></View>
+        {this.state.showActDetails ? <ActivityPreview
+          onClosed={this.hideActDetail}
+          event={this.props.Event}
+          isOpen={this.state.showActDetails}
+          showPhoto={this.props.showPhoto}
+        ></ActivityPreview> : null}
       </View>
     );
   }

@@ -217,6 +217,8 @@ export default class ConcerneeList extends BeComponent {
                 onClosed={this.hideAction.bind(this)}
             ></MessageActions> : null}
             {this.state.exportMembers? <ConcludeExportModal
+            program_name={this.props.program_name}
+            type={this.props.type}
             donners={this.props.getMembers()}
             isOpen={this.state.exportMembers}
             onClosed={this.hideExportMembers}

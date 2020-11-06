@@ -96,6 +96,7 @@ class ServerEventListener {
   invitationsDispatched = false;
   sendUnSentMessages() {
     let mess = stores.States.unsentMessagesExist()
+    //console.warn("unsent messages are: ", mess)
     if (mess) {
       console.warn("unsent messages exist! ");
       let ele = mess[0];
@@ -107,7 +108,7 @@ class ServerEventListener {
         this.sendUnSentMessages()
       }
     } else {
-      emitter.emit(this.events.cleared, this.data.data);
+      emitter.emit(this.events.cleared, this.data && this.data.data);
       this.informWaiters();
     }
   }
@@ -393,8 +394,11 @@ class ServerEventListener {
   }
   writeToSocket(data, init) {
     if (this.socket && this.socket.write) {
+      console.warn("writing to socket: ", data)
       init ? (this.initializing = true) : null;
       this.socket.write(data);
+    }else{
+      console.warn("socket not written: ", data);
     }
   }
   writeToSocketFresh(data, id, message) {
@@ -417,10 +421,11 @@ class ServerEventListener {
         this.messageData = this.returnRequestData(
           stores.States.getUnsentMessage(id)
         ).data;
-        console.warn("the message is: ", this.messageData);
+        //console.warn("the message is: ", this.messageData);
       }
       emitter.once(this.events.successful_ + id, () => {
         if (message) {
+          console.warn("successfull message received: ",id)
           MainUpdater.saveMessage(
             { ...this.messageData, sent: true },
             this.messageData.committee_id,
@@ -428,10 +433,12 @@ class ServerEventListener {
             this.messageData.notme
           ).then(() => {
             stores.States.unPersistRequestUnsentMessage(id);
+            this.clearRetriesFinal(id)
             this.sendUnSentMessages()
           });
         } else {
           stores.States.unPersistRequest(id);
+          this.clearRetriesFinal(id)
         }
       });
       emitter.once(this.events.unsuccessful_ + id, () => {
@@ -476,11 +483,17 @@ class ServerEventListener {
   working = false;
   unsentRequest = {};
   sendRequest(data, id, persist) {
-    //console.warn("sending ...", data)
+    //console.warn("sending ...", id)
     return new Promise((resolve, reject) => {
       emitter.once(this.events.successful_ + id, (response) => {
         this.clearRetriesFinal(id);
         console.warn("result response", response);
+        stores.States.unPersistRequestUnsentMessage(id); // this is added here not in the definition of 
+                                                         // clearRetreiesFinal because it not in all cases thar 
+                                                         // clearRetriesFinal is called that we might want to 
+                                                         // unpersistUnsentMessages. 
+        if(persist && persist == persistTypes.messaging) 
+        this.sendUnSentMessages()
         resolve(response);
       });
       emitter.once(this.events.unsuccessful_ + id, (response) => {
@@ -501,6 +514,7 @@ class ServerEventListener {
     } else {
       emitter.once(this.events.cleared_ + id, () => {
         this.requestUnprocessed[id] && this.handleRerequest(data, id);
+        this.clearRetriesFinal(id)
       });
     }
   }
@@ -510,7 +524,6 @@ class ServerEventListener {
   }
   clearRetriesFinal(id) {
     this.clearRetries(id);
-    stores.States.unPersistRequestUnsentMessage(id);
     stores.States.unPersistRequest(id);
     this.shouldReconnect = true;
     emitter.off(this.events.cleared_ + id);
@@ -518,7 +531,7 @@ class ServerEventListener {
     delete this.retriesCounter[id];
     delete this.requestUnprocessed[id];
   }
-  allowableTrials = 50;
+  allowableTrials = 100;
   startRetryer(data, id, reject) {
     this.retries[id] = setInterval(() => {
       //emitter.off(this.events.cleared_ + id);

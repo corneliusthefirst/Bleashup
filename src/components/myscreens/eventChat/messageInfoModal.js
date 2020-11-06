@@ -76,7 +76,9 @@ class MessageInfoModal extends TabModal {
                     return <View style={{ flex: 1 }}>
                         <UserList data={this.props.item &&
                             this.props.item.receive ?
-                            this.props.item.receive : []}></UserList>
+                            this.props.item.receive.map(ele => {
+                                return {...ele,phone:ele.phone.replace("+","00")}
+                            }) : []}></UserList>
                     </View>
                 },
             },

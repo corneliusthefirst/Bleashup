@@ -113,10 +113,10 @@ class ProfileView extends BePureComponent {
         : (this.props.phoneInfo && this.props.phoneInfo.nickname) ||
           Texts.a_bleashup_user;
     return !this.state.hide ? (
-      <View style={{ flexDirection: "row" }}>
+      <View style={{ flexDirection: "row",alignItems:'center' }}>
         <TouchableOpacity onPress={this.openProfile.bind(this)}>
           {!this.props.hidePhoto && (
-            <View style={{ alignSelf: "center" }} transparent>
+            <View style={{width:50 }} transparent>
               {testForURL(user && user.profile) ? (
                 <CacheImages
                   staySmall
@@ -143,8 +143,6 @@ class ProfileView extends BePureComponent {
         <TouchableOpacity
           onPress={press}
           style={{
-            alignSelf: "center",
-            marginLeft: this.props.contact ? "6.5%" : "4%",
             fontWeight: "bold",
           }}
         >

@@ -1022,7 +1022,7 @@ class TEXTS {
         fr: "Oui"
     }[GState.lang]
     every_day_at = {
-        en: "every days at",
+        en: "every day at",
         fr: "tous les jours a"
     }[GState.lang]
     every_month_on_the = {
@@ -1736,6 +1736,26 @@ class TEXTS {
     file_too_large = {
         en: 'this file is too large',
         fr: 'ce fichier est trop volumineux'
+    }[GState.lang]
+    preview_your_background = {
+        en:'Preview',
+        fr:''
+    }[GState.lang]
+    change = {
+        en:'Change',
+        fr: 'Changer'
+    }[GState.lang]
+    audio_picking_failed = {
+        en: 'Audio Picking failed',
+        fr:"echec de selection de l'audio"
+    }[GState.lang]
+    background_image_settings = {
+        en:'Background',
+        fr:''
+    }[GState.lang]
+    day = {
+        en:'Day',
+        fr:'Jour'
     }[GState.lang]
 }
 const Texts = new TEXTS()
