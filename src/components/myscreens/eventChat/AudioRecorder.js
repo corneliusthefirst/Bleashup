@@ -133,6 +133,7 @@ export default class AudioRecorder extends BeComponent {
             this.setStatePure({
                 recordTime: this.state.recordTime + 1,
             });
+        this.props.sayRecording && this.props.sayRecording()
         }, 1000);
     }
     resumAudioRecoder() {

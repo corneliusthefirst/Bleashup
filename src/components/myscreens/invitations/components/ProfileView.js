@@ -25,14 +25,14 @@ import TextContent from "../../eventChat/TextContent";
 import GState from '../../../../stores/globalState/index';
 
 @observer
-class ProfileView extends BePureComponent {
+class ProfileView extends BeComponent {
   constructor(props) {
     super(props);
     this.state = { isMount: false, hide: false };
   }
 
   state = { isMount: false, hide: false };
- 
+
   componentDidMount() {
     this.props.showHighlighter && this.props.showHighlighter()
     setTimeout(
@@ -50,7 +50,7 @@ class ProfileView extends BePureComponent {
                 stores.Contacts.addContact({
                   phone: user.phone,
                   host: user.current_host,
-                }).then(() => {});
+                }).then(() => { });
               this.props.contact && this.props.updateContact(user);
 
               this.setStatePure({
@@ -60,7 +60,7 @@ class ProfileView extends BePureComponent {
               this.props.setContact ? this.props.setContact(user) : null;
             }
           })
-          .catch((err) => {}),
+          .catch((err) => { }),
       20 * this.props.delay ? this.props.delay : 2
     );
   }
@@ -77,7 +77,7 @@ class ProfileView extends BePureComponent {
   }
   unmountingComponent() {
     emitter.off(this.typing_event)
-    
+
   }
   showTyper() {
     return (
@@ -91,7 +91,7 @@ class ProfileView extends BePureComponent {
             },
           ]}
         >
-          {Texts.typing}
+          {this.state.recording ? Texts.recording : Texts.typing}
         </Text>
       )
     );
@@ -101,22 +101,22 @@ class ProfileView extends BePureComponent {
       this.openModal();
     });
   }
-  color = ColorList.colorArray[Math.floor(Math.random() * (ColorList.colorArray.length-1))];
+  color = ColorList.colorArray[Math.floor(Math.random() * (ColorList.colorArray.length - 1))];
   render() {
-      let press = !this.props.dontPress && this.openProfile.bind(this)
+    let press = !this.props.dontPress && this.openProfile.bind(this)
     let user = stores.TemporalUsersStore.Users[this.props.phone];
     let userName =
       user && user.phone === stores.LoginStore.user.phone
         ? user.nickname + ` (${Texts.you})`
         : user
-        ? user.nickname
-        : (this.props.phoneInfo && this.props.phoneInfo.nickname) ||
+          ? user.nickname
+          : (this.props.phoneInfo && this.props.phoneInfo.nickname) ||
           Texts.a_bleashup_user;
     return !this.state.hide ? (
-      <View style={{ flexDirection: "row",alignItems:'center' }}>
-        <TouchableOpacity onPress={this.openProfile.bind(this)}>
+      <View style={{ flexDirection: "row", alignItems: 'center' }}>
+        <TouchableOpacity onPress={press}>
           {!this.props.hidePhoto && (
-            <View style={{width:50 }} transparent>
+            <View style={{ width: 50 }} transparent>
               {testForURL(user && user.profile) ? (
                 <CacheImages
                   staySmall
@@ -128,15 +128,15 @@ class ProfileView extends BePureComponent {
                   }}
                 />
               ) : (
-                <FontAwesome
-                  type={"FontAwesome"}
-                  style={{
-                    fontSize: ColorList.profilePlaceHolderHeight,
-                    color: this.color,
-                  }}
-                  name={"user-circle-o"}
-                />
-              )}
+                  <FontAwesome
+                    type={"FontAwesome"}
+                    style={{
+                      fontSize: ColorList.profilePlaceHolderHeight,
+                      color: this.color,
+                    }}
+                    name={"user-circle-o"}
+                  />
+                )}
             </View>
           )}
         </TouchableOpacity>
@@ -147,7 +147,8 @@ class ProfileView extends BePureComponent {
           }}
         >
           <TextContent
-          onPress={press}
+            onPress={press}
+            notScallEmoji
             searchString={this.props.searchString}
             numberOfLines={1}
             style={{
@@ -175,8 +176,8 @@ class ProfileView extends BePureComponent {
         ) : null}
       </View>
     ) : (
-      null
-    );
+        null
+      );
   }
 }
 export default ProfileView;

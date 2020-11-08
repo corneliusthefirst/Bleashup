@@ -52,7 +52,7 @@ export default class RelationProfile extends BeComponent {
                 members={this.props.Event.participant}
                 navigate
                 searchString={this.props.searchString}
-                onPress={this.props.showPhoto}
+                onPress={this.navigateToRelation}
                 profile={this.user}
                 relation
                 style={styles.profile}

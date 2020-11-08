@@ -55,8 +55,8 @@ export default class States {
         this.initBackgroundImage()
         this.setProperties(this.states)
     }
-    removeBackground(){
-        this.states.app_background = null 
+    removeBackground() {
+        this.states.app_background = null
         this.initBackgroundImage()
         this.setProperties(this.states)
     }
@@ -104,7 +104,8 @@ export default class States {
                 this.states.newMessages[id] && this.states.newMessages[id].length
         } else {
             return this.states && this.states.newMessages &&
-                Object.keys(this.states.newMessages).length
+                Object.keys(this.states.newMessages).filter(ele =>
+                    this.states.newMessages[ele] && this.states.newMessages[ele].length > 0).length
         }
     }
     getNewRemindsCount() {

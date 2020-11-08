@@ -16,7 +16,7 @@ import  MaterialIcons  from 'react-native-vector-icons/MaterialIcons';
     }
     render() {
         this.act_count = this.props.remind ? stores.States.getNewRemindsCount() : stores.States.getNewMessagesCount()
-        console.warn(this.act_count, 
+        console.warn("act counts is: ",  this.act_count, 
             stores.States.states.newMessages)
         this.iconStyle = {
             ...GState.defaultIconSize,

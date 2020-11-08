@@ -51,6 +51,7 @@ export default class ChatKeyboard extends AnimatedComponent {
             isOptionsOpened: false,
         }
         this.tagItem = this.tagItem.bind(this)
+        this.choseTagged = this.choseTagged.bind(this)
     }
     componentMounting() {
         this.formSerachableMembers();
@@ -200,14 +201,18 @@ export default class ChatKeyboard extends AnimatedComponent {
             }
         );
     }
+    choseTagged(item){
+        requestAnimationFrame(() => this.chooseItem(item))
+    }
     searchableMembers = [];
     tagItem(item) {
         return (
             <TouchableOpacity
-                onPress={() => requestAnimationFrame(() => this.chooseItem(item))}
+                onPress={() => this.choseTagged(item)}
             >
                 <View style={{ width: 200, alignSelf: "flex-start" }}>
                     <ProfileSimple
+                        onPress={() => this.choseTagged(item)}
                         searching
                         searchString={
                             this.state.textValue.split("@")[
@@ -493,6 +498,7 @@ export default class ChatKeyboard extends AnimatedComponent {
             }}>
                 <AudioRecorder
                     room
+                    sayRecording={this.props.sayRecording}
                     justHideMe={() => {
                         this.setStatePure({
                             showAudioRecorder: false,

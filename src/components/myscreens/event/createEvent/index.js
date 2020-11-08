@@ -68,10 +68,11 @@ export default class CreateEventView extends AnimatedComponent {
       let event = find(Events, { id: request.Event().id });
       this.setStatePure({
         showMore: false,
-        participant: this.isRemind ? request.Event().participant : head(event.participant),
-        currentEvent: event,
-        title: this.isRemind ? Texts.my_activity : event.about.title,
-        photo: this.isRemind ? null : event.background,
+        participant: this.isRemind ? request.Event().participant : 
+        ((event && head(event.participant))||request.Event().participant),
+        currentEvent: event|| request.Event(),
+        title: this.isRemind ? Texts.my_activity : ((event && event.about.title) || ""),
+        photo: this.isRemind ? null : ((event && event.background) || null),
       });
     });
   }
@@ -396,10 +397,10 @@ export default class CreateEventView extends AnimatedComponent {
               </AntDesign>
             </View>
             <View>
-              <Text style={{ 
+              <Text style={{
                 ...GState.defaultTextStyle,
                 fontStyle: 'italic',
-               }}>{this.state.showMore ? Texts.show_less : Texts.show_more}</Text>
+              }}>{this.state.showMore ? Texts.show_less : Texts.show_more}</Text>
             </View>
           </TouchableOpacity>
           {this.state.creating ? (

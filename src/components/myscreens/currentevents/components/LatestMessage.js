@@ -37,6 +37,7 @@ class LatestMessage extends AnimatedComponent {
                     <ChatUser
                         reply
                         searchString={this.props.searchString}
+                        showProfile={this.props.onPress}
                         phone={
                             change
                                 ? this.change.updater
@@ -73,6 +74,7 @@ class LatestMessage extends AnimatedComponent {
             <TextContent
                 tags={this.message.tags}
                 notScallEmoji
+                onPress={this.props.onPress}
                 text={change ? (this.change.changed + writeChangeWithContent(this.change.new_value.new_value)) : this.message.text}
                 numberOfLines={1}
                 style={this.textStyle}
@@ -327,6 +329,11 @@ class LatestMessage extends AnimatedComponent {
         justifyContent: "space-between",
         alignItems: "flex-end",
     }
+    senderIsMe() {
+        const senderPhone = this.message && this.message.sender &&
+            this.message.sender.phone && this.message.sender.phone.replace("+", "00")
+        return stores.LoginStore.user.phone == senderPhone
+    }
     writeStates() {
         this.seen =
             this.message.seen &&
@@ -350,13 +357,13 @@ class LatestMessage extends AnimatedComponent {
             ) : (
                     <View
                         style={this.statesContainer}
-                    >
+                    >{this.senderIsMe() ?
                         <MessageState
                             sent={this.message.sent}
                             color={ColorList.bodyBackground}
                             seen={this.seen}
                             received={this.received}
-                        ></MessageState>
+                        ></MessageState> : null}
                         {this.calendar()}
                     </View>
                 )

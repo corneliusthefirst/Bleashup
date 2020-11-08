@@ -155,8 +155,9 @@ export default class Event extends BeComponent {
   currentWidth = 0.5;
   isOpen = false;
 
-  replies_options() {
+  replies_options(extra) {
     return {
+      ...extra,
       room: this.event.id,
       reply: () => emitter.emit(reply_me, GState.reply),
       reply_privately:
@@ -167,11 +168,12 @@ export default class Event extends BeComponent {
   currentRemindUser = this.type && this.getParam(this.type);
   handleReplyExtern = (reply) => {
     const calculateReply = (forwardReply, data, fallback) => {
-      if (reply.from_activity && reply_me.from_activity !== this.event.id) {
+      if (reply.from_activity && reply.from_activity !== this.event.id) {
         stores.Events.isParticipant(
           reply.from_activity,
           stores.LoginStore.user.phone
         ).then((act) => {
+          console.warn("test for belonging: ",act)
           if (act) {
             forwardReply(act, data);
           } else {
@@ -206,7 +208,7 @@ export default class Event extends BeComponent {
           ...reply_options,
         },
         () => {
-          BeNavigator.goToRemindDetail(reply.id, reply.from_activity, this.replies_options());
+          BeNavigator.goToRemindDetail(reply.id, reply.from_activity, this.replies_options(reply_options));
         }
       );
     } else if (reply.type_extern.toLowerCase().includes("post")) {

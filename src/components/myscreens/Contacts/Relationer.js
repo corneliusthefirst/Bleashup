@@ -6,9 +6,9 @@ import Toaster from '../../../services/Toaster';
 import Texts from '../../../meta/text';
 import GState from '../../../stores/globalState/index';
 
-export default function getRelation(user){
-        return new Promise((resolve,reject) => {
-            if (findIndex(stores.Contacts.contacts.contacts, { phone: user.phone }) >= 0) {
+export default function getRelation(user, relate) {
+    return new Promise((resolve, reject) => {
+        if (findIndex(stores.Contacts.contacts.contacts, { phone: user.phone }) >= 0 || relate) {
             stores.Events.readFromStore().then((events) => {
                 let index = findIndex(events, (ele) => ele.type && ele.type === "relation" &&
                     findIndex(ele.participant, { phone: user.phone }) >= 0 &&
@@ -21,7 +21,7 @@ export default function getRelation(user){
                     opponent.master = true;
                     relation.participant.push(opponent);
                     CreateRequest.createEvent(relation).then((resp) => {
-                          resolve(resp)
+                        resolve(resp)
                     }).catch(() => {
                         Toaster({ text: 'unable to start a relation' })
                         reject()
@@ -31,9 +31,9 @@ export default function getRelation(user){
                     resolve(events[index])
                 }
             })
-        }else{
+        } else {
             GState.considerIvite()
             reject()
         }
-        })
+    })
 }

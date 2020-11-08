@@ -4,6 +4,7 @@ import userHttpServices from "../services/userHttpServices"
 import moment from 'moment';
 import GState from './globalState/index';
 import stores from ".";
+import { observable } from 'mobx';
 
 export const check_user_error_1 = "unknown_user"
 export const check_user_error_2 = "wrong server_key"
@@ -43,7 +44,7 @@ export default class TemporalUsersStore {
     saveInterval = 2000
     currentTime = moment().format()
     previousTime = moment().format()
-    Users = {}
+    @observable Users = {}
     saveKey = {
         key: "temporalUsers",
         data: {}
@@ -58,11 +59,11 @@ export default class TemporalUsersStore {
             })
         })
     }
-    updateUserInfo(phone,field,data){
-        return new Promise((resolve,reject) => {
+    updateUserInfo(phone, field, data) {
+        return new Promise((resolve, reject) => {
             this.getUser(phone).then(user => {
                 user[field] = data
-                user.updated_at = moment().format()
+                user = { ...user, updated_at: moment().format() }
                 this.addUser(user).then((response) => {
                     resolve()
                 })
@@ -98,10 +99,10 @@ export default class TemporalUsersStore {
                         resolve(profile)
                     }
                 }).catch(err => {
-                    console.warn("checking user error: ",err)
-                    if (this.Users[phone]){
+                    console.warn("checking user error: ", err)
+                    if (this.Users[phone]) {
                         resolve(this.Users[phone])
-                    }else{
+                    } else {
                         rejec()
                     }
                 })

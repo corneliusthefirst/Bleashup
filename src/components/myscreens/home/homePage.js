@@ -94,7 +94,7 @@ class Home extends BeComponent {
   }
   showDetailModal(event, data) {
     if (data.remind_id) {
-      BeNavigator.goToRemindDetail(data.remind_id, data.activity_id)
+      BeNavigator.goToRemindDetail(data.remind_id, data.activity_id, JSON.parse(data.reply || "{}"))
     } else if (data.post_id) {
       BeNavigator.gotoStarDetail(data.post_id, data.activity_id)
     } else {
@@ -240,9 +240,6 @@ class Home extends BeComponent {
       }
     });
   };
-  navigateToInvitations() {
-    BeNavigator.navigateTo("voteCard");
-  }
   render() {
     GState.setBeroute(this.props.navigation)
     StatusBar.setBackgroundColor(colorList.headerBackground, true);

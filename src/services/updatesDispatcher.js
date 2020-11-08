@@ -67,20 +67,28 @@ class UpdatesDispatcher {
     new_message: update => MainUpdater.saveMessage(update.new_value.data,
       update.event_id, update.new_value.
       committee_id),
-    received_message: update => MainUpdater.receiveMessage(update.new_value.data.message_id,
-      update.new_value.committee_id,
-      update.new_value.data.recieved),
+    received_message: update => {
+      return new Promise((resolve, reject) => {
+        setTimeout(() => {
+          MainUpdater.receiveMessage(update.new_value.data.message_id,
+            update.event_id,
+            update.new_value.data.recieved).then(() => {
+              resolve()
+            })
+        }, 500)
+      })
+    },
     update_message: update => MainUpdater.updateMessage(update.new_value.data.message_id,
       update.new_value.committee_id,
       update.event_id, update.new_value.data.text),
-    deleted_message: update => MainUpdater.deleteMessage(update.new_value.message_id,
-      update.new_value.committee_id,
-      update.event),
+    deleted_message: update => MainUpdater.deleteMessage(update.new_value.data.message_id,
+      update.event_id,
+      update.event_id),
     seen_message: update => MainUpdater.seenMessage(update.new_value.data.message_id,
       update.new_value.committee_id,
-      update.event_id, update.new_value.seer),
-    typing_message: update => MainUpdater.sayTyping(update.new_value.committee_id,
-      update.new_value.data.typer),
+      update.event_id, update.new_value.data.seer),
+    ///typing_message: update => MainUpdater.sayTyping(update.new_value.committee_id,
+    // update.new_value.data.typer),
     blocked: update => MainUpdater.blocked(update.updater),
     un_blocked: update => MainUpdater.unBlocked(update.updater),
     muted: update => MainUpdater.muted(update.updater),
@@ -475,9 +483,9 @@ class UpdatesDispatcher {
               Texts.removed_participants_from_activity,
             updater: update.updater,
             new_value: {
-              data: null, 
-              new_value:newValue,
-                
+              data: null,
+              new_value: newValue,
+
             },
             date: update.date,
             time: update.time
@@ -579,11 +587,11 @@ class UpdatesDispatcher {
           resolve()
           //!! heyyy case that highlight doesn't exists please think of handling this.
           //!! a case where this scenario can occur is when the user add a highlight and imediately deletes it 
-              //!! a case where this scenario can occur is when the user add a highlight and imediately deletes it 
+          //!! a case where this scenario can occur is when the user add a highlight and imediately deletes it 
           //!! a case where this scenario can occur is when the user add a highlight and imediately deletes it 
           //!! such that when offline users will received their updates,they will be receiving of and 
           //!! that doesn't exists. 
-              //!! that doesn't exists. 
+          //!! that doesn't exists. 
           //!! that doesn't exists. 
         })
       });
@@ -1122,11 +1130,11 @@ class UpdatesDispatcher {
           resolve()
           //!! heyyy case that remind doesn't exists please think of handling this.
           //!! a case where this scenario can occur is when the user add a remind and imediately deletes it 
-              //!! a case where this scenario can occur is when the user add a remind and imediately deletes it 
+          //!! a case where this scenario can occur is when the user add a remind and imediately deletes it 
           //!! a case where this scenario can occur is when the user add a remind and imediately deletes it 
           //!! such that when offline users will received their updates,they will be receiving of and 
           //!! that doesn't exists. 
-              //!! that doesn't exists. 
+          //!! that doesn't exists. 
           //!! that doesn't exists. 
         })
       });
@@ -1171,7 +1179,8 @@ class UpdatesDispatcher {
             RemindRequest.saveToCanlendar(oldRemind.event_id, {
               ...oldRemind, period:
                 update.new_value.period
-            }, null).then(() => {
+            }, oldRemind.extra &&
+            oldRemind.extra.alarms).then(() => {
 
             })
           })
@@ -1230,10 +1239,20 @@ class UpdatesDispatcher {
               date: update.date,
               time: null
             }
+            RemindRequest.saveToCanlendar(
+              oldRemind.event_id,
+              {
+                ...oldRemind,
+                title: update.new_value.title
+              },
+              oldRemind.extra.alarms,
+              oldRemind.title
+            )
             this.infomCurrentRoom(Change, oldRemind, update.event_id)
-            stores.ChangeLogs.addChanges(Change)
+            stores.ChangeLogs.addChanges(Change).then(() => {
+              resolve('ok')
+            })
             GState.eventUpdated = true;
-            resolve('ok')
           });
       });
     },
@@ -1362,7 +1381,7 @@ class UpdatesDispatcher {
           }
           RemindRequest.saveToCanlendar(oldRemind.event_id,
             oldRemind, (update.new_value.alarms || (oldRemind.extra &&
-              oldRemind.extra.alams))).then(calendar_id => {
+              oldRemind.extra.alarms))).then(calendar_id => {
                 this.infomCurrentRoom(Change, oldRemind, update.event_id)
                 stores.ChangeLogs.addChanges(Change).then(() => {
 
@@ -1391,7 +1410,7 @@ class UpdatesDispatcher {
               time: null
             }
             this.infomCurrentRoom(Change, oldRemind, update.event_id)
-            RemindRequest.saveToCanlendar(oldRemind.event_id, { ...oldRemind, period: null }, null).then(() => {
+            RemindRequest.saveToCanlendar(oldRemind.event_id, { ...oldRemind, period: null }).then(() => {
               stores.ChangeLogs.addChanges(Change).then(() => {
 
               })

@@ -107,6 +107,7 @@ class UserHttpServices {
     //same return values as the method above
     changeNickname(phone, password, newNickname) {
         return new Promise((resolve, reject) => {
+            newNickname = encodeURI(newNickname)
             fetch(`${this.domainame()}user/change_nickname?phone=${phone}&password=${password}&nick_name=${newNickname}`, {
                 method: "POST"
             }).then(result => {

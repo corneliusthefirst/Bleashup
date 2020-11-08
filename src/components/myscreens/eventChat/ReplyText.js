@@ -185,6 +185,7 @@ export default class ReplyText extends BePureComponent {
                     >
                     </ChatUser> : <TextContent
                       note
+                      notScallEmoji
                       ellipsizeMode={"tail"}
                       numberOfLines={1}
                       style={{

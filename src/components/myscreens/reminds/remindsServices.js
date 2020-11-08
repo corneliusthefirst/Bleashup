@@ -57,14 +57,14 @@ export function loadIntervals(canCheck, fresh) {
     this.item = this.item || this.props.item
     return new Promise((resolve, reject) => {
         const callback = (currentDateIntervals, correspondingDateInterval) => {
-            canCheck &&
+            canCheck && this.showActions &&
                 this.showActions(
                     currentDateIntervals,
                     correspondingDateInterval,
                     true
                 );
-            canCheck && this.props.showReport &&
-                this.props.showReport(currentDateIntervals, correspondingDateInterval);
+            canCheck && this.showReport &&
+                this.showReport(currentDateIntervals, correspondingDateInterval);
             resolve({ currentDateIntervals, correspondingDateInterval });
         }
         stores.Reminds.getRemindsIntervals(this.item, fresh).then(

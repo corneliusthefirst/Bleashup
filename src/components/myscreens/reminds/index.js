@@ -114,7 +114,7 @@ class Reminds extends AnimatedComponent {
       removing: false,
       notcheckAll: false,
       contacts: uniqBy([...this.props.event.participant, 
-        ...this.isCurrentRemindPublic() && this.getMyContacts() ],"phone").filter(
+        ...this.isCurrentRemindPublic() ?this.getMyContacts():[] ],"phone").filter(
         (e) => findIndex(currentMembers, { phone: e.phone }) < 0
       ),
     });
@@ -242,13 +242,14 @@ class Reminds extends AnimatedComponent {
       });
   }
   refreshReminds() {
+    const currentRem = (this.state.currentTask || this.state.remind)
+    const newRem = currentRem && find(this.getRemindData(), { id: currentRem.id })
     this.animateUI();
     this.setStatePure(
       {
         newing: !this.state.newing,
-        currentTask:
-          this.state.currentTask &&
-          find(this.getRemindData(), { id: this.state.currentTask.id }),
+        currentTask: newRem,
+        remind:newRem
       },
       () => {
         emitter.emit(members_updated);

@@ -34,6 +34,7 @@ import TextContent from '../../eventChat/TextContent';
       last_seen: " ...."
     };
     !this.onlinePart ? this.onlinePart = onlinePart.bind(this) : null
+    this.onClosedModal = this.onClosedModal.bind(this)
   }
 
   transparent = "rgba(52, 52, 52, 0.3)";
@@ -45,7 +46,7 @@ import TextContent from '../../eventChat/TextContent';
     });
   }
   onOpenModal() {
-    if (this.props.profile) {
+    if (this.props.profile && !this.opened) {
       this.event_to_be_listen = typing(this.props.profile.phone)
       emitter.on(this.event_to_be_listen, (typer) => () => {
         !this.sayTyping ? this.sayTyping = sayTyping.bind(this) : null
@@ -57,6 +58,7 @@ import TextContent from '../../eventChat/TextContent';
     }
   }
   onClosedModal() {
+    console.warn("clearing check online time out: ",this.checkRef)
     clearInterval(this.checkRef)
     this.props.profile && emitter.off(typing(this.props.profile.phone))
     this.props.onClosed()
@@ -64,7 +66,7 @@ import TextContent from '../../eventChat/TextContent';
   }
   goToRelation(rems) {
     this.onClosedModal()
-    this.props.profile ? getRelation(this.props.profile).then(relation => {
+    this.props.profile ? getRelation(this.props.profile,true).then(relation => {
       Vibrator.vibrateShort()
       if (rems) {
         BeNavigator.goToRemind(relation, true)
@@ -78,7 +80,7 @@ import TextContent from '../../eventChat/TextContent';
     return this.state.typing && <TextContent style={[GState.defaultTextStyle,
     {
       color: ColorList.indicatorColor, fontSize: 12, fontStyle: 'italic',
-    }]}>{Texts.typing}</TextContent>
+    }]}>{this.state.recording ? Texts.recording : Texts.typing}</TextContent>
   }
   swipeToClose = true
   modalHeight = "70%"
@@ -104,7 +106,7 @@ import TextContent from '../../eventChat/TextContent';
       <View>
         <View style={styles.child1}>
           <View style={styles.child1Sub}>
-            <TouchableOpacity style={{ ...rounder(40), justifyContent: 'center', }} onPress={this.props.onClosed} transparent>
+            <TouchableOpacity style={{ ...rounder(40), justifyContent: 'center', }} onPress={this.onClosedModal} transparent>
               <EvilIcons
                 style={styles.Child1SubIconStyle}
                 name="close"
@@ -121,7 +123,7 @@ import TextContent from '../../eventChat/TextContent';
                 margin: '2%',
               }}>
                 <View style={{
-                flex: 1,
+                  flex: 1,
                 }}>
                   <TextContent
                     ellipsizeMode={"tail"}

@@ -42,6 +42,9 @@ class ServerEventListener {
     wrong_json: "wrong_json",
     all_updates: "all_updates",
     current_events: "current_events",
+    unprocessable:'un_processable',
+    un_authenticated:'un_authenticated',
+    represence:'represence',
     presence: "presence",
     event_changes: "event_changes",
     current_event: "current_event",
@@ -113,7 +116,7 @@ class ServerEventListener {
     }
   }
   dispatch(data) {
-    //console.warn("data from dispatcher: ",data)
+    console.warn("data from dispatcher: ",data)
     if (data.response) {
       switch (data.response) {
         case this.responseCases.wrong_json:
@@ -270,6 +273,15 @@ class ServerEventListener {
       }
     }
     if (data.error) {
+      console.warn("error is: ",data.error)
+      if(data.error == this.responseCases.un_authenticated || 
+        data.error == this.responseCases.represence 
+        ){
+          console.warn("reconnection error receivd")
+          this.initializing = false
+          this.shouldReconnect = true 
+          this.reconnecting = false
+        }
       //emitter.emit(this.events.unsuccessful_+data.id,data.error)
       //console.warn(this.sayReconnectionAttempt, " deu to ", data);
       //this.initPresence();

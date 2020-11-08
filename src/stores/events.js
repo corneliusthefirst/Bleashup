@@ -1082,7 +1082,9 @@ export default class events {
           this.setProperties(Events, true);
           resolve();
         } else {
-          resolve()
+          this.loadCurrentEvent(EventID).then(() => {
+            resolve()
+          })
         }
       });
     });

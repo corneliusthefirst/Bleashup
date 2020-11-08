@@ -131,6 +131,7 @@ export default class ChatRoomHeader extends BeComponent {
                     <View>
                         <TextContent
                             numberOfLines={1}
+                            notScallEmoji
                             onPress={!this.props.isRelation ? this.props.openSettings : this.showOponent}
                             style={{
                                 alignSelf: 'center',

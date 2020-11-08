@@ -1739,7 +1739,7 @@ class TEXTS {
     }[GState.lang]
     preview_your_background = {
         en:'Preview',
-        fr:''
+        fr:'Aperçu'
     }[GState.lang]
     change = {
         en:'Change',
@@ -1747,15 +1747,35 @@ class TEXTS {
     }[GState.lang]
     audio_picking_failed = {
         en: 'Audio Picking failed',
-        fr:"echec de selection de l'audio"
+        fr: "Échec de la sélection audio"
     }[GState.lang]
     background_image_settings = {
-        en:'Background',
-        fr:''
+        en:'Background image',
+        fr: 'Image de fond'
     }[GState.lang]
     day = {
         en:'Day',
         fr:'Jour'
+    }[GState.lang]
+    beup_wants_to_write_to = {
+        en:'BeUp wants to write to external storage',
+        fr: 'BeUp veut écrire sur un stockage externe'
+    }[GState.lang]
+    beup_wants_to_read_from = {
+        en:'BeUp wants to write to exteranl storage',
+        fr: 'BeUp veut écrire sur un stockage externe'
+    }[GState.lang]
+    beup_wants_to_write_to_your_calendat = {
+        en:'BeUp wants to write to your calendar',
+        fr: 'BeUp veut écrire dans votre agenda'
+    }[GState.lang]
+    read_your_contacts = {
+        en:'BeUp wants to read your contacts',
+        fr: 'BeUp veut lire vos contacts'
+    }[GState.lang]
+    recording={
+        en:'is recording an audio ...',
+        fr: 'enregistre un audio ...'
     }[GState.lang]
 }
 const Texts = new TEXTS()

@@ -39,6 +39,9 @@ class ChatStore {
             });
         }
     }
+    canUpdate(index) {
+        return index >= 0
+    }
     loadLatestMessage(roomID, key) {
         return new Promise((resolve, reject) => {
             this.readFromStore().then((messages) => {
@@ -112,16 +115,25 @@ class ChatStore {
         });
     }
     receiveMessage(roomID, receiver, messageID) {
-        return new promise((resolve, reject) => {
+        return new Promise((resolve, reject) => {
             this.readFromStore().then((messages) => {
                 let index = findIndex(messages[roomID], { id: messageID });
-                messages[roomID][index].receive ? messages[roomID][index].recieve.unshift(receiver) :
-                    messages[roomID][index].receive = [receiver];
-                messages[roomID][index].updated_at = moment().format()
-                messages[roomID][index].receive = uniqBy(messages[roomID][index].receive, "phone")
-                messages[roomID][index] = this.add_updated_at(messages[roomID][index])
-                this.addToStore(messages);
-                resolve();
+                if (this.canUpdate(index)) {
+                    let newRec = null
+                    if (messages[roomID][index].receive) {
+                        newRec = [...messages[roomID][index].receive, receiver]
+                    } else {
+                        newRec = [receiver];
+                    }
+                    messages[roomID][index].receive = newRec
+                    messages[roomID][index].updated_at = moment().format()
+                    messages[roomID][index].receive = uniqBy(messages[roomID][index].receive, "phone")
+                    messages[roomID][index] = this.add_updated_at(messages[roomID][index])
+                    this.addToStore(messages);
+                    resolve();
+                } else {
+                    resolve()
+                }
             });
         });
     }
@@ -138,10 +150,14 @@ class ChatStore {
         return new Promise((resolve, reject) => {
             this.readFromStore().then((messages) => {
                 let index = findIndex(messages[roomID], { id: messageID });
-                messages[roomID][index].text = newText;
-                messages[roomID][index].updated_at = moment().format()
-                this.addToStore(messages);
-                resolve();
+                if (this.canUpdate(index)) {
+                    messages[roomID][index].text = newText;
+                    messages[roomID][index].updated_at = moment().format()
+                    this.addToStore(messages);
+                    resolve();
+                } else {
+                    resolve()
+                }
             });
         });
     }
@@ -149,14 +165,18 @@ class ChatStore {
         return new Promise((resolve, reject) => {
             this.readFromStore().then((messages) => {
                 let index = findIndex(messages[roomID], { id: messageID });
-                messages[roomID][index].played
-                    ? messages[roomID][index].played.unshift(player)
-                    : (messages[roomID][index].played = [player]);
-                messages[roomID][index].updated_at = moment().format()
-                messages[roomID][index].played = uniqBy(messages[roomID][index].played, "phone")
-                messages[roomID][index] = this.add_updated_at(messages[roomID][index])
-                this.addToStore(messages);
-                resolve();
+                if (this.canUpdate(index)) {
+                    messages[roomID][index].played
+                        ? messages[roomID][index].played.unshift(player)
+                        : (messages[roomID][index].played = [player]);
+                    messages[roomID][index].updated_at = moment().format()
+                    messages[roomID][index].played = uniqBy(messages[roomID][index].played, "phone")
+                    messages[roomID][index] = this.add_updated_at(messages[roomID][index])
+                    this.addToStore(messages);
+                    resolve();
+                } else {
+                    resolve()
+                }
             });
         });
     }
@@ -164,14 +184,18 @@ class ChatStore {
         return new Promise((resolve, reject) => {
             this.readFromStore().then(messages => {
                 let index = findIndex(messages[roomID], { id: messageID });
-                messages[roomID][index].seen
-                    ? messages[roomID][index].seen.unshift(seer)
-                    : (messages[roomID][index].seen = [seer]);
-                messages[roomID][index].updated_at = moment().format()
-                messages[roomID][index].seen = uniqBy(messages[roomID][index].seen, "phone")
-                messages[roomID][index] = this.add_updated_at(messages[roomID][index])
-                this.addToStore(messages);
-                resolve();
+                if (this.canUpdate(index)) {
+                    messages[roomID][index].seen
+                        ? messages[roomID][index].seen.unshift(seer)
+                        : (messages[roomID][index].seen = [seer]);
+                    messages[roomID][index].updated_at = moment().format()
+                    messages[roomID][index].seen = uniqBy(messages[roomID][index].seen, "phone")
+                    messages[roomID][index] = this.add_updated_at(messages[roomID][index])
+                    this.addToStore(messages);
+                    resolve();
+                } else {
+                    resolve()
+                }
             })
         });
     }
@@ -180,31 +204,37 @@ class ChatStore {
             message.seen.findIndex(ele => ele && ele.phone === phone) >= 0 ?
             true : false
     }
-    @action reactToMessage(roomID, messageID, reaction) {
+    reactToMessage(roomID, messageID, reaction) {
         return new Promise((resolve, reject) => {
             this.readFromStore().then(messages => {
                 let index = findIndex(messages[roomID], { id: messageID });
-                if (messages[roomID][index].reaction) {
-                    let reactionIndex = findIndex(messages[roomID][index].reaction, {
-                        reaction: reaction.reaction,
-                    });
-                    if (reactionIndex >= 0) {
-                        messages[roomID][index].reaction[reactionIndex].reacters.push(
-                            reaction.reacter
-                        );
-                        messages[roomID][index].reaction[reactionIndex].count = messages[
-                            roomID
-                        ][index].reaction[reactionIndex].reacters.length;
+                if (this.canUpdate(index)) {
+                    if (messages[roomID][index].reaction) {
+                        let reactionIndex = findIndex(messages[roomID][index].reaction, {
+                            reaction: reaction.reaction,
+                        });
+                        if (reactionIndex >= 0) {
+                            messages[roomID][index].reaction[reactionIndex].reacters.push(
+                                reaction.reacter
+                            );
+                            messages[roomID][index].reaction[reactionIndex].count = messages[
+                                roomID
+                            ][index].reaction[reactionIndex].reacters.length;
+                        } else {
+                            let newReaction = { reaction: reaction.reaction, reacters: [reaction.reacter], count: 1 }
+                            messages[roomID][index].reaction.push(newReaction)
+                        }
                     } else {
-                        let newReaction = { reaction: reaction.reaction, reacters: [reaction.reacter], count: 1 }
-                        messages[roomID][index].reaction.push(newReaction)
+                        messages[roomID][index].reaction =
+                            [{ reaction: reaction.reaction, reacters: [reaction.reacter], count: 1 }]
                     }
+                    messages[roomID][index].updated_at = moment().format()
+                    messages[roomID][index] = this.add_updated_at(messages[roomID][index])
+                    this.addToStore(messages)
+                    resolve()
                 } else {
-                    messages[roomID][index].reaction =
-                        [{ reaction: reaction.reaction, reacters: [reaction.reacter], count: 1 }]
+                    resolve()
                 }
-                messages[roomID][index].updated_at = moment().format()
-                this.addToStore(messages)
             })
         });
     }
@@ -217,8 +247,11 @@ class ChatStore {
         });
     }
     persistMessageDimenssions(dims, index, roomID) {
-        this.messages[roomID][index].dimensions = dims
-        this.currentModif = moment().format()
+        if (this.messages && this.messages[roomID] && this.messages[roomID][index]) {
+            this.messages[roomID][index].dimensions = dims
+            this.currentModif = moment().format()
+        }
+
     }
     addNewMessage(roomID, newMessage) {
         return new Promise((resolve, reject) => {
@@ -347,13 +380,17 @@ class ChatStore {
         return new Promise((resolve, reject) => {
             this.readFromStore().then((data) => {
                 let index = findIndex(data[roomID], { id: id });
-                if (data[roomID][index]) {
-                    data[roomID][index].duration = duration;
-                    data[roomID][index].updated_at = moment().format()
-                    this.addToStore(data);
-                    resolve("ok");
+                if (this.canUpdate(index)) {
+                    if (data[roomID][index]) {
+                        data[roomID][index].duration = duration;
+                        data[roomID][index].updated_at = moment().format()
+                        this.addToStore(data);
+                        resolve("ok");
+                    } else {
+                        resolve("not found");
+                    }
                 } else {
-                    resolve("not found");
+                    resolve()
                 }
             });
         });
@@ -362,7 +399,7 @@ class ChatStore {
         return new Promise((resolve, reject) => {
             this.readFromStore().then((data) => {
                 let index = findIndex(data[roomID], { id: id });
-                if (data[roomID][index]) {
+                if (this.canUpdate(index)) {
                     data[roomID][index].total = total;
                     data[roomID][index].updated_at = moment().format()
                     data[roomID][index].temp = origin
@@ -394,7 +431,7 @@ class ChatStore {
         return new Promise((resolve, reject) => {
             this.readFromStore().then((data) => {
                 let index = findIndex(data[roomID], { id: id });
-                if (data[roomID][index]) {
+                if (this.canUpdate(index)) {
                     data[roomID][index].total = total;
                     data[roomID][index].received = recieved;
                     data[roomID][index].updated_at = moment().format()
@@ -412,7 +449,7 @@ class ChatStore {
         return new Promise((resolve, reject) => {
             this.readFromStore().then((data) => {
                 let index = findIndex(data[roomID], { id: id });
-                if (data[roomID][index]) {
+                if (this.canUpdate(index)) {
                     data[roomID][index].cancled = true;
                     data[roomID][index].updated_at = moment().format()
                     this.addToStore(data);
@@ -429,16 +466,15 @@ class ChatStore {
             let newMessage = messagePreparer.formMessageFromRemind(remind)
             this.readFromStore().then(messages => {
                 const index = findIndex(messages[roomID], { id })
-                if (index >= 0) {
-                    if (messages[roomID][index]) {
-                        messages[roomID][index].text = newMessage.text
-                        messages[roomID][index].remind_date = newMessage.remind_date
-                        messages[roomID][index].end_date = newMessage.end_date
-                        messages[roomID][index].updated_at = moment().format()
-                        messages[roomID][index].tags = newMessage.tags
-                    }
+                if (this.canUpdate(index)) {
+                    messages[roomID][index].text = newMessage.text
+                    messages[roomID][index].remind_date = newMessage.remind_date
+                    messages[roomID][index].end_date = newMessage.end_date
+                    messages[roomID][index].updated_at = moment().format()
+                    messages[roomID][index].tags = newMessage.tags
                 }
                 this.addToStore(messages)
+                resolve()
             })
         })
 
@@ -449,13 +485,12 @@ class ChatStore {
             return new Promise((resolve, reject) => {
                 this.readFromStore().then(messages => {
                     const index = findIndex(messages[roomID], { id })
-                    if (index >= 0) {
-                        if (messages[roomID][index]) {
-                            messages[roomID][index].text = newMessage.text
-                            messages[roomID][index].updated_at = moment().format()
-                            messages[roomID][index].tags = newMessage.tags
-                        }
+                    if (this.canUpdate(index)) {
+                        messages[roomID][index].text = newMessage.text
+                        messages[roomID][index].updated_at = moment().format()
+                        messages[roomID][index].tags = newMessage.tags
                     }
+                    resolve()
                     this.addToStore(messages)
                 })
             })
@@ -474,7 +509,7 @@ class ChatStore {
         return new Promise((resolve, reject) => {
             this.readFromStore().then((data) => {
                 let index = findIndex(data[roomID], { id: id });
-                if (data[roomID][index]) {
+                if (this.canUpdate(index)) {
                     data[roomID][index].source = url;
                     data[roomID][index].updated_at = moment().format()
                     data[roomID][index] = this.add_updated_at(data[roomID][index])

@@ -108,18 +108,18 @@ export default class SignInView extends Component {
       this.user = user;
       UserService.login(user.phone, this.state.password).then(response => {
         if (response === "true") {
-          if (this.authUser && 
+          /*if (this.authUser && 
             this.authUser.metadata && 
-            this.authUser.metadata.creationTime) {
-            this.login()
-          } else {
+            this.authUser.metadata.creationTime) {*/
+          this.login()
+          /*} else {
             firebase.auth().signInWithPhoneNumber(user.phone.replace("00", "+")).then(confirmCode => {
               stores.TempLoginStore.confirmCode = confirmCode
               this.setState({ isModalOpened: true })
             }).catch(() => {
               this.sayVerificationError()
             })
-          }
+          }*/
         } else {
           globalState.loading = false;
           globalState.error = true;
@@ -151,7 +151,8 @@ export default class SignInView extends Component {
             margin: '2%',
           }}>
             <Text style={{ ...GState.defaultTextStyle, fontWeight: 'bold', }}>{this.loginStore.user.nickname}</Text>
-            <Text style={{ ...GState.defaultTextStyle }}>{this.loginStore.user.status}</Text>
+            <Text style={{ ...GState.defaultTextStyle }}>{GState.isUndefined(this.loginStore.user.status) ? "" :
+              this.loginStore.user.status}</Text>
           </View>
           <TouchableOpacity
             style={{ alignSelf: "flex-end", marginRight: "5%" }}

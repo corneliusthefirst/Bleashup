@@ -19,7 +19,7 @@ class reply_extern {
     done = "done"
     member = "member"
     replyWith(phone) {
-        getRelation(phone).then((relation) => {
+        getRelation(phone,true).then((relation) => {
             GState.reply.activity_id = relation.id;
             setTimeout(() => {
                 BeNavigator.pushToChat(relation);

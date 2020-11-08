@@ -29,7 +29,7 @@ export default class BeMenu extends BeComponent {
     };
     renderMenuList(){
         return this.props.items && this.props.items().map(ele => {
-            return ele.condition && <View key={ele.title} style={{ flex: 1 }}><MenuItem textStyle={{ color: "#0A4E52" }} onPress={() => {
+            return ele.condition && <View key={ele.title} style={{ flex: 1 }}><MenuItem textStyle={{ color: ColorList.bodyIcon }} onPress={() => {
                 this.hideMenu()
                 ele && ele.action() 
             }}>{ele.title}</MenuItem>

@@ -91,22 +91,22 @@ class MessageRequest {
       });
     });
   }
-  receiveMessage(messageID, phone, eventID, commiteeID) {
+  receiveMessage(messageID, eventID, commiteeID) {
     return new Promise((resolve, reject) => {
-      let recieved = {
+      let reciever = {
         phone: stores.LoginStore.user.phone,
         date: moment().format(),
       };
       let messageData = request.MessageAction();
       messageData.action = received;
-      messageData.data = { message_id: messageID, recieved: received };
+      messageData.data = { message_id: messageID, recieved: reciever };
       messageData.event_id = eventID;
       messageData.committee_id = commiteeID;
       tcpRequest
         .messaging(messageData, messageID + received)
         .then((JSONdata) => {
           EventListener.sendRequest(JSONdata, messageID + received).then(() => {
-            MainUpdater.receiveMessage(messageID, commiteeID, recieved).then(
+            MainUpdater.receiveMessage(messageID, eventID, reciever).then(
               () => {
                 resolve();
               }
@@ -197,7 +197,7 @@ class MessageRequest {
     });
   }
   seenMessage(messageID, committeeID, eventID) {
-    console.warn("calling seen on: ",messageID)
+    console.warn("calling seen on: ", messageID)
     return new Promise((resolve, reject) => {
       let seer = {
         phone: stores.LoginStore.user.phone,
@@ -260,29 +260,25 @@ class MessageRequest {
       });
     });
   }
-  sayTyping(committeeID, eventID) {
-    return new Promise((resolve, reject) => {
-      let messageData = request.MessageAction();
-      let typer = {
-        phone: stores.LoginStore.user.phone,
-        name: stores.LoginStore.user.nickname,
-      };
-      (messageData.action = typing), (messageData.data = typer);
-      messageData.committee_id = committeeID;
-      messageData.event_id = eventID;
-      const id = committeeID + typing
-      tcpRequest
-        .messaging(messageData, id)
-        .then((JSONdata) => {
-          EventListener.sendRequest(JSONdata, id).then(
-            (res) => {
-              MainUpdater.sayTyping(committeeID, typer).then(() => {
-                resolve();
-              });
-            }
-          );
-        });
-    });
+  sayTyping(committeeID, eventID, isRelation,recording) {
+    //console.warn("sending typing state from", committeeID,recording)
+    let messageData = request.MessageAction();
+  
+    let typer = {
+      phone: stores.LoginStore.user.phone,
+      isRelation,recording,
+      name: stores.LoginStore.user.nickname,
+    };
+    (messageData.action = typing), (messageData.data = typer);
+    messageData.committee_id = committeeID;
+    messageData.event_id = eventID;
+    const id = committeeID + typing
+    return tcpRequest
+      .messaging(messageData, id)
+      .then((JSONdata) => {
+        EventListener.sendRequest(JSONdata, id)
+      });
+
   }
 }
 const Requester = new MessageRequest();

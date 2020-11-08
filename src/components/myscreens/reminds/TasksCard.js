@@ -88,6 +88,7 @@ export default class EventTasksCard extends BeComponent {
   update() {
     this.props.update(this.props.item);
   }
+  showReport = this.props.showReport
   showMembers(type){
     this.showActions(this.currentDateIntervals,this.correspondingDateInterval,true)
     setTimeout(() => {

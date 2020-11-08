@@ -175,8 +175,12 @@ class mainUpdater {
   }
   saveMessage(message, eventID, committeeID, me) {
     return new Promise((resolve, reject) => {
-      !me ? stores.Messages.addNewMessage(committeeID, message) : null;
-      !me && Requester.seenMessage(message.id, committeeID, eventID).then(() => { })
+      if (!me) {
+        stores.Messages.addNewMessage(committeeID, message).then(() => {
+          Requester.receiveMessage(message.id, eventID, eventID).then(() => {
+          })
+        })
+      }
       this.informCommitteeAndEvent(message, committeeID, eventID).then(() => {
         resolve();
       });
@@ -189,6 +193,7 @@ class mainUpdater {
     return new Promise((resolve, reject) => {
       stores.Messages.updateMessageText(commiteeID, messageID, text).then(
         () => {
+          resolve()
           /*stores.CommiteeStore.updateLatestMessageText(
             messageID,
             text,
@@ -227,12 +232,12 @@ class mainUpdater {
   }
   sayTyping(commiteeID, typer, dontEmit) {
     return new Promise((resolve, reject) => {
-      emitter.emit(typing(commiteeID), typer)
+      emitter.emit(typing(typer.isRelation ? typer.phone : commiteeID), typer)
       resolve();
     });
   }
   isSeeer(message) {
-    return message.seen && message.seen.find(ele => ele &&
+    return message && message.seen && message.seen.find(ele => ele &&
       ele.phone &&
       ele.phone.replace("+", "00") ===
       stores.LoginStore.user.phone)

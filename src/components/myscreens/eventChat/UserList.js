@@ -17,7 +17,7 @@ export default class UserList extends BePureComponent {
             <BleashupFlatList
                 dataSource={this.props.data}
                 numberOfItems={this.props.data.length}
-                keyExtractor= {(item,index) => item.id}
+                keyExtractor= {(item,index) => item && item.phone}
                 renderPreBatch={20}
                 initialRender={20}
                 renderItem={(item, index) => <View style={{
@@ -29,13 +29,13 @@ export default class UserList extends BePureComponent {
                     height: 50,
                     alignItems: 'center',
                 }}>
-                    <View><ProfileView phone={item.phone}>
+                    <View><ProfileView phone={item && item.phone}>
                     </ProfileView></View>
                     <View><Text style={{
                         ...GState.defaultIconSize,
                         fontSize: 12,
                         fontStyle: 'italic',
-                    }}>{moment(item.date).calendar()}</Text></View>
+                    }}>{moment(item && item.date).calendar()}</Text></View>
                 </View>}
             >
             </BleashupFlatList>

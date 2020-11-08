@@ -341,6 +341,7 @@ export default class globalState {
       type_extern: data.type,
       photo: true,
       sourcer: user.profile,
+      from_activity:remind.event_id,
       rounded: true,
       title: remind.title + ": \n" + user.nickname,
       change_date: data.status.date,

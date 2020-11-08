@@ -9,12 +9,14 @@ export function sayTyping(typer) {
     this.typingTimeout && clearTimeout(this.typingTimeout);
     this.setStatePure({
         typing: true,
-        typer: user.nickname
+        recording: user.recording,
+        typer: user.name
     });
     this.typingTimeout = setTimeout(() => {
         this.setStatePure({
             typing: false,
-            typer: user.nickname
+            recording:user.recording,
+            typer: user.name
         });
         clearTimeout(this.typingTimeout)
         this.typingTimeout = null

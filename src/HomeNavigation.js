@@ -3,7 +3,6 @@ import { createStackNavigator, createNavigationContainer, createAppContainer } f
 import homePage from "./components/myscreens/home/homePage"
 import { enableScreens } from 'react-native-screens';
 import Event from './components/myscreens/event/index';
-import PaginationView from "./components/myscreens/Viewer/constants/paginationSwipe";
 import ContactView from './components/myscreens/Contacts/Contact';
 import QRScanner from './components/myscreens/QR/index';
 import CreateEventView from './components/myscreens/event/createEvent/index';
@@ -13,7 +12,7 @@ import ProfileView from './components/myscreens/settings/profile';
 import PhotoViewer from './components/myscreens/event/PhotoViewer';
 import VideoViewer from './components/myscreens/highlights_details/VideoModal';
 import ActuView from './components/myscreens/settings/editActu';
-import SearchUser from './components/myscreens/Contacts/searchUser';
+//import SearchUser from './components/myscreens/Contacts/searchUser';
 import RemindDetail from './components/myscreens/eventChat/RemindDetail';
 import StarDetail from './components/myscreens/eventChat/StarDetail';
 import ReportTabModal from './components/myscreens/reminds/NewReportTab';
@@ -32,14 +31,13 @@ const HomeNavigator = createStackNavigator({
     Report: { screen: ReportTabModal },
     TaskCreation: { screen: TasksCreation },
     StarCreation : {screen:EventHighlights},
-    PaginationView: { screen: PaginationView },
     CreateEventView: { screen: CreateEventView },
     SwiperComponent: { screen: SwiperComponent },
     CameraScreen: { screen: CameraScreen },
     RemindDetail: { screen: RemindDetail },
     StarDetail: { screen: StarDetail },
     ContactsList: {screen: ContactsModal},
-    SearchUser: { screen: SearchUser },
+    //SearchUser: { screen: SearchUser },
     Profile: { screen: ProfileView },
     SelectRelation: { screen: SelectRelation },
     Actu: { screen: ActuView },

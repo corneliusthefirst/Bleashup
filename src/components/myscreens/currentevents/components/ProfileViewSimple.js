@@ -26,7 +26,7 @@ import TextContent from "../../eventChat/TextContent";
 import LatestMessage from "./LatestMessage";
 
 @observer
-class ProfileSimple extends BePureComponent {
+class ProfileSimple extends BeComponent {
   constructor(props) {
     super(props);
     this.state = {
@@ -73,10 +73,11 @@ class ProfileSimple extends BePureComponent {
             },
           ]}
         >
-          {Texts.typing}
+          {this.state.recording ? Texts.recording : Texts.typing}
         </Text>
       )
         : this.props.navigate ? <LatestMessage
+          onPress={this.showProfile}
           id={this.props.id}
           members={this.props.members}>
         </LatestMessage> : null);
@@ -97,9 +98,9 @@ class ProfileSimple extends BePureComponent {
     return (
       <View style={styles.mainContainer}>
         {!this.props.hidePhoto && (
-          <View style={styles.containerSub}>
-            {user && user.profile && testForURL(user.profile) ? (
-              <TouchableWithoutFeedback onPress={this.props.onPress || this.showProfile}>
+          <TouchableWithoutFeedback onPress={this.showProfile}>
+            <View style={styles.containerSub}>
+              {user && user.profile && testForURL(user.profile) ? (
                 <CacheImages
                   staySmall
                   small
@@ -107,19 +108,21 @@ class ProfileSimple extends BePureComponent {
                   {...this.props}
                   source={{ uri: user.profile }}
                 />
-              </TouchableWithoutFeedback>
-            ) : (
-                <FontAwesome
-                  style={styles.iconPlaceHolder}
-                  name={"user-circle"}
-                ></FontAwesome>
-              )}
-          </View>
+              ) : (
+                  <FontAwesome
+                    style={styles.iconPlaceHolder}
+                    name={"user-circle"}
+                  ></FontAwesome>
+                )}
+
+            </View>
+          </TouchableWithoutFeedback>
         )}
         <TouchableOpacity onPress={this.props.onPress || this.showProfile} style={styles.textStyles}>
           <TextContent
             onPress={this.props.onPress || this.showProfile}
             ellipsizeMode={"tail"}
+            notScallEmoji
             numberOfLines={1}
             style={styles.text}
             foundString={this.props.foundString}
@@ -165,7 +168,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     alignSelf: 'center',
     width: 60,
-    marginRight:"2%",
+    marginRight: "2%",
   },
   textStyles: {
     flex: 1,

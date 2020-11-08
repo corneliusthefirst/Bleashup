@@ -20,12 +20,16 @@ import Texts from '../../../meta/text';
         let isMe = stores.LoginStore.user.phone == phone
         user = { ...user, nickname: isMe ? Texts.you : user.nickname }
         return <TouchableOpacity
+            style={{
+                marginLeft: 2
+            }}
             onPress={this.props.showProfile}
             onPressIn={this.props.onPressIn}
         >
             <TextContent
                 searchString={this.props.searchString}
                 onPress={this.props.showProfile}
+                notScallEmoji
                 foundString={this.props.foundString}
                 style={{
                     color: ColorList.iconActive,

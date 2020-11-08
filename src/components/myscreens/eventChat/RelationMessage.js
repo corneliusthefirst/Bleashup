@@ -14,6 +14,7 @@ import GState from "../../../stores/globalState";
 export default class RelationMessage extends Component {
     constructor(props) {
         super(props)
+        this.press = this.press.bind(this)
     }
     iconStyle = {
         fontSize: 13,
@@ -35,18 +36,19 @@ export default class RelationMessage extends Component {
                 return Texts.contacts
         }
     }
+    press(){
+        requestAnimationFrame(() => this.props.onPress({
+            type: this.props.message.relation_type,
+            item: this.props.message.item
+        }))
+    }
     render() {
         return <View style={{
             marginVertical: '1%',
             flex: this.props.compose ? null : 1,
             //width: "100%",
             minWidth: 200,
-        }}><TouchableOpacity onPress={() => {
-            requestAnimationFrame(() => this.props.onPress({
-                type: this.props.message.relation_type,
-                item: this.props.message.item
-            }))
-        }} style={{
+        }}><TouchableOpacity onPress={this.press.bind(this)} style={{
             borderTopLeftRadius: 5,
             borderTopRightRadius: 5,
             backgroundColor: ColorList.bottunerLighter,
@@ -57,7 +59,7 @@ export default class RelationMessage extends Component {
 
                 }}>
                     <View style={{ marginHorizontal: '1%', }}>{this.choseIcon()}</View>
-                    <View><TextContent numberOfLines={1} style={{
+                    <View><TextContent onPress={this.press} numberOfLines={1} style={{
                         color: ColorList.indicatorColor,
                         fontSize: 13,
                         fontWeight: 'bold',
@@ -79,6 +81,7 @@ export default class RelationMessage extends Component {
                         thumbnails small>
                     </CacheImages>}
                     <View><TextContent
+                        onPress={this.press}
                         style={{
                             ...GState.defaultTextStyle,
                             fontWeight: 'bold',
@@ -93,6 +96,7 @@ export default class RelationMessage extends Component {
             </TouchableOpacity>
             {this.props.message.text ?
                 <TextContent
+                    onPress={this.press}
                     searchString={this.props.searchString}
                     foundString={this.props.foundString}
                     tags={this.props.message.tags}

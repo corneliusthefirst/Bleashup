@@ -24,5 +24,7 @@ export default function initAllContacts(){
         this.phoneContacts = uniqBy(this.phoneContacts, "phone")
         this.setStatePure({ isMount: true });
         this.setStatePure({ contacts: this.phoneContacts });
+    }else{
+        this.setStatePure({ contacts: stores.Contacts.contacts.contacts,isMount:true });
     }
 }

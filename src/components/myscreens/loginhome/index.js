@@ -8,6 +8,7 @@ import Waiter from "./Waiter";
 import GState from '../../../stores/globalState/index';
 import BeNavigator from '../../../services/navigationServices';
 import AnimatedComponent from '../../AnimatedComponent';
+import Texts from "../../../meta/text";
 //import BeBackground from '../../../services/backgroundSync';
 //import BackgroundJob from 'react-native-background-job';
 const AppDir = rnFetchBlob.fs.dirs.SDCardDir + '/Bleashup';
@@ -32,6 +33,25 @@ export default class LoginHomeView extends AnimatedComponent {
   }
   state = {};
   async requestReadAndWritePermission() {
+   const ReadDirperms = await PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.READ_EXTERNAL_STORAGE,{
+       'title': 'BeUp',
+       'message': Texts.beup_wants_to_read_from
+   })
+    const writePerms = await PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE, {
+      'title': 'BeUp',
+      'message': Texts.beup_wants_to_read_from
+    })
+
+    const contactPerms = await PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.READ_CONTACTS, {
+      'title': 'BeUp',
+      'message': Texts.beup_wants_to_read_from
+    })
+
+    const writeCalPerms = await PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.WRITE_CALENDAR, {
+      'title': 'BeUp',
+      'message': Texts.beup_wants_to_read_from
+    })
+    console.warn(writePerms,ReadDirperms, contactPerms,writeCalPerms)
     fs.exists(AppDir).then((status) => {
       if (!status) {
         fs.mkdir(AppDir).then(() => {

@@ -43,19 +43,18 @@ export default class TitleView extends BePureComponent {
         style={{
           width: "100%",
           flexDirection: "row",
-          justifyContent: "space-between",
           alignItems: "center",
         }}
       >
-        <View style={{ width: "43%" }}>
+        <View style={{ marginLeft:'2%' }}>
           <ProfileView hidePhoto phone={user_1}></ProfileView>
         </View>
         <View>
           <Text style={{ ...GState.defaultTextStyle, fontWeight: "bold" }}>
-            {" & "}
+            {"  &  "}
           </Text>
         </View>
-        <View style={{ width: "43%" }}>
+        <View style={{ marginRight:'2%' }}>
           <ProfileView hidePhoto phone={user_2}></ProfileView>
         </View>
       </View>
@@ -103,6 +102,7 @@ export default class TitleView extends BePureComponent {
               <View style={styles.titleContainer}>
                 <TextContent
                   onPress={this.props.onPress || this.goToEventDetails}
+                  notScallEmoji
                   numberOfLines={1}
                   adjustsFontSizeToFit={true}
                   searchString={this.props.searchString}
@@ -122,8 +122,9 @@ export default class TitleView extends BePureComponent {
                   color: ColorList.indicatorColor,
                 },
               ]}
-            >{`${this.state.typer} is ${Texts.typing}`}</Text>
+            >{`${this.state.typer} ${this.state.recording ? Texts.recording : Texts.typing}`}</Text>
           ) : this.props.navigate ? <LatestMessage
+            onPress={this.goToEventDetails}
             id={this.props.Event.id}
             members={this.props.Event.participant}
           >

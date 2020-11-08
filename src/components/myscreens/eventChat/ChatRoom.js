@@ -116,6 +116,7 @@ class ChatRoom extends AnimatedComponent {
         this.getItemLayout = this.getItemLayout.bind(this)
         this.defaultItem = this.defaultItem.bind(this)
         this.onFlatlistItemsChange = this.onFlatlistItemsChange.bind(this)
+        this.sayRecording = this.sayRecording.bind(this)
     }
     saveNotificationToken() {
         firebase
@@ -176,9 +177,12 @@ class ChatRoom extends AnimatedComponent {
         !this.sayTyping ? this.sayTyping = sayTyping.bind(this) : null
         this.sayTyping(newTyper)
     }
-    setTyingState() {
-        return Requester.sayTyping(this.typingListener,
-            this.props.activity_id)
+    setTyingState(user,recording) {
+        return Requester.sayTyping(this.props.firebaseRoom,
+            this.props.activity_id,this.props.isRelation,recording)
+    }
+    sayRecording(){
+        this.setTyingState(null,true)
     }
     formStorableData() {
         let result = [];
@@ -1221,8 +1225,7 @@ class ChatRoom extends AnimatedComponent {
     }
     renderMessage(item, index) {
         const lastIndex = this.lastIndex
-        let delay =
-            delay >= 20 || (item && !item.sent) ? 0 : delay + 1;
+        let delay = index % 20
         let played = item.type == message_types.audio
             && item.played && item.played.length >=
             this.props.members.length
@@ -1479,6 +1482,7 @@ class ChatRoom extends AnimatedComponent {
     keyboardView() {
         return (
             <ChatKeyboard
+                sayRecording={this.sayRecording}
                 activity_name={this.props.activity_name}
                 showRelation={this.showRelation.bind(this)}
                 dontShowKeyboard={this.state.dontShowKeyboard}

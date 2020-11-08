@@ -9,7 +9,7 @@ class Emit {
     }
     off(event, calback) {
         if (GState.canStopListening(event)) {
-            //console.warn("removing listerner ",event)
+            console.warn("removing listerner ",event)
             tinnyEmiter.off(event, calback)
         } 
         GState.removeListener(event)

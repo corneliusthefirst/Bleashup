@@ -242,6 +242,7 @@ export default class Reminds {
           Reminds[EventID] = Array.isArray(NewRemind) ? NewRemind : [NewRemind];
         }
         this.setProperty(Reminds);
+        this.computeRemindIntervals(Reminds[EventID][0])
         resolve();
       });
     });
@@ -544,7 +545,7 @@ export default class Reminds {
     });
   }
 
-  addMembers(EventID, Remind, inform) {
+  addMembers(EventID, Remind, inform, called) {
     return new Promise((resolve, reject) => {
       this.readFromStore().then((Reminds) => {
         let index = findIndex(Reminds[EventID], { id: Remind.remind_id });
@@ -563,7 +564,16 @@ export default class Reminds {
           GState.eventUpdated = true;
           resolve(Reminds[EventID][index]);
         } else {
-          resolve({})
+          if (called) {
+            resolve({})
+          } else {
+            this.loadRemind(EventID, Remind.remind_id).then(() => {
+              console.warn("calling load remind again")
+              this.addMembers(EventID, Remind, true, true).then((Rem) => {
+                resolve(Rem)
+              })
+            })
+          }
         }
       });
     });

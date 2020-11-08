@@ -103,7 +103,7 @@ export default class RemindDetail extends AnimatedPureComponent {
     });
   }
   showMembers(type) {
-    this.showReport(type)
+    this.gotoReport(type)
     //BeNavigator.gotoContactList(this.item.members, Texts.program_members);
   }
   loadInitialStates() {
@@ -164,6 +164,7 @@ export default class RemindDetail extends AnimatedPureComponent {
     return {
       type: type,
       editReport: this.editReport.bind(this),
+      currentRemindUser: this.currentRemindUser,
       shareReport: this.startSharing.bind(this),
       getMembers: () => this.item.members,
       concernees: this.item.members,
@@ -181,10 +182,12 @@ export default class RemindDetail extends AnimatedPureComponent {
       actualInterval: this.correspondingDateInterval,
     };
   }
-  showReport(type) {
+  gotoReport(type) {
     BeNavigator.goToRemindReport(this.returnRouteActions(type))
   }
-
+  showReport(){
+    this.gotoReport(this.routeType)
+  }
   loadStatesFromRemote() {
     stores.Events.loadCurrentEventFromRemote(this.activity_id)
       .then((event) => {
@@ -203,7 +206,7 @@ export default class RemindDetail extends AnimatedPureComponent {
                 this.item
               );
             stores.Reminds.addReminds(this.activity_id, this.item).then(() => { });
-            this.loadStates(false, true);
+            this.loadStates(this.routeType && this.currentRemindUser, true);
           })
           .catch(() => {
             this.showError();
@@ -311,6 +314,8 @@ export default class RemindDetail extends AnimatedPureComponent {
   reply_privately = this.getParam("reply_privately");
   forward = this.getParam("forward")
   activity_id = this.getParam("activity_id");
+  routeType = this.getParam('type')
+  currentRemindUser = this.getParam(this.routeType)
   handleReply() { }
   handlePrivateReply() { }
   saveAlarms(alarms, date) {
@@ -392,12 +397,12 @@ export default class RemindDetail extends AnimatedPureComponent {
     let reply = item ? GState.prepareMentionForRemindsMembers(item, this.item) : 
     GState.prepareRemindsForMetion(this.item);
     reply.from_activity = this.item.event_id;
-    reply.activity_id = this.roomID;
+    reply.activity_id = this.roomID || this.item.event_id;
     reply.activity_name = this.activity.about.title;
     return reply;
   }
-  startReply() {
-    GState.reply = this.formReply();
+  startReply(item) {
+    GState.reply = item ? GState.prepareMentionForRemindsMembers(item,this.item): this.formReply();
     if (this.reply) {
       this.reply && this.reply();
       this.goback();
@@ -425,9 +430,9 @@ export default class RemindDetail extends AnimatedPureComponent {
   startPrivateReply(item) {
     GState.reply = this.formReply(item);
     if (this.reply_privately) {
-      this.reply_privately(this.item.members, item.phone || this.item.creator);
+      this.reply_privately(this.item.members, (item && item.phone) || this.item.creator);
     } else {
-      this.showPrivateReply(this.item.members, item.phone || this.item.creator)
+      this.showPrivateReply(this.item.members, (item && item.phone) || this.item.creator)
     }
   }
   isMember() {
@@ -447,7 +452,7 @@ export default class RemindDetail extends AnimatedPureComponent {
       },
       {
         title: Texts.reply_privately,
-        condition: this.roomID,
+        condition: true,
         action: this.startPrivateReply.bind(this),
       },
       {
