@@ -15,6 +15,7 @@ import Searcher from "../Contacts/Searcher";
 import { startSearching, cancelSearch, justSearch } from "../eventChat/searchServices";
 import Texts from '../../../meta/text';
 import globalFunctions from '../../globalFunctions';
+import rounder from "../../../services/rounder";
 export default class ManageMembersModal extends BleashupModal {
     initialize() {
         this.state = {
@@ -125,7 +126,7 @@ export default class ManageMembersModal extends BleashupModal {
                                     </View>
                                     {this.state.selected.length > 0 && this.props.master && !this.state.searching ? (
                                         <TouchableOpacity
-                                            style={{ marginTop: 'auto', marginBottom: 'auto', marginRight: "3%", marginLeft: "10%", }}
+                                            style={{ ...rounder(40,ColorList.bodyBackground), marginRight: "3%", marginLeft: "10%", }}
                                             onPress={() => requestAnimationFrame(() => this.apply())}
                                         >
                                             <Text style={{ color: "red", fontWeight: "bold" }}>

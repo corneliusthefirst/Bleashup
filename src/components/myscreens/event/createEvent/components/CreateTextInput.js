@@ -110,7 +110,7 @@ export default class CreateTextInput extends BePureComponent {
         <View
           style={{
             position: "absolute",
-            backgroundColor: ColorList.descriptionBody,
+            backgroundColor: ColorList.descriptionBodyTransparent,
             flexDirection: 'row',
             borderRadius: 5,
             padding: '2%',

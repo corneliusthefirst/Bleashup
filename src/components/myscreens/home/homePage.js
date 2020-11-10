@@ -124,7 +124,6 @@ class Home extends BeComponent {
     this.removeNotificationListener = firebase
       .notifications()
       .onNotification((notification) => {
-        console.warn(notification._data);
         emitter.emit("notify", {
           body: notification._body,
           title: notification._title,
@@ -135,7 +134,6 @@ class Home extends BeComponent {
     this.removeNotificationDisplayedListener = firebase
       .notifications()
       .onNotificationDisplayed((notification) => {
-        console.warn(notification);
       });
   }
   navigateToEventDetails(id, remind_id, post_id) {
@@ -173,7 +171,8 @@ class Home extends BeComponent {
   realNew = [];
   componentDidMount() {
     emitter.on("notify", (event) => {
-      if (GState.currentRoom !== event.data.room_key) {
+      console.warn(event.data)
+      if (GState.currentRoom !== event.data.activity_id) {
         this.props.showNotification({
           title: event.title,
           message: event.body,

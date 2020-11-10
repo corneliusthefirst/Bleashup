@@ -14,7 +14,7 @@ export default class MessageState extends AnimatedComponent{
 
     }
     iconStyles = {
-        fontSize: 14,
+        fontSize: 20,
         color: ColorList.indicatorColor,
         //marginTop: "-2%",
     };
@@ -24,7 +24,7 @@ export default class MessageState extends AnimatedComponent{
                 this.props.seen ? (
                     <View
                         style={{
-                            ...rounder(12, ColorList.indicatorColor),
+                            ...rounder(20, ColorList.indicatorColor),
                             justifyContent: "center",
                         }}
                     >
@@ -33,7 +33,7 @@ export default class MessageState extends AnimatedComponent{
                                 ...this.iconStyles,
                                 color: ColorList.bodyBackground,
                                 marginLeft: 0,
-                                fontSize: 14,
+                                fontSize: 20,
                                 marginBottom: 0,
                                 paddingTop: 0,
                             }}
@@ -50,7 +50,7 @@ export default class MessageState extends AnimatedComponent{
                     )
             ) : (
                     <View style={{
-                        ...rounder(14, this.props.color), justifyContent: 'center',
+                        ...rounder(20, this.props.color), justifyContent: 'center',
                     }}
                     ><EvilIcons
                             style={this.iconStyles}

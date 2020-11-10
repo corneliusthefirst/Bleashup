@@ -24,6 +24,8 @@ import Spinner from '../../Spinner';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 import Texts from "../../../meta/text";
 import CreateTextInput from './createEvent/components/CreateTextInput';
+import rounder from "../../../services/rounder";
+import Ionicons from 'react-native-vector-icons/Ionicons';
 
 var event = null;
 export default class Settings extends Component {
@@ -342,10 +344,10 @@ export default class Settings extends Component {
                     marginTop: 5,
                   }}
                 >
-                  {this.props.event && this.props.event.closed ? 
-                    Texts.open_activity : 
+                  {this.props.event && this.props.event.closed ?
+                    Texts.open_activity :
                     Texts.close_activity}
-              </Text>
+                </Text>
               </TouchableOpacity>
             </View>
           </ScrollView>
@@ -354,24 +356,39 @@ export default class Settings extends Component {
               style={{
                 justifyContent: "space-between",
                 alignSelf: "flex-start",
-                width: 150,
+                width: '50%',
                 flexDirection: "row",
-                margin: "2%",
-                marginTop: '4%',
-                height: 35,
+                margin: "4%",
+                marginTop: '6%',
+                height: 45,
               }}
             >
-              <EvilIcons
-                name="close"
-                type="EvilIcons"
-                style={{ ...GState.defaultIconSize, color: colorList.headerIcon }}
-                onPress={this.cancelUpdate.bind(this)}
-              />
-              <EvilIcons
-                style={{ ...GState.defaultIconSize, color: colorList.indicatorColor }}
-                onPress={this.saveConfigurations.bind(this)}
-                name="check"
-              />
+              <TouchableOpacity onPress={this.cancelUpdate.bind(this)} style={{
+                ...rounder(40, colorList.descriptionBody)
+              }}>
+                <EvilIcons
+                  name="close"
+                  type="EvilIcons"
+                  style={{ 
+                    ...GState.defaultIconSize,
+                    fontSize: 40, 
+                    color: colorList.orangeColor 
+                  }}
+                />
+              </TouchableOpacity>
+              <TouchableOpacity style={{
+                ...rounder(40, colorList.descriptionBody)
+              }}>
+                <Ionicons
+                  style={{ 
+                    ...GState.defaultIconSize,
+                    fontSize: 40, 
+                    color: colorList.indicatorColor 
+                  }}
+                  onPress={this.saveConfigurations.bind(this)}
+                  name="ios-checkmark-circle"
+                />
+              </TouchableOpacity>
             </View>
           )}
         </View>

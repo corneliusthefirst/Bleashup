@@ -33,6 +33,7 @@ export default class ReplyText extends BePureComponent {
   constructor(props) {
     super(props);
     this.state = {};
+    this.startOpeningReply = this.startOpeningReply.bind(this)
   }
   state = {};
   showReplyer() {
@@ -114,271 +115,264 @@ export default class ReplyText extends BePureComponent {
     />
     return types[type] || defaultVal
   }
-  handleReply() {
-    this.props.openReply(this.props.reply);
+  startOpeningReply() {
+    this.props.openReply(this.props.reply)
   }
   render() {
     let cannotBeExtraSmall = this.props.reply.type === message_types.relation_message
     return (
-      <TouchableWithoutFeedback
-        //onLongPress={() =>
-        //  this.props.handLongPress ? this.props.handLongPress() : null
-        // }
-        onPress={() =>
-          requestAnimationFrame(() => this.props.openReply(this.props.reply))
-        }
+      <TouchableOpacity
+        onPress={this.startOpeningReply}
+        style={{
+          display: "flex",
+          flexDirection: "row",
+          borderBottomWidth: 0,
+          backgroundColor: ColorList.replyBackground,
+          padding: 2, //margin: '1%',
+          minHeight: 50,
+          //maxWidth: "100%",
+          width: '100%',
+          maxHeight: 170,
+          minWidth: cannotBeExtraSmall
+            ? 200 : 120,
+          borderTopLeftRadius: 5,
+          borderTopRightRadius: 5,
+        }}
       >
         <View
           style={{
-            display: "flex",
-            flexDirection: "row",
-            borderBottomWidth: 0,
-            backgroundColor: ColorList.replyBackground,
-            padding: 2, //margin: '1%',
-            minHeight: 50,
-            //maxWidth: "100%",
-            width: '100%',
-            maxHeight: 150,
-            minWidth: cannotBeExtraSmall
-              ? 200 : 100,
-            borderTopLeftRadius: 5,
-            borderTopRightRadius: 5,
+              /* width: "90%",*/ width: this.props.compose ? "100%" : null,
           }}
         >
-          <View
-            style={{
-              /* width: "90%",*/ width: this.props.compose ? "100%" : null,
-            }}
-          >
-            <View style={{ margin: "1%", minWidth: 100 }}>
-              <View style={{ flexDirection: "column" }}>
-                {this.props.reply.forwarded ? (
-                  <Text style={{ fontSize: 10, fontStyle: "italic" }} note>
-                    {"(forwarded)"}
-                  </Text>
-                ) : null}
-                <View style={{
-                  flexDirection: "row",
-                  alignItems: 'center',
-                  //justifyContent: 'space-between',
-                }}>
-                  <View
+          <View style={{ margin: "1%", minWidth: 100 }}>
+            <View style={{ flexDirection: "column" }}>
+              {this.props.reply.forwarded ? (
+                <Text style={{ fontSize: 10, fontStyle: "italic" }} note>
+                  {"(forwarded)"}
+                </Text>
+              ) : null}
+              <View style={{
+                flexDirection: "row",
+                alignItems: 'center',
+                //justifyContent: 'space-between',
+              }}>
+                <View
+                  style={{
+                    width: !this.props.reply.type_extern ? 0 : 13,
+                    marginRight: '1%',
+                  }}
+                >
+                  {this.renderReplyIcon(this.props.reply.type_extern)}
+                </View>
+                <View
+                  style={{
+                    flexDirection: 'row',
+                    //flex: 1,
+                    //width: !this.props.reply.type_extern ? "100%" : "95%",
+                  }}
+                >
+                  {this.props.reply.replyer_name ? <ChatUser
+                    activity_name={this.props.reply.activity_name}
+                    reply
+                    phone={this.props.reply.replyer_phone}
+                    showProfile={this.showReplyer.bind(this)}
+                  >
+                  </ChatUser> : <TextContent
+                    note
+                    notScallEmoji
+                    ellipsizeMode={"tail"}
+                    onPress={this.startOpeningReply}
+                    numberOfLines={2}
                     style={{
-                      width: !this.props.reply.type_extern ? 0 : 13,
-                      marginRight: '1%',
+                      ...GState.defaultTextStyle,
+                      fontWeight: "bold",
+                      flexShrink: 1,
+                      flexWrap: 'wrap',
+                      color: ColorList.indicatorColor,
+                      maxWidth: "97%",
                     }}
                   >
-                    {this.renderReplyIcon(this.props.reply.type_extern)}
-                  </View>
-                  <View
-                    style={{
-                      flexDirection: 'row',
-                      //flex: 1,
-                      //width: !this.props.reply.type_extern ? "100%" : "95%",
-                    }}
-                  >
-                    {this.props.reply.replyer_name ? <ChatUser
-                      activity_name={this.props.reply.activity_name}
-                      reply
-                      phone={this.props.reply.replyer_phone}
-                      showProfile={this.showReplyer.bind(this)}
-                    >
-                    </ChatUser> : <TextContent
-                      note
-                      notScallEmoji
-                      ellipsizeMode={"tail"}
-                      numberOfLines={1}
-                      style={{
-                        ...GState.defaultTextStyle,
-                        fontWeight: "bold",
-                        flexShrink: 1,
-                        flexWrap: 'wrap',
-                        color: ColorList.indicatorColor,
-                        maxWidth: "99%",
-                      }}
-                    >
-                        {`${(this.props.reply.activity_name ?
-                          ("(" + this.props.reply.activity_name + ") ") : "")}${this.props.reply.title && this.props.reply.title.split(": \n")[0]}`}
-                      </TextContent>}
-                  </View>
+                      {`${(this.props.reply.activity_name ?
+                        ("(" + this.props.reply.activity_name + ") ") : "")}${this.props.reply.title && this.props.reply.title.split(": \n")[0]}`}
+                    </TextContent>}
                 </View>
               </View>
-              <View></View>
-              {this.props.reply.audio || this.props.reply.file ? (
-                <View style={{ display: "flex", flexDirection: "row" }}>
-                  {this.props.reply.audio ? (
-                    <MaterialIcons
+            </View>
+            <View></View>
+            {this.props.reply.audio || this.props.reply.file ? (
+              <View style={{ display: "flex", flexDirection: "row" }}>
+                {this.props.reply.audio ? (
+                  <MaterialIcons
+                    style={{
+                      ...GState.defaultIconSize,
+                      width: 40,
+                      color: ColorList.indicatorColor,
+                    }}
+                    name={"audiotrack"}
+                  ></MaterialIcons>
+                ) : (
+                    <MaterialCommunityIcons
+                      name={"file-document-box"}
                       style={{
                         ...GState.defaultIconSize,
                         width: 40,
                         color: ColorList.indicatorColor,
                       }}
-                      name={"audiotrack"}
-                    ></MaterialIcons>
-                  ) : (
-                      <MaterialCommunityIcons
-                        name={"file-document-box"}
-                        style={{
-                          ...GState.defaultIconSize,
-                          width: 40,
-                          color: ColorList.indicatorColor,
-                        }}
-                      ></MaterialCommunityIcons>
-                    )}
-                  {this.props.reply.type_extern && this.props.reply.audio ? (
-                    <Text
-                      ellipsizeMode={"tail"}
-                      numberOfLines={4}
+                    ></MaterialCommunityIcons>
+                  )}
+                {this.props.reply.type_extern && this.props.reply.audio ? (
+                  <Text
+                    ellipsizeMode={"tail"}
+                    numberOfLines={4}
+                    style={{
+                      fontWeight: "bold",
+                      fontSize: 12,
+                      color: "#1F4237",
+                      maxWidth: "83%",
+                    }}
+                  >
+                    {this.props.reply.replyer_name
+                      ? this.props.reply.title
+                      : this.props.reply.title.split(": \n")[1]}
+                  </Text>
+                ) : (
+                    <View
                       style={{
-                        fontWeight: "bold",
-                        fontSize: 12,
-                        color: "#1F4237",
-                        maxWidth: "83%",
+                        marginTop: this.props.reply.audio ? "2%" : "0%",
+                        //width: "83%",
                       }}
                     >
-                      {this.props.reply.replyer_name
-                        ? this.props.reply.title
-                        : this.props.reply.title.split(": \n")[1]}
-                    </Text>
-                  ) : (
-                      <View
-                        style={{
-                          marginTop: this.props.reply.audio ? "2%" : "0%",
-                          //width: "83%",
-                        }}
-                      >
-                        {this.props.reply.audio ? (
+                      {this.props.reply.audio ? (
+                        <Text
+                          ellipsizeMode={"tail"}
+                          style={{ ...GState.defaultTextStyle }}
+                          numberOfLines={1}
+                        >
+                          {this.props.reply.duration
+                            ? converToHMS(this.props.reply.duration)
+                            : null}
+                        </Text>
+                      ) : (
                           <Text
                             ellipsizeMode={"tail"}
-                            style={{ ...GState.defaultTextStyle }}
                             numberOfLines={1}
+                            style={{ ...GState.defaultTextStyle, fontSize: 30 }}
                           >
-                            {this.props.reply.duration
-                              ? converToHMS(this.props.reply.duration)
-                              : null}
+                            {"."}
+                            {this.props.reply.typer.toUpperCase()}
                           </Text>
-                        ) : (
-                            <Text
-                              ellipsizeMode={"tail"}
-                              numberOfLines={1}
-                              style={{ ...GState.defaultTextStyle, fontSize: 30 }}
-                            >
-                              {"."}
-                              {this.props.reply.typer.toUpperCase()}
-                            </Text>
-                          )}
-                      </View>
-                    )}
-                </View>
-              ) : (
-                  <View>
-                    <View style={{ display: "flex", flexDirection: "row" }}>
-                      {this.props.reply.sourcer ? (
-                        <View
-                          style={{
-                          /*width: this.props.reply.sourcer ? "20%" : "0%",*/ marginRight:
-                              "1%",
-                            marginTop: 3,
-                          }}
-                        >
-                          <View>
-                            <CacheImages
-                              staySmall
-                              thumbnails
-                              small={this.props.reply.rounded}
-                              square={!this.props.reply.rounded}
-                              style={!this.props.reply.rounded && {
-                                width: 70,
-                                minHeight:
-                                  this.state.currentHeight > 30
-                                    ? this.state.currentHeight
-                                    : 40,
-                                maxHeight:
-                                  this.state.currentHeight > 30
-                                    ? this.state.currentHeight
-                                    : 40,
-                                borderBottomRightRadius: 5,
-                                borderTopRightRadius: 5,
-                              }}
-                              source={{ uri: this.props.reply.sourcer }}
-                            ></CacheImages>
-                          </View>
-                        </View>
-                      ) : null}
+                        )}
+                    </View>
+                  )}
+              </View>
+            ) : (
+                <View>
+                  <View style={{ display: "flex", flexDirection: "row" }}>
+                    {this.props.reply.sourcer ? (
                       <View
-                        onLayout={(e) => {
-                          this.setStatePure({
-                            currentHeight: e.nativeEvent.layout.height,
-                          });
-                        }}
                         style={{
-                          flexWrap: 'wrap',
-                          flexDirection: 'row',
-                          flexShrink: 1,
-                          //maxWidth: 200,
-                          alignSelf: this.props.reply.rounded ? "center" : "flex-end",
-                          marginLeft: this.props.reply.sourcer ? ".5%" : null,
-                          maxWidth: this.props.reply.sourcer ? "74%" : "98%",
+                          /*width: this.props.reply.sourcer ? "20%" : "0%",*/ marginRight:
+                            "1%",
+                          marginTop: 3,
                         }}
                       >
-                        {this.props.reply.title ? (
-                          <TextContent
-                            notScallEmoji
-                            onPress={() => this.props.openReply(this.props.reply)}
-                            handleLongPress={this.props.handLongPress}
-                            pressingIn={() => this.props.pressingIn()}
-                            tags={this.props.reply.tags}
-                            ellipsizeMode="tail"
-                            numberOfLines={
-                              this.props.reply.sourcer
-                                ? this.props.reply.replyer_name
-                                  ? 5
-                                  : 5
-                                : 7
-                            }
-                            style={{ fontSize: 12, color: "#1F4237", flexShrink: 1 }}
-                            text={
-                              this.props.reply.replyer_name
-                                ? this.props.reply.title && this.props.reply.title
-                                : this.props.reply.title.split(": \n")[1]
-                            }
-                          ></TextContent>
-                        ) : this.props.reply.text ? (
-                          <TextContent
-                            notScallEmoji
-                            onPress={() => this.props.openReply(this.props.reply)}
-                            handleLongPress={this.props.handLongPress}
-                            pressingIn={() => this.props.pressingIn()}
-                            tags={this.props.reply.tags}
-                            ellipsizeMode="tail"
-                            numberOfLines={
-                              this.props.reply.sourcer
-                                ? this.props.reply.replyer_name
-                                  ? 5
-                                  : 6
-                                : 4
-                            }
-                            style={{ fontSize: 12, flexShrink: 1, }}
-                            text={this.props.reply.text}
-                          ></TextContent>
-                        ) : null}
+                        <View>
+                          <CacheImages
+                            staySmall
+                            thumbnails
+                            small={this.props.reply.rounded}
+                            square={!this.props.reply.rounded}
+                            style={!this.props.reply.rounded && {
+                              width: 70,
+                              minHeight:
+                                this.state.currentHeight > 30
+                                  ? this.state.currentHeight
+                                  : 40,
+                              maxHeight:
+                                this.state.currentHeight > 30
+                                  ? this.state.currentHeight
+                                  : 40,
+                              borderBottomRightRadius: 5,
+                              borderTopRightRadius: 5,
+                            }}
+                            source={{ uri: this.props.reply.sourcer }}
+                          ></CacheImages>
+                        </View>
                       </View>
+                    ) : null}
+                    <View
+                      onLayout={(e) => {
+                        this.setStatePure({
+                          currentHeight: e.nativeEvent.layout.height,
+                        });
+                      }}
+                      style={{
+                        flexWrap: 'wrap',
+                        flexDirection: 'row',
+                        flexShrink: 1,
+                        //maxWidth: 200,
+                        alignSelf: this.props.reply.rounded ? "center" : "flex-end",
+                        marginLeft: this.props.reply.sourcer ? ".5%" : null,
+                        maxWidth: this.props.reply.sourcer ? "74%" : "98%",
+                      }}
+                    >
+                      {this.props.reply.title ? (
+                        <TextContent
+                          notScallEmoji
+                          onPress={this.startOpeningReply}
+                          handleLongPress={this.props.handLongPress}
+                          pressingIn={() => this.props.pressingIn()}
+                          tags={this.props.reply.tags}
+                          ellipsizeMode="tail"
+                          numberOfLines={
+                            this.props.reply.sourcer
+                              ? this.props.reply.replyer_name
+                                ? 5
+                                : 5
+                              : 7
+                          }
+                          style={{ fontSize: 12, color: "#1F4237", flexShrink: 1 }}
+                          text={
+                            this.props.reply.replyer_name
+                              ? this.props.reply.title && this.props.reply.title
+                              : this.props.reply.title.split(": \n")[1]
+                          }
+                        ></TextContent>
+                      ) : this.props.reply.text ? (
+                        <TextContent
+                          notScallEmoji
+                          onPress={this.startOpeningReply}
+                          handleLongPress={this.props.handLongPress}
+                          pressingIn={this.props.pressingIn}
+                          tags={this.props.reply.tags}
+                          ellipsizeMode="tail"
+                          numberOfLines={
+                            this.props.reply.sourcer
+                              ? this.props.reply.replyer_name
+                                ? 5
+                                : 6
+                              : 4
+                          }
+                          style={{ fontSize: 12, flexShrink: 1, }}
+                          text={this.props.reply.text}
+                        ></TextContent>
+                      ) : null}
                     </View>
                   </View>
-                )}
-            </View>
-            {this.props.reply.change_date ? (
-              <Text
-                style={{
-                  fontSize: 12,
-                  color: ColorList.bodySubtext,
-                  fontStyle: "italic",
-                }}
-              >{`${moment(this.props.reply.change_date).calendar()}`}</Text>
-            ) : null}
+                </View>
+              )}
           </View>
+          {this.props.reply.change_date ? (
+            <Text
+              style={{
+                fontSize: 12,
+                color: ColorList.bodySubtext,
+                fontStyle: "italic",
+              }}
+            >{`${moment(this.props.reply.change_date).calendar()}`}</Text>
+          ) : null}
         </View>
-      </TouchableWithoutFeedback>
+      </TouchableOpacity>
     );
   }
 }

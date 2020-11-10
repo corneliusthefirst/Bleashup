@@ -61,6 +61,7 @@ class colorlist {
   indicatorColor = '#057D74';
   indicatorInverted = '#DDECE9';
   descriptionBody = "mintcream";
+  descriptionBodyTransparent = 'rgba(245,255,250,.7)'
   recorderColor = 'rgba(92, 185, 158,1)'
   sendRand = () => Math.floor(Math.random() * (this.senTBoxColor.length - 1))
   senTBoxColor = ["#EFF8FE"]

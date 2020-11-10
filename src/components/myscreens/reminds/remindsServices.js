@@ -9,6 +9,7 @@ import messagePreparer from '../eventChat/messagePreparer';
 import Requester from '../eventChat/Requester';
 import Texts from '../../../meta/text';
 import public_states from './public_states';
+import GState from '../../../stores/globalState/index';
 
 export function returnStoredIntervalsKey(key){
     this.item = this.item || this.props.item
@@ -167,6 +168,7 @@ export function calculateCurrentStates(currentDateIntervals, correspondingDateIn
             this.item.period,
             this.item.recursive_frequency.recurrence, this.item.recursive_frequency.interval)}`
         this.canShare = this.item.status == public_states.public_
+        this.isEvent = GState.calculateRemindType(this.item)
         resolve();
     });
 }

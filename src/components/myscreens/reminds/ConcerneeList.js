@@ -70,7 +70,9 @@ export default class ConcerneeList extends BeComponent {
         setTimeout(() => {
             if (this.props.currentRemindUser) {
                 let index = this.getMembers().findIndex(ele => ele === this.props.currentRemindUser.phone)
-                index >= 0 && this.refs.flatlist && this.refs.flatlist.scrollToIndex(index)
+                setTimeout(() => {
+                    index >= 0 && this.refs.flatlist && this.refs.flatlist.scrollToIndex(index)
+                },50)
             }
             this.setStatePure({
                 mounted: true

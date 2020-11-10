@@ -1835,6 +1835,7 @@ export default class Event extends BeComponent {
             addMembers={() => this.startInvitation(true)}
             invite={() => this.startInvitation()}
             remove={(phone) => this.showMembers(phone)}
+            working={this.state.working}
             isOpen={this.state.isSettingsModalOpened}
             currentPhone={this.user.phone}
             leaveActivity={() => this.preleaveActivity()}

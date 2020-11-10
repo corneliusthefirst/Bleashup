@@ -105,8 +105,12 @@ export function remindTitle() {
     </View>
 }
 function updateURL(aid, data) {
-    stores.Reminds.updateURL(aid, { ...data, url: { ...data.url, 
-        main_source: this.item.remind_url.source } })
+    stores.Reminds.updateURL(aid, {
+        ...data, url: {
+            ...data.url,
+            main_source: this.item.remind_url.source
+        }
+    })
 }
 export function remindMedia() {
     this.item = this.props.item || this.item
@@ -187,7 +191,7 @@ export function remindActons() {
     return !this.member ? (
         this.cannotAssign ? null : (
             <CreateButton
-                title={Texts.assign_me}
+                title={this.isEvent ? Texts.take_part : Texts.assign_me}
                 style={{
                     borderWidth: 0,
                     borderRadius: 10,

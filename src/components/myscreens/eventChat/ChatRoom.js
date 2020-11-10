@@ -754,6 +754,7 @@ class ChatRoom extends AnimatedComponent {
     }
     render() {
         let canShowHeder = this.state.showHeader && !this.state.showCaption && !this.state.fullScreen
+        GState.currentRoom = this.props.firebaseRoom
         return (
             <ImageBackground style={GState.imageBackgroundContainer} source={GState.backgroundImage}>
                 <View style={{ height: '100%', justifyContent: 'flex-end' }}>
@@ -1389,7 +1390,7 @@ class ChatRoom extends AnimatedComponent {
                 clearTimeout(this.itemChangeTimeout)
                 this.itemChangeTimeout = null
             });
-        }, 200)
+        },50)
 
     }
     viewabilityConfig = {

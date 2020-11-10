@@ -24,6 +24,7 @@ export default class ReactionModal extends BleashupModal {
     }
     reactionStyle = {
         fontSize: 34,
+        color:ColorList.bodyIcon,
         textAlign: "center",
     };
     reactions = [

@@ -51,7 +51,11 @@ export default class LoginHomeView extends AnimatedComponent {
       'title': 'BeUp',
       'message': Texts.beup_wants_to_read_from
     })
-    console.warn(writePerms,ReadDirperms, contactPerms,writeCalPerms)
+    /*const docManPerms = await PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.MANAGE_DOCUMENTS,{
+      title: Texts.write_to_disk_permission,
+      message: Texts.writ_to_disk_permission_message
+    })*/
+    console.warn(writePerms,ReadDirperms, contactPerms,writeCalPerms,/*docManPerms*/)
     fs.exists(AppDir).then((status) => {
       if (!status) {
         fs.mkdir(AppDir).then(() => {

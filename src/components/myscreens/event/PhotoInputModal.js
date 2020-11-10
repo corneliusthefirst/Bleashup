@@ -36,6 +36,7 @@ export default class PhotoInputModal extends BleashupModal {
     borderRadius = 5
     photoStyle = {
         width: 300,
+        alignSelf: 'center',
         height: 290,
         borderRadius: 5
     }
@@ -50,6 +51,7 @@ export default class PhotoInputModal extends BleashupModal {
                     backgroundColor: ColorList.indicatorColor,
                     ...shadower(2),
                     alignSelf: 'center',
+                    flexDirection:'row',
                     justifyContent: 'center',
                     borderRadius: 5,
                     width: 300,
@@ -97,11 +99,17 @@ export default class PhotoInputModal extends BleashupModal {
                         marginLeft: "1%",
                         flexDirection: 'row',
                         alignItems: 'center',
-                        justifyContent: 'space-between',
-                        ...shadower(1),
+                        //justifyContent: 'space-between',
+                        //...shadower(1),
                         backgroundColor: ColorList.bodyBackground,
                     }}>
-                        {!this.props.isRelation && <View style={{ flex: 1, }}>
+                        <TouchableOpacity onPress={this.props.replyToPhoto} style={{ ...rounder(35, ColorList.bodyDarkWhite), justifyContent: 'center', }}>
+                            <Entypo name={"reply"} style={{
+                                ...GState.defaultIconSize,
+                                color: ColorList.indicatorColor
+                            }}></Entypo>
+                        </TouchableOpacity>
+                        {!this.props.isRelation && <View style={{ flex: 1,marginLeft:'5%' }}>
                             <PickersUpload
                                 withTrash={!this.props.isRelation && this.props.photo}
                                 currentURL={{ photo: this.props.photo }}
@@ -109,12 +117,6 @@ export default class PhotoInputModal extends BleashupModal {
                                 creating={false} notVideo notAudio notFile>
                             </PickersUpload>
                         </View>}
-                        <TouchableOpacity onPress={this.props.replyToPhoto} style={{ ...rounder(35, ColorList.bodyDarkWhite), justifyContent: 'center', }}>
-                            <Entypo name={"reply"} style={{
-                                ...GState.defaultIconSize,
-                                color: ColorList.indicatorColor
-                            }}></Entypo>
-                        </TouchableOpacity>
                     </View>
 
                     <View style={{ 

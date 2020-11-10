@@ -80,13 +80,7 @@ export default class TasksCreation extends BleashupModal {
   }
   backdropPressToClose = false;
   calculateType(remind) {
-    return remind.location ||
-      (remind.remind_url && remind.remind_url.photo) ||
-      remind.description ||
-      (remind.remind_url && remind.remind_url.video) ||
-      (remind.remind_url && remind.remind_url.source)
-      ? "event"
-      : "reminder";
+    return GState.calculateRemindType(remind)
   }
 
   unmountingComponent() {

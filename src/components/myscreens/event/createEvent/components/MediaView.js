@@ -10,7 +10,7 @@ import Ionicons from 'react-native-vector-icons/Ionicons';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import FileAttarchementMessaege from '../../../eventChat/FileAttarchtmentMessage';
 import AudioMessage from '../../../eventChat/AudioMessage';
-import { containsAudio, containsMedia, containsFile } from './mediaTypes.service';
+import { containsAudio, containsMedia, containsFile, containsVideo } from './mediaTypes.service';
 
 export default class MedaiView extends Component {
     constructor(props) {
@@ -18,6 +18,7 @@ export default class MedaiView extends Component {
         this.containsMedia = containsMedia.bind(this)
         this.containsAudio = containsAudio.bind(this)
         this.containsFile = containsFile.bind(this)
+        this.containsVideo = containsVideo.bind(this)
     }
 
     render() {
@@ -45,28 +46,19 @@ export default class MedaiView extends Component {
                     }} onPress={() => requestAnimationFrame(() => this.props.showItem(this.props.url))} >
                         <CacheImages thumbnails square style={{
                             width: this.props.width ? this.props.width : "100%",
-                            alignSelf: 'center', height: this.props.height * .7,...this.props.style
+                            alignSelf: 'center', height: this.props.height * .7, ...this.props.style
                         }} source={{ uri: this.props.url.photo }}></CacheImages>
-                        {this.props.url && (this.props.url.video || this.props.url.audio) ?
+                        {this.containsVideo() ?
                             <View style={{
                                 ...buttoner,
                                 alignSelf: "center",
                                 position: "absolute",
                             }}>
-                                {this.props.url.video ?
-                                    <Ionicons onPress={() => {
-                                        this.props.showItem(this.props.url)
-                                    }} name="ios-play" style={{
-                                        fontSize: 43, color: ColorList.bodyBackground
-                                    }} type="Ionicons" />
-                                    :
-
-                                    <MaterialIcons onPress={() => {
-                                        this.props.showItem(this.props.url)
-                                    }} name="headset" style={{
-                                        fontSize: 40, color: ColorList.bodyBackground
-                                    }} type="MaterialIcons" />
-                                }
+                                <Ionicons onPress={() => {
+                                    this.props.showItem(this.props.url)
+                                }} name="ios-play" style={{
+                                    fontSize: 43, color: ColorList.bodyBackground
+                                }} type="Ionicons" />
                             </View> : null}
                     </TouchableOpacity> : null
     }

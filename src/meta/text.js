@@ -973,9 +973,13 @@ class TEXTS {
         en: "Done",
         fr: "Fait"
     }[GState.lang]
-    assign_me = {
+    take_part = {
         en: "Take Part",
         fr: "Prendre part"
+    }[GState.lang]
+    assign_to_me = {
+        en:'Assign to me',
+        fr: 'Attribuez-moi'
     }[GState.lang]
     un_assign_to_me = {
         en: "Boycot",

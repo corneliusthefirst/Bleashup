@@ -14,6 +14,7 @@ import Searcher from "../Contacts/Searcher";
 import { startSearching, cancelSearch, justSearch } from "../eventChat/searchServices";
 import globalFunctions from '../../globalFunctions';
 import Texts from '../../../meta/text';
+import rounder from "../../../services/rounder";
 export default class SettingsTabModal extends BleashupModal {
 
   initialize() {
@@ -48,6 +49,7 @@ export default class SettingsTabModal extends BleashupModal {
                 height: ColorList.headerHeight,
                 flexDirection: "row",
                 justifyContent: 'space-between',
+                marginRight:'2%',
                 alignItems: "center",
               }}
             >
@@ -65,7 +67,8 @@ export default class SettingsTabModal extends BleashupModal {
                 />
               </TouchableOpacity>
               <View style={{
-                width: "80%"
+                flex: 1,
+                marginRight: '3%'
               }}>
                 <Text style={{
                   color: ColorList.headerText,
@@ -76,11 +79,16 @@ export default class SettingsTabModal extends BleashupModal {
                   {Texts.activity_setting}
                 </Text>
               </View>
+              {this.props.working ? <View style={{
+                ...rounder(40, ColorList.bodyBackground)
+              }}>
+                <Spinner color={ColorList.indicatorColor} big />
+              </View> : null}
             </View>
           </View>
         </View>
         <ScrollView nestedScrollEnabled>
-          <View style={{ height: GState.height *.50 }}>
+          <View style={{ height: GState.height * .50 }}>
             <Settings
               closeModals={this.onClosedModal.bind(this)}
               event={this.props.event}
@@ -91,10 +99,10 @@ export default class SettingsTabModal extends BleashupModal {
               closeActivity={this.props.closeActivity}
             ></Settings>
           </View>
-          <View style={{ height: GState.height*.7,width:'100%' }}>
+          <View style={{ height: GState.height * .7, width: '100%' }}>
             <View style={{
               height: ColorList.headerHeight,
-              width:'100%',
+              width: '100%',
             }}>{this.TabHeader()}</View>
             <View style={{ height: "80%" }}>
               {this.state.isMounted ?
@@ -124,7 +132,7 @@ export default class SettingsTabModal extends BleashupModal {
         alignSelf: 'center',
         //justifyContent: 'space-between',
         marginLeft: "1%",
-        width:'97%',
+        width: '97%',
         alignItems: 'center',
         height: 35,
         marginRight: "1%",
@@ -139,7 +147,7 @@ export default class SettingsTabModal extends BleashupModal {
           height: 35,
           alignSelf: 'center',
           marginLeft: 5,
-          marginRight:6,
+          marginRight: 6,
           width: this.state.searching ? "98%" : 35
         }}>
           <Searcher
@@ -150,6 +158,6 @@ export default class SettingsTabModal extends BleashupModal {
             search={this.search}
           ></Searcher>
         </View>
-       </View>)
+      </View>)
   }
 }

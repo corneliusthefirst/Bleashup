@@ -370,6 +370,15 @@ export default class globalState {
       index: index,
     };
   }
+  calculateRemindType(remind) {
+    return remind.location ||
+      (remind.remind_url && remind.remind_url.photo) ||
+      remind.description ||
+      (remind.remind_url && remind.remind_url.video) ||
+      (remind.remind_url && remind.remind_url.source)
+      ? "event"
+      : "reminder";
+  }
   itemDebounce(item, callback, delay) {
     if (this.layoutsTimeout[item.id])
       clearTimeout(this.layoutsTimeout[item.id]);

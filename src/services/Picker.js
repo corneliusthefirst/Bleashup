@@ -31,8 +31,8 @@ class Picker {
         });
         let temp = response.path.split('/');
         const size = GState.toMB(response.size)
-        console.warn("file size is: ",size)
-        if (size > 100 ) {
+        console.warn("file size is: ", size)
+        if (size > 100) {
           Toaster({ text: Texts.media_too_large })
           reject({ error: 'this file is extra large' })
         } else {
@@ -43,7 +43,7 @@ class Picker {
   }
 
   CompressVideo(response) {
-    console.warn("response to compress is: ",response)
+    console.warn("response to compress is: ", response)
     return new Promise((resolve, reject) => {
       let size = 0;
       let file = response.path.split('/');
@@ -136,7 +136,7 @@ class Picker {
       const res = await DocumentPicker.pick({
         type: [DocumentPicker.types.audio],
       });
-     return this.concludeSize(res)
+      return this.concludeSize(res)
     } catch (err) {
       if (DocumentPicker.isCancel(err)) {
         return null;
@@ -145,7 +145,7 @@ class Picker {
       }
     }
   }
-  concludeSize(res){
+  concludeSize(res) {
     const size = GState.toMB(res.size)
     if (size > 100) {
       Toaster({ text: Texts.file_too_large })
@@ -181,17 +181,9 @@ class Picker {
     return RNFFprobe.getMediaInformation(url)
   }
   openFile(source) {
-    FileViewer.open(
-      source
-    ).then(
-      () => { }
-    ).catch((e) => {
-      PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.MANAGE_DOCUMENTS, {
-        title: Texts.write_to_disk_permission,
-        message: Texts.writ_to_disk_permission_message
-      }).then(pers => {
-        console.warn(pers)
-      })
+    FileViewer.open(source).then((res) => {
+        console.warn(res)
+      }).catch((e) => {
     })
   }
   CleanAll() {
