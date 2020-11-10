@@ -63,6 +63,7 @@ export default class ActivityPreview extends BleashupModal {
             </CacheImages>
             <View style={{
                 position:'absolute',
+                padding:5,
                 paddingBottom:'70%'
             }}>
             <View style={{

@@ -91,7 +91,7 @@ export default class PrivateReplyModal extends BleashupModal {
                 </View>
             </View>
             <View style={{
-                maxHeight: isAll ? 250 : 60
+                maxHeight: isAll ? this.modalHeight*.7 : 60
             }}>
                 <BleashupFlatList
                     fit

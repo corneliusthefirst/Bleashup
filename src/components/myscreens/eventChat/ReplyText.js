@@ -123,6 +123,7 @@ export default class ReplyText extends BePureComponent {
     return (
       <TouchableOpacity
         onPress={this.startOpeningReply}
+        onLongPress={this.props.onLongPress}
         style={{
           display: "flex",
           flexDirection: "row",
@@ -182,7 +183,7 @@ export default class ReplyText extends BePureComponent {
                     notScallEmoji
                     ellipsizeMode={"tail"}
                     onPress={this.startOpeningReply}
-                    numberOfLines={2}
+                    numberOfLines={1}
                     style={{
                       ...GState.defaultTextStyle,
                       fontWeight: "bold",

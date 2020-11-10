@@ -674,7 +674,7 @@ export default class Message extends BeComponent {
                             }}
                           >
                             <ReplyText
-                              //handLongPress={() => this.handLongPress()}
+                              onLongPress={() => this.handLongPress()}
                               showProfile={(pro) => this.props.showProfile(pro)}
                               pressingIn={() => {
                                 this.handlePressIn();

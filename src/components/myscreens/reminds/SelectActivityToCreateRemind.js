@@ -115,7 +115,8 @@ export default class SelectActivityToCreateRemind extends BleashupModal {
         return <View>
             <View style={{
                 margin: '2%',
-                flexDirection: 'row', alignSelf: 'center',
+                flexDirection: 'row', 
+                alignSelf: 'center',
                 width: '95%',
                 justifyContent: 'space-between',
                 alignItems: 'center',
@@ -130,8 +131,13 @@ export default class SelectActivityToCreateRemind extends BleashupModal {
                         {Texts.select_activity}
                     </Text>
                 </View> : null}
-                {!this.state.searching ? <View style={{
-                    marginLeft: 70,
+                <View style={{
+                    flexDirection: 'row',
+                    alignItems: 'center',
+                    alignSelf: 'flex-end'
+                }}>{!this.state.searching ? <View style={{
+                    alignSelf:'flex-end',
+                    marginRight:6
                 }}><TouchableOpacity
                     onPress={this.createNewActivity}
                     style={{
@@ -146,6 +152,7 @@ export default class SelectActivityToCreateRemind extends BleashupModal {
                     </TouchableOpacity></View> : null}
                 <View style={{
                     height: 35,
+                    alignSelf:'flex-end',
                     flex: this.state.searching ? 1 : null,
                     width: this.state.searching ? null : 35
                 }}>
@@ -157,6 +164,7 @@ export default class SelectActivityToCreateRemind extends BleashupModal {
                         cancelSearch={this.cancelSearch}
                     >
                     </Searcher>
+                </View>
                 </View>
             </View>
             <View style={{

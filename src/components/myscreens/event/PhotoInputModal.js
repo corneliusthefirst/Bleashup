@@ -31,13 +31,13 @@ export default class PhotoInputModal extends BleashupModal {
     }
     entry="top"
     swipeToClose = false
-    modalHeight = 340
-    modalWidth = 300
+    modalHeight = GState.height*.6
+    modalWidth = GState.width*.8
     borderRadius = 5
     photoStyle = {
-        width: 300,
+        width: this.modalWidth*.95,
         alignSelf: 'center',
-        height: 290,
+        height: this.modalHeight*.8,
         borderRadius: 5
     }
     color = ColorList.colorArray[Math.floor(Math.random() * (ColorList.colorArray.length - 1))]
@@ -53,9 +53,10 @@ export default class PhotoInputModal extends BleashupModal {
                     alignSelf: 'center',
                     flexDirection:'row',
                     justifyContent: 'center',
+                    marginTop:10,
                     borderRadius: 5,
-                    width: 300,
-                    height: 300
+                    width: this.modalWidth*.95,
+                    height: this.modalHeight*.82
                 }}>
                     {testForURL(this.props.photo) ? <CacheImages
                         source={{ uri: this.props.photo }}
