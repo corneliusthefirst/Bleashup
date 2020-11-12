@@ -34,9 +34,9 @@ class colorlist {
   bottunerLighter = 'rgba(34, 0, 0, 0.05)';
   headerFontSize = 16;
   reminds = '#2DDFD5';
-  remindsTransparent = "rgba(45, 223, 213, 0.3)"
+  remindsTransparent = "rgba(45, 223, 213, 0.5)"
   post = '#F4AC1C';
-  postTransparent = "rgba(244, 172, 28,0.3)"
+  postTransparent = "rgba(244, 172, 28,0.5)"
   vote = '#4B6CF7';
   chatboxBorderRadius = 5;
   copy = '#92E578';
@@ -59,7 +59,7 @@ class colorlist {
   likeActive = '#1FABAB';
   likeInactive = 'black';
   indicatorColor = '#057D74';
-  indicatorLighter = 'rgba(5, 125, 116,.3)'
+  indicatorLighter = 'rgba(5, 125, 116,.5)'
   indicatorInverted = '#DDECE9';
   descriptionBody = "mintcream";
   descriptionBodyTransparent = 'rgba(245,255,250,.7)'
