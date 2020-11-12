@@ -171,15 +171,16 @@ export default class EventTasksCard extends BeComponent {
           <View
             onLayout={(e) => this.props.onLayout(e.nativeEvent.layout)}
             style={[
-              this.container,
+            
               {
+                borderRadius:5,
                 backgroundColor: this.props.isPointed
                   ? ColorList.remindsTransparent
-                  : ColorList.bodyBackground,
+                  : null,
               },
             ]}
           >
-            <View>
+          <View style={this.container}>
               {this.remindTime()}
               {this.remindLocation()}
               {this.remindTitle()}

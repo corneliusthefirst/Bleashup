@@ -25,6 +25,7 @@ export default function initAllContacts(){
         this.setStatePure({ isMount: true });
         this.setStatePure({ contacts: this.phoneContacts });
     }else{
+        stores.Contacts.getContacts()        
         this.setStatePure({ contacts: stores.Contacts.contacts.contacts,isMount:true });
     }
 }

@@ -95,6 +95,7 @@ export default class Event extends BeComponent {
       showNotifiation: false,
     };
     this.backHandler = null;
+    this.user = stores.LoginStore.user
   }
   state = {
     Event: undefined /*{ about: { title: "Event title" }, updated: true }*/,
@@ -164,6 +165,7 @@ export default class Event extends BeComponent {
         (members, creator) => this.showPrivateReply([...members, ...this.event.participant], creator)
     }
   }
+  user = stores.LoginStore.user
   type = this.getParam("type")
   currentRemindUser = this.type && this.getParam(this.type);
   handleReplyExtern = (reply) => {
@@ -171,7 +173,7 @@ export default class Event extends BeComponent {
       if (reply.from_activity && reply.from_activity !== this.event.id) {
         stores.Events.isParticipant(
           reply.from_activity,
-          stores.LoginStore.user.phone
+          this.user.phone
         ).then((act) => {
           console.warn("test for belonging: ",act)
           if (act) {
@@ -185,7 +187,7 @@ export default class Event extends BeComponent {
       }
     };
     if (reply.type_extern == replies.activity_photo) {
-      this.openPhotoSelectorModal();
+      this.openPhotoSelectorModal(reply.replyer_phone !== this.user.phone);
     } else if (reply.type_extern.includes(replies.description)) {
       this.showDescription();
     } else if (reply.type_extern.toLowerCase().includes("remind") 
@@ -303,7 +305,7 @@ export default class Event extends BeComponent {
             share={{
               id: "1434",
               date: moment().format(),
-              sharer: stores.LoginStore.user.phone,
+              sharer: this.user.phone,
               item_id: "740a5530-8b20-11ea-9234-9b01561bce6b",
               event_id: this.event.id,
             }}
@@ -347,7 +349,7 @@ export default class Event extends BeComponent {
             share={{
               id: "456322",
               date: moment().format(),
-              sharer: stores.LoginStore.user.phone,
+              sharer: this.user.phone,
               item_id: "a7f976f0-8cd8-11ea-9234-ebf9c3b94af7",
               event_id: this.event.id,
             }}
@@ -439,7 +441,7 @@ export default class Event extends BeComponent {
             }
             showMembers={() => {
               let thisMember = find(this.event.participant, {
-                phone: stores.LoginStore.user.phone,
+                phone: this.user.phone,
               });
               this.showContacts(unionBy(
                 this.state.roomMembers,
@@ -716,7 +718,7 @@ export default class Event extends BeComponent {
   computedMaster = false;
   member = false;
   initializeMaster() {
-    this.user = stores.LoginStore.user;
+    this.user = this.user;
     stores.Events.loadCurrentEvent(this.event.id).then((e) => {
       this.event = this.returnRealEvent(e);
       let member = find(this.event.participant, { phone: this.user.phone });
@@ -827,7 +829,7 @@ export default class Event extends BeComponent {
   getOponent(participant) {
     let user =
       participant &&
-      participant.find((ele) => ele && ele.phone !== stores.LoginStore.user.phone);
+      participant.find((ele) => ele && ele.phone !== this.user.phone);
     if (user && user.phone) {
       return stores.TemporalUsersStore.Users[user.phone];
     } else {
@@ -843,10 +845,10 @@ export default class Event extends BeComponent {
       background: this.isRelation ? oponent.profile : event.background,
       participant: [
         event.participant.find(
-          (ele) => ele && ele.phone == stores.LoginStore.user.phone
+          (ele) => ele && ele.phone == this.user.phone
         ),
       ].concat(
-        reject(event.participant, { phone: stores.LoginStore.user.phone })
+        reject(event.participant, { phone: this.user.phone })
       ),
       about: {
         ...event.about,
@@ -857,7 +859,6 @@ export default class Event extends BeComponent {
   id = this.getParam("id");
   index = this.getParam("index");
   currentTab = this.getParam("tab");
-  user = null;
   isOpen = true;
   event = this.returnRealEvent(this.getParam("Event"));
   currentRemindMembers = this.getParam("currentRemindMembers");
@@ -962,7 +963,7 @@ export default class Event extends BeComponent {
         phone: this.event.creator_phone,
       });
       let currentCreator = find(this.event.participant, {
-        phone: stores.LoginStore.user.phone,
+        phone: this.user.phone,
       });
       let arr = [creator, currentCreator];
       let commitee = {
@@ -1257,7 +1258,7 @@ export default class Event extends BeComponent {
         working: true,
       });
       let member = find(this.event.participant, {
-        phone: stores.LoginStore.user.phone,
+        phone: this.user.phone,
       });
       Requester.joinCommitee(id, this.event.id, member)
         .then(() => {
@@ -1375,7 +1376,7 @@ export default class Event extends BeComponent {
   checkActivity(member) {
     this.closeSettingModal();
     BeNavigator.gotoChangeLogs(this.event, {
-      isMe: member.phone === stores.LoginStore.user.phone ? true : false,
+      isMe: member.phone === this.user.phone ? true : false,
       activeMember: member.phone,
       forMember: member.nickname,
     });
@@ -1386,9 +1387,10 @@ export default class Event extends BeComponent {
       isSettingsModalOpened: true,
     });
   }
-  openPhotoSelectorModal() {
+  openPhotoSelectorModal(reply) {
     this.isOpen = false;
     this.setStatePure({
+      isReply:reply,
       isSelectPhotoInputMethodModal: true,
     });
   }
@@ -1548,6 +1550,7 @@ export default class Event extends BeComponent {
   hidePhotoIput() {
     this.setStatePure({
       isSelectPhotoInputMethodModal: false,
+      isReply:false
     });
   }
   directReply(reply) {
@@ -1560,7 +1563,7 @@ export default class Event extends BeComponent {
       let reply = GState.prepareActivityPhotoForMention(
         this.event.background,
         this.event.id,
-        this.event.creator_phone,
+        this.user.phone,
         this.event.type
       );
       this.mention(reply);
@@ -1641,7 +1644,7 @@ export default class Event extends BeComponent {
             saveRemoved={(mem) => this.saveRemoved(mem)}
             adding={this.state.adding}
             title={this.state.title}
-            phone={stores.LoginStore.user.phone}
+            phone={this.user.phone}
             addMembers={(members) => {
               this.saveCommiteeMembers(members);
             }}
@@ -1811,7 +1814,7 @@ export default class Event extends BeComponent {
             replyToPhoto={this.replyToPhoto.bind(this)}
             isRelation={!this.computedMaster || this.isRelation}
             saveBackground={(url) => this.saveBackground(url)}
-            photo={this.event.background}
+            photo={this.state.isReply?this.user.profile : this.event.background}
             showActivityPhoto={() => {
               this.event.background && this.showPhoto(this.event.background);
             }}

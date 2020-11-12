@@ -90,7 +90,7 @@ export default class ChatRoomHeader extends BeComponent {
                         justifyContent: 'center',
                     }}
                     onPress={() =>
-                        requestAnimationFrame(this.props.showActivityPhotoAction)
+                        requestAnimationFrame(() => this.props.showActivityPhotoAction())
                     }
                 >
                     {testForURL(this.props.background) ? (

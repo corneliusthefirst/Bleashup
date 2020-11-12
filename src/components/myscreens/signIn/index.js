@@ -108,18 +108,18 @@ export default class SignInView extends Component {
       this.user = user;
       UserService.login(user.phone, this.state.password).then(response => {
         if (response === "true") {
-          /*if (this.authUser && 
+          if (this.authUser && 
             this.authUser.metadata && 
-            this.authUser.metadata.creationTime) {*/
+            this.authUser.metadata.creationTime) {
           this.login()
-          /*} else {
+          } else {
             firebase.auth().signInWithPhoneNumber(user.phone.replace("00", "+")).then(confirmCode => {
               stores.TempLoginStore.confirmCode = confirmCode
               this.setState({ isModalOpened: true })
             }).catch(() => {
               this.sayVerificationError()
             })
-          }*/
+          }
         } else {
           globalState.loading = false;
           globalState.error = true;

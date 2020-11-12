@@ -10,8 +10,10 @@ import AntDesign from 'react-native-vector-icons/AntDesign';
 import Texts from '../../../meta/text';
 import shadower from "../../shadower";
 import GState from "../../../stores/globalState";
+import { observer } from "mobx-react";
+import stores from "../../../stores";
 
-export default class RelationMessage extends Component {
+@observer class RelationMessage extends Component {
     constructor(props) {
         super(props)
         this.press = this.press.bind(this)
@@ -42,7 +44,21 @@ export default class RelationMessage extends Component {
             item: this.props.message.item
         }))
     }
+    isRelation(){
+        const message = this.props.message
+      return message && message.relation_type == active_types.activity
+    }
+    userExist(){
+        return stores.TemporalUsersStore.Users[this.props.message.item]
+    }
     render() {
+        this.photo = this.props.message.source
+        this.name = this.props.message.name
+        if (this.isRelation() && this.userExist()){
+            const user = stores.TemporalUsersStore.Users[this.props.message.item]
+            this.photo =  user.profile
+            this.name = user.nickname 
+        }
         return <View style={{
             marginVertical: '1%',
             flex: this.props.compose ? null : 1,
@@ -77,7 +93,7 @@ export default class RelationMessage extends Component {
                 }}>
                     {<CacheImages
                         style={{ marginHorizontal: '2%', }}
-                        source={{ uri: this.props.message.source }}
+                        source={{ uri: this.photo }}
                         thumbnails small>
                     </CacheImages>}
                     <View><TextContent
@@ -91,7 +107,7 @@ export default class RelationMessage extends Component {
                         foundString={this.props.foundString}
                         tags={this.props.message.tags}
                     >
-                        {this.props.message.name}
+                        {this.name}
                     </TextContent></View></View>
             </TouchableOpacity>
             {this.props.message.text ?
@@ -104,3 +120,5 @@ export default class RelationMessage extends Component {
         </View>
     }
 }
+
+export default RelationMessage

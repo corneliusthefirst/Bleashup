@@ -168,6 +168,9 @@ export default class ReplyText extends BePureComponent {
                 <View
                   style={{
                     flexDirection: 'row',
+                    marginRight: '2%',
+                    paddingRight:'5%',
+                    paddingLeft:'1%'
                     //flex: 1,
                     //width: !this.props.reply.type_extern ? "100%" : "95%",
                   }}
@@ -190,7 +193,7 @@ export default class ReplyText extends BePureComponent {
                       flexShrink: 1,
                       flexWrap: 'wrap',
                       color: ColorList.indicatorColor,
-                      maxWidth: "97%",
+                      maxWidth: "100%",
                     }}
                   >
                       {`${(this.props.reply.activity_name ?

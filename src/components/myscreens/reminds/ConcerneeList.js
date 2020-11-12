@@ -179,7 +179,7 @@ export default class ConcerneeList extends BeComponent {
                                 borderRadius: 5,
                                 alignItems: 'center',
                                 flexDirection: 'row',
-                                width: "100%"
+                                width: "97%"
                             }}
                             key={index.toString()}
                             ><Swipeout style={{ 

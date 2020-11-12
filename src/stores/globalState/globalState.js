@@ -323,6 +323,7 @@ export default class globalState {
       id: activity_id,
       type_extern: replies.activity_photo,
       photo: true,
+      replyer_phone:creator,
       sent: true,
       title: (type == active_types.relation ? Texts.profile_photo : Texts.activity_photo) + ": \n",
       sourcer: photo,

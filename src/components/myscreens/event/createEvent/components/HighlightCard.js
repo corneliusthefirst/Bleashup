@@ -77,6 +77,12 @@ export default class HighlightCard extends BeComponent {
         onLayout={(e) => {
           this.props.onLayout(e.nativeEvent.layout);
         }}
+        style={{
+          borderRadius: 5,
+          backgroundColor: this.props.isPointed
+            ? ColorList.postTransparent
+            : null,
+        }}
       >
         <Swipeout
           disabled={false}
@@ -88,14 +94,7 @@ export default class HighlightCard extends BeComponent {
           }}
         >
           <View
-            style={[
-              this.container,
-              {
-                backgroundColor: this.props.isPointed
-                  ? ColorList.postTransparent
-                  : ColorList.bodyBackground,
-              },
-            ]}
+            style={this.container}
           >
             <View
               style={{

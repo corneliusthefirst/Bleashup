@@ -66,7 +66,7 @@ export default class Message extends BeComponent {
         this.props.PreviousMessage.sender &&
         this.props.message.sender &&
         this.props.PreviousMessage.sender.phone !==
-          this.props.message.sender.phone,
+        this.props.message.sender.phone,
       time: /*!isDiff &&
                     this.props.PreviousMessage &&
                     this.props.PreviousMessage.type !== "date_separator" &&
@@ -310,11 +310,11 @@ export default class Message extends BeComponent {
   renderMessageReactions(sender) {
     return this.props.message.reaction
       ? this.props.message.reaction.map((ele, index) =>
-          this.reaction(sender, ele, index)
-        )
+        this.reaction(sender, ele, index)
+      )
       : this.testReactions.map((ele, index) =>
-          this.reaction(sender, ele, index)
-        );
+        this.reaction(sender, ele, index)
+      );
   }
   reactions(sender) {
     return (
@@ -388,8 +388,8 @@ export default class Message extends BeComponent {
   shouldComponentUpdate(nextProps, nextState, nextContext) {
     let shoulUpdate =
       this.props.state !== nextProps.state ||
-      this.state.refresh !== nextState.refresh ||
-      this.state.isReacting !== nextState.isReacting
+        this.state.refresh !== nextState.refresh ||
+        this.state.isReacting !== nextState.isReacting
         ? true
         : false;
     return shoulUpdate;
@@ -471,7 +471,6 @@ export default class Message extends BeComponent {
     let showName = this.state.sender && this.state.different;
     let topMostStyle = {
       marginLeft: this.state.sender ? "1%" : 0,
-      opacity: this.props.isPointed ? 0.4 : 1,
       marginRight: !this.state.sender ? "1%" : 0,
       marginTop: this.state.different ? "4%" : "1.2%",
       marginBottom: this.props.index <= 0 ? "2%" : 0,
@@ -501,8 +500,8 @@ export default class Message extends BeComponent {
       borderBottomRightRadius: this.state.sender
         ? ColorList.chatboxBorderRadius
         : this.props.message.reply && this.props.message.reply.type_extern
-        ? ColorList.chatboxBorderRadius
-        : null,
+          ? ColorList.chatboxBorderRadius
+          : null,
     };
     let subNameStyle = {
       paddingBottom: 0,
@@ -556,6 +555,9 @@ export default class Message extends BeComponent {
             containerDims: e.nativeEvent.layout,
           });
         }}
+        style={{ 
+          backgroundColor: this.props.isPointed ? ColorList.indicatorLighter : '',
+          borderRadius: ColorList.chatboxBorderRadius, }}
       >
         {this.props.message.type == message_types.date_separator ? (
           <View style={{ marginTop: "2%", marginBottom: "2%" }}>
@@ -574,223 +576,223 @@ export default class Message extends BeComponent {
         ) : !this.state.loaded ? (
           <View style={placeholderStyle}></View>
         ) : (
-          <View>
-            <View style={topMostStyle}>
-              <SwipeRow
-                swipeGestureEnded={(key, data) => {
-                  if (data.translateX >= 50) {
-                    this.handleReply();
-                  } else if (data.translateX <= -50) {
-                    Vibrator.vibrateLong();
-                    this.handLongPress();
-                  }
-                }}
-                leftOpenValue={0}
-                rightOpenValue={0}
-                swipeToClosePercent={50}
-                style={{ backgroundColor: "transparent", width: "100%" }}
-              >
-                <View
-                  style={{
-                    marginTop: "auto",
-                    marginBottom: "auto",
-                    alignSelf: "center",
-                    flexDirection: "row",
-                    justifyContent: "space-between",
-                    width: "90%",
-                  }}
-                ></View>
-                <View
-                  style={{
-                    flexDirection: "row",
-                    alignSelf: !this.state.sender ? "flex-end" : "flex-start",
-                  }}
-                >
-                  {this.state.time && !this.state.sender ? (
-                    <View style={timeContainerStyle}>
-                      <Text style={timestyle}>{this.state.time}</Text>
-                    </View>
-                  ) : null}
-                  {!this.state.sender && this.props.isfirst ? (
-                    <View
-                      style={{
-                        flexDirection: "row",
-                        alignItems: "flex-end",
-                        width: 30,
-                        justifyContent: "center",
+                <View>
+                  <View style={topMostStyle}>
+                    <SwipeRow
+                      swipeGestureEnded={(key, data) => {
+                        if (data.translateX >= 50) {
+                          this.handleReply();
+                        } else if (data.translateX <= -50) {
+                          Vibrator.vibrateLong();
+                          this.handLongPress();
+                        }
                       }}
-                    >
-                      {this.rendermessageState(transparentColor)}
-                    </View>
-                  ) : null}
-                  <View style={GeneralMessageBoxStyle}>
-                    <View>
-                      {this.props.message.forwarded ? (
-                        <Text
-                          style={{
-                            fontStyle: "italic",
-                            marginLeft: "2%",
-                            fontSize: 10,
-                          }}
-                          note
-                        >
-                          {"(" +
-                            Texts.forwarded +
-                            ") " +
-                            (this.props.message.report
-                              ? "(" + Texts.report + ")"
-                              : "")}
-                        </Text>
-                      ) : null}
-                      {this.state.different &&
-                      this.state.sender &&
-                      !this.props.isRelation ? (
-                        <ChatUser
-                          searchString={this.props.searchString}
-                          foundString={this.props.foundString}
-                          phone={
-                            this.props.message &&
-                            this.props.message.sender &&
-                            this.props.message.sender.phone
-                          }
-                          onPressIn={this.handlePressIn.bind(this)}
-                          showProfile={() => {
-                            requestAnimationFrame(() => {
-                              this.props.showProfile(
-                                this.props.message.sender.phone
-                              );
-                            });
-                          }}
-                        />
-                      ) : null}
-                      <View>
-                        {this.props.message.reply ? (
-                          <View
-                            style={{
-                              alignItems: "center",
-                              alignSelf: "center",
-                              marginTop: ".4%",
-                              width: "99%",
-                            }}
-                          >
-                            <ReplyText
-                              onLongPress={() => this.handLongPress()}
-                              showProfile={(pro) => this.props.showProfile(pro)}
-                              pressingIn={() => {
-                                this.handlePressIn();
-                                this.replying = true;
-                              }}
-                              openReply={(replyer) => {
-                                replyer.isThisUser = !this.state.sender;
-                                this.props.message.reply &&
-                                this.props.message.reply.type_extern
-                                  ? this.props.handleReplyExtern(
-                                      this.props.message.reply
-                                    )
-                                  : this.props.openReply(replyer);
-                              }}
-                              reply={this.props.message.reply}
-                            ></ReplyText>
-                          </View>
-                        ) : null}
-                        <TouchableWithoutFeedback
-                          onPressIn={this.handlePressIn.bind(this)}
-                          //onPress={this.handlePress.bind(this)}
-                          style={{ flex: 1 }}
-                          onLongPress={() => {
-                            this.handLongPress();
-                          }}
-                        >
-                          <View
-                            style={{
-                              marginLeft: "1%",
-                              marginRight: "1%",
-                              flex: 1,
-                            }}
-                          >
-                            {this.chooseComponent(
-                              this.props.message,
-                              this.props.message.id,
-                              this.state.sender
-                            )}
-                          </View>
-                        </TouchableWithoutFeedback>
-                      </View>
-                      <View style={{ alignSelf: "flex-start" }}>
-                        {this.reactions(this.state.sender)}
-                      </View>
-                    </View>
-                  </View>
-                  {this.state.sender && this.state.showReacter ? (
-                    <TouchableOpacity
-                      //onLongPress={this.handLongPress.bind(this)}
-                      onPress={this.openReaction.bind(this)}
+                      leftOpenValue={0}
+                      rightOpenValue={0}
+                      swipeToClosePercent={50}
+                      style={{ backgroundColor: "transparent", width: "100%" }}
                     >
                       <View
                         style={{
-                          ...reactionContanerStyle,
-                          ...rounder(30, transparentColor),
-                          marginLeft: 5,
+                          marginTop: "auto",
+                          marginBottom: "auto",
+                          alignSelf: "center",
+                          flexDirection: "row",
+                          justifyContent: "space-between",
+                          width: "90%",
+                        }}
+                      ></View>
+                      <View
+                        style={{
+                          flexDirection: "row",
+                          alignSelf: !this.state.sender ? "flex-end" : "flex-start",
                         }}
                       >
-                        <AntDesign
-                          style={{
-                            fontSize: 30,
-                            color: ColorList.indicatorColor,
-                            alignSelf: "center",
-                          }}
-                          type={"AntDesign"}
-                          name={"meh"}
-                        />
+                        {this.state.time && !this.state.sender ? (
+                          <View style={timeContainerStyle}>
+                            <Text style={timestyle}>{this.state.time}</Text>
+                          </View>
+                        ) : null}
+                        {!this.state.sender && this.props.isfirst ? (
+                          <View
+                            style={{
+                              flexDirection: "row",
+                              alignItems: "flex-end",
+                              width: 30,
+                              justifyContent: "center",
+                            }}
+                          >
+                            {this.rendermessageState(transparentColor)}
+                          </View>
+                        ) : null}
+                        <View style={GeneralMessageBoxStyle}>
+                          <View>
+                            {this.props.message.forwarded ? (
+                              <Text
+                                style={{
+                                  fontStyle: "italic",
+                                  marginLeft: "2%",
+                                  fontSize: 10,
+                                }}
+                                note
+                              >
+                                {"(" +
+                                  Texts.forwarded +
+                                  ") " +
+                                  (this.props.message.report
+                                    ? "(" + Texts.report + ")"
+                                    : "")}
+                              </Text>
+                            ) : null}
+                            {this.state.different &&
+                              this.state.sender &&
+                              !this.props.isRelation ? (
+                                <ChatUser
+                                  searchString={this.props.searchString}
+                                  foundString={this.props.foundString}
+                                  phone={
+                                    this.props.message &&
+                                    this.props.message.sender &&
+                                    this.props.message.sender.phone
+                                  }
+                                  onPressIn={this.handlePressIn.bind(this)}
+                                  showProfile={() => {
+                                    requestAnimationFrame(() => {
+                                      this.props.showProfile(
+                                        this.props.message.sender.phone
+                                      );
+                                    });
+                                  }}
+                                />
+                              ) : null}
+                            <View>
+                              {this.props.message.reply ? (
+                                <View
+                                  style={{
+                                    alignItems: "center",
+                                    alignSelf: "center",
+                                    marginTop: ".4%",
+                                    width: "99%",
+                                  }}
+                                >
+                                  <ReplyText
+                                    onLongPress={() => this.handLongPress()}
+                                    showProfile={(pro) => this.props.showProfile(pro)}
+                                    pressingIn={() => {
+                                      this.handlePressIn();
+                                      this.replying = true;
+                                    }}
+                                    openReply={(replyer) => {
+                                      replyer.isThisUser = !this.state.sender;
+                                      this.props.message.reply &&
+                                        this.props.message.reply.type_extern
+                                        ? this.props.handleReplyExtern(
+                                          this.props.message.reply
+                                        )
+                                        : this.props.openReply(replyer);
+                                    }}
+                                    reply={this.props.message.reply}
+                                  ></ReplyText>
+                                </View>
+                              ) : null}
+                              <TouchableWithoutFeedback
+                                onPressIn={this.handlePressIn.bind(this)}
+                                //onPress={this.handlePress.bind(this)}
+                                style={{ flex: 1 }}
+                                onLongPress={() => {
+                                  this.handLongPress();
+                                }}
+                              >
+                                <View
+                                  style={{
+                                    marginLeft: "1%",
+                                    marginRight: "1%",
+                                    flex: 1,
+                                  }}
+                                >
+                                  {this.chooseComponent(
+                                    this.props.message,
+                                    this.props.message.id,
+                                    this.state.sender
+                                  )}
+                                </View>
+                              </TouchableWithoutFeedback>
+                            </View>
+                            <View style={{ alignSelf: "flex-start" }}>
+                              {this.reactions(this.state.sender)}
+                            </View>
+                          </View>
+                        </View>
+                        {this.state.sender && this.state.showReacter ? (
+                          <TouchableOpacity
+                            //onLongPress={this.handLongPress.bind(this)}
+                            onPress={this.openReaction.bind(this)}
+                          >
+                            <View
+                              style={{
+                                ...reactionContanerStyle,
+                                ...rounder(30, transparentColor),
+                                marginLeft: 5,
+                              }}
+                            >
+                              <AntDesign
+                                style={{
+                                  fontSize: 30,
+                                  color: ColorList.indicatorColor,
+                                  alignSelf: "center",
+                                }}
+                                type={"AntDesign"}
+                                name={"meh"}
+                              />
+                            </View>
+                          </TouchableOpacity>
+                        ) : null}
+                        {this.state.time && this.state.sender ? (
+                          <View
+                            style={{
+                              alignItems: "flex-end",
+                              marginLeft: 5,
+                              ...timeContainerStyle,
+                            }}
+                          >
+                            <Text style={timestyle}>{this.state.time}</Text>
+                          </View>
+                        ) : null}
                       </View>
-                    </TouchableOpacity>
-                  ) : null}
-                  {this.state.time && this.state.sender ? (
+                    </SwipeRow>
+                  </View>
+                  {this.state.isReacting ? (
                     <View
                       style={{
-                        alignItems: "flex-end",
-                        marginLeft: 5,
-                        ...timeContainerStyle,
+                        position: "absolute",
+                        width: GState.width * 0.9,
+                        alignSelf: "center",
+                        height: this.state.containerDims
+                          ? this.state.containerDims.height + 10
+                          : 40,
+                        justifyContent: "center",
+                        margin: "2%",
                       }}
                     >
-                      <Text style={timestyle}>{this.state.time}</Text>
+                      <ReactionModal
+                        pressingIn={() => {
+                          this.startReactionShowTimer();
+                        }}
+                        react={(reaction) =>
+                          this.props.react(this.props.message.id, reaction)
+                        }
+                        isOpen={this.state.isReacting}
+                        onClosed={() => {
+                          this.setStatePure({
+                            isReacting: false,
+                          });
+                          clearInterval(this.reactionsTimer);
+                        }}
+                      ></ReactionModal>
                     </View>
                   ) : null}
                 </View>
-              </SwipeRow>
-            </View>
-            {this.state.isReacting ? (
-              <View
-                style={{
-                  position: "absolute",
-                  width: GState.width * 0.9,
-                  alignSelf: "center",
-                  height: this.state.containerDims
-                    ? this.state.containerDims.height + 10
-                    : 40,
-                  justifyContent: "center",
-                  margin: "2%",
-                }}
-              >
-                <ReactionModal
-                  pressingIn={() => {
-                    this.startReactionShowTimer();
-                  }}
-                  react={(reaction) =>
-                    this.props.react(this.props.message.id, reaction)
-                  }
-                  isOpen={this.state.isReacting}
-                  onClosed={() => {
-                    this.setStatePure({
-                      isReacting: false,
-                    });
-                    clearInterval(this.reactionsTimer);
-                  }}
-                ></ReactionModal>
-              </View>
-            ) : null}
-          </View>
-        )}
+              )}
       </View>
     );
   }

@@ -402,6 +402,9 @@ export default class LoginStore {
       state: false
     }]
   @action setStatusOptions(newArray) {
+    return this.setSOptions(newArray)
+  }
+  setSOptions(newArray){
     return new Promise((resolve, reject) => {
       //console.warn("here1",newArray)
       storage
@@ -418,7 +421,6 @@ export default class LoginStore {
         });
     });
   }
-
   @action async updateStatusOptions(newArray) {
     return new Promise((resolve, reject) => {
       storage
@@ -438,7 +440,9 @@ export default class LoginStore {
             });
         })
         .catch(error => {
-          reject(error);
+         this.setSOptions(newArray).then(() => {
+           resolve()
+         })
         });
     });
   }

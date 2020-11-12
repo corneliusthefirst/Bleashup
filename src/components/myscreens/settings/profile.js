@@ -265,7 +265,7 @@ class ProfileView extends BeComponent {
                 style={{ ...GState.defaultTextStyle, alignSelf: "flex-start" }}
                 numberOfLines={1}
               >
-                {stores.LoginStore.user.status}
+                {GState.isUndefined(stores.LoginStore.user.status) ? '' : stores.LoginStore.user.status}
               </Text>
             </View>
           </View>

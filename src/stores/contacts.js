@@ -7,6 +7,7 @@ import serverEventListener from '../services/severEventListener';
 import moment from 'moment';
 import request from '../services/requestObjects';
 import EventListener from '../services/severEventListener';
+import stores from '.';
 export default class contacts {
   constructor() {
     //storage.remove(this.saveKey).then(() =>{})
@@ -86,7 +87,8 @@ isAContact(phone){
     this.currentTime = moment().format();
     this.contacts = newValue;
   }
-  getContacts(phone) {
+  getContacts() {
+    const phone = stores.LoginStore.user.phone
     return new Promise((resolve, reject) => {
       this.readFromStore().then((contacts) => {
         if (!contacts || !contacts.contacts || contacts.contacts.length == 0) {

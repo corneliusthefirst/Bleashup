@@ -98,13 +98,24 @@ class Functions {
         stores.TemporalUsersStore.Users[ele.phone].nickname.toLowerCase());
     return name && name.includes(search.toLowerCase()) ? true : false;
   }
-
   filterMessages(ele, search, isRelation) {
+    const Relation = (message) => {
+      return message && message.relation_type == active_types.activity
+    }
+    const userExist = (message) => {
+      return stores.TemporalUsersStore.Users[message.item]
+    }
+    const returnName = (item) => {
+      if (Relation(item) && userExist(item)) {
+        return stores.TemporalUsersStore.Users[item.item].nickname
+      }
+      return item && item.name
+    }
     if (ele && search && search.length > 0) {
       search = search.toLowerCase()
       let senderPhone = ele.sender && ele.sender.phone.replace && ele.sender.phone.replace("+", "00")
       let isText = (ele.text && ele.text.toLowerCase().includes(search))
-      let isName = (ele.name && ele.name.toLowerCase().includes(search))
+      let isName = (returnName(ele) && ele.name.toLowerCase().includes(search))
       let user = senderPhone && senderPhone !== stores.LoginStore.user.phone &&
         stores.TemporalUsersStore.Users[senderPhone]
       let isUsername = user && user.nickname && user.nickname.toLowerCase().includes(search)
@@ -172,7 +183,7 @@ class Functions {
   authorFirstWithouMe(members, author) {
     members = reject(
       [find(members, { phone: author }), ...reject(members, { phone: author }),
-        ...reject(stores.Contacts.contacts.contacts,{phone:author})],
+      ...reject(stores.Contacts.contacts.contacts, { phone: author })],
       { phone: stores.LoginStore.user.phone }
     ).filter(ele => ele);
     return members;
