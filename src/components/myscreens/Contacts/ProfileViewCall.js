@@ -18,13 +18,6 @@ export default class ProfileViewCall extends BeComponent {
 
   render() {
     return !this.state.hide ? (
-      <TouchableOpacity
-        onPress={() => {
-          requestAnimationFrame(() => {
-            this.props.createRelation();
-          });
-        }}
-      >
         <ProfileView
           contact
           full
@@ -38,9 +31,9 @@ export default class ProfileViewCall extends BeComponent {
             this.hide(hidestate);
           }}
         />
-      </TouchableOpacity>
     ) : (
-      <ProfileSimple 
+      <ProfileSimple
+        dontpress 
       showInvite={this.props.showInvite}
        searching={this.props.searching} 
        searchString={this.props.searchString} 

@@ -16,6 +16,7 @@ import BeComponent from '../../BeComponent';
 
 
   render() {
+    this.allUsers = stores.TemporalUsersStore.Users
     return (
         <CurrentEvents searchString={this.props.searchString} data={stores.Events.events.filter(actFilterFunc)} {...this.props}></CurrentEvents>
     );

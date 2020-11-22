@@ -110,16 +110,24 @@ export default class events {
     if (NewEvent == 'no_such_key') {
       resolve();
     } else {
-      NewEvent.updated_at = moment().format();
-      NewEvent.new = true;
       return new Promise((resolve, reject) => {
         this.readFromStore().then(Events => {
           if (Events.length !== 0) {
-            Events.push(NewEvent);
+            let index = findIndex(Events,{id:NewEvent.id})
+            if(this.canUpdate(index)){
+              Events[index] = {
+                ...Events[index],
+                ...NewEvent,
+                updated_at:Events[index].updated_at
+              }
+            }else{
+              NewEvent.updated_at = moment().format();
+              NewEvent.new = true;
+              Events.unshift(NewEvent);
+            }
             this.saveKey.data = Events;
           }
           else { this.saveKey.data = [NewEvent]; }
-          this.saveKey.data = uniqBy(this.saveKey.data, 'id');
           this.setProperties(this.saveKey.data, true);
           resolve();
         });
@@ -465,6 +473,7 @@ export default class events {
     });
   }
   @action removeParticipant(EventID, Phone, inform) {
+    console.warn("Phone to leave: ",Phone)
     return new Promise((resolve, rejec) => {
       this.readFromStore().then(Events => {
         let eventIndex = findIndex(Events, { id: EventID });
@@ -1077,13 +1086,16 @@ export default class events {
         if (this.canUpdate(index)) {
           const previousUpdate = Events[index].previous_updated
           const currentUpdate = Events[index].updated_at
+          console.warn("event is: ", Events[index])
           Events[index].updated_at = revert ? previousUpdate : moment().format();
           Events[index].previous_updated = currentUpdate
           this.setProperties(Events, true);
           resolve();
         } else {
-          this.loadCurrentEvent(EventID).then(() => {
-            resolve()
+          return this.loadCurrentEventFromRemote(EventID).then((event) => {
+            return this.changeUpdatedStatus(EventID, revert).then(() => {
+              resolve()
+            })
           })
         }
       });

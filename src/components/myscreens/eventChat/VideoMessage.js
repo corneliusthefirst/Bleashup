@@ -295,7 +295,7 @@ export default class VideoMessage extends BePureComponent {
                     </View>
                     <View
                       style={{
-                        marginTop: "5%",
+                        marginTop: "1%",
                         ...buttoner,
                         height: 25,
                         width:null,

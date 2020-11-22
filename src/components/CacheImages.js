@@ -18,7 +18,7 @@ class CacheImages extends BeComponent {
       this.setStatePure({
         mounted: true,
       });
-    }, 2000);
+    }, 700);
   }
   styles = {
     small: {

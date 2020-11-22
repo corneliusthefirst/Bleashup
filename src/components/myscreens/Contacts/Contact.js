@@ -120,8 +120,8 @@ export default class ContactView extends BeComponent {
       };
       contact.phoneNumbers.forEach((subcontact) => {
         subcontact.number.charAt(0) != '+'
-          ? (subcontact.number = '00' + this.codeObj.code + subcontact.number)
-          : (subcontact.number = subcontact.number.replace('+', '00'));
+          ? (subcontact.number = ('00' + this.codeObj.code + subcontact.number).replace(/ /g, ''))
+          : (subcontact.number = subcontact.number.replace('+', '00').replace(/ /g, ''));
         phoneUser.phone = subcontact.number;
         this.array.push(phoneUser);
       });
@@ -176,7 +176,9 @@ export default class ContactView extends BeComponent {
 
   render() {
     let data = this.state.contacts||[]
-    data = data? data.filter(ele => ele && ele.phone && globalFunctions.filterForRelation(ele, this.state.searchString)):[]
+    data = data? data.filter(ele => ele 
+      && ele.phone
+    && globalFunctions.filterForRelation(ele, this.state.searchString)):[]
     return (
       <View
         style={{

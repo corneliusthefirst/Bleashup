@@ -120,6 +120,7 @@ export default class TitleView extends BePureComponent {
                 {
                   fontSize: 12,
                   color: ColorList.indicatorColor,
+                  fontWeight:'bold'
                 },
               ]}
             >{`${this.state.typer} ${this.state.recording ? Texts.recording : Texts.typing}`}</Text>

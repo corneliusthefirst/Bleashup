@@ -90,13 +90,14 @@ export default class CreateEventView extends AnimatedComponent {
   };
 
   creatEvent = () => {
-    if (!this.state.currentEvent.about.title) {
+    if (!this.state.currentEvent.about.title && !this.state.title) {
       Toaster({ text: Texts.event_must_have_a_name, duration: 4000 });
     } else {
       this.setStatePure({
         creating: true,
       });
       let event = this.state.currentEvent;
+      event.about.title = this.state.title
       event.created_at = moment().format();
       event.participant = this.state.participant
       event.updated_at = moment().format();

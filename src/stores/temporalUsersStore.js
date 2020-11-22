@@ -83,29 +83,40 @@ export default class TemporalUsersStore {
     towDayMillisec() {
         return 1000 * 60 * 60 * 24 * 2
     }
-    getUser(phone) {
+    getUser(phone, always) {
         return new Promise((resolve, rejec) => {
             if (this.Users[phone] && (this.Users[phone].updated_at ||
                 (moment().format("x") - moment(this.Users[phone].updated_at).format("x")) <
                 this.towDayMillisec())) {
                 resolve(this.Users[phone])
+                if(always){
+                    this.checkRemote(phone).then(() => {
+                        resolve()
+                    })
+                }else{
+                    resolve()
+                }
             } else {
-                userHttpServices.checkUser(phone).then(profile => {
-                    if (profile.message || profile.response) {
-                        resolve(profile)
-                    } else {
-                        this.Users[phone] = { ...profile, updated_at: moment().format() }
-                        this.setPropterties(this.Users);
-                        resolve(profile)
-                    }
-                }).catch(err => {
-                    console.warn("checking user error: ", err)
-                    if (this.Users[phone]) {
-                        resolve(this.Users[phone])
-                    } else {
-                        rejec()
-                    }
+                this.checkRemote(phone).then((pro) => {
+                    resolve(pro)
                 })
+            }
+        })
+    }
+    checkRemote(phone) {
+        return userHttpServices.checkUser(phone).then(profile => {
+            if (profile.message || profile.response) {
+                return Promise.resolve(profile)
+            } else {
+                this.Users[phone] = { ...profile, updated_at: moment().format() }
+                this.setPropterties(this.Users);
+                return Promise.resolve(profile)
+            }
+        }).catch(err => {
+            if (this.Users[phone]) {
+               return Promise.resolve(this.Users[phone])
+            } else {
+                return Promise.reject()
             }
         })
     }

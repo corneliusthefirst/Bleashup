@@ -4,6 +4,7 @@ import storage from "./Storage";
 import { PrivacyRequester } from '../components/myscreens/settings/privacy/Requester';
 import UserInfoDispatcher from '../services/UserInfoDispatcher';
 import Texts from '../meta/text';
+import { BackHandler } from 'react-native';
 
 export default class LoginStore {
   constructor() {
@@ -321,6 +322,11 @@ export default class LoginStore {
     });
   }
 
+  logOut(){
+    this.setUser({}).then(() => {
+        BackHandler.exitApp()
+    })
+  }
 
   /*
   @action async updateAge(newAge) {

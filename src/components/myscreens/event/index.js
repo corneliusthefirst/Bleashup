@@ -63,6 +63,7 @@ import PrivateReplyModal from "../eventChat/PrivateReplyModal";
 import getRelation from "../Contacts/Relationer";
 import rounder from "../../../services/rounder";
 import globalFunctions from '../../globalFunctions';
+import { containsVideo } from "./createEvent/components/mediaTypes.service";
 
 const screenWidth = Math.round(Dimensions.get("window").width);
 
@@ -123,7 +124,7 @@ export default class Event extends BeComponent {
   }
   showHighlightDetails(H, restoring, play) {
     play
-      ? H.url.video
+      ? containsVideo(H.url) 
         ? this.showVideo(H.url.video)
         : this.showPhoto(H.url.photo)
       : BeNavigator.gotoStarDetail(H.id, H.event_id, { star: H });
@@ -651,6 +652,9 @@ export default class Event extends BeComponent {
       fresh: false,
     });
   }
+  sync(){
+    stores.Events.loadCurrentEventFromRemote(this.event.id)
+  }
   handleActivityUpdates(change, newValue) {
     if(this.hideNotifTimeout) clearTimeout(this.hideNotifTimeout)
     this.setStatePure({
@@ -815,6 +819,7 @@ export default class Event extends BeComponent {
   }
   leave_route_event = "leave_route";
   componentMounting() {
+    //this.sync()
     emitter.on(this.leave_route_event, () => {
       this.goback();
     });

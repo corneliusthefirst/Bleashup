@@ -13,12 +13,12 @@ import ColorList from '../../../colorList';
 import BleashupModal from '../../../mainComponents/BleashupModal';
 import CreationHeader from '../../event/createEvent/components/CreationHeader';
 export default class VerificationModal extends BleashupModal{
-    constructor(props) {
-        super(props)
+    initialize() {
         this.state = {
             code : null
         }
     }
+    backdropPressToClose = false
     state = {}
     removeError() {
         globalState.error = false;
@@ -52,7 +52,7 @@ export default class VerificationModal extends BleashupModal{
                         <Ionicons style={{...GState.defaultIconSize,alignSelf: 'center',margin: 2,}} name="md-code" />
                         <Input
                             placeholder={
-                                globalState.error == false
+                                !globalState.error
                                     ? Texts.enter_verification_code
                                     : Texts.invalide_verification_code
                             }

@@ -93,7 +93,7 @@ def enableSeparateBuildPerCPUArchitecture = false
  */
 def enableProguardInReleaseBuilds = false
 android {
-    //compileSdkVersion 27
+    compileSdkVersion 29
    // buildToolsVersion "27.0.3"
      packagingOptions {
         pickFirst 'lib/x86/libc++_shared.so'
@@ -126,14 +126,14 @@ android {
 
     defaultConfig {
         multiDexEnabled true
-        targetSdkVersion 27
+        targetSdkVersion 29
         vectorDrawables.useSupportLibrary true
         applicationId "com.bleashup.bleashup"
          missingDimensionStrategy 'react-native-camera', 'general'
         minSdkVersion rootProject.ext.minSdkVersion
-        targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 1
-        versionName "1.0"
+        targetSdkVersion rootProject.ext.targetSdkVersion   
+        versionCode 7
+        versionName "1.6"
       
     }
     splits {
@@ -194,6 +194,7 @@ dependencies {
     implementation fileTree(dir: "libs", include: ["*.jar"])
     implementation 'com.google.firebase:firebase-core:16.0.1'
     implementation "com.google.firebase:firebase-messaging:18.0.0"
+    implementation 'com.google.firebase:firebase-bom:26.0.0'
     implementation 'me.leolin:ShortcutBadger:1.1.21@aar'
     //implementation 'androidx.appcompat:appcompat:1.0.0'
     implementation 'com.android.support:design:27.1.1'

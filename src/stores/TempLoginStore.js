@@ -71,42 +71,38 @@ export default class TempLoginStore {
 
   @action getUser() {
     return new Promise((resolve, reject) => {
-      if (this.user.phone == "" || this.user.password == "") {
-        storage
-          .load({
-            key: "temploginStore",
+      storage
+        .load({
+          key: "temploginStore",
+          autoSync: true
+        })
+        .then(data => {
+          storage.load({
+            key: "phone",
             autoSync: true
+          }).then((P) => {
+            this.user = {
+              phone: P.phone || data.phone,
+              name: data.name,
+              status: data.status,
+              nickname: data.nickname,
+              birth_date: data.birth_date,
+              created_at: data.created_at,
+              email: data.email,
+              country_code: P.country_code || data.country_code,
+              updated_at: data.updated_at,
+              password: data.password,
+              profile: data.profile,
+              profile_ext: data.profile_ext
+            };
+            resolve(this.user);
+          }).catch(() => {
+            resolve(this.user)
           })
-          .then(data => {
-            storage.load({
-              key: "phone",
-              autoSync: true
-            }).then((P) => {
-              this.user = {
-                phone: P.phone || data.phone,
-                name: data.name,
-                status: data.status,
-                nickname: data.nickname,
-                birth_date: data.birth_date,
-                created_at: data.created_at,
-                email: data.email,
-                country_code: P.country_code || data.country_code,
-                updated_at: data.updated_at,
-                password: data.password,
-                profile: data.profile,
-                profile_ext: data.profile_ext
-              };
-              resolve(this.user);
-            }).catch(() => {
-              resolve(this.user)
-            })
-          })
-          .catch(error => {
-            reject(error);
-          });
-      } else {
-        resolve(this.user);
-      }
+        })
+        .catch(error => {
+          reject(error);
+        });
     });
   }
 

@@ -467,6 +467,24 @@ class ProfileView extends BeComponent {
                   </Text>
                 </TouchableWithoutFeedback>
               </View>
+              <View style={{ ...this.extraContainer, marginTop: 25 }}>
+                <AntDesign
+                  name="logout"
+                  active={true}
+                  style={{ ...GState.defaultIconSize, color: "red" }}
+                  onPress={() => stores.LoginStore.logOut()}
+                />
+                <TouchableWithoutFeedback
+                  style={{ flex: 1 }}
+                  onPress={() => stores.LoginStore.logOut()}
+                >
+                  <Text
+                    style={this.extraTextStyle}
+                  >
+                    {Texts.logout}
+                  </Text>
+                </TouchableWithoutFeedback>
+              </View>
             </View>
 
             <EditUserModal

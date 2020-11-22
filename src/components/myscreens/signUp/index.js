@@ -120,6 +120,7 @@ export default class SignUpView extends BeComponent {
         body: body
       };
       this.temploginStore.loadSaveData("phone").then(phone => {
+        console.warn("phonee code is: ",phone)
         this.user = {...this.user,
           phone: phone.phone,
           status: "",
@@ -134,9 +135,12 @@ export default class SignUpView extends BeComponent {
           this.temploginStore.confirmCode = confirmCode
           this.temploginStore.setUser(this.user).then(() => {
             BeNavigator.navigateTo("EmailVerification");
+            this.setState({
+              loading:false
+            })
           });  
         }).catch(e => {
-          alert(this.user.phone.replace("00", "+"), Texts.unable_to_verify_account)
+          alert(Texts.unable_to_verify_account)
         })
       });
     }
@@ -310,14 +314,15 @@ export default class SignUpView extends BeComponent {
                 </TouchableOpacity>
               )}
           </View>
-          {this.state.loading ? <Spinner></Spinner> : <CreateButton
+          <CreateButton
+            loading={this.state.loading}
             title={Texts.sign_up}
             action={() => {
               this.SignUp()
             }}
             style={styles.buttonstyle}
           >
-          </CreateButton>}
+          </CreateButton>
         </View>
         </ScrollView>
     );

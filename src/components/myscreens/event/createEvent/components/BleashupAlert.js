@@ -63,12 +63,17 @@ export default class BleashupAlert extends BleashupModal {
       </View>
 
       <View
-        style={{ flex: 3, flexDirection: "row", justifyContent: "flex-end" }}
+        style={{ 
+        flex: 3, 
+        flexDirection: "row", 
+        justifyContent: "flex-end",
+        padding:4 
+      }}
       >
-        <TouchableOpacity style={{ width: "21%", marginRight: "5%" }}>
           <TouchableOpacity
             style={{
-              width: "100%",
+              minWidth:70,
+              marginRight:20,
               height: 40,
               borderRadius: 15,
               padding: 4,
@@ -85,11 +90,9 @@ export default class BleashupAlert extends BleashupModal {
               {this.props.refuse}
             </Text>
           </TouchableOpacity>
-        </TouchableOpacity>
-        <TouchableOpacity style={{ minWidth: "20%", marginRight: "4%" }}>
           <TouchableOpacity
             style={{
-              width: "100%",
+              minWidth:70,
               padding: 4,
               height: 40,
               flexDirection: "row",
@@ -106,7 +109,6 @@ export default class BleashupAlert extends BleashupModal {
               {this.props.accept}
             </Text>
           </TouchableOpacity>
-        </TouchableOpacity>
       </View>
     </View>;
   }

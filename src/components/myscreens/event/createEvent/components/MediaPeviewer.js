@@ -9,7 +9,7 @@ import Ionicons from 'react-native-vector-icons/Ionicons';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import EvilIcons from 'react-native-vector-icons/EvilIcons';
 import FileAttarchementMessaege from '../../../eventChat/FileAttarchtmentMessage';
-import { containsFile, containsAudio } from "./mediaTypes.service";
+import { containsFile, containsAudio, containsVideo } from "./mediaTypes.service";
 import AudioMessage from "../../../eventChat/AudioMessage";
 import BeNavigator from '../../../../../services/navigationServices';
 import GState from "../../../../../stores/globalState";
@@ -23,7 +23,7 @@ export default class MediaPreviewer extends BeComponent {
   }
   state = {};
   choseAction(url) {
-    if (url.video) {
+    if(containsVideo(url)) {
       BeNavigator.openVideo(url.video, true)
     } else {
       BeNavigator.openPhoto(url.photo, true)

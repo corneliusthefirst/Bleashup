@@ -66,11 +66,12 @@ export default class highlights {
     autoSync: true,
   };
 
-  @action addHighlight(EventID, H) {
-    return this.addHighlights(EventID, [H]);
+  addHighlight(EventID, H) {
+    H = Array.isArray(H) ? H : [H]
+    return this.addHighlights(EventID, H);
   }
 
-  @action addHighlights(EventID, NewHighlight) {
+  addHighlights(EventID, NewHighlight) {
     return new Promise((resolve, Reject) => {
       this.readFromStore().then((Highlights) => {
         if (Highlights[EventID] && Highlights[EventID].length > 0) {
@@ -119,8 +120,8 @@ export default class highlights {
   @action removeHighlight(EventID, HighlightId) {
     return new Promise((resolve, RejectPromise) => {
       this.readFromStore().then((Highlights) => {
-        const His = find(Highlights[EventID],{id:HighlightId})
-        Highlights[EventID] = reject(Highlights[EventID], {id: HighlightId});
+        const His = find(Highlights[EventID], { id: HighlightId })
+        Highlights[EventID] = reject(Highlights[EventID], { id: HighlightId });
         this.setProperty(Highlights);
         resolve(His);
       });
@@ -176,7 +177,7 @@ export default class highlights {
       }
     });
   }
-  canUpdate(index){
+  canUpdate(index) {
     return index >= 0
   }
   @action updateHighlightTitle(EventID, NewHighlight, inform) {
@@ -186,7 +187,7 @@ export default class highlights {
         let RemindIndex = findIndex(Highlights[EventID], {
           id: NewHighlight.id,
         });
-        if(this.canUpdate(RemindIndex)){
+        if (this.canUpdate(RemindIndex)) {
           console.warn('here the remindIndex', RemindIndex);
           Highlights[EventID][RemindIndex].title = NewHighlight.title;
           Highlights[EventID][RemindIndex].updated_date = moment().format();
@@ -207,14 +208,14 @@ export default class highlights {
         let RemindIndex = findIndex(Highlights[EventID], {
           id: NewHighlight.id,
         });
-        if(this.canUpdate(RemindIndex)){
+        if (this.canUpdate(RemindIndex)) {
           Highlights[EventID][RemindIndex].description = NewHighlight.description;
           Highlights[EventID][RemindIndex].updated_date = moment().format();
           Highlights[EventID][RemindIndex].description_updated = inform;
           Highlights[EventID][RemindIndex].updated = inform;
           this.setProperty(Highlights);
           resolve(Highlights[EventID][RemindIndex]);
-        }else{
+        } else {
           resolve({})
         }
       });
@@ -227,7 +228,7 @@ export default class highlights {
         let RemindIndex = findIndex(Highlights[EventID], {
           id: NewHighlight.id,
         });
-        if(this.canUpdate(RemindIndex)){
+        if (this.canUpdate(RemindIndex)) {
           Highlights[EventID][RemindIndex].url = NewHighlight.url;
           Highlights[EventID][RemindIndex].updated_date = moment().format();
           Highlights[EventID][RemindIndex].url_updated = inform;
@@ -235,7 +236,7 @@ export default class highlights {
 
           this.setProperty(Highlights);
           resolve(Highlights[EventID][RemindIndex]);
-        }else{
+        } else {
           resolve({})
         }
       });
@@ -248,7 +249,7 @@ export default class highlights {
         let RemindIndex = findIndex(Highlights[EventID], {
           id: NewHighlight.id,
         });
-        if(this.canUpdate(RemindIndex)){
+        if (this.canUpdate(RemindIndex)) {
           Highlights[EventID][RemindIndex].title = NewHighlight.title;
           Highlights[EventID][RemindIndex].url = NewHighlight.url;
           Highlights[EventID][RemindIndex].description = NewHighlight.description;
@@ -257,7 +258,7 @@ export default class highlights {
           Highlights[EventID][RemindIndex].updated = inform;
           this.setProperty(Highlights);
           resolve(Highlights[EventID][RemindIndex]);
-        }else{
+        } else {
           resolve({})
         }
       });
@@ -276,6 +277,7 @@ export default class highlights {
           } else {
             this.loadHighlightFromRemote(EventID, id)
               .then((highlight) => {
+                console.warn(highlight, "highlight is: ")
                 this.addHighlight(EventID, highlight).then(() => {
                   resolve(highlight);
                 });

@@ -153,12 +153,15 @@ export default class States {
         this.setProperties(this.states)
     }
     removeNewMessage(committee_id, id) {
-        if (id) {
-            this.states.newMessages[committee_id] =
-                this.states.newMessages && this.states.newMessages[committee_id] ?
-                    this.states.newMessages[committee_id].filter(ele => ele !== id) : []
-        } else {
-            delete this.states.newMessages[committee_id]
+        if (this.states.newMessages) {
+            if (id) {
+                this.states.newMessages[committee_id] =
+                    this.states.newMessages && this.states.newMessages[committee_id] ?
+                        this.states.newMessages[committee_id].filter(ele => ele !== id) : []
+            } else {
+                delete this.states.newMessages[committee_id]
+
+            }
         }
         this.setProperties(this.states)
     }

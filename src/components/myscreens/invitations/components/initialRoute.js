@@ -17,8 +17,8 @@ class InitialRouteName {
       loginStore
         .getUser()
         .then(user => {
-          if (user.password == "") {
-            resolve("SignIn");
+          if( !user || !user.password) {
+            resolve("Login");
           } else {
             resolve("Home");
           }

@@ -4,9 +4,9 @@ import * as configs from "../config/bleashup-server-config.json"
 import Toaster from './Toaster';
 import GState from '../stores/globalState/index';
 import Texts from '../meta/text';
+import { AppDir } from '../stores/globalState/globalState';
 const { fs, config } = rnFetchBlob
 let dirs = fs.dirs
-const AppDir = fs.dirs.SDCardDir + '/Bleashup'
 export default class FileExachange {
     constructor(url, dir, total, received, progressFunc,
         onSuccess, onFail, onError, content_type,
@@ -118,8 +118,8 @@ export default class FileExachange {
         fs.exists(this.path).then((state) => {
             if (state) {
 
-                this.successFunc(this.path, 
-                    total ? total / 1000000 : 0, 
+                this.successFunc(this.path,
+                    total ? total / 1000000 : 0,
                     received ? received / 1000000 : 0)
             } else {
                 this.startDownload(received, total)
@@ -158,9 +158,7 @@ export default class FileExachange {
                     temp3 = Math.ceil(temper2)
                     console.warn(this.url, response.data)
                     let newDir = `file://` + AppDir + this.base + this.filename
-                    //!this.store ? fs.writeFile(newDir.split(`file://`)[1], this.url.split(`file://`)[1], 'uri').then((status) => {
                     this.successFunc ? this.successFunc(this.url, this.baseURL + response.data, response.data, this.baseURL) : null
-                    // }) : this.successFunc(newDir, this.baseURL + response.data, response.data, this.baseURL)
                 }
             })
             this.task.catch((error) => {
@@ -187,7 +185,7 @@ export default class FileExachange {
             })
         })
     }
-    cachFile(source,back) {
+    cachFile(source, back) {
         return new Promise((resolve, reject) => {
             this.appdir = this.appDir + '/cache/'
             this.tempDir = this.appdir + source.split('/').pop()
@@ -222,6 +220,12 @@ export default class FileExachange {
     }
     doFileExists(url) {
         return fs.exists(url)
+    }
+    makeDir(url) {
+        return fs.mkdir(url)
+    }
+    rmDir(url) {
+        return fs.unlink(url)
     }
 
 } 

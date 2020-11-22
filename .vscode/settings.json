@@ -1,5 +1,6 @@
 {
     "restructuredtext.confPath": "",
-    "java.configuration.updateBuildConfiguration": "interactive"
+    "java.configuration.updateBuildConfiguration": "interactive",
+    "compile-hero.disable-compile-files-on-did-save-code": false
 }
                                             

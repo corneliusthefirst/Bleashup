@@ -53,7 +53,7 @@ class mainUpdater {
         oldRemind.calendar_id
           ? CalendarServe.saveEvent(
             { ...oldRemind, location: newLocation },
-            oldRemind.alams,
+            oldRemind.alarms,
             'reminds'
           ).then(() => { })
           : null;
@@ -194,14 +194,6 @@ class mainUpdater {
       stores.Messages.updateMessageText(commiteeID, messageID, text).then(
         () => {
           resolve()
-          /*stores.CommiteeStore.updateLatestMessageText(
-            messageID,
-            text,
-            commiteeID,
-            eventID
-          ).then(() => {
-            resolve();
-          });*/
         }
       );
     });

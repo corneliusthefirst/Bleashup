@@ -22,6 +22,7 @@ import emitter from "../../../services/eventEmiter";
 import shadower from "../../shadower";
 import rounder from "../../../services/rounder";
 import Texts from '../../../meta/text';
+import { AppDir } from "../../../stores/globalState/globalState";
 let dirs = rnFetchBlob.fs.dirs;
 export default class AudioRecorder extends BeComponent {
     constructor(props) {
@@ -30,7 +31,7 @@ export default class AudioRecorder extends BeComponent {
             recordTime: 0,
             recording: true,
             font: 22,
-            numberOfLines:1
+            numberOfLines: 1
         };
         this.BackHandler = null;
     }
@@ -58,6 +59,7 @@ export default class AudioRecorder extends BeComponent {
                 console.warn("permission denied!!!");
                 return;
             }
+            console.warn(this.filename)
             SoundRecorder.start(this.filename)
                 .then(() => {
                     this.startRecordTiming();
@@ -91,7 +93,7 @@ export default class AudioRecorder extends BeComponent {
             return false;
         }
     }
-    filename = dirs.SDCardDir + '/Bleashup/Sound' + "/test.mp3";
+    filename = AppDir + '/Sound' + "/test.mp3";
     unmountingComponent() {
         SoundRecorder.stop().catch(() => { });
     }
@@ -133,7 +135,7 @@ export default class AudioRecorder extends BeComponent {
             this.setStatePure({
                 recordTime: this.state.recordTime + 1,
             });
-        this.props.sayRecording && this.props.sayRecording()
+            this.props.sayRecording && this.props.sayRecording()
         }, 1000);
     }
     resumAudioRecoder() {
@@ -244,12 +246,12 @@ export default class AudioRecorder extends BeComponent {
                     }}
                 >
                     <Text numberOfLines={this.state.numberOfLines}
-                     onTextLayout={this.adjusFontSize.bind(this)} 
-                     style={{
-                        fontSize: this.state.font,
-                        flex: 1,
-                        color: ColorList.bodyBackground
-                    }}>
+                        onTextLayout={this.adjusFontSize.bind(this)}
+                        style={{
+                            fontSize: this.state.font,
+                            flex: 1,
+                            color: ColorList.bodyBackground
+                        }}>
                         {converToHMS(this.state.recordTime)}
                     </Text>
                     <View>

@@ -108,10 +108,10 @@ export default class SignInView extends Component {
       this.user = user;
       UserService.login(user.phone, this.state.password).then(response => {
         if (response === "true") {
-          if (this.authUser && 
-            this.authUser.metadata && 
+          if (this.authUser &&
+            this.authUser.metadata &&
             this.authUser.metadata.creationTime) {
-          this.login()
+            this.login()
           } else {
             firebase.auth().signInWithPhoneNumber(user.phone.replace("00", "+")).then(confirmCode => {
               stores.TempLoginStore.confirmCode = confirmCode
@@ -174,6 +174,7 @@ export default class SignInView extends Component {
             }} active type="FontAwesome" name="unlock" />
             <Input
               secureTextEntry
+              autoCapitalize="none"
               style={{ ...GState.defaultTextStyle, width: "70%", marginLeft: "2%", height: 40 }}
               placeholder={
                 globalState.error == false

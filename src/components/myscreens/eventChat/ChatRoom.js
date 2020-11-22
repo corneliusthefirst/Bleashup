@@ -117,6 +117,7 @@ class ChatRoom extends AnimatedComponent {
         this.defaultItem = this.defaultItem.bind(this)
         this.onFlatlistItemsChange = this.onFlatlistItemsChange.bind(this)
         this.sayRecording = this.sayRecording.bind(this)
+        this.choseReply = this.choseReply.bind(this)
     }
     saveNotificationToken() {
         firebase
@@ -177,12 +178,12 @@ class ChatRoom extends AnimatedComponent {
         !this.sayTyping ? this.sayTyping = sayTyping.bind(this) : null
         this.sayTyping(newTyper)
     }
-    setTyingState(user,recording) {
+    setTyingState(user, recording) {
         return Requester.sayTyping(this.props.firebaseRoom,
-            this.props.activity_id,this.props.isRelation,recording)
+            this.props.activity_id, this.props.isRelation, recording)
     }
-    sayRecording(){
-        this.setTyingState(null,true)
+    sayRecording() {
+        this.setTyingState(null, true)
     }
     formStorableData() {
         let result = [];
@@ -227,17 +228,22 @@ class ChatRoom extends AnimatedComponent {
         this.initializeNewMessageForRoom()
     }
     scrollToNewMessage() {
-        const recentID = stores.States.getMostRecentMessage(this.roomID)
-        const index = recentID ? this.findI(recentID) : stores.States.getNewMessagesCount(this.roomID)
-        if (index) {
+        let index = this.findType(message_types.new_separator)
+        index = index -1
+        if (index >= 0) {
             this.scrollToIndex(index)
         }
     }
+    findType(type) {
+        return stores.Messages.messages && findIndex(stores.Messages.messages[this.props.firebaseRoom], 
+            { type })
+    }
     findI(id) {
-        return findIndex(stores.Messages.messages[this.props.firebaseRoom], { id })
+        return stores.Messages.messages && findIndex(stores.Messages.messages[this.props.firebaseRoom], 
+            { id })
     }
     scrollToMessage() {
-        if (this.props.id) {
+        if (this.props.id && !GState.reply) {
             return new Promise(() => {
                 let index = this.findI(this.props.id)
                 if (index >= 0) {
@@ -554,14 +560,11 @@ class ChatRoom extends AnimatedComponent {
     }
     duration = 0;
 
-    scrollToEnd() {
-        if (this.newCount) {
-            this.scrollToNewMessage()
-        } else {
-            this.refs &&
-                this.refs.bleashupSectionListOut &&
-                this.refs.bleashupSectionListOut.scrollToEnd();
-        }
+    scrollToEnd(end) {
+        this.refs &&
+            this.refs.bleashupSectionListOut &&
+            this.refs.bleashupSectionListOut.scrollToEnd();
+        stores.States.removeNewMessage(this.roomID)
     }
     initialzeFlatList() {
         this.refs &&
@@ -824,7 +827,7 @@ class ChatRoom extends AnimatedComponent {
                                                             </View>
                                                         </TouchableOpacity>
                                                     }}
-                                                    action={() => requestAnimationFrame(() => { this.scrollToEnd() })}
+                                                    action={() => requestAnimationFrame(() => { this.scrollToEnd(true) })}
                                                     //buttonTextStyle={{color:colorList.bodyBackground}}
                                                     offsetX={15}
                                                     size={20}
@@ -872,11 +875,6 @@ class ChatRoom extends AnimatedComponent {
                             >
 
                             </MessageInfoModal> : null}
-                            {/*<VerificationModal
-                                isOpened={this.state.isModalOpened}
-                                verifyCode={(code) => this.verifyNumber(code)}
-                                phone={this.props.user.phone}
-                            />*/}
                             {
                                 this.state.showOptions && <Options
                                     addStar={this.props.addStar}
@@ -963,7 +961,7 @@ class ChatRoom extends AnimatedComponent {
                 created_at: moment().format(),
                 sender: this.props.user,
                 photo: message.source,
-                duration:message.duration,
+                duration: message.duration,
                 sent: true,
                 source: message.temp || message.source,
                 type: message.type === 'image' ? 'photo' :
@@ -1071,6 +1069,7 @@ class ChatRoom extends AnimatedComponent {
             replyer_phone: message.sender &&
                 message.sender.phone &&
                 message.sender.phone.replace("+", "00"),
+            activity_id: this.props.firebaseRoom,
             change_date: message.created_at,
             seen: null
         }
@@ -1238,6 +1237,7 @@ class ChatRoom extends AnimatedComponent {
             item.seen.length >= this.props.members.length ? true : false
         let sent = item.sent
         let pointed = item.id === GState.currentID
+        console.warn("pointed is: ", pointed)
         let found = this.state.foundIndex == index ? true : false
         let isFirst = index === 0
         let state = Number(found) +
@@ -1390,7 +1390,7 @@ class ChatRoom extends AnimatedComponent {
                 clearTimeout(this.itemChangeTimeout)
                 this.itemChangeTimeout = null
             });
-        },50)
+        }, 50)
 
     }
     viewabilityConfig = {

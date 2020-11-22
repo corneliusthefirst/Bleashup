@@ -103,6 +103,7 @@ class ProfileView extends BeComponent {
   }
   color = ColorList.colorArray[Math.floor(Math.random() * (ColorList.colorArray.length - 1))];
   render() {
+    console.warn("rendering: ",this.props.phoneInfo)
     let press = !this.props.dontPress && this.openProfile.bind(this)
     let user = stores.TemporalUsersStore.Users[this.props.phone];
     let userName =

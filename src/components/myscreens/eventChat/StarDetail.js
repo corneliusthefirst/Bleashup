@@ -27,6 +27,7 @@ import messagePreparer from "./messagePreparer";
 import public_states from "../reminds/public_states";
 import BeMenu from "../../Menu";
 import Texts from "../../../meta/text";
+import { containsVideo } from "../event/createEvent/components/mediaTypes.service";
 
 let { height, width } = Dimensions.get("window");
 
@@ -41,6 +42,7 @@ export default class StarDetail extends AnimatedComponent {
             check: false,
         };
         this.updateSource = this.updateSource.bind(this)
+        this.containsVideo = containsVideo.bind(this)
     }
 
     containsMedia() {
@@ -63,8 +65,10 @@ export default class StarDetail extends AnimatedComponent {
             this.activity = event;
             stores.Highlights.loadHighlight(this.activity_id, this.item_id).then(
                 (item) => {
-                    this.item = { ...item, public_state: public_states.private_ };
-                    this.refreshStates();
+                    if (item) {
+                        this.item = { ...item, public_state: public_states.private_ };
+                        this.refreshStates();
+                    }
                 }
             );
         });
@@ -82,8 +86,11 @@ export default class StarDetail extends AnimatedComponent {
                 this.activity_id,
                 this.item_id
             ).then((star) => {
+                console.warn("star gotten from remote is: ",star)
                 star = Array.isArray(star) && star[0];
-                if (this.item.url.main_source == star.url.source) {
+                if (this.item
+                    && this.item.url
+                    && this.item.url.main_source !== star.url.source) {
                     star.url = this.item.url
                 }
                 this.item = star
@@ -152,7 +159,7 @@ export default class StarDetail extends AnimatedComponent {
         this.reply_privately([], this.item.creator);
     }
     showItem(item) {
-        item.url.video
+        this.containsVideo()
             ? BeNavigator.openVideo(item.url.video)
             : BeNavigator.openPhoto(item.url.photo);
     }
@@ -216,7 +223,7 @@ export default class StarDetail extends AnimatedComponent {
                     >
                         <View
                             style={{
-                                width: "98%",
+                                width: "100%",
                                 flexDirection: "row",
                                 alignSelf: "flex-start",
                                 hieght: 70,

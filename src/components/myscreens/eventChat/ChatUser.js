@@ -13,15 +13,20 @@ import Texts from '../../../meta/text';
     constructor(props) {
         super(props)
     }
-
+    componentWillMount() {
+        this.phone = this.props.phone && this.props.phone.replace && this.props.phone.replace("+", "00")
+        if (!stores.TemporalUsersStore.Users[this.phone]) {
+            stores.TemporalUsersStore.checkRemote(this.phone)
+        }
+    }
     render() {
         let phone = this.props.phone && this.props.phone.replace && this.props.phone.replace("+", "00")
-        let user = (phone && stores.TemporalUsersStore.Users[phone]) || {}
+        let user = (phone && stores.TemporalUsersStore.Users[phone]) || { phone, nickname: Texts.a_bleashup_user }
         let isMe = stores.LoginStore.user.phone == phone
         user = { ...user, nickname: isMe ? Texts.you : user.nickname }
         return <TouchableOpacity
             style={{
-                marginLeft: 2
+                //marginLeft: 2
             }}
             onPress={this.props.showProfile}
             onPressIn={this.props.onPressIn}

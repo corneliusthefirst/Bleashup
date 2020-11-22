@@ -148,7 +148,10 @@ export default class CurrentEvents extends AnimatedComponent {
             <View style={{
                 marginBottom: "3%",
             }}>
-                <Text style={{ ...GState.defaultTextStyle, fontWeight: 'bold', }}>{Texts.beup_activity_description}</Text>
+                <Text style={{ 
+                    ...GState.defaultTextStyle, 
+                    fontWeight: 'bold', 
+                }}>{Texts.beup_activity_description}</Text>
             </View>
             <View style={{
                 alignSelf: 'center',
@@ -156,7 +159,9 @@ export default class CurrentEvents extends AnimatedComponent {
                 <TouchableOpacity style={{
                     ...rounder(45, ColorList.bodyBackground)
                 }} onPress={this.startCreateActivity}>
-                    <Entypo name={"plus"} style={GState.defaultIconSize} />
+                    <Entypo name={"plus"} style={{...GState.defaultIconSize,
+                        color:ColorList.indicatorColor
+                }} />
                 </TouchableOpacity>
             </View>
         </View>

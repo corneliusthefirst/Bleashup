@@ -8,6 +8,7 @@ import moment from 'moment';
 import request from '../services/requestObjects';
 import EventListener from '../services/severEventListener';
 import stores from '.';
+import GState from './globalState/index';
 export default class contacts {
   constructor() {
     //storage.remove(this.saveKey).then(() =>{})
@@ -74,6 +75,9 @@ isAContact(phone){
   }
   save() {
     if (Object.keys(this.contacts).length > 0){
+      if(this.contacts && this.contacts.contacts){
+        this.contacts.contacts = this.contacts.contacts.filter(ele => !GState.isUndefined(ele.phone))
+      }
       this.saveKey.data = this.contacts;
       storage.save(this.saveKey).then(() => {
         console.warn('saving contacts');

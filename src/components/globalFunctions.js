@@ -64,7 +64,12 @@ class Functions {
       if (event.type === active_types.relation) {
         let oponentPhone = this.returnOponent(event)
         let oponent = stores.TemporalUsersStore.Users[oponentPhone]
-        return oponent && oponent.nickname && oponent.nickname.toLowerCase().includes(text)
+        if (!oponent) {
+          stores.TemporalUsersStore.getUser(oponentPhone)
+        }
+        return !oponent || 
+        !oponent.nickname ||
+        (oponent && oponent.nickname && oponent.nickname.toLowerCase().includes(text))
       } else {
         return event.about && event.about.title && event.about.title.toLowerCase().includes(text)
       }
@@ -81,13 +86,17 @@ class Functions {
   }*/
   getOpponent = (event) => {
     return new Promise((resolve, reject) => {
-      event.participant.forEach((participant) => {
-        if (participant.phone != stores.LoginStore.user.phone) {
-          stores.TemporalUsersStore.getUser(participant.phone).then((user) => {
-            resolve(user);
-          });
-        }
-      });
+      if (event.type == active_types.relation) {
+        event.participant.forEach((participant) => {
+          if (participant.phone != stores.LoginStore.user.phone) {
+            stores.TemporalUsersStore.getUser(participant.phone).then((user) => {
+              resolve(user);
+            });
+          }
+        });
+      } else {
+        resolve({})
+      }
     });
   };
   filterForRelation(ele, search) {
@@ -96,7 +105,7 @@ class Functions {
       name ||
       (ele && stores.TemporalUsersStore.Users[ele.phone] &&
         stores.TemporalUsersStore.Users[ele.phone].nickname.toLowerCase());
-    return name && name.includes(search.toLowerCase()) ? true : false;
+    return (!name && ele && ele.phone) || (name && name.includes(search.toLowerCase())) ? true : false;
   }
   filterMessages(ele, search, isRelation) {
     const Relation = (message) => {
@@ -136,11 +145,11 @@ class Functions {
     }
   }
   filterStars(ele, search) {
-    return ele && ele.id !== request.Highlight().id && this.byTitleAndDesc(ele, search)
+    return ele && ele.id && ele.id !== request.Highlight().id && this.byTitleAndDesc(ele, search)
 
   }
   filterReminds(ele, search) {
-    return ele && ele.id !== request.Remind().id && this.byTitleAndDesc(ele, search)
+    return ele && ele.id && ele.id !== request.Remind().id && this.byTitleAndDesc(ele, search)
   }
   filterHistory(ele, search) {
     if (ele && search && ele.type !== message_types.date_separator) {

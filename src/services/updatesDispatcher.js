@@ -460,7 +460,7 @@ class UpdatesDispatcher {
             });
           } else {
             console.warn('participant does not exists');
-            reject()
+            resolve()
           }
         })
       });
@@ -472,7 +472,7 @@ class UpdatesDispatcher {
       return new Promise((resolve, reject) => {
         stores.Events.removeParticipant(
           update.event_id,
-          update.new_value,
+          newValue,
           true
         ).then((Event) => {
           let Change = {
@@ -1146,6 +1146,7 @@ class UpdatesDispatcher {
           update.new_value.location,
           update.date, update.updater).then(Change => {
             this.infomCurrentRoom(Change, update.new_value, update.event_id)
+            resolve()
           })
       })
     },
@@ -1354,7 +1355,7 @@ class UpdatesDispatcher {
               ...oldRemind,
               recursive_frequency: update.new_value.recursive_frequency
             },
-              null).then(() => {
+              oldRemind.alarms).then(() => {
                 GState.eventUpdated = true;
               })
           })

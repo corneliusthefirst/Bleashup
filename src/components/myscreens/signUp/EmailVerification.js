@@ -11,7 +11,7 @@ import connect from '../../../services/tcpConnect';
 import Toaster from "../../../services/Toaster";
 import CreationHeader from "../event/createEvent/components/CreationHeader";
 import Texts from '../../../meta/text';
-import Ionicons  from 'react-native-vector-icons/Ionicons';
+import Ionicons from 'react-native-vector-icons/Ionicons';
 import GState from '../../../stores/globalState/index';
 import CreateButton from '../event/createEvent/components/ActionButton';
 import Spinner from '../../Spinner';
@@ -24,7 +24,7 @@ export default class EmailVerificationView extends Component {
     this.state = {
       code: "",
       loading: false,
-      mounted:false
+      mounted: false
     };
   }
   state = {}
@@ -39,22 +39,22 @@ export default class EmailVerificationView extends Component {
   componentWillUnmount() {
     //BackHandler.removeEventListener("hardwareBackPress", this.handleBackButton);
   }
- 
-  back(){
+
+  back() {
     this.props.navigation.goBack()
   }
-  componentDidMount(){
+  componentDidMount() {
     setTimeout(() => {
       this.setState({
-        mounted:true
+        mounted: true
       })
-    },1000)
+    }, 1000)
   }
   componentWillMount() {
     firebase.auth().onAuthStateChanged(user => {
       this.authUser = user
       if (user) {
-      this.state.mounted && this.registerUserAndClean()
+        this.registerUserAndClean()
       }
     });
   }
@@ -62,7 +62,7 @@ export default class EmailVerificationView extends Component {
     this.props.navigation.goBack();
   }
 
-  
+
   removeError() {
     globalState.error = false;
   }
@@ -70,14 +70,15 @@ export default class EmailVerificationView extends Component {
   resendCode() {
     console.warn("resending verificatio")
     let user = this.temploginStore.user
-      firebase.auth().signInWithPhoneNumber(user.phone.replace("00", "+")).then((confirmCode) => {
-        this.temploginStore.confirmCode = confirmCode
-      }).catch(e => {
-        alert(Texts.verfication_error, Texts.unable_to_verify_account)
-      })
-  } 
+    firebase.auth().signInWithPhoneNumber(user.phone.replace("00", "+")).then((confirmCode) => {
+      this.temploginStore.confirmCode = confirmCode
+    }).catch(e => {
+      alert(Texts.verfication_error, Texts.unable_to_verify_account)
+    })
+  }
   registerUserAndClean() {
     this.temploginStore.getUser().then(user => {
+      console.warn("user from temp login store is: ",user)
       UserServices.register(user.phone, user.password, user.name, user.birth_date).then(res => {
         this.loginStore.setUser(user).then(response => {
           //Delete temporal data
@@ -88,14 +89,16 @@ export default class EmailVerificationView extends Component {
                 this.setState({
                   loading: false
                 })
-                connect.init().then((socket) => {
-                  this.props.navigation.navigate("Home");
+                this.props.navigation.navigate("Home");
+                connect && connect.init().then((socket) => {
                 }).catch(() => {
                   console.warn("error while connecting socket")
                 })
               });
           });
         });
+      }).catch((er) => {
+        console.warn(er)
       });
     })
   }
@@ -103,22 +106,26 @@ export default class EmailVerificationView extends Component {
     this.setState({
       loading: true
     })
-    if (this.state.code) {
-      this.temploginStore.confirmCode.confirm(this.state.code).then(success => {
-        this.registerUserAndClean()
-      }).catch(e => {
+    if (this.authUser) {
+      this.registerUserAndClean()
+    } else {
+      if (this.state.code) {
+        this.temploginStore.confirmCode.confirm(this.state.code).then(success => {
+          this.registerUserAndClean()
+        }).catch(e => {
+          this.setState({
+            loading: false
+          })
+          console.warn(e, "error here")
+          alert(Texts.wrong_verification_code)
+          globalState.error = true;
+        })
+      } else {
         this.setState({
           loading: false
         })
-        console.warn(e, "error here")
-        alert(Texts.wrong_verification_code)
-        globalState.error = true;
-      })
-    } else {
-      this.setState({
-        loading: false
-      })
-      alert(Texts.enter_verification_code)
+        alert(Texts.enter_verification_code)
+      }
     }
   }
 
@@ -126,25 +133,25 @@ export default class EmailVerificationView extends Component {
     return (
       <View>
         <ScrollView>
-          <CreationHeader title={Texts.phone_number_verify} back={() => {}}></CreationHeader>
+          <CreationHeader title={Texts.phone_number_verify} back={() => { this.props.navigation.goBack() }}></CreationHeader>
           <View
-            style={{  marginTop: 50,  }}
+            style={{ marginTop: 50, }}
           >
-            <Text style={{ ...GState.defaultTextStyle }}>{Texts.phone_number_verification} {"    "}{this.temploginStore.user.phone.replace("00","+")} </Text>
+            <Text style={{ ...GState.defaultTextStyle }}>{Texts.phone_number_verification} {"    "}{this.temploginStore.user.phone.replace("00", "+")} </Text>
           </View>
 
           <Text style={{ ...GState.defaultTextStyle, color: "skyblue", marginTop: 20 }}>
             {Texts.verfication_code_sent_to_you}
           </Text>
 
-          <View rounded style={[styles.input, globalState.error?{backgroundColor: ColorList.errorColor,}:null]}>
-            <View style={{ alignSelf: 'center', marginRight: 5,}}>
-            <Ionicons style={{...GState.defaultIconSize,}} active type="Ionicons" name="md-code" />
+          <View rounded style={[styles.input, globalState.error ? { backgroundColor: ColorList.errorColor, } : null]}>
+            <View style={{ alignSelf: 'center', marginRight: 5, }}>
+              <Ionicons style={{ ...GState.defaultIconSize, }} active type="Ionicons" name="md-code" />
             </View>
             <Input
-             style={{
-               width:"75%"
-             }}
+              style={{
+                width: "75%"
+              }}
               placeholder={
                 globalState.error == false
                   ? Texts.enter_verification_code
@@ -161,31 +168,30 @@ export default class EmailVerificationView extends Component {
             {globalState.error == false ? (
               <Text />
             ) : (
-                <TouchableOpacity style={styles.close_button}  onPress={this.removeError.bind(this)}>
-                <Ionicons
-                  type="Ionicons"
-                  name="ios-close-circle"
-                  style={{ color: ColorList.errorColor }}
-                />
+                <TouchableOpacity style={styles.close_button} onPress={this.removeError.bind(this)}>
+                  <Ionicons
+                    type="Ionicons"
+                    name="ios-close-circle"
+                    style={{ color: ColorList.errorColor }}
+                  />
                 </TouchableOpacity>
               )}
           </View>
           <TouchableOpacity onPress={() => this.resendCode()}
           >
           <Text
-            style={{ color: "royalblue", marginTop: 20, marginLeft: 175 }}
-          >
-            Resend verification code
+              style={{ color: "royalblue", marginTop: 20, marginLeft: 175 }}
+            >
+              {Texts.resent_email_verification_code}
           </Text>
           </TouchableOpacity>
-          {!this.state.loading ? <CreateButton
+          <CreateButton
+            loading={this.state.loading}
             title={Texts.ok}
             style={styles.buttonstyle}
             action={() => this.onClickEmailVerification()}
           >
-          </CreateButton>:
-          <View style={{...styles.spinner}}>
-              <Spinner /></View>}
+          </CreateButton>
         </ScrollView>
       </View>
     );

@@ -1091,7 +1091,9 @@ class Request {
                                         stores.Events.removeHighlight(
                                             eventID,
                                             highlightID
-                                        ).then((res) => { });
+                                        ).then((res) => {
+                                            resolve("ok")
+                                         });
                                     }
                                 );
                             }

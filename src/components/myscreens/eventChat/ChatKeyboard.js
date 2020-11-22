@@ -77,7 +77,7 @@ export default class ChatKeyboard extends AnimatedComponent {
                 creator: this.creator,
                 created_at: moment().format(),
             };
-            this.props.scrollToEnd();
+            this.props.scrollToEnd(true);
             stores.Messages.addMessageToStore(this.props.roomID, messager).then(
                 (data) => {
                     this._resetTextInput();
@@ -99,7 +99,7 @@ export default class ChatKeyboard extends AnimatedComponent {
     sendAudioMessge(filename, duration, dontsend) {
         !this.state.audio && this.props.toggleAudio()
         if (!dontsend) {
-            this.props.scrollToEnd();
+            this.props.scrollToEnd(true);
             let message = {
                 ...request.Message(),
                 id: IDMaker.make(),
@@ -409,7 +409,7 @@ export default class ChatKeyboard extends AnimatedComponent {
             })
     }
     sendMedia() {
-        this.props.scrollToEnd();
+        this.props.scrollToEnd(true);
         let message = {
             ...request.Message(),
             id: IDMaker.make(),
@@ -591,7 +591,7 @@ export default class ChatKeyboard extends AnimatedComponent {
         this.animateLayout(true);
     }
     sendFileMessage() {
-        this.props.scrollToEnd();
+        this.props.scrollToEnd(true);
         message = {
             ...request.Message(),
             id: IDMaker.make(),

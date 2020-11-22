@@ -38,7 +38,7 @@ export default class RelationProfile extends BeComponent {
     this.oponent = this.props.Event.participant.find(
       (ele) => ele && ele.phone !== stores.LoginStore.user.phone
     ).phone
-    this.user = stores.TemporalUsersStore.Users[this.oponent]
+    this.user = stores.TemporalUsersStore.Users[this.oponent]||{phone:this.oponent}
     return (
       <View style={styles.mainContainer}>
         <View style={styles.subContainer}>

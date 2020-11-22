@@ -488,6 +488,7 @@ export default class Message extends BeComponent {
       flexDirection: "column",
       minWidth: 60,
       minHeight: 20,
+      padding: 4,
       overflow: "hidden",
       borderBottomLeftRadius: ColorList.chatboxBorderRadius,
       borderColor: color,
@@ -555,9 +556,11 @@ export default class Message extends BeComponent {
             containerDims: e.nativeEvent.layout,
           });
         }}
-        style={{ 
-          backgroundColor: this.props.isPointed ? ColorList.indicatorLighter : '',
-          borderRadius: ColorList.chatboxBorderRadius, }}
+        style={{
+          backgroundColor: this.props.isPointed ? ColorList.indicatorLighter : 'transparent',
+          paddingBottom: this.props.isPointed ? '1.1%' : 0,
+          borderRadius: ColorList.chatboxBorderRadius,
+        }}
       >
         {this.props.message.type == message_types.date_separator ? (
           <View style={{ marginTop: "2%", marginBottom: "2%" }}>
@@ -647,7 +650,9 @@ export default class Message extends BeComponent {
                             {this.state.different &&
                               this.state.sender &&
                               !this.props.isRelation ? (
-                                <ChatUser
+                                <View style={{
+                                  marginLeft:'1%'
+                                }}><ChatUser
                                   searchString={this.props.searchString}
                                   foundString={this.props.foundString}
                                   phone={
@@ -663,7 +668,7 @@ export default class Message extends BeComponent {
                                       );
                                     });
                                   }}
-                                />
+                                /></View>
                               ) : null}
                             <View>
                               {this.props.message.reply ? (

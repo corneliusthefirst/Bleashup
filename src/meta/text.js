@@ -118,7 +118,7 @@ class TEXTS {
         fr: "Vérification du numéro de téléphone"
     }[GState.lang]
     enter_verification_code = {
-        en: "Please enter email verification code",
+        en: "Please enter verification code",
         fr: "Veuillez entrer le code de vérification"
     }[GState.lang]
     verfication_code_sent_to_you = {
@@ -855,7 +855,7 @@ class TEXTS {
     }[GState.lang]
     invite = {
         en: "Invite",
-        fr: "Iviter"
+        fr: "Inviter"
     }[GState.lang]
     beup_wants_to_access_your_contacts = {
         en: 'BeUp would like to view your contacts.',
@@ -1569,6 +1569,10 @@ class TEXTS {
         en: 'Blocked',
         fr: 'Bloqué'
     }[GState.lang]
+    logout = {
+        en:'Logout',
+        fr:'Se déconnecter'
+    }[GState.lang]
     muted = {
         en: 'Muted',
         fr: 'Muet'
@@ -1602,32 +1606,32 @@ class TEXTS {
         fr: 'Fichier téléchargé par BeUp'
     }[GState.lang]
     audio_message = {
-        en: "Audio message",
-        fr: 'Audio message'
+        en: "audio message",
+        fr: 'audio message'
     }[GState.lang]
     file_message = {
-        fr: 'Message fichier',
-        en:'File Message'
+        fr: 'message fichier',
+        en:'file message'
     }[GState.lang]
     video_message = {
-        en: "Video message",
-        fr: "Message vidéo"
+        en: "video message",
+        fr: "message vidéo"
     }[GState.lang]
     photo_message = {
-        en: "Photo message",
-        fr: "Message photo"
+        en: "photo message",
+        fr: "message photo"
     }[GState.lang]
     remind_message = {
-        en: "New program",
-        fr: "Nouveau programme"
+        en: "program",
+        fr: "programme"
     }[GState.lang]
     star_message = {
-        en: 'New highlight',
-        fr: 'Nouveau moment fort'
+        en: 'highlight',
+        fr: 'moment fort'
     }[GState.lang]
     text_message = {
-        en: "Text message",
-        fr: 'Message texte'
+        en: "text message",
+        fr: 'message texte'
     }[GState.lang]
     new_ = {
         en:"New",
@@ -1780,6 +1784,10 @@ class TEXTS {
     recording={
         en:'is recording an audio ...',
         fr: 'enregistre un audio ...'
+    }[GState.lang]
+    resent_email_verification_code = {
+        en:'Resend verification code',
+        fr:'Renvoyer le code de vérification'
     }[GState.lang]
 }
 const Texts = new TEXTS()

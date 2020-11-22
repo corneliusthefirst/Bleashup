@@ -72,6 +72,7 @@ import { constructProgramLink } from "../eventChat/services";
 import { members_updated } from "../../../meta/events";
 import ColorList from "../../colorList";
 import public_states from './public_states';
+import { containsVideo } from "../event/createEvent/components/mediaTypes.service";
 
 @observer
 class Reminds extends AnimatedComponent {
@@ -102,7 +103,8 @@ class Reminds extends AnimatedComponent {
     return (rem).status == public_states.public_
   }
   getMyContacts(){
-    return stores.Contacts.contacts &&
+    return stores.Contacts.contacts && 
+    stores.Contacts.contacts.contacts &&
       stores.Contacts.contacts.contacts.length > 0 ?
       stores.Contacts.contacts.contacts : []
   }
@@ -157,6 +159,7 @@ class Reminds extends AnimatedComponent {
 
   componentDidMount() {
     this.initReminds();
+    this.syncReminds()
   }
   startRemindUpdateListener() {
     emitter.on("remind-updated", () => {
@@ -903,8 +906,19 @@ class Reminds extends AnimatedComponent {
     let members = this.getMembersForPrivateMwntion(item);
     this.props.replyPrivately(members, item.creator);
   }
+  itemsTobeSynced() {
+    return (this.props.event &&
+      this.storeReminds &&
+      this.props.event.reminds.filter(ele => findIndex(this.storeReminds, { id: ele }) < 0)) || []
+  }
+  storeReminds = stores.Reminds.Reminds && stores.Reminds.Reminds[this.props.event.id]
+  syncReminds() {
+    this.itemsTobeSynced().forEach(ele => {
+      stores.Reminds.loadRemind(this.props.event.id, ele)
+    })
+  }
   showMedia = (url) => {
-    if (url.video) {
+    if (containsVideo(url)) {
       console.warn("showing video");
       BeNavigator.openVideo(url.video);
     } else {

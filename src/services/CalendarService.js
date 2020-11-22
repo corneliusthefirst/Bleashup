@@ -90,17 +90,6 @@ class CalendarService {
   saveEvent(Bevent, alarms, type, all, newName) {
     if (Bevent.period && Bevent.period.includes("T")) {
       let calendarEvent = this.translateRemindToCalendar(Bevent, alarms);
-      /*let calendarEvent = {   
-                title : "test",
-                startDate: (new Date()).toISOString(),
-                recurrence: 'weekly',
-                recurrenceRule: {
-                    frequency: 'weekly',
-                    interval: 2,
-                    endDate: (new Date()).toISOString(),
-                }
-            }*/
-      //console.warn(calendarEvent);
       return RNCalendarEvents.saveEvent(calendarEvent.title, {
         ...calendarEvent,
         title: newName || calendarEvent.title,

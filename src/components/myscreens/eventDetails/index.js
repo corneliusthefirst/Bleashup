@@ -134,6 +134,7 @@ let { height, width } = Dimensions.get('window');
   }
   componentDidMount() {
     this.init();
+    this.syncHighLights()
   }
   init() {
     this.initializer()
@@ -159,6 +160,7 @@ let { height, width } = Dimensions.get('window');
       this.props.startLoader()
       this.setStatePure({ isAreYouSureModalOpened: false });
       Requester.deleteHighlight(item.id, item.event_id).then(() => {
+        this.props.stopLoader()
       }).catch((error) => {
         this.props.stopLoader()
       })
@@ -354,12 +356,12 @@ let { height, width } = Dimensions.get('window');
           {Texts.beup_highlight_description}
         </Text>
       </View>
-      <View style={{alignSelf: 'center',}}>
+      <View style={{ alignSelf: 'center', }}>
         {this.plusButton()}
       </View>
     </View>
   }
-  plusButton(){
+  plusButton() {
     return <TouchableOpacity
       onPress={this.newHighlight}
       style={{
@@ -373,12 +375,24 @@ let { height, width } = Dimensions.get('window');
       }} />
     </TouchableOpacity>
   }
-  hideActions(){
+  hideActions() {
     this.setStatePure({
       showActions: false
     })
   }
-  hideAreYouSure(){
+  itemsTobeSynced() {
+    return (this.props.Event &&
+      this.storeHighlight &&
+      this.props.Event.highlights.filter(ele => findIndex(this.storeHighlight, { id: ele }) < 0)) || []
+  }
+  syncHighLights() {
+    this.itemsTobeSynced().forEach(ele => {
+      console.warn("fetching highlight: ",ele)
+      stores.Highlights.loadHighlight(this.props.Event.id, ele)
+    })
+  }
+  storeHighlight = stores.Highlights.highlights && stores.Highlights.highlights[this.props.Event.id]
+  hideAreYouSure() {
     this.setStatePure({ isAreYouSureModalOpened: false })
   }
   getItemLayout = (item, index) => GState.getItemLayout(item, index, this.data, 70, 0)

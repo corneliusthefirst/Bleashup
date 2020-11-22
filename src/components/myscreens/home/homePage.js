@@ -193,13 +193,8 @@ class Home extends BeComponent {
   }
   hide_keyboard_event = "hide_keyboard"
   _handleAppStateChange = (nextAppState) => {
-    if (nextAppState !== "active") {
-
-    }
-    if (
-      this.state.appState.match(/inactive|background/) &&
-      nextAppState === "active"
-    ) {
+    console.warn("app next state is: ", nextAppState)
+    if (nextAppState == "active") {
       GState.currentRoom && PrivacyRequester.makeOnline()
       console.warn("App has come to the foreground!");
     } else {
@@ -255,38 +250,38 @@ class Home extends BeComponent {
                 style={styles.headerImage}
               />}
             </View>
-            <View style={{ 
-              flexDirection:'row',
-              alignItems:'center'
-              
-             }}>{!this.state.searching ? <View style={{
-              marginRight:10
+            <View style={{
+              flexDirection: 'row',
+              alignItems: 'center'
+
+            }}>{!this.state.searching ? <View style={{
+              marginRight: 10
             }}><TouchableOpacity
               style={styles.settingsIconStyleContainerSub}
               onPress={this.settings}
             >
-              <Icon
-                name="gear"
-                style={styles.settingsIcon}
-                onPress={this.settings}
-              />
-            </TouchableOpacity></View> : null}
-            <View style={{
-              height: 35,
-              alignSelf: 'center',
-              marginRight: '2%',
-              flex: this.state.searching ? 1 : null,
-              ...this.state.searching ? null : { width: 35 }
-            }}>
-              <Searcher
-                searching={this.state.searching}
-                search={this.search}
-                startSearching={this.startSearching}
-                cancelSearch={this.cancelSearching}
-                searchString={this.state.searchString}
-              >
-              </Searcher>
-            </View>
+                <Icon
+                  name="gear"
+                  style={styles.settingsIcon}
+                  onPress={this.settings}
+                />
+              </TouchableOpacity></View> : null}
+              <View style={{
+                height: 35,
+                alignSelf: 'center',
+                marginRight: '2%',
+                flex: this.state.searching ? 1 : null,
+                ...this.state.searching ? null : { width: 35 }
+              }}>
+                <Searcher
+                  searching={this.state.searching}
+                  search={this.search}
+                  startSearching={this.startSearching}
+                  cancelSearch={this.cancelSearching}
+                  searchString={this.state.searchString}
+                >
+                </Searcher>
+              </View>
             </View>
           </View>
         </View>
@@ -329,8 +324,8 @@ const styles = StyleSheet.create({
   },
   headerImageContainer: {
     alignSelf: "flex-start",
-    marginLeft:5,
-    alignItems:'center',
+    marginLeft: 5,
+    alignItems: 'center',
     justifyContent: "center",
     height: "100%",
   },

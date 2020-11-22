@@ -37,7 +37,7 @@ class ProfileSimple extends BeComponent {
     this.closeProfileModal = this.closeProfileModal.bind(this);
   }
   showProfile() {
-    requestAnimationFrame(() => {
+  !this.props.dontpress &&  requestAnimationFrame(() => {
       GState.showingProfile = true;
       this.setStatePure({ isModalOpened: true });
       setTimeout(() => {
@@ -70,6 +70,7 @@ class ProfileSimple extends BeComponent {
             {
               color: ColorList.indicatorColor,
               fontSize: 12,
+              fontWeight:'500'
             },
           ]}
         >
@@ -95,6 +96,7 @@ class ProfileSimple extends BeComponent {
       user && user.phone === stores.LoginStore.user.phone
         ? user.nickname + ` (${Texts.you})`
         : user && user.nickname;
+    userName = userName || Texts.a_bleashup_user
     return (
       <View style={styles.mainContainer}>
         {!this.props.hidePhoto && (

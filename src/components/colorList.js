@@ -59,7 +59,7 @@ class colorlist {
   likeActive = '#1FABAB';
   likeInactive = 'black';
   indicatorColor = '#057D74';
-  indicatorLighter = 'rgba(5, 125, 116,.5)'
+  indicatorLighter = 'rgba(5, 125, 116,.3)'
   indicatorInverted = '#DDECE9';
   descriptionBody = "mintcream";
   descriptionBodyTransparent = 'rgba(245,255,250,.7)'

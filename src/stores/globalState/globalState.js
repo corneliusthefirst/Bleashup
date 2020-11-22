@@ -10,6 +10,13 @@ import active_types from '../../components/myscreens/eventChat/activity_types';
 const { height, width } = Dimensions.get('window');
 import * as configs from "../../config/bleashup-server-config.json"
 import moment from 'moment';
+const { fs } = rnFetchBlob;
+import rnFetchBlob from 'rn-fetch-blob';
+const AppDir = rnFetchBlob.fs.dirs.DownloadDir + '/BeUp';
+const PhotoDir = AppDir + '/Photo';
+const SounDir = AppDir + '/Sound';
+const VideoDir = AppDir + '/Video';
+const OthersDir = AppDir + '/Others';
 import { containsAudio, containsPhoto, containsVideo, containsFile } from "../../components/myscreens/event/createEvent/components/mediaTypes.service";
 const deviceLanguage =
   Platform.OS === 'ios'
@@ -17,6 +24,7 @@ const deviceLanguage =
     NativeModules.SettingsManager.settings.AppleLanguages[0] // iOS 13
     : NativeModules.I18nManager.localeIdentifier;
 const lan = deviceLanguage && deviceLanguage.includes('fr') ? 'fr' : 'en'
+export { AppDir, PhotoDir, SounDir, VideoDir, OthersDir }
 export default class globalState {
   constructor() {
     this.lang = lan
@@ -275,9 +283,9 @@ export default class globalState {
       audio: containsAudio(replyer.url) ? true : false,
       photo: containsPhoto(replyer.url) ? true : false,
       file: containsFile(replyer.url) ? true : false,
-      sourcer: replyer.url ? replyer.url.photo || 
-      replyer.url.video ? replyer.url.photo : 
-      replyer.url.source : null,
+      sourcer: replyer.url ? replyer.url.photo ||
+        replyer.url.video ? replyer.url.photo :
+        replyer.url.source : null,
       title: `${replyer.title} : \n ${replyer.description}`,
       duration: replyer.url && replyer.url.duration,
       replyer_phone: stores.LoginStore.user.phone,
@@ -323,7 +331,7 @@ export default class globalState {
       id: activity_id,
       type_extern: replies.activity_photo,
       photo: true,
-      replyer_phone:creator,
+      replyer_phone: creator,
       sent: true,
       title: (type == active_types.relation ? Texts.profile_photo : Texts.activity_photo) + ": \n",
       sourcer: photo,
@@ -342,7 +350,7 @@ export default class globalState {
       type_extern: data.type,
       photo: true,
       sourcer: user.profile,
-      from_activity:remind.event_id,
+      from_activity: remind.event_id,
       rounded: true,
       title: remind.title + ": \n" + user.nickname,
       change_date: data.status.date,
