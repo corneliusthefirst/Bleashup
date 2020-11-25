@@ -132,8 +132,8 @@ android {
          missingDimensionStrategy 'react-native-camera', 'general'
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion   
-        versionCode 7
-        versionName "1.6"
+        versionCode 9
+        versionName "1.8"
       
     }
     splits {
@@ -166,6 +166,7 @@ android {
 }
 
 dependencies {
+    implementation project(':@react-native-community_netinfo')
     implementation project(':react-native-screens')
     implementation project(':react-native-fast-image')
     implementation project(':react-native-permissions')

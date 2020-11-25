@@ -1789,6 +1789,10 @@ class TEXTS {
         en:'Resend verification code',
         fr:'Renvoyer le code de vérification'
     }[GState.lang]
+    sync_item = {
+        en:'Sync item',
+        fr:'Synchronisation'
+    }[GState.lang]
 }
 const Texts = new TEXTS()
 export default Texts

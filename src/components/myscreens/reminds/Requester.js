@@ -294,6 +294,7 @@ class Requester {
           .then((JSONData) => {
             EventListener.sendRequest(JSONData, remindID + "_alarms").then(
               (response) => {
+                newRemindName.alarms = newRemindName.data
                 UpdatesDispatch.dispatchUpdate(request.Updated(eventID,
                   newRemindName,
                   null,

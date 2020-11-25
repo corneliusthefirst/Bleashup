@@ -23,6 +23,8 @@ var _events = require("../meta/events");
 
 var _text = _interopRequireDefault(require("../meta/text"));
 
+var _updatesDispatcher = _interopRequireDefault(require("./updatesDispatcher"));
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "default": obj }; }
 
 function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); keys.push.apply(keys, symbols); } return keys; }
@@ -346,6 +348,9 @@ function () {
               new_value: newAlarms
             }
           };
+
+          _updatesDispatcher["default"].infomCurrentRoom(change, eventID, eventID);
+
           resolve();
 
           _stores["default"].ChangeLogs.addChanges(change);

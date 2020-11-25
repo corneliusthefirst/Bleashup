@@ -14,6 +14,7 @@ import Searcher from "../Contacts/Searcher";
 import { justSearch, startSearching, cancelSearch } from './searchServices';
 import globalFunctions from '../../globalFunctions';
 import Vibrator from '../../../services/Vibrator';
+import { uniqBy } from 'lodash';
 
 export default class PrivateReplyModal extends BleashupModal {
     initialize() {
@@ -58,6 +59,7 @@ export default class PrivateReplyModal extends BleashupModal {
     modalBody() {
         this.data = this.props.members && this.props.members.slice(0, this.state.currentLength)
         this.data = this.data.filter(ele => globalFunctions.filterForRelation(ele,this.state.searchString || ""))
+        this.data = uniqBy(this.data,'phone')
         let isAll = this.state.currentLength > 1 && this.data.length > 1
         return <View>
             <View style={{

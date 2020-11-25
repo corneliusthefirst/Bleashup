@@ -229,31 +229,29 @@ class ChatRoom extends AnimatedComponent {
     }
     scrollToNewMessage() {
         let index = this.findType(message_types.new_separator)
-        index = index -1
+        index = index - 1
         if (index >= 0) {
             this.scrollToIndex(index)
         }
     }
     findType(type) {
-        return stores.Messages.messages && findIndex(stores.Messages.messages[this.props.firebaseRoom], 
+        return stores.Messages.messages && findIndex(stores.Messages.messages[this.props.firebaseRoom],
             { type })
     }
     findI(id) {
-        return stores.Messages.messages && findIndex(stores.Messages.messages[this.props.firebaseRoom], 
+        return stores.Messages.messages && findIndex(stores.Messages.messages[this.props.firebaseRoom],
             { id })
     }
     scrollToMessage() {
-        if (this.props.id && !GState.reply) {
-            return new Promise(() => {
-                let index = this.findI(this.props.id)
-                if (index >= 0) {
-                    setTimeout(() => {
-                        this.scrollToIndex(index)
-                    })
-                } else {
-                    Toaster({ text: Texts.not_found_item })
-                }
-            })
+        if (this.props.id) {
+            let index = this.findI(this.props.id)
+            if (index >= 0) {
+                setTimeout(() => {
+                    this.scrollToIndex(index)
+                })
+            } else {
+                Toaster({ text: Texts.not_found_item })
+            }
         } else {
             this.scrollToNewMessage()
         }

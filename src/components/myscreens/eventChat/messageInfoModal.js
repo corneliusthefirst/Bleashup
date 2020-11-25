@@ -11,6 +11,7 @@ import UserList from "./UserList";
 import Ionicons from "react-native-vector-icons/Ionicons";
 import message_types from "./message_types";
 import shadower from "../../shadower";
+import { uniqBy } from 'lodash';
 
 @observer
 class MessageInfoModal extends TabModal {
@@ -76,9 +77,9 @@ class MessageInfoModal extends TabModal {
                     return <View style={{ flex: 1 }}>
                         <UserList data={this.props.item &&
                             this.props.item.receive ?
-                            this.props.item.receive.map(ele => {
+                           uniqBy(this.props.item.receive.map(ele => {
                                 return {...ele,phone:ele.phone.replace("+","00")}
-                            }) : []}></UserList>
+                            }),'phone') : []}></UserList>
                     </View>
                 },
             },
@@ -110,7 +111,7 @@ class MessageInfoModal extends TabModal {
                 },
                 screen: () => {
                     return <View style={{ flex: 1 }}>
-                        <UserList data={this.props.item && this.props.item.seen ? this.props.item.seen : []}></UserList>
+                        <UserList data={this.props.item && this.props.item.seen ? uniqBy(this.props.item.seen,'phone') : []}></UserList>
                     </View>
                 },
             },
@@ -149,7 +150,7 @@ class MessageInfoModal extends TabModal {
                         screen: () => {
                             return <View style={{ flex: 1 }}>
                                 <UserList data={this.props.item &&
-                                    this.props.item.played ? this.props.item.played : []}></UserList>
+                                    this.props.item.played ? uniqBy(this.props.item.played) : []}></UserList>
                             </View>
                         },
                     },

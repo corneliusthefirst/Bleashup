@@ -1218,7 +1218,7 @@ class UpdatesDispatcher {
     remind_alarms: update => {
       return MainUpdater.updateRemindAlarms(update.event_id,
         update.new_value.remind_id,
-        update.new_value.data,
+        update.new_value.alarms,
         update.date,
         update.updater)
     },

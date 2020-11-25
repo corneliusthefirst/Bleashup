@@ -44,6 +44,9 @@ export default class globalState {
     const divider = 1000 * 1000
     return data / divider
   }
+  returnItem(item){
+    return Array.isArray(item)?item[0]:item
+  }
   @observable eventUpdated = false;
   @observable isScrolling = true;
   @observable loading = false;

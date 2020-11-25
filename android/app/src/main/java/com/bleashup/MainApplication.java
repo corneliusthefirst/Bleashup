@@ -2,6 +2,7 @@ package com.bleashup.bleashup;
 
 import android.app.Application;
 import com.facebook.react.ReactApplication;
+import com.reactnativecommunity.netinfo.NetInfoPackage;
 import com.swmansion.rnscreens.RNScreensPackage;
 import com.dylanvann.fastimage.FastImageViewPackage;
 import com.reactnativecommunity.rnpermissions.RNPermissionsPackage;
@@ -48,6 +49,7 @@ public class MainApplication extends Application implements ReactApplication {
     protected List<ReactPackage> getPackages() {
       return Arrays.<ReactPackage>asList(
             new MainReactPackage(),
+            new NetInfoPackage(),
             new RNScreensPackage(),
             new FastImageViewPackage(),
             new RNPermissionsPackage(),

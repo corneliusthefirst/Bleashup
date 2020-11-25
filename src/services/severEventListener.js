@@ -45,6 +45,7 @@ class ServerEventListener {
     unprocessable:'un_processable',
     un_authenticated:'un_authenticated',
     represence:'represence',
+    ping:'ping',
     presence: "presence",
     event_changes: "event_changes",
     current_event: "current_event",
@@ -119,6 +120,10 @@ class ServerEventListener {
     console.warn("data from dispatcher: ",data)
     if (data.response) {
       switch (data.response) {
+        case this.responseCases.ping:
+          console.warn('receving ping Hence, Fetching updates!! ');
+          this.getAllUpdates()
+          break
         case this.responseCases.wrong_json:
           console.warn("wrong json data was sent to the server: ", data.data);
           break;
@@ -140,10 +145,16 @@ class ServerEventListener {
           this.sendUnSentMessages();
           break;
         case this.responseCases.all_updates:
+          const sortItem = (a) => {
+           console.warn(a.update.new_value)
+           return (a.new_value && 
+            a.new_value.data && 
+            a.new_value.data.created_at) || a.date
+          }
           let sorter = (a, b) =>
-            moment(a.date).format("x") < moment(b.date).format("x")
+            moment(sortItem(a)).format("x") < moment(sortItem(b)).format("x")
               ? 1
-              : moment(a.date).format("x") > moment(b.date).format("x")
+              : moment(sortItem(a)).format("x") > moment(sortItem(b)).format("x")
                 ? -1
                 : 0;
           const sortedUpdates = data.updated.sort(sorter);
@@ -175,9 +186,7 @@ class ServerEventListener {
         case this.responseCases.presence:
           GState.initialized = true;
           stores.Session.updateReference(data.reference).then((sessios) => {
-            tcpRequest.get_all_update().then((JSONData) => {
-              this.writeToSocket(JSONData, true);
-            });
+           this.getAllUpdates()
           });
           break;
         case this.responseCases.event_changes:
@@ -287,6 +296,11 @@ class ServerEventListener {
       //this.initPresence();
       //emitter.emit("unsuccessful", data.message);
     }
+  }
+  getAllUpdates(){
+    tcpRequest.get_all_update().then((JSONData) => {
+      this.writeToSocket(JSONData, true);
+    });
   }
   informWaiters() {
     this.requestUnprocessed &&

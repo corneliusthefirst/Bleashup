@@ -98,13 +98,13 @@ class Reminds extends AnimatedComponent {
     this.intervalFilterFunc = intervalFilterFunc.bind(this)
     this.returnActualDonners = returnActualDonners.bind(this)
   }
-  isCurrentRemindPublic(){
+  isCurrentRemindPublic() {
     const rem = this.state.currentTask || this.state.remind
     return (rem).status == public_states.public_
   }
-  getMyContacts(){
-    return stores.Contacts.contacts && 
-    stores.Contacts.contacts.contacts &&
+  getMyContacts() {
+    return stores.Contacts.contacts &&
+      stores.Contacts.contacts.contacts &&
       stores.Contacts.contacts.contacts.length > 0 ?
       stores.Contacts.contacts.contacts : []
   }
@@ -115,8 +115,8 @@ class Reminds extends AnimatedComponent {
       adding: true,
       removing: false,
       notcheckAll: false,
-      contacts: uniqBy([...this.props.event.participant, 
-        ...this.isCurrentRemindPublic() ?this.getMyContacts():[] ],"phone").filter(
+      contacts: uniqBy([...this.props.event.participant,
+      ...this.isCurrentRemindPublic() ? this.getMyContacts() : []], "phone").filter(
         (e) => findIndex(currentMembers, { phone: e.phone }) < 0
       ),
     });
@@ -252,7 +252,7 @@ class Reminds extends AnimatedComponent {
       {
         newing: !this.state.newing,
         currentTask: newRem,
-        remind:newRem
+        remind: newRem
       },
       () => {
         emitter.emit(members_updated);
@@ -673,6 +673,14 @@ class Reminds extends AnimatedComponent {
       color: colorList.indicatorColor,
     },
     {
+      title: Texts.sync_item,
+      callback: () => this.syncRemindItem(),
+      condition: () => true,
+      color: ColorList.likeActive,
+      iconName: 'sync',
+      iconType: 'AntDesign'
+    },
+    {
       title: Texts.members,
       callback: () =>
         this.showReport(this.state.intervals, this.state.actualInterval),
@@ -718,6 +726,24 @@ class Reminds extends AnimatedComponent {
       color: colorList.delete,
     },
   ];
+  
+  stopLoader() {
+    this.props.stopLoader && this.props.stopLoader()
+  }
+  syncRemindItem() {
+    const remind_id = (this.state.currentTask || this.state.remind).id
+    this.props.startLoader()
+    stores.Reminds.loadRemindFromRemote(this.props.event.id, remind_id).then((rem) => {
+      rem = GState.returnItem(rem)
+      stores.Reminds.addReminds(this.props.event.id, rem).then(() => {
+        this.stopLoader()
+      }).catch(() => {
+        this.props.stopLoader()
+      })
+    }).catch(() => {
+      this.props.stopLoader()
+    })
+  }
   showRemindActions(remind, intervals, thisInterval, creator, showModal) {
     this.setStatePure({
       intervals,

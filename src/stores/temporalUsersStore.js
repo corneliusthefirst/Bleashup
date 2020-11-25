@@ -56,6 +56,7 @@ export default class TemporalUsersStore {
                 users[user.phone] = user
                 this.saveKey.data = users;
                 this.setPropterties(users)
+                resolve(user)
             })
         })
     }

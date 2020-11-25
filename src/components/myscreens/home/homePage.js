@@ -15,6 +15,7 @@ import {
 } from "react-native";
 import { withInAppNotification } from "react-native-in-app-notification";
 import stores from "../../../stores";
+import NetInfo from "@react-native-community/netinfo";
 import CurrentEventView from "../currentevents";
 import emitter from "../../../services/eventEmiter";
 import firebase from "react-native-firebase";
@@ -142,9 +143,19 @@ class Home extends BeComponent {
     }
     this.handleNotifications(data)
   }
+  startConnectionStateListerner(){
+    this.unsubscribe = NetInfo.addEventListener(state => {
+      console.warn("Connection type", state.type);
+      console.warn("Is connected?", state.isConnected);
+      if(state.isConnected){
+        PrivacyRequester.saveToken()
+      }
+    });
+  }
   componentMounting() {
     Linking.addEventListener("url", this.handleURL);
     DeepLinking.addScheme(GState.DeepLinkURL);
+    this.startConnectionStateListerner()
     DeepLinking.addScheme(GState.DeepLinkURLs);
     DeepLinking.addRoute("/tester", (response) => {
       console.warn("responding to this nice test", response);
@@ -185,6 +196,7 @@ class Home extends BeComponent {
   exiting = false;
   timeout = null;
   unmountingComponent() {
+    this.unsubscribe()
     this.removeNotificationDisplayedListener();
     Linking.removeEventListener("url", this.handleUrl);
     this.removeNotificationListener();

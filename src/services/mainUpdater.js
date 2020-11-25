@@ -10,6 +10,7 @@ import Requester from "../components/myscreens/eventChat/Requester";
 import emitter from './eventEmiter';
 import { typing } from "../meta/events";
 import Texts from '../meta/text';
+import UpdatesDispatch from "./updatesDispatcher";
 class mainUpdater {
   addParticipants(eventID, participants, updater, updated, date) {
     return new Promise((resolve, reject) => {
@@ -264,6 +265,7 @@ class mainUpdater {
             changed: Texts.changed_the_default_alarm_settings,
             new_value: { data: null, new_value: newAlarms },
           };
+          UpdatesDispatch.infomCurrentRoom(change,eventID,eventID)
           resolve()
           stores.ChangeLogs.addChanges(change)
         })

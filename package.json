@@ -17,6 +17,7 @@
     "@react-native-community/cameraroll": "^2.0.0",
     "@react-native-community/datetimepicker": "^2.1.0",
     "@react-native-community/eslint-config": "^1.1.0",
+    "@react-native-community/netinfo": "^5.9.9",
     "add": "^2.0.6",
     "buffer": "^5.4.3",
     "create-react-class": "^15.6.3",

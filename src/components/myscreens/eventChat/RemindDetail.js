@@ -185,7 +185,7 @@ export default class RemindDetail extends AnimatedPureComponent {
   gotoReport(type) {
     BeNavigator.goToRemindReport(this.returnRouteActions(type))
   }
-  showReport(){
+  showReport() {
     this.gotoReport(this.routeType)
   }
   loadStatesFromRemote() {
@@ -194,7 +194,7 @@ export default class RemindDetail extends AnimatedPureComponent {
         this.activity = event;
         stores.Reminds.loadRemindFromRemote(this.activity_id, this.item_id)
           .then((remind) => {
-            remind = Array.isArray(remind) ? remind[0] : remind;
+            remind = GState.returnItem(remind);
             if (this.item.remind_url.main_source == remind.remind_url.source) {
               remind.remind_url = this.item.remind_url
             }
@@ -394,15 +394,15 @@ export default class RemindDetail extends AnimatedPureComponent {
     });
   }
   formReply(item) {
-    let reply = item ? GState.prepareMentionForRemindsMembers(item, this.item) : 
-    GState.prepareRemindsForMetion(this.item);
+    let reply = item ? GState.prepareMentionForRemindsMembers(item, this.item) :
+      GState.prepareRemindsForMetion(this.item);
     reply.from_activity = this.item.event_id;
     reply.activity_id = this.roomID || this.item.event_id;
     reply.activity_name = this.activity.about.title;
     return reply;
   }
   startReply(item) {
-    GState.reply = item ? GState.prepareMentionForRemindsMembers(item,this.item): this.formReply();
+    GState.reply = item ? GState.prepareMentionForRemindsMembers(item, this.item) : this.formReply();
     if (this.reply) {
       this.reply && this.reply();
       this.goback();
@@ -600,12 +600,12 @@ export default class RemindDetail extends AnimatedPureComponent {
               {this.remindCreator()}
             </View>
           </View>
-          <SetAlarmPatternModal
+          {this.state.showAlarmsPattern ? <SetAlarmPatternModal
             save={(alarms, date) => this.saveAlarms(alarms, date)}
-            alarms={returnCurrentPatterns(this.item)}
+            pattern={returnCurrentPatterns(this.item)}
             isOpen={this.state.showAlarmsPattern}
             closed={this.hideAlarmsModal.bind(this)}
-          ></SetAlarmPatternModal>
+          ></SetAlarmPatternModal> : null}
           {this.state.showPrivateReply ? (
             <PrivateReplyModal
               isOpen={this.state.showPrivateReply}
